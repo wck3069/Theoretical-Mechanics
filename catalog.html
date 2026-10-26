@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>理论力学 · 交互讲义 — 总目录（开发期）</title>
+<style>
+  :root{
+    --bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+    --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh;
+    background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text);
+    font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:56px 28px 40px}
+
+  /* ---------- 页眉 ---------- */
+  header.page{margin-bottom:34px}
+  header.page h1{margin:0; font-size:26px; letter-spacing:.5px; font-weight:650}
+  header.page .sub{margin:9px 0 0; font-size:14px; color:var(--muted); line-height:1.7; max-width:640px}
+  header.page .phase{display:inline-block; margin-top:14px; font-size:12px; color:var(--accent2);
+    font-variant-numeric:tabular-nums}
+
+  /* ---------- 里程碑筛选 ---------- */
+  .filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px}
+  .filters button{
+    font:inherit; font-size:12.5px; padding:7px 13px; border-radius:999px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.14); border:1px solid rgba(94,162,255,.28);
+    transition:.15s; font-variant-numeric:tabular-nums;
+  }
+  .filters button:hover{background:rgba(94,162,255,.24)}
+  .filters button.active{background:rgba(94,162,255,.28); color:#fff}
+  .filters button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* ---------- 模块卡片栅格 ---------- */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px}
+  .card{
+    padding:20px 20px 18px; border-radius:14px;
+    background:var(--panel); border:1px solid var(--line);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .card .eyebrow{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px;
+    color:var(--accent); letter-spacing:.4px; font-variant-numeric:tabular-nums;
+  }
+  .card h2{margin:0; font-size:17px; font-weight:650; letter-spacing:.3px}
+  .card .src{margin:0; font-size:12.5px; color:var(--muted); line-height:1.6}
+  .badge{
+    align-self:flex-start; font-size:11.5px; padding:3px 10px; border-radius:999px;
+    font-variant-numeric:tabular-nums;
+  }
+  .badge.ready{background:rgba(255,207,107,.13); color:var(--accent2)}
+  .badge.todo{background:rgba(138,152,192,.12); color:var(--muted)}
+  .card .actions{display:flex; gap:10px; margin-top:auto; padding-top:6px}
+  .card .actions a{
+    font-size:12.5px; text-decoration:none; padding:8px 14px; border-radius:9px;
+  }
+  .card .actions a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  a.primary{background:linear-gradient(180deg,#3f7bff,#2b5fe0); border:1px solid #4f86ff; color:#fff}
+  a.primary:hover{filter:brightness(1.1)}
+  a.ghost{color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35)}
+  a.ghost:hover{background:rgba(94,162,255,.28)}
+  .card.disabled{opacity:.62}
+  .card.disabled .note{font-size:12px; color:#6d7ba3; margin-top:auto; padding-top:6px}
+  .card[hidden]{display:none}
+
+  /* ---------- 页脚 ---------- */
+  footer.page{
+    margin-top:44px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:12px; color:var(--muted); line-height:1.8;
+  }
+  footer.page b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+
+  @media (max-width:640px){
+    .wrap{padding:36px 18px 32px}
+    header.page h1{font-size:22px}
+    .grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <h1>理论力学 · 交互讲义</h1>
+    <p class="sub">把 7 次作业和 1 个两体问题专题中的知识点，重构成一套“每章三件套”的交互式讲义：严格推导 note.tex、阅读版 note.pdf、单文件数值实验 index.html。</p>
+    <span class="phase">P0–P8 开发期总目录 · P9 后迁移为根 index.html</span>
+  </header>
+
+  <nav class="filters" id="filters" aria-label="按里程碑筛选"></nav>
+
+  <main class="grid" id="grid"></main>
+  <noscript><p style="color:#ffd7d7;font-size:14px">需要启用 JavaScript 才能显示模块目录。</p></noscript>
+
+  <footer class="page">
+    内容来源：<b>作业/ 目录共 8 份 PDF</b>（7 次作业 + 1 个两体问题专题）<br>
+    统一验收：单文件零依赖 · 内联 JS 过 esprima 语法检查 · ?selftest=1 数值断言 · 守恒量漂移监控
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var MODULES = [
+    { slug: '00-binet',               milestone: 'M0', title: '比奈方程（现有样板）',   src: '中心力、比奈方程、圆锥曲线、进动',               status: 'ready', sim: 'index.html', note: 'binet.pdf' },
+    { slug: '01-effective-potential', milestone: 'M1', title: '有效势与轨道稳定性',     src: '作业-2 Q1–Q7 · 作业-3 Q1 · 作业-5 Q4',           status: 'todo' },
+    { slug: '02-scattering',          milestone: 'M2', title: '散射与俘获',             src: '作业-3 Q2–Q3',                                     status: 'todo' },
+    { slug: '03-two-body',            milestone: 'M3', title: '两体问题与系外行星',     src: '两体专题',                                         status: 'todo' },
+    { slug: '04-variational',         milestone: 'M4', title: '变分原理与等时摆',       src: '作业-6',                                           status: 'todo' },
+    { slug: '05-virtual-work',        milestone: 'M5', title: '虚功原理与静力学',       src: '作业-7',                                           status: 'todo' },
+    { slug: '06-collisions',          milestone: 'M6', title: '碰撞与变质量',           src: '作业-5 Q1–Q3',                                     status: 'todo' },
+    { slug: '07-rigid-body',          milestone: 'M7', title: '刚体几何与角动量',       src: '作业-4',                                           status: 'todo' },
+    { slug: '08-kinematics',          milestone: 'M8', title: '运动学与非线性振动',     src: '作业-1',                                           status: 'todo' }
+  ];
+
+  var STATUS_LABEL = { ready: '样板', todo: '未创建' };
+
+  var grid = document.getElementById('grid');
+  var filters = document.getElementById('filters');
+
+  /* ---------- 卡片渲染 ---------- */
+  function renderCards() {
+    grid.textContent = '';
+    MODULES.forEach(function (m) {
+      var card = document.createElement('article');
+      card.className = 'card' + (m.status === 'ready' ? '' : ' disabled');
+      card.setAttribute('data-milestone', m.milestone);
+
+      var eyebrow = document.createElement('div');
+      eyebrow.className = 'eyebrow';
+      eyebrow.textContent = m.slug + ' · ' + m.milestone;
+      card.appendChild(eyebrow);
+
+      var h2 = document.createElement('h2');
+      h2.textContent = m.title;
+      card.appendChild(h2);
+
+      var src = document.createElement('p');
+      src.className = 'src';
+      src.textContent = '来源：' + m.src;
+      card.appendChild(src);
+
+      var badge = document.createElement('span');
+      badge.className = 'badge ' + m.status;
+      badge.textContent = STATUS_LABEL[m.status];
+      card.appendChild(badge);
+
+      if (m.status === 'ready') {
+        var actions = document.createElement('div');
+        actions.className = 'actions';
+
+        var sim = document.createElement('a');
+        sim.className = 'primary';
+        sim.href = m.sim;
+        sim.textContent = '打开模拟';
+        actions.appendChild(sim);
+
+        var note = document.createElement('a');
+        note.className = 'ghost';
+        note.href = m.note;
+        note.textContent = '推导 PDF';
+        actions.appendChild(note);
+
+        card.appendChild(actions);
+      } else {
+        var note2 = document.createElement('div');
+        note2.className = 'note';
+        note2.textContent = '随里程碑 ' + m.milestone + ' 创建（tools/new_module.py）';
+        card.appendChild(note2);
+      }
+
+      grid.appendChild(card);
+    });
+  }
+
+  /* ---------- 里程碑筛选 ---------- */
+  function renderFilters() {
+    var seen = {};
+    var keys = ['all'];
+    MODULES.forEach(function (m) {
+      if (!seen[m.milestone]) { seen[m.milestone] = true; keys.push(m.milestone); }
+    });
+    keys.forEach(function (k) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = k === 'all' ? '全部' : k;
+      btn.setAttribute('data-key', k);
+      if (k === 'all') btn.classList.add('active');
+      btn.addEventListener('click', function () { applyFilter(k); });
+      filters.appendChild(btn);
+    });
+  }
+
+  function applyFilter(key) {
+    var btns = filters.querySelectorAll('button');
+    Array.prototype.forEach.call(btns, function (b) {
+      b.classList.toggle('active', b.getAttribute('data-key') === key);
+    });
+    var cards = grid.querySelectorAll('.card');
+    Array.prototype.forEach.call(cards, function (c) {
+      var show = key === 'all' || c.getAttribute('data-milestone') === key;
+      c.hidden = !show;
+    });
+  }
+
+  renderCards();
+  renderFilters();
+})();
+</script>
+</body>
+</html>

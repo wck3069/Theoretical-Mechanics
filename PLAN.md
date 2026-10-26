@@ -658,7 +658,7 @@ URL 参数规范：
 |---|---|---|---|---|---|
 | P0-T1 | 资产盘点与基线：记录现有三件套哈希、页面截图、作业 PDF 页数；确认只读边界 | 无 | `qa/global/baseline.md` 含哈希、页数、截图路径；`作业/` 未被修改 | `[x]` | 2026-10-26 完成；证据 `qa/global/baseline.md`、`baseline-index-1440.png`、`baseline-index-360.png`；作业哈希==本地备份 |
 | P0-T2 | 工具链与模板：写 `build_note.sh`（`latexmk -xelatex`）、`check_html.py`、`new_module.py`；从 `binet.tex`/`index.html` 抽取模板 | P0-T1 | 用模板生成一个空模块，`build_note.sh`（`latexmk -xelatex`）编译出 PDF，JS 语法检查通过 | `[x]` | 2026-10-26 完成；`tools/`+`templates/` 落库；复验 /tmp/t2-verify：build EXIT_CODE=0、PDF 3 页无`??`/TODO、check_html 6/6；决策 `qa/global/toolchain.md` |
-| P0-T3 | 目录骨架与设计系统：建立 `modules/`、`templates/`、`tools/`、`qa/`；写 `catalog.html` 雏形 | P0-T2 | 目录结构符合 §4.3；`catalog.html` 可打开；无外链 | `[ ]` | |
+| P0-T3 | 目录骨架与设计系统：建立 `modules/`、`templates/`、`tools/`、`qa/`；写 `catalog.html` 雏形 | P0-T2 | 目录结构符合 §4.3；`catalog.html` 可打开；无外链 | `[x]` | 2026-10-26 完成；`modules/.gitkeep`+`catalog.html`；复验 check_html 6/6、headless dump-dom 9 卡片/仅 binet 卡有链接、1440+360 截图 `qa/global/catalog-*.png`；证据 `qa/global/p0-t3.md` |
 
 ### M1 有效势与轨道稳定性
 
