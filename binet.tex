@@ -1,0 +1,263 @@
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{比奈方程（Binet Equation）的推导\\及其在行星运动中的应用}}
+\author{本地模型 Strata\\\small（Qwen3.8-Flash-Next，Gyro-S 量化）辅助生成}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本文从极坐标下的牛顿第二定律出发，利用中心力场中的角动量守恒，
+引入变量 \(u=1/r\)，逐步推导出比奈方程（Binet equation）。
+随后将其应用于万有引力情形，证明行星轨道为圆锥曲线，
+并讨论偏心率 \(e\) 与轨道类型的关系。
+最后说明如何通过修改比奈方程的源项参数，
+在数值模拟中改变行星的运动轨迹。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{极坐标下的运动方程}
+
+设质量为 \(m\) 的质点在中心力场中运动，其位置矢量用极坐标表示为
+\begin{equation}
+  \mathbf r = r\,\hat{\mathbf e}_r,
+\end{equation}
+其中 \(r\) 为径向距离，\(\theta\) 为极角。极坐标的单位矢量满足
+\begin{equation}
+  \dot{\hat{\mathbf e}}_r = \dot\theta\,\hat{\mathbf e}_\theta,
+  \qquad
+  \dot{\hat{\mathbf e}}_\theta = -\dot\theta\,\hat{\mathbf e}_r .
+\end{equation}
+对位置矢量求导，得到速度
+\begin{equation}
+  \mathbf v = \dot{\mathbf r}
+  = \dot r\,\hat{\mathbf e}_r + r\dot\theta\,\hat{\mathbf e}_\theta .
+\end{equation}
+再次求导，得到加速度
+\begin{equation}
+  \mathbf a = \dot{\mathbf v}
+  = \left(\ddot r - r\dot\theta^{2}\right)\hat{\mathbf e}_r
+  + \left(2\dot r\dot\theta + r\ddot\theta\right)\hat{\mathbf e}_\theta .
+\end{equation}
+因此，牛顿第二定律 \(m\mathbf a=\mathbf F\) 在极坐标下的两个分量为
+\begin{align}
+  m\left(\ddot r - r\dot\theta^{2}\right) &= F_r, \label{eq:radial}\\
+  m\left(2\dot r\dot\theta + r\ddot\theta\right) &= F_\theta . \label{eq:transverse}
+\end{align}
+
+\section{角动量守恒}
+
+对中心力场，力只沿径向，横向分力为零：
+\begin{equation}
+  F_\theta = 0 .
+\end{equation}
+由式 \eqref{eq:transverse} 得
+\begin{equation}
+  m\left(2\dot r\dot\theta + r\ddot\theta\right)=0 .
+\end{equation}
+注意到
+\begin{equation}
+  \frac{d}{dt}\left(r^{2}\dot\theta\right)
+  = 2r\dot r\dot\theta + r^{2}\ddot\theta
+  = r\left(2\dot r\dot\theta + r\ddot\theta\right),
+\end{equation}
+于是
+\begin{equation}
+  \frac{d}{dt}\left(m r^{2}\dot\theta\right)=0 .
+\end{equation}
+定义角动量
+\begin{equation}
+  L \equiv m r^{2}\dot\theta = \text{常量}. \label{eq:L}
+\end{equation}
+由此可得角速度与半径的关系
+\begin{equation}
+  \dot\theta = \frac{L}{m r^{2}} . \label{eq:thetadot}
+\end{equation}
+这正是开普勒第二定律（面积定律）的微分形式。
+
+\section{比奈方程的推导}
+
+引入新变量
+\begin{equation}
+  u \equiv \frac{1}{r}, \qquad\text{即}\qquad r=\frac{1}{u}.
+\end{equation}
+记 \(u'=\dfrac{du}{d\theta}\)，\(u''=\dfrac{d^{2}u}{d\theta^{2}}\)。
+由链式法则与式 \eqref{eq:thetadot}，
+\begin{equation}
+  \dot u = \frac{du}{d\theta}\dot\theta = u'\,\dot\theta ,
+\end{equation}
+而
+\begin{equation}
+  \dot r = -\frac{1}{u^{2}}\dot u
+  = -\frac{u'}{u^{2}}\dot\theta .
+\end{equation}
+代入 \(\dot\theta = \dfrac{L}{m}u^{2}\)，得
+\begin{equation}
+  \dot r = -\frac{u'}{u^{2}}\cdot\frac{L}{m}u^{2}
+  = -\frac{L}{m}u' . \label{eq:rdot}
+\end{equation}
+对式 \eqref{eq:rdot} 再求时间导数：
+\begin{equation}
+  \ddot r = -\frac{L}{m}\frac{d u'}{dt}
+  = -\frac{L}{m}u''\dot\theta
+  = -\frac{L}{m}u''\cdot\frac{L}{m}u^{2},
+\end{equation}
+即
+\begin{equation}
+  \boxed{\ \ddot r = -\frac{L^{2}}{m^{2}}u^{2}u''\ } \label{eq:rddot}
+\end{equation}
+同时
+\begin{equation}
+  r\dot\theta^{2}
+  = \frac{1}{u}\left(\frac{L}{m}u^{2}\right)^{2}
+  = \frac{L^{2}}{m^{2}}u^{3} . \label{eq:rthetadot2}
+\end{equation}
+将式 \eqref{eq:rddot} 与式 \eqref{eq:rthetadot2} 代入径向方程 \eqref{eq:radial}：
+\begin{equation}
+  m\left(-\frac{L^{2}}{m^{2}}u^{2}u''
+  - \frac{L^{2}}{m^{2}}u^{3}\right)=F_r ,
+\end{equation}
+整理得
+\begin{equation}
+  -\frac{L^{2}}{m}u^{2}\left(u''+u\right)=F_r .
+\end{equation}
+两边同除以 \(-\dfrac{L^{2}}{m}u^{2}\)，得到\textbf{比奈方程}：
+\begin{equation}
+  \boxed{\
+  \frac{d^{2}u}{d\theta^{2}} + u
+  = -\frac{m\,F_r(1/u)}{L^{2}u^{2}}
+  \ } \label{eq:binet}
+\end{equation}
+其中 \(F_r(1/u)\) 表示把径向力 \(F_r(r)\) 中的 \(r\) 用 \(1/u\) 替换。
+式 \eqref{eq:binet} 把二维轨道问题化为一维关于 \(u(\theta)\) 的常微分方程。
+
+\section{万有引力与圆锥曲线轨道}
+
+对行星绕太阳运动，万有引力为
+\begin{equation}
+  F_r(r) = -\frac{GMm}{r^{2}}
+  = -GMm\,u^{2},
+\end{equation}
+其中 \(G\) 为引力常量，\(M\) 为太阳质量，负号表示吸引力。
+代入比奈方程 \eqref{eq:binet}：
+\begin{equation}
+  u''+u
+  = -\frac{m\left(-GMm\,u^{2}\right)}{L^{2}u^{2}}
+  = \frac{GMm^{2}}{L^{2}} .
+\end{equation}
+定义
+\begin{equation}
+  p \equiv \frac{L^{2}}{GMm^{2}} ,
+  \label{eq:p}
+\end{equation}
+则方程化为常系数线性方程
+\begin{equation}
+  \boxed{\
+  \frac{d^{2}u}{d\theta^{2}} + u = \frac{1}{p}
+  \ } \label{eq:binet-newton}
+\end{equation}
+其通解为
+\begin{equation}
+  u(\theta) = \frac{1}{p}
+  + A\cos\theta + B\sin\theta ,
+\end{equation}
+其中 \(A,B\) 为积分常数。令
+\begin{equation}
+  A = \frac{e}{p}\cos\theta_0,
+  \qquad
+  B = \frac{e}{p}\sin\theta_0 ,
+\end{equation}
+则
+\begin{equation}
+  u(\theta) = \frac{1}{p}\left[1+e\cos(\theta-\theta_0)\right],
+\end{equation}
+从而
+\begin{equation}
+  \boxed{\
+  r(\theta) = \frac{p}{1+e\cos(\theta-\theta_0)}
+  \ } \label{eq:conic}
+\end{equation}
+这正是圆锥曲线的极坐标方程，其中 \(p\) 为半通径，
+\(e\ge 0\) 为偏心率，\(\theta_0\) 为轨道近心点方向。
+
+\section{轨道类型与偏心率}
+
+由式 \eqref{eq:conic} 可知，轨道类型完全由偏心率 \(e\) 决定：
+\begin{center}
+\begin{tabular}{ccl}
+\toprule
+偏心率 & 轨道类型 & 说明 \\
+\midrule
+\(e=0\) & 圆 & 半径 \(r=p\) 的圆周运动 \\
+\(0<e<1\) & 椭圆 & 行星、多数卫星的轨道 \\
+\(e=1\) & 抛物线 & 临界逃逸轨道 \\
+\(e>1\) & 双曲线 & 非束缚的散射轨道 \\
+\bottomrule
+\end{tabular}
+\end{center}
+对于椭圆轨道，半长轴 \(a\) 与半通径 \(p\) 满足
+\begin{equation}
+  p = a\left(1-e^{2}\right),
+\end{equation}
+近日点与远日点距离分别为
+\begin{equation}
+  r_{\min}=\frac{p}{1+e}=a(1-e),
+  \qquad
+  r_{\max}=\frac{p}{1-e}=a(1+e).
+\end{equation}
+偏心率与总能量 \(E\) 的关系为
+\begin{equation}
+  e = \sqrt{1+\frac{2E L^{2}}{G^{2}M^{2}m^{3}}} .
+\end{equation}
+当 \(E<0\) 时 \(e<1\)，轨道为椭圆；当 \(E=0\) 时 \(e=1\)；
+当 \(E>0\) 时 \(e>1\)。这体现了能量对轨道束缚性质的判据。
+
+\section{推广与数值模拟}
+
+比奈方程的价值在于：\textbf{给定任意中心力 \(F_r(r)\)，
+都可以直接写出关于 \(u(\theta)\) 的轨道微分方程}，
+而不必求解含时的二维运动方程。若将源项作如下推广：
+\begin{equation}
+  \frac{d^{2}u}{d\theta^{2}} + u
+  = C + \lambda u^{2} + \mu u^{3},
+  \qquad C=\frac{GMm^{2}}{L^{2}},
+  \label{eq:general}
+\end{equation}
+则 \(\lambda,\mu\) 分别代表对平方反比定律的二次、三次修正。
+当 \(\lambda=\mu=0\) 时回到牛顿引力，轨道为闭合圆锥曲线；
+当修正项不为零时，轨道的近心点会随每圈转动，
+形成\textbf{进动（precession）}或玫瑰线型轨道。
+广义相对论对牛顿引力的最低阶修正恰好给出
+一个正比于 \(u^{3}\) 的附加项，因此会自然导致水星近日点进动。
+
+为直观展示上述结论，配套的交互网页 \texttt{index.html}
+对式 \eqref{eq:general} 作四阶 Runge--Kutta 数值积分，
+并实时绘制行星轨迹。用户可调参数包括
+\begin{itemize}
+  \item \(C\)：中心引力强度（对应 \(GMm^{2}/L^{2}\)）；
+  \item \(e\)：初始偏心率（决定初始近心点距离）；
+  \item \(\lambda\)：二次修正系数；
+  \item \(\mu\)：三次修正系数（可模拟相对论进动）；
+  \item 动画速度与轨迹显示。
+\end{itemize}
+
+\section*{参考文献}
+\begin{enumerate}
+  \item H. Goldstein, C. P. Poole, J. L. Safko,
+        \emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+  \item L. D. Landau, E. M. Lifshitz,
+        \emph{Mechanics}, 3rd ed., Butterworth--Heinemann, 1976.
+  \item S. Weinberg,
+        \emph{Gravitation and Cosmology}, Wiley, 1972.
+\end{enumerate}
+
+\end{document}
