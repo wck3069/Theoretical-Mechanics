@@ -1,0 +1,152 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— note.tex 模板（P0-T2）
+% 由 tools/new_module.py 复制到模块目录并替换占位符：
+%   {{MODULE_TITLE}}  模块标题
+%   {{MODULE_SLUG}}   模块代号
+% 两个占位符本身均为合法 LaTeX 文本，未替换时本文件也可直接编译。
+% 所有 TODO 标记均放在注释中，不会出现在 PDF 里（§7.1：PDF 无 TODO 字样）。
+% 结构按 PLAN.md §4.2/§7.1：摘要 → 作业映射 → 模型与假设 → 推导
+%   → 解析结果 → 数值验证 → 讨论 → 参考文献。
+% 导言区与 binet.tex 完全一致（ctexart、A4、11pt、2.5cm 边距）。
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{{{MODULE_TITLE}}}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% TODO(摘要)：3--6 句概括本模块——物理问题、方法、主要解析结论、数值验证结果。
+本文围绕 {{MODULE_TITLE}}（模块代号 {{MODULE_SLUG}}）展开：
+先建立物理模型并列出全部假设，再完成解析推导，
+最后用配套交互页的数值实验对照解析结果。
+本段为模板占位文字，请替换为本模块的具体概括。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{作业映射}
+% TODO(作业映射)：按 PLAN.md 第 3 节知识地图，把本模块知识点映射到具体作业题。
+本模块覆盖的作业题如下表（占位行，请替换为实际映射）：
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+来源 & 题目 & 核心知识点 & 本模块对应章节 \\
+\midrule
+作业-N QM & （题面简述） & （知识点） & 第~\ref{sec:model}--\ref{sec:numeric} 节 \\
+作业-N QM & （题面简述） & （知识点） & 第~\ref{sec:derive} 节 \\
+作业-N QM & （题面简述） & （知识点） & 第~\ref{sec:result} 节 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{模型与假设}\label{sec:model}
+% TODO(模型与假设)：写清坐标系、自由度、守恒量、单位制/量纲化约定，
+% 以及每条近似的适用条件（§7.1：所有近似都写明适用条件）。
+考虑质量为 $m$ 的质点在中心力场中运动，位矢用极坐标表示为
+\begin{equation}
+  \mathbf r = r\,\hat{\mathbf e}_r,
+  \label{eq:tpl-r}
+\end{equation}
+其中 $r$ 为径向距离，$\theta$ 为极角。基本假设（占位，按本模块实际改写）：
+\begin{enumerate}
+  \item 忽略（列出可忽略的因素及其量级依据）；
+  \item 取（写出单位制或无量纲化约定）；
+  \item 适用条件：（写明公式成立的参数范围）。
+\end{enumerate}
+
+\section{推导}\label{sec:derive}
+% TODO(推导)：从运动方程出发逐步推导到解析结果；每一步给出依据；
+% 公式中的符号在首次出现处定义（§7.1）。
+由牛顿第二定律 $m\mathbf a=\mathbf F$ 出发（占位推导，替换为本模块实际推导），
+径向与横向分量方程为
+\begin{equation}
+  m\left(\ddot r - r\dot\theta^{2}\right) = F_r,
+  \label{eq:tpl-radial}
+\end{equation}
+\begin{equation}
+  \frac{d}{dt}\left(m r^{2}\dot\theta\right) = 0,
+  \label{eq:tpl-L}
+\end{equation}
+式 \eqref{eq:tpl-L} 即角动量守恒。定义角动量
+\begin{equation}
+  L \equiv m r^{2}\dot\theta = \text{常量},
+  \label{eq:tpl-Ldef}
+\end{equation}
+由此得角速度与半径的关系
+\begin{equation}
+  \dot\theta = \frac{L}{m r^{2}}.
+  \label{eq:tpl-thetadot}
+\end{equation}
+机械能（占位：替换为本模块的能量表达式）为
+\begin{equation}
+  E = \frac{1}{2}m\dot r^{2} + \frac{L^{2}}{2mr^{2}} + V(r),
+  \label{eq:tpl-E}
+\end{equation}
+其中 $V(r)$ 为势能。
+
+\section{解析结果}\label{sec:result}
+% TODO(解析结果)：给出最终公式的编号、符号定义与适用条件。
+占位结果（替换为本模块的解析结论）：
+\begin{equation}
+  \boxed{\ \omega = \frac{L}{m r^{2}} \ }
+  \label{eq:tpl-result}
+\end{equation}
+其中 $\omega$ 为角速度，$L$ 为角动量，$m$ 为质量，$r$ 为半径；
+该式在（写明适用条件）下成立。
+
+\section{数值验证}\label{sec:numeric}
+% TODO(数值验证)：用配套 index.html 的数值实验对照解析结果；
+% 表格固定三列——解析值 / 数值值 / 相对误差（§7.1）。
+相对误差按下式定义：
+\begin{equation}
+  \varepsilon_{\mathrm{rel}}
+  = \frac{\left|x_{\mathrm{num}} - x_{\mathrm{ana}}\right|}
+         {\left|x_{\mathrm{ana}}\right|},
+  \label{eq:tpl-relerr}
+\end{equation}
+配套交互页 \texttt{index.html}（建议四阶 Runge--Kutta）给出数值对照，
+占位数据如下（请替换为实测值）：
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+物理量 & 解析值 & 数值值 & 相对误差 \\
+\midrule
+$\omega$（占位） & $1.000$ & $1.000$ & $0.0\%$ \\
+（量名） & （值） & （值） & （误差） \\
+（量名） & （值） & （值） & （误差） \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{讨论}
+% TODO(讨论)：极限行为、误差来源、与作业题原答案的对照、可交互化方向。
+占位讨论：
+\begin{itemize}
+  \item 极限行为：（如 $e\to0$、$r\to\infty$ 等极限下公式退化的检查）；
+  \item 误差来源：（积分步长、舍入误差、模型假设的取舍）；
+  \item 与作业题的对照：（解析结果与原题答案一致性的说明）。
+\end{itemize}
+
+\section*{参考文献}
+% TODO(参考文献)：至少 2 条（§7.1）；沿用 Goldstein / Landau 风格。
+\begin{enumerate}
+  \item H. Goldstein, C. P. Poole, J. L. Safko,
+        \emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+  \item L. D. Landau, E. M. Lifshitz,
+        \emph{Mechanics}, 3rd ed., Butterworth--Heinemann, 1976.
+\end{enumerate}
+
+\end{document}
