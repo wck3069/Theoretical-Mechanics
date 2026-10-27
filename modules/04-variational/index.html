@@ -197,7 +197,7 @@ function initParticles() {
   var s0s = [0.5, 1.0, 1.5, 2.0];
   for (var i = 0; i < s0s.length; i++) {
     if (s0s[i] <= 4 * P.a) {
-      particles.push({s0: s0s[i], s: s0s[i], t: 0, done: false});
+      particles.push({s0: s0s[i], s: s0s[i] * 0.999, t: 0, done: false});
     }
   }
 }
@@ -209,7 +209,8 @@ function stepParticles() {
     var p = particles[i];
     if (p.done) continue;
     var v = Math.sqrt(P.g / (4 * P.a)) * Math.sqrt(Math.max(0, p.s0*p.s0 - p.s*p.s));
-    if (v < 1e-9) { p.done = true; continue; }
+    if (p.s <= 1e-6) { p.s = 0; p.done = true; continue; }
+    if (v < 1e-9) { v = Math.sqrt(P.g / (4 * P.a)) * Math.sqrt(Math.max(0, p.s0*p.s0 - (p.s-0.001)*(p.s-0.001))); }
     var ds = v * dt;
     p.s -= ds;
     p.t += dt;
