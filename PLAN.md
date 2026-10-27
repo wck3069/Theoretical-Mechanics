@@ -666,7 +666,7 @@ URL 参数规范：
 |---|---|---|---|---|---|
 | M1-T1 | 写 `note.tex`：有效势、圆轨道、稳定性、径向振动、进动、位力定理 | P0-T3 | 按 §7.1 通过；含作业-2/3/5 映射表 | `[x]` | 2026-10-27 主代理复验：11 页、89 编号公式、14 行数值表与 `qa/numeric_check.py`（18/18 PASS）逐位一致；证据 `modules/01-effective-potential/qa/T1-note.md` |
 | M1-T2 | 写 `index.html`：势能选择、轨道积分、\(V_{\rm eff}\) 曲线、HUD、预设、自测 | M1-T1 | 按 §7.2 通过；`?selftest=1` 全 PASS | `[x]` | 2026-10-27 主代理+免费模型双重复验：check_html 6/6；chrome headless `?selftest=1` SELFTEST 5/5 PASS（ST1 err=4.4e-16；ST2 drift=3.1e-14、周期 rel=5.5e-5；ST3 频率比 2.0000/1.0000；ST4 Lmax=2√2/e；ST5 进动 0.0534 vs 6πγ/L⁴=0.0545）；证据 `modules/01-effective-potential/qa/T2-html.md` |
-| M1-T3 | 模块 QA 与集成：README、截图、总目录卡片、上一/下一链接 | M1-T2 | 按 §7.3/§7.4 通过 | `[ ]` | |
+| M1-T3 | 模块 QA 与集成：README、截图、总目录卡片、上一/下一链接 | M1-T2 | 按 §7.3/§7.4 通过 | `[x]` | 2026-10-27 主代理复验：README 95 行（占位/grep 0）、T3-qa.md 182 行、截图 3 张（1440×900/768×1024/360×640）、check_html 6/6、SELFTEST 5/5、LINKS ALL OK；catalog.html 已更新为 ready；index.html 已含上一/下一链接 |
 
 ### M2 散射与俘获
 
