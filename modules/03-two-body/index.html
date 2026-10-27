@@ -228,7 +228,7 @@ function stepSim() {
 
 function viewScale() {
   var maxR = Math.max(comR1(), P.a - comR1());
-  return Math.min(W, H) * 0.30 / (maxR * 1.2 + 0.1);
+  return Math.min(W, H) * 0.45 / (maxR * 1.2 + 0.1);
 }
 
 function draw() {
@@ -280,6 +280,40 @@ function draw() {
   ctx.shadowColor = 'rgba(94,162,255,.8)'; ctx.shadowBlur = 8;
   ctx.beginPath(); ctx.arc(px, py, 4, 0, 2*Math.PI); ctx.fill();
   ctx.shadowBlur = 0;
+  // Star wobble zoom (top-right inset)
+  var zw = Math.min(W, H) * 0.25;
+  var zx0 = W - zw - 20, zy0 = 20;
+  ctx.strokeStyle = 'rgba(120,160,255,.2)';
+  ctx.strokeRect(zx0, zy0, zw, zw);
+  ctx.fillStyle = '#8a98c0'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('Star wobble (zoomed)', zx0 + 4, zy0 - 4);
+  var zsc = zw * 0.4 / (comR1() * 1.5 + 0.001);
+  var zcx = zx0 + zw/2, zcy = zy0 + zw/2;
+  // Draw star orbit (zoomed)
+  if (traj1.length > 1) {
+    ctx.strokeStyle = 'rgba(255,207,107,.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var i = 0; i < traj1.length; i++) {
+      var zpx = zcx + traj1[i].x * zsc;
+      var zpy = zcy - traj1[i].y * zsc;
+      if (i === 0) ctx.moveTo(zpx, zpy); else ctx.lineTo(zpx, zpy);
+    }
+    ctx.stroke(); ctx.lineWidth = 1;
+  }
+  // Draw star (zoomed)
+  var phase = omega() * t;
+  var r1 = comR1();
+  var zsx = zcx - r1 * Math.cos(phase) * zsc;
+  var zsy = zcy - r1 * Math.sin(phase) * zsc;
+  ctx.fillStyle = '#ffcf6b';
+  ctx.shadowColor = 'rgba(255,207,107,.8)'; ctx.shadowBlur = 8;
+  ctx.beginPath(); ctx.arc(zsx, zsy, 5, 0, 2*Math.PI); ctx.fill();
+  ctx.shadowBlur = 0;
+  // COM marker
+  ctx.fillStyle = 'rgba(255,207,107,.4)';
+  ctx.beginPath(); ctx.arc(zcx, zcy, 2, 0, 2*Math.PI); ctx.fill();
+
   // RV curve (bottom-left inset, clear of orbit)
   var rvX0 = 20, rvY0 = H * 0.65, rvW = W * 0.32, rvH = H * 0.30;
   ctx.strokeStyle = 'rgba(120,160,255,.2)';
