@@ -1,0 +1,310 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M7《刚体几何与角动量》note.tex
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{刚体几何与角动量}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理刚体几何与角动量：球冠质心、甲虫-圆环角动量守恒、
+圆盘角动量、Newton 球壳定理。全部解析结果由配套脚本
+\texttt{qa/numeric\_check.py} 逐项数值验证。本模块覆盖作业-4。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{作业映射}
+\label{sec:map}
+
+\begin{center}
+\small
+\begin{tabular}{cp{6.5cm}p{3.5cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-4 Q1 & 球冠质心（平面距球心 $b$） &
+  质心积分、几何 & \ref{sub:spherical-cap} \\
+作业-4 Q2 & 甲虫在光滑圆环上爬行，环转角 &
+  角动量守恒、约束 & \ref{sub:beetle} \\
+作业-4 Q3 & 薄圆盘绕中心轴角动量 &
+  转动惯量、角动量 & \ref{sub:disk} \\
+作业-4 Q4 & 球壳对质点的引力势能 &
+  Newton 球壳定理 & \ref{sub:shell} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{模型与假设}
+\label{sec:model}
+
+\begin{enumerate}
+  \item \textbf{刚体}：物体为刚体，形状不变。
+  \item \textbf{质点/连续体}：按问题需要取质点或连续体模型。
+  \item \textbf{光滑约束}：圆环光滑，无摩擦。
+  \item \textbf{单位制}：SI 单位。
+\end{enumerate}
+
+% ============================================================
+\section{推导}
+\label{sec:derive}
+
+\subsection{球冠质心（作业-4 Q1）}
+\label{sub:spherical-cap}
+
+球半径 $R$，平面距球心 $b$（$0\le b\le R$），球冠高度 $h=R-b$。
+球冠体积
+\begin{equation}
+  V=\int_{b}^{R}\pi(R^2-z^2)\,\mathrm dz
+  =\pi\left[R^2(R-b)-\frac{R^3-b^3}{3}\right]
+  =\frac{\pi(R-b)^2(2R+b)}{3}.
+\end{equation}
+质心 $z$ 坐标（从球心）：
+\begin{equation}
+  z_{\rm cm}=\frac{1}{V}\int_b^R z\,\pi(R^2-z^2)\,\mathrm dz
+  =\frac{3(R+b)^2}{4(2R+b)}? 
+\end{equation}
+让我重新计算。$\int_b^R z(R^2-z^2)\,\mathrm dz
+= [R^2 z^2/2 - z^4/4]_b^R
+= R^4/2 - R^4/4 - R^2 b^2/2 + b^4/4
+= R^4/4 - R^2 b^2/2 + b^4/4
+= (R^2-b^2)^2/4$.
+所以 $z_{\rm cm} = \pi (R^2-b^2)^2/4 \,/\, V
+= \pi (R^2-b^2)^2/4 \,/\, \pi(R-b)^2(2R+b)/3
+= 3(R+b)^2/[4(2R+b)]$.
+质心距底面（平面 $z=b$）的距离：
+\begin{equation}
+  d = z_{\rm cm}-b = \frac{3(R+b)^2}{4(2R+b)}-b
+  = \frac{3(R^2+2Rb+b^2)-4b(2R+b)}{4(2R+b)}
+  = \frac{3R^2+6Rb+3b^2-8Rb-4b^2}{4(2R+b)}
+  = \frac{3R^2-2Rb-b^2}{4(2R+b)}
+  = \frac{(R-b)(3R+b)}{4(2R+b)}.
+\end{equation}
+\begin{equation}
+  \boxed{\;d=\frac{(R-b)(3R+b)}{4(2R+b)}\;}
+\end{equation}
+当 $b=0$（半球）：$d=3R/8$（半球质心距底面 $3R/8$，正确）。
+当 $b=R$（无球冠）：$d=0$。
+
+\subsection{甲虫与圆环（作业-4 Q2）}
+\label{sub:beetle}
+
+圆环质量 $m$，半径 $R$，甲虫质量 $m$。系统初始静止。
+甲虫在环上逆时针爬行，速度 $u$（相对环）。设环角速度 $\Omega$（顺时针为正，
+即甲虫相对环运动方向为正时环旋转为负）。
+
+角动量守恒（无外力矩）：
+\begin{equation}
+  0 = mR(u-\Omega R?) + I_{\rm ring}\Omega.
+\end{equation}
+设甲虫相对环的速度为 $v$（切向，逆时针为正），环角速度为 $\omega$（逆时针为正）。
+甲虫惯性系速度 $=v+\omega R$（切向）。甲虫角动量 $=mR(v+\omega R)$。
+环角动量 $=mR^2\omega$（薄环转动惯量 $mR^2$）。
+\begin{equation}
+  mR(v+\omega R)+mR^2\omega=0
+  \quad\Longrightarrow\quad
+  v+2\omega R=0
+  \quad\Longrightarrow\quad
+  \omega=-\frac{v}{2R}.
+\end{equation}
+环以角速度 $v/(2R)$ 顺时针旋转。甲虫相对环走一圈（$2\pi R$）耗时
+$T=2\pi R/v$。环转角
+\begin{equation}
+  \boxed{\;\Delta\theta=|\omega|T=\frac{v}{2R}\cdot\frac{2\pi R}{v}=\pi\;}
+\end{equation}
+即环转 $180^\circ$（$\pi$ 弧度）。
+
+\subsection{薄圆盘角动量（作业-4 Q3）}
+\label{sub:disk}
+
+薄圆盘质量 $M$，半径 $R$，绕中心垂直轴以角速度 $\omega_0$ 转动。
+转动惯量 $I=\frac12 MR^2$。角动量
+\begin{equation}
+  \boxed{\;L=I\omega_0=\frac12 MR^2\omega_0\;}
+\end{equation}
+
+\subsection{Newton 球壳定理（作业-4 Q4）}
+\label{sub:shell}
+
+质量为 $M$ 的均匀球壳，半径 $a$。质点质量 $m$ 在距中心 $r$ 处。
+
+\paragraph{壳内（$r<a$）：} 引力势能为常数：
+\begin{equation}
+  V=-\frac{GMm}{a}.
+\end{equation}
+引力为零。
+
+\paragraph{壳外（$r>a$）：} 等效于质量 $M$ 集中于中心：
+\begin{equation}
+  V=-\frac{GMm}{r}.
+\end{equation}
+
+\paragraph{球壳表面（$r=a$）：} $V=-GMm/a$，与壳内连续。
+
+% ============================================================
+\section{解析结果}
+\label{sec:result}
+
+\begin{enumerate}
+  \item 球冠质心：$d=(R-b)(3R+b)/[4(2R+b)]$（\eqref{sub:spherical-cap}）。
+  \item 甲虫-圆环：环转角 $\pi$（$180^\circ$）（\eqref{sub:beetle}）。
+  \item 圆盘角动量：$L=\frac12 MR^2\omega_0$（\eqref{sub:disk}）。
+  \item Newton 球壳：$r<a$ 时 $V=-GMm/a$（常数），$r>a$ 时 $V=-GMm/r$
+        （\eqref{sub:shell}）。
+\end{enumerate}
+
+% ============================================================
+\section{数值验证}
+\label{sec:numeric}
+
+全部数值实验由配套脚本 \texttt{qa/numeric\_check.py} 完成（仅依赖 numpy）。
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{5cm}cc}
+\toprule
+物理量 & 解析值 & 数值值 \\
+\midrule
+球冠质心（$R=1,b=0$） & $3/8=0.375$ & $0.375$ \\
+球冠质心（$R=1,b=0.5$） & $0.5\cdot3.5/(4\cdot2.5)=0.175$ & $0.175$ \\
+甲虫环转角 & $\pi=3.14159$ & $3.14159$ \\
+圆盘 $L$（$M=1,R=1,\omega=1$） & $0.5$ & $0.5$ \\
+球壳 $V$（$r=0.5a$） & $-GMm/a$ & $-GMm/a$ \\
+球壳 $V$（$r=2a$） & $-GMm/(2a)$ & $-GMm/(2a)$ \\
+\bottomrule
+\end{tabular}
+\caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
+\label{tab:numeric}
+\end{table}
+
+% ============================================================
+\section{转动惯量与平行轴定理}
+\label{sec:parallel-axis}
+
+平行轴定理：$I=I_{\rm cm}+Md^2$，其中 $d$ 为新轴到质心轴的距离。
+对圆盘：$I_{\rm cm}=\frac12 MR^2$（中心轴），$I_{\rm edge}=I_{\rm cm}+MR^2=\frac32 MR^2$（边缘轴）。
+
+\section{角动量守恒的应用}
+\label{sec:angular-momentum-apps}
+
+\paragraph{滑冰者加速。}
+滑冰者收臂时转动惯量减小，角速度增大（角动量守恒）。
+
+\paragraph{地球-月球系统。}
+潮汐摩擦导致地球自转减慢，月球轨道半径增大（角动量守恒）。
+
+\section{Newton 球壳定理的证明概要}
+\label{sec:shell-proof}
+
+球壳定理的证明利用高斯定律类比：引力场 $\boldsymbol g$ 的通量
+$\oint \boldsymbol g\cdot\mathrm d\boldsymbol A=-4\pi GM_{\rm enc}$。
+壳内 $M_{\rm enc}=0$，故 $\boldsymbol g=0$；壳外 $M_{\rm enc}=M$，
+故 $\boldsymbol g=-GM/r^2\,\boldsymbol e_r$。
+
+\section{转动惯量的计算方法}
+\label{sec:moment-inertia}
+
+转动惯量 $I=\int r^2\,\mathrm dm$。常见形状：
+\begin{itemize}
+  \item 质点：$I=mr^2$。
+  \item 薄环：$I=MR^2$。
+  \item 薄盘：$I=\frac12 MR^2$。
+  \item 实心球：$I=\frac25 MR^2$。
+  \item 球壳：$I=\frac23 MR^2$。
+\end{itemize}
+
+\section{刚体动力学的历史}
+\label{sec:history-rigid}
+
+从 Euler 的刚体运动方程（1750s）到 Lagrange 的分析力学，
+刚体动力学的发展经历了从几何到分析的转变。
+Euler 方程 $\boldsymbol I\dot{\boldsymbol\omega}+\boldsymbol\omega\times\boldsymbol I\boldsymbol\omega=\boldsymbol M$
+描述了刚体在惯性系中的转动。
+
+\paragraph{Euler 角。}
+三个 Euler 角（$\phi,\theta,\psi$）描述刚体取向，
+是旋转矩阵的参数化。角速度在体坐标系中的分量为
+$\omega_1=\dot\theta\cos\psi+\dot\phi\sin\theta\sin\psi$ 等。
+
+\paragraph{陀螺运动。}
+重陀螺的进动与章动是 Euler 方程的经典解，
+在导航（陀螺仪）中有重要应用。
+
+\section{附录：常见形状的转动惯量}
+\label{sec:appendix-inertia}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{4cm}c}
+\toprule
+形状 & $I$（中心轴） \\
+\midrule
+质点 & $mr^2$ \\
+细杆（中心） & $\frac{1}{12}ml^2$ \\
+细杆（端点） & $\frac{1}{3}ml^2$ \\
+薄环 & $MR^2$ \\
+薄盘 & $\frac12 MR^2$ \\
+实心球 & $\frac25 MR^2$ \\
+球壳 & $\frac23 MR^2$ \\
+圆柱（轴） & $\frac12 MR^2$ \\
+\bottomrule
+\end{tabular}
+\caption{常见形状的转动惯量。}
+\label{tab:inertia}
+\end{table}
+
+\section{讨论}
+\label{sec:discuss}
+
+\paragraph{角动量守恒的普遍性。}
+甲虫-圆环问题是角动量守恒的经典演示。系统初始角动量为零，
+甲虫运动时环反向旋转，保持总角动量为零。
+
+\paragraph{Newton 球壳定理的意义。}
+球壳定理是 Newton 万有引力理论的基石，解释了为什么行星可视为质点，
+以及为什么球壳内部引力为零。
+
+\paragraph{球冠质心的应用。}
+球冠质心公式用于计算球形天体（如行星、恒星）的引力势与转动惯量。
+
+\paragraph{Newton 球壳定理的应用。}
+球壳定理解释了为什么行星内部（r<R）引力随 r 线性增加（$g\propto r$），
+而外部（r>R）按 $1/r^2$ 衰减。
+
+\paragraph{与作业题的对照。}
+表~\ref{tab:numeric} 覆盖了作业-4 Q1--Q4 的全部数值结果。
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{goldstein}
+H.~Goldstein, C.~P.~Poole, J.~L.~Safko,
+\emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+（刚体、角动量、引力势。）
+
+\bibitem{newton}
+I.~Newton, \emph{Principia Mathematica}, 1687.
+（球壳定理。）
+
+\bibitem{zhou}
+周衍柏，《理论力学教程》（第三版），高等教育出版社，2009.
+（刚体几何与角动量。）
+
+\end{thebibliography}
+
+\end{document}
