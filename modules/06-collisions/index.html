@@ -201,19 +201,37 @@ function draw() {
   if (P.mode === 'collision') {
     var alpha = P.alpha * Math.PI / 180;
     var e = P.e;
-    // Draw incoming ball
-    ctx.fillStyle = '#5ea2ff';
-    ctx.beginPath(); ctx.arc(cx - 80, cy, 12, 0, 2*Math.PI); ctx.fill();
-    // Draw target ball
-    ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(cx + 80, cy, 12, 0, 2*Math.PI); ctx.fill();
-    // Draw incoming velocity vector
-    ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(cx-80, cy); ctx.lineTo(cx-80+60*Math.cos(alpha), cy-60*Math.sin(alpha)); ctx.stroke();
-    // Draw outgoing velocity vector
     var beta = betaDeflection(e, P.alpha) * Math.PI / 180;
-    ctx.strokeStyle = '#7fe3a0'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(cx-80, cy); ctx.lineTo(cx-80+60*Math.cos(beta), cy-60*Math.sin(beta)); ctx.stroke();
+    var phase = animT;
+    // Ball 1: approach (0-1), collision at 1, scatter (1-2)
+    var x1, y1;
+    if (phase < 1) {
+      x1 = cx - 120 + phase * 120; y1 = cy - phase * 120 * Math.sin(alpha);
+    } else if (phase < 2) {
+      var t2 = phase - 1;
+      x1 = cx + t2 * 80 * Math.cos(beta); y1 = cy - t2 * 80 * Math.sin(beta);
+    } else {
+      x1 = cx + 80 * Math.cos(beta); y1 = cy - 80 * Math.sin(beta);
+    }
+    // Ball 2: stationary until collision, then moves
+    var x2, y2;
+    if (phase < 1) {
+      x2 = cx + 40; y2 = cy;
+    } else {
+      var t2 = phase - 1;
+      x2 = cx + 40 + t2 * 60; y2 = cy - t2 * 20;
+    }
+    // Draw ball 1
+    ctx.fillStyle = '#5ea2ff';
+    ctx.beginPath(); ctx.arc(x1, y1, 12, 0, 2*Math.PI); ctx.fill();
+    // Draw ball 2
+    ctx.fillStyle = '#ffcf6b';
+    ctx.beginPath(); ctx.arc(x2, y2, 12, 0, 2*Math.PI); ctx.fill();
+    // Draw velocity vector for ball 1 (before collision)
+    if (phase < 1) {
+      ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + 40*Math.cos(alpha), y1 - 40*Math.sin(alpha)); ctx.stroke();
+    }
     // Labels
     ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
     ctx.fillText('alpha=' + P.alpha.toFixed(1) + ' deg', W - 180, 30);
@@ -235,6 +253,14 @@ function draw() {
     ctx.fillStyle = '#8a98c0'; ctx.font = '11px ui-monospace,monospace';
     ctx.fillText('v(t) (raindrop)', 40, 30);
   }
+}
+
+// ==================== 4.5) 动画 ====================
+var animT = 0, animRunning = true;
+function stepAnim() {
+  if (!animRunning) return;
+  animT += 0.02 * P.speed;
+  if (animT > 4) animT = 0; // loop
 }
 
 // ==================== 5) HUD ====================
@@ -330,6 +356,7 @@ if (qURL.selftest === '1') {
 }
 var running = true;
 function frame() {
+  stepAnim();
   draw(); updateHUD();
   requestAnimationFrame(frame);
 }
