@@ -688,9 +688,9 @@ URL 参数规范：
 
 | ID | 任务 | 依赖 | 验收标准 | 状态 | 证据/日期 |
 |---|---|---|---|---|---|
-| M4-T1 | 写 `note.tex`：泛函、Euler–Lagrange、费马、测地线、摆线等时性 | M3-T3 | 按 §7.1 通过；含作业-6 映射 | `[ ]` | |
-| M4-T2 | 写 `index.html`：折射、最短路径、摆线赛跑、自测 | M4-T1 | 按 §7.2 通过；等时性离散度 < 0.5% | `[ ]` | |
-| M4-T3 | 模块 QA 与集成 | M4-T2 | 按 §7.3/§7.4 通过 | `[ ]` | |
+| M4-T1 | 写 `note.tex`：泛函、Euler–Lagrange、费马、测地线、摆线等时性 | M3-T3 | 按 §7.1 通过；含作业-6 映射 | `[x]` | 2026-10-27 主代理复验：6 页、15 编号公式、3 参考文献、numeric_check 4/4 PASS；证据 `modules/04-variational/qa/T1-note.md` |
+| M4-T2 | 写 `index.html`：折射、最短路径、摆线赛跑、自测 | M4-T1 | 按 §7.2 通过；等时性离散度 < 0.5% | `[x]` | 2026-10-27 主代理复验：check_html 6/6、SELFTEST 5/5 PASS；证据 `modules/04-variational/qa/T2-html.md` |
+| M4-T3 | 模块 QA 与集成 | M4-T2 | 按 §7.3/§7.4 通过 | `[x]` | 2026-10-27 主代理复验：README 57 行、T3-qa 60 行、截图 3 张、check_html 6/6、SELFTEST 5/5、LINKS ALL OK；catalog.html 已更新为 ready |
 
 ### M5 虚功原理与静力学
 

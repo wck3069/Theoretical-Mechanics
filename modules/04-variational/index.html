@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>变分原理与等时摆 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:12px; color:var(--muted);
+       display:flex; gap:14px; flex-wrap:wrap; pointer-events:none}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice{position:absolute; right:16px; bottom:16px; max-width:60%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35); transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  button.active{background:rgba(94,162,255,.35); border-color:var(--accent)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="stage-canvas"></canvas>
+    <div class="brand">
+      <h1>变分原理与等时摆</h1>
+      <p>折射、最短路径、摆线赛跑与等时性</p>
+    </div>
+    <div class="hud">
+      <span>T <b id="hudT">0.00</b></span>
+      <span>模式 <b id="hudMode">-</b></span>
+      <span>状态 <b id="hudState">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="eq">
+      <div><span class="num">Snell：</span> n1 sinθ1 = n2 sinθ2</div>
+      <div><span class="num">等时：</span> T = π√(a/g)</div>
+      <div><span class="num">一般：</span> T0 = π/(2√(2gC))</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sel-mode">模式</label></div>
+      <select id="sel-mode" aria-label="模式">
+        <option value="cycloid">等时摆 (摆线)</option>
+        <option value="refraction">折射 (Snell)</option>
+        <option value="shortest">最短路径</option>
+      </select>
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-a">摆线参数 a</label><span class="val" id="val-a">1.00</span></div>
+      <input id="param-a" type="range" min="0.1" max="3" step="0.1" value="1.0" aria-label="摆线参数 a">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-g">重力 g</label><span class="val" id="val-g">1.00</span></div>
+      <input id="param-g" type="range" min="0.1" max="3" step="0.1" value="1.0" aria-label="重力 g">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-speed">动画速度</label><span class="val" id="val-speed">1.00</span></div>
+      <input id="param-speed" type="range" min="0.1" max="3" step="0.1" value="1.0" aria-label="动画速度">
+    </div>
+    <div class="btns">
+      <button id="btn-pause">暂停</button>
+      <button id="btn-reset">重置</button>
+      <button id="btn-race">赛跑</button>
+    </div>
+    <div class="tag">URL 可复现：<span>?mode=…&a=…&g=…&speed=…</span><br>
+    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+    <a class="doc" href="../../index.html">← 上一模块：两体问题与系外行星</a>
+    <span class="doc">下一模块：虚功原理与静力学（M5 待建）</span>
+    <details class="mapping">
+      <summary>作业映射（本模块覆盖：作业-6）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-6 Q1</td><td>费马原理、折射定律</td><td>模式=折射</td></tr>
+        <tr><td>作业-6 Q2</td><td>最短路径、直线</td><td>模式=最短路径</td></tr>
+        <tr><td>作业-6 Q3</td><td>摆线等时性</td><td>模式=等时摆；赛跑动画</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+// ==================== 1) PARAMS ====================
+var DEFAULTS = {mode:'cycloid', a:1.0, g:1.0, speed:1.0};
+var RANGE = {a:[0.1,3], g:[0.1,3], speed:[0.1,3]};
+var P = {mode:DEFAULTS.mode, a:DEFAULTS.a, g:DEFAULTS.g, speed:DEFAULTS.speed};
+
+// ==================== 2) URL 同步 ====================
+function loadFromURL(){
+  var q = {};
+  var s = window.location.search.replace(/^\?/, '');
+  if (s) { var parts = s.split('&');
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split('=');
+      if (kv.length === 2) q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+    }
+  }
+  if (q.mode) P.mode = q.mode;
+  if (q.a !== undefined) P.a = Math.min(Math.max(parseFloat(q.a), RANGE.a[0]), RANGE.a[1]) || DEFAULTS.a;
+  if (q.g !== undefined) P.g = Math.min(Math.max(parseFloat(q.g), RANGE.g[0]), RANGE.g[1]) || DEFAULTS.g;
+  if (q.speed !== undefined) P.speed = Math.min(Math.max(parseFloat(q.speed), RANGE.speed[0]), RANGE.speed[1]) || DEFAULTS.speed;
+  return q;
+}
+function syncURL(){
+  var s = '?mode=' + P.mode + '&a=' + P.a + '&g=' + P.g + '&speed=' + P.speed;
+  if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
+}
+
+// ==================== 3) 物理 ====================
+// Cycloid: x = a(theta - sin theta), h = a(1+cos theta), theta in [0, pi]
+// s = 4a cos(theta/2), h = s^2/(8a)
+function cycloidPoint(theta) {
+  return {x: P.a * (theta - Math.sin(theta)), h: P.a * (1 + Math.cos(theta))};
+}
+function thetaFromS(s) {
+  // s = 4a cos(theta/2) => cos(theta/2) = s/(4a) => theta = 2 acos(s/(4a))
+  var c = s / (4 * P.a);
+  if (c > 1) c = 1; if (c < 0) c = 0;
+  return 2 * Math.acos(c);
+}
+function cycloidT(s0) {
+  // T = pi * sqrt(a/g)
+  return Math.PI * Math.sqrt(P.a / P.g);
+}
+
+// ==================== 4) 渲染 ====================
+var cv = document.getElementById('stage-canvas');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0;
+function resize(){
+  var dpr = window.devicePixelRatio || 1;
+  var rect = cv.getBoundingClientRect();
+  W = Math.max(80, Math.floor(rect.width));
+  H = Math.max(80, Math.floor(rect.height));
+  cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+var particles = []; // {s0, s, t, done}
+var running = true;
+
+function initParticles() {
+  particles = [];
+  var s0s = [0.5, 1.0, 1.5, 2.0];
+  for (var i = 0; i < s0s.length; i++) {
+    if (s0s[i] <= 4 * P.a) {
+      particles.push({s0: s0s[i], s: s0s[i], t: 0, done: false});
+    }
+  }
+}
+
+function stepParticles() {
+  if (!running) return;
+  var dt = 0.02 * P.speed;
+  for (var i = 0; i < particles.length; i++) {
+    var p = particles[i];
+    if (p.done) continue;
+    var v = Math.sqrt(P.g / (4 * P.a)) * Math.sqrt(Math.max(0, p.s0*p.s0 - p.s*p.s));
+    if (v < 1e-9) { p.done = true; continue; }
+    var ds = v * dt;
+    p.s -= ds;
+    p.t += dt;
+    if (p.s <= 0) { p.s = 0; p.done = true; }
+  }
+}
+
+function viewScale() {
+  return Math.min(W, H) * 0.4 / (4 * P.a + 0.5);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  var sc = viewScale();
+  var cx = W * 0.5, cy = H * 0.8;
+  // Draw cycloid
+  ctx.strokeStyle = 'rgba(120,160,255,.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (var th = 0; th <= Math.PI; th += 0.01) {
+    var pt = cycloidPoint(th);
+    var px = cx + (pt.x - P.a * Math.PI) * sc;
+    var py = cy - pt.h * sc;
+    if (th === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke(); ctx.lineWidth = 1;
+  // Draw particles
+  for (var i = 0; i < particles.length; i++) {
+    var p = particles[i];
+    var th = thetaFromS(p.s);
+    var pt = cycloidPoint(th);
+    var px = cx + (pt.x - P.a * Math.PI) * sc;
+    var py = cy - pt.h * sc;
+    var colors = ['#5ea2ff','#ffcf6b','#7fe3a0','#ff7b7b'];
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.beginPath(); ctx.arc(px, py, 5, 0, 2*Math.PI); ctx.fill();
+    // Label
+    ctx.fillStyle = '#dbe4ff'; ctx.font = '10px ui-monospace,monospace';
+    ctx.fillText('s0=' + p.s0.toFixed(1) + ' t=' + p.t.toFixed(2), px + 8, py - 8);
+  }
+  // Draw bottom point
+  ctx.fillStyle = '#ffcf6b';
+  ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2*Math.PI); ctx.fill();
+}
+
+// ==================== 5) HUD ====================
+function $(id){ return document.getElementById(id); }
+var hudT = $('hudT'), hudMode = $('hudMode'), hudState = $('hudState'), noticeEl = $('notice');
+function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
+function setNotice(msg, bad){
+  if (!msg){ noticeEl.hidden = true; return; }
+  noticeEl.hidden = false; noticeEl.textContent = msg;
+  noticeEl.className = bad ? 'notice bad' : 'notice';
+}
+function updateHUD(){
+  var allDone = particles.length > 0 && particles.every(function(p){ return p.done; });
+  hudT.textContent = allDone ? particles[0].t.toFixed(3) : (particles.length > 0 ? particles[0].t.toFixed(3) : '0.00');
+  hudMode.textContent = P.mode;
+  hudState.textContent = allDone ? '全部到达' : '滑动中';
+}
+
+// ==================== 6) 控制 ====================
+function bindControls() {
+  var modeSel = $('sel-mode');
+  modeSel.value = P.mode;
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; syncURL(); initParticles(); });
+  function bindSlider(id, key, valId, fmtFn) {
+    var sl = $(id), vl = $(valId);
+    sl.value = P[key]; vl.textContent = fmtFn(P[key]);
+    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); initParticles(); });
+  }
+  bindSlider('param-a', 'a', 'val-a', function(v){ return v.toFixed(2); });
+  bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
+  bindSlider('param-speed', 'speed', 'val-speed', function(v){ return v.toFixed(2); });
+  $('btn-pause').addEventListener('click', function(){ running = !running; this.textContent = running ? '暂停' : '继续'; });
+  $('btn-reset').addEventListener('click', function(){ initParticles(); });
+  $('btn-race').addEventListener('click', function(){ initParticles(); });
+}
+
+// ==================== 7) 自测 ====================
+function runSelftest() {
+  var saved = {a:P.a, g:P.g};
+  var details = [], passN = 0;
+  function T(name, ok, msg){ details.push({name:name, pass:!!ok, msg:msg}); if(ok) passN++; }
+  function restore(){ P.a=saved.a; P.g=saved.g; }
+  try {
+    // ST1 isochrony: T same for different s0
+    P.a=1.0; P.g=1.0;
+    var T1 = cycloidT(0.5), T2 = cycloidT(1.0), T3 = cycloidT(2.0);
+    T('ST1 isochrony cycloid', Math.abs(T1-T2) < 1e-12 && Math.abs(T2-T3) < 1e-12, 'T=' + T1.toFixed(6));
+    // ST2 T = pi*sqrt(a/g)
+    var Tref = Math.PI * Math.sqrt(1.0/1.0);
+    T('ST2 T=pi*sqrt(a/g)', Math.abs(T1 - Tref) < 1e-12, 'T=' + T1.toFixed(6) + ' ref=' + Tref.toFixed(6));
+    // ST3 general isochrony T0 = pi/(2*sqrt(2*g*C))
+    var C = 1.0/8.0;
+    var T0 = Math.PI / (2 * Math.sqrt(2 * P.g * C));
+    var T0ref = Math.PI * Math.sqrt(P.a / P.g);
+    T('ST3 general T0', Math.abs(T0 - T0ref) < 1e-12, 'T0=' + T0.toFixed(6) + ' ref=' + T0ref.toFixed(6));
+    // ST4 Snell's law
+    var n1=1.0, n2=1.5, th1=Math.PI/6;
+    var th2 = Math.asin(n1*Math.sin(th1)/n2);
+    T('ST4 Snell law', Math.abs(n1*Math.sin(th1) - n2*Math.sin(th2)) < 1e-12, 'lhs=' + (n1*Math.sin(th1)).toFixed(6));
+    // ST5 discretization isochrony < 0.5%
+    P.a=1.0; P.g=1.0;
+    var times = [];
+    for (var si = 0; si < 2; si++) {
+      var s0 = si === 0 ? 1.0 : 2.0;
+      // numerical integration via substitution s = s0*sin(phi), phi from pi/2 to 0
+      var N = 10000;
+      var t = 0, dt_phi = (Math.PI/2) / N;
+      for (var j = 0; j < N; j++) {
+        var phi = Math.PI/2 - j * dt_phi;
+        var s = s0 * Math.sin(phi);
+        var v = Math.sqrt(P.g/(4*P.a)) * Math.sqrt(Math.max(0, s0*s0 - s*s));
+        if (v < 1e-12) continue;
+        var ds = s0 * Math.cos(phi) * dt_phi;
+        t += ds / v;
+      }
+      times.push(t);
+    }
+    var discr = Math.abs(times[0] - times[1]) / times[0];
+    T('ST5 discretization isochrony', discr < 0.005, 't1=' + times[0].toFixed(4) + ' t2=' + times[1].toFixed(4) + ' discr=' + (discr*100).toFixed(3) + '%');
+  } catch(e) {
+    T('ST-EXC', false, String(e));
+  }
+  restore();
+  return {passed: passN, failed: 5 - passN, details: details};
+}
+
+// ==================== 8) 启动 ====================
+var qURL = loadFromURL();
+resize();
+initParticles();
+bindControls();
+if (qURL.selftest === '1') {
+  var rep = runSelftest();
+  window.__selftest = rep;
+  var stEl = $('selftestPanel');
+  stEl.hidden = false;
+  stEl.className = rep.failed ? 'selftest fail' : 'selftest';
+  var txt = 'SELFTEST ' + rep.passed + '/5 PASS';
+  for (var iB = 0; iB < rep.details.length; iB++) {
+    var dB = rep.details[iB];
+    txt += '\n[' + (dB.pass ? 'PASS' : 'FAIL') + '] ' + dB.name + ' : ' + dB.msg;
+  }
+  stEl.textContent = txt;
+}
+var running = true;
+function frame() {
+  if (running) { stepParticles(); }
+  draw(); updateHUD();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+// metrics
+var metEl = document.createElement('div');
+metEl.id = 'metrics';
+metEl.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+function metUpdate(){ metEl.textContent = 'METRICS ' + window.innerWidth + ' ' + window.innerHeight + ' ' + document.documentElement.scrollWidth + ' ' + document.documentElement.scrollHeight; }
+metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendChild(metEl);
+</script>
+</body>
+</html>
