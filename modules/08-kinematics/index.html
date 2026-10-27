@@ -185,6 +185,9 @@ function syncURL(){
   if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
 }
 
+function prewarmDouble(n){
+  for (var i=0;i<(n||320);i++) dpStep(0.02);
+}
 // ==================== 3) 物理 ====================
 function detachAngle() { return Math.acos(2/3) * 180 / Math.PI; }
 function pendulumPeriod(L, g, theta0) {
@@ -250,11 +253,11 @@ function draw() {
     ctx.fillText('detach at ' + detachAngle().toFixed(2) + ' deg', 20, 30);
   } else if (P.mode === 'double') {
     var L1 = 1, L2 = 1;
-    var cx = W * 0.5, cy = H * 0.35;
-    var sc = Math.min(W, H) * 0.22;
+    var cx = W * 0.5, cy = H * 0.32;
+    var sc = Math.min(W, H) * 0.15;
     if (dp.trail.length > 1) {
-      ctx.strokeStyle = 'rgba(94,162,255,.6)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(94,162,255,.35)';
+      ctx.lineWidth = 1.4;
       ctx.beginPath();
       for (var i = 0; i < dp.trail.length; i++) {
         var px = cx + dp.trail[i].x2 * sc;
@@ -276,11 +279,24 @@ function draw() {
     ctx.beginPath(); ctx.arc(x1, y1, 6, 0, 2*Math.PI); ctx.fill();
     ctx.fillStyle = '#ffcf6b';
     ctx.beginPath(); ctx.arc(x2, y2, 6, 0, 2*Math.PI); ctx.fill();
+    // anchored pivot: support bar + hatching
+    ctx.strokeStyle = 'rgba(138,152,192,.9)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx - 26, cy); ctx.lineTo(cx + 26, cy); ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(138,152,192,.5)';
+    for (var hs = -24; hs <= 24; hs += 8) {
+      ctx.beginPath(); ctx.moveTo(cx + hs, cy); ctx.lineTo(cx + hs + 7, cy - 8); ctx.stroke();
+    }
+    // pivot bolt
     ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2*Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2*Math.PI); ctx.fill();
+    // readout to the right (avoids title)
     ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('Double Pendulum (chaos)', 20, 30);
-    ctx.fillText('theta1=' + dp.th1.toFixed(3) + ' theta2=' + dp.th2.toFixed(3), 20, 50);
+    ctx.fillText('DOUBLE PENDULUM', W - 210, 30);
+    ctx.fillText('theta1 = ' + dp.th1.toFixed(3), W - 210, 50);
+    ctx.fillText('theta2 = ' + dp.th2.toFixed(3), W - 210, 68);
+    ctx.fillText('w1 = ' + dp.w1.toFixed(3), W - 210, 86);
+    ctx.fillText('w2 = ' + dp.w2.toFixed(3), W - 210, 104);
     return;
   } else {
     // Pendulum: draw arc and period
@@ -323,9 +339,11 @@ function updateHUD(){
     hudCorr.textContent = fmt(corr, 6);
     hudState.textContent = '振荡';
   } else if (P.mode === 'double') {
-    hudT.textContent = dp.trail.length > 0 ? (dp.trail.length * 0.02 * P.speed).toFixed(2) : '0.00';
+    hudTheta.textContent = '-';
+    hudDetach.textContent = '-';
+    hudT.textContent = dp.trail.length > 0 ? (dp.trail.length * 0.02).toFixed(2) : '0.00';
     hudCorr.textContent = '-';
-    hudState.textContent = '混沌';
+    hudState.textContent = '混沌 (double pendulum)';
   } else {
     hudT.textContent = '-';
     hudCorr.textContent = '-';
@@ -337,7 +355,7 @@ function updateHUD(){
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
-  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; } syncURL(); });
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(320); } syncURL(); });
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
@@ -346,7 +364,7 @@ function bindControls() {
   bindSlider('param-theta0', 'theta0', 'val-theta0', function(v){ return v.toFixed(1); });
   bindSlider('param-L', 'L', 'val-L', function(v){ return v.toFixed(2); });
   bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
-  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; syncSliders(); } syncURL(); });
+  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(320); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; syncSliders(); } syncURL(); });
 }
 function syncSliders() {
   $('param-theta0').value = P.theta0; $('val-theta0').textContent = P.theta0.toFixed(1);
@@ -390,6 +408,7 @@ var qURL = loadFromURL();
 resize();
 bindControls();
 syncSliders();
+if (P.mode === 'double') prewarmDouble(320);
 if (qURL.selftest === '1') {
   var rep = runSelftest();
   window.__selftest = rep;
