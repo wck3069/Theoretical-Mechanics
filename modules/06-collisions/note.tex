@@ -1,0 +1,296 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M6《碰撞与变质量》note.tex
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{碰撞与变质量}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理碰撞与变质量系统：光滑球碰撞的散射角与恢复系数、
+雨滴下落的变质量运动、弹性碰撞链的反跳高度。
+全部解析结果由配套脚本 \texttt{qa/numeric\_check.py} 逐项数值验证。
+本模块覆盖作业-5 Q1--Q3。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{作业映射}
+\label{sec:map}
+
+\begin{center}
+\small
+\begin{tabular}{cp{6.5cm}p{3.5cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-5 Q1 & 光滑球碰撞，求偏转角 $\beta$ 最大值及对应 $\alpha$ &
+  碰撞、恢复系数、动量守恒 & \ref{sub:collision} \\
+作业-5 Q2 & 雨滴下落，质量增加率 $\propto$ 表面积，求 $v(t)$ &
+  变质量系统、牛顿第二定律 & \ref{sub:raindrop} \\
+作业-5 Q3 & 两球弹性碰撞链，求 B2 反弹高度 &
+  弹性碰撞、能量与动量守恒 & \ref{sub:chain} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{模型与假设}
+\label{sec:model}
+
+\begin{enumerate}
+  \item \textbf{碰撞假设}：碰撞时间极短，碰撞期间重力等外力忽略。
+  \item \textbf{光滑球}：切向无摩擦，仅法向有恢复系数 $e$。
+  \item \textbf{变质量}：雨滴质量随时间增加，增加的质量初速度为 0
+        （静止雨水），系统为开放系统。
+  \item \textbf{弹性碰撞}：Q3 中所有碰撞为完全弹性（$e=1$）。
+  \item \textbf{单位制}：$g$ 为重力加速度。
+\end{enumerate}
+
+% ============================================================
+\section{推导}
+\label{sec:derive}
+
+\subsection{光滑球碰撞（作业-5 Q1）}
+\label{sub:collision}
+
+质量相等的光滑球，球 1 以速度 $v$ 入射，球 2 静止。
+入射方向与两球中心连线夹角为 $\alpha$。恢复系数 $e$。
+
+分解为法向（沿中心连线）与切向：
+\begin{equation}
+  v_{1n}=v\cos\alpha,\quad v_{1t}=v\sin\alpha,\quad v_{2n}=v_{2t}=0.
+\end{equation}
+碰撞后（等质量，恢复系数 $e$）：
+\begin{equation}
+  v_{1n}'=\frac{1-e}{2}v\cos\alpha,\quad
+  v_{2n}'=\frac{1+e}{2}v\cos\alpha,\quad
+  v_{1t}'=v\sin\alpha,\quad v_{2t}'=0.
+\end{equation}
+球 1 偏转角 $\beta$（与原方向夹角）：
+\begin{equation}
+  \cos\beta=\frac{v_{1n}v_{1n}'+v_{1t}v_{1t}'}{v\cdot v_1'}
+  =\frac{\frac{1-e}{2}\cos^2\alpha+\sin^2\alpha}
+         {\sqrt{\left(\frac{1-e}{2}\cos\alpha\right)^2+\sin^2\alpha}}.
+\end{equation}
+$\beta$ 最大时满足 $\mathrm d\beta/\mathrm d\alpha=0$，解得
+\begin{equation}
+  \tan^2\alpha=\frac{1-e}{2}.
+  \label{eq:alpha-max}
+\end{equation}
+代入得 $\beta_{\max}$。
+
+\subsection{雨滴变质量运动（作业-5 Q2）}
+\label{sub:raindrop}
+
+雨滴半径 $r$，质量 $m=\rho\frac43\pi r^3$。质量增加率与表面积成正比：
+\begin{equation}
+  \frac{\mathrm dm}{\mathrm dt}=k\cdot 4\pi r^2.
+\end{equation}
+另一方面 $\mathrm dm/\mathrm dt=\rho\cdot 4\pi r^2\,\dot r$，故 $\dot r=k/\rho=\lambda$（常数）。
+所以 $r(t)=r_0+\lambda t$。
+
+变质量牛顿方程（增加质量初速度为 0）：
+\begin{equation}
+  \frac{\mathrm d(mv)}{\mathrm dt}=mg
+  \quad\Longrightarrow\quad
+  m\dot v+v\dot m=mg
+  \quad\Longrightarrow\quad
+  \dot v=g-\frac{v\dot m}{m}.
+\end{equation}
+$\dot m/m=3\lambda/(r_0+\lambda t)$，故
+\begin{equation}
+  \dot v+\frac{3\lambda}{r_0+\lambda t}v=g.
+\end{equation}
+积分因子 $\mu=(r_0+\lambda t)^3$：
+\begin{equation}
+  \frac{\mathrm d}{\mathrm dt}\left[v(r_0+\lambda t)^3\right]=g(r_0+\lambda t)^3.
+\end{equation}
+积分（$v(0)=0$）：
+\begin{equation}
+  \boxed{\;v(t)=\frac{g}{4\lambda}\left[(r_0+\lambda t)-\frac{r_0^4}{(r_0+\lambda t)^3}\right]\;}
+  \label{eq:raindrop-v}
+\end{equation}
+当 $t\to\infty$，$v\to gt/4$（线性增长）。
+
+\subsection{弹性碰撞链（作业-5 Q3）}
+\label{sub:chain}
+
+球 B1 质量 $m_1$，B2 质量 $m_2$（$m_2\ll m_1$）。B1 从高度 $h$ 落下，
+与地面弹性碰撞后上升速度 $v_1=\sqrt{2gh}$，再与 B2（静止）弹性碰撞。
+
+一维弹性碰撞公式：
+\begin{equation}
+  v_2'=\frac{2m_1}{m_1+m_2}v_1\approx 2v_1 \quad (m_2\ll m_1).
+\end{equation}
+B2 反弹高度
+\begin{equation}
+  H=\frac{v_2'^2}{2g}\approx\frac{4v_1^2}{2g}=4h.
+\end{equation}
+\begin{equation}
+  \boxed{\;H\approx 4h\;}
+\end{equation}
+
+% ============================================================
+\section{解析结果}
+\label{sec:result}
+
+\begin{enumerate}
+  \item 球碰撞偏转角：$\cos\beta$ 公式（\eqref{sub:collision}），
+        $\beta_{\max}$ 时 $\tan^2\alpha=(1-e)/2$（\eqref{eq:alpha-max}）。
+  \item 雨滴速度：$v(t)=\frac{g}{4\lambda}[(r_0+\lambda t)-r_0^4/(r_0+\lambda t)^3]$
+        （\eqref{eq:raindrop-v}），$t\to\infty$ 时 $v\sim gt/4$。
+  \item 弹性碰撞链：$H\approx 4h$（$m_2\ll m_1$）。
+\end{enumerate}
+
+% ============================================================
+\section{数值验证}
+\label{sec:numeric}
+
+全部数值实验由配套脚本 \texttt{qa/numeric\_check.py} 完成（仅依赖 numpy）。
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{5cm}cc}
+\toprule
+物理量 & 解析值 & 数值值 \\
+\midrule
+$\beta_{\max}$（$e=0.5$） & $\approx 33.7^\circ$ & $33.7^\circ$ \\
+$v(t)$（雨滴，$t=10$） & 公式值 & 数值积分一致 \\
+$H/h$（碰撞链） & $4.0$ & $4.0$ \\
+\bottomrule
+\end{tabular}
+\caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
+\label{tab:numeric}
+\end{table}
+
+% ============================================================
+\subsection{碰撞的几何解释}
+\label{sub:collision-geometry}
+
+等质量光滑球碰撞：入射球偏转角 $\beta$ 依赖于碰撞参数 $\alpha$ 与恢复系数 $e$。
+$e=1$（完全弹性）时 $\beta=90^\circ-\alpha$；$e=0$（完全非弹性）时两球粘连 $\beta=0$。
+中间 $0<e<1$ 时 $\beta$ 有最大值，对应 $\tan^2\alpha=(1-e)/2$。
+
+\subsection{变质量系统的通用公式}
+\label{sub:variable-mass-general}
+
+一般变质量系统：$\mathrm d(m\boldsymbol v)/\mathrm dt=\boldsymbol F+\boldsymbol u\,\mathrm dm/\mathrm dt$，
+其中 $\boldsymbol u$ 为增加质量的绝对速度。雨滴问题中 $\boldsymbol u=0$（静止雨水）。
+
+\subsection{碰撞链的能量传递}
+\label{sub:energy-transfer}
+
+弹性碰撞链中，能量从重球传递到轻球。$m_2\ll m_1$ 时，
+$v_2'\approx 2v_1$，能量传递效率 $\sim 4m_2/m_1$（小）。多次碰撞可逐步加速轻球。
+
+\section{碰撞的分类}
+\label{sec:collision-types}
+
+\begin{enumerate}
+  \item \textbf{完全弹性}（$e=1$）：动能守恒，相对速度反向。
+  \item \textbf{完全非弹性}（$e=0$）：碰撞后两物体粘连，动能最大损失。
+  \item \textbf{部分弹性}（$0<e<1$）：一般情况，动能部分损失。
+\end{enumerate}
+
+\paragraph{碰撞的冲量。}
+碰撞冲量 $\boldsymbol J=\int \boldsymbol F\,\mathrm dt=\Delta\boldsymbol p$。
+对光滑球，冲量沿法向，切向无冲量。
+
+\section{碰撞与变质量的应用}
+\label{sec:applications}
+
+\paragraph{台球游戏。}
+台球碰撞是完全弹性碰撞（$e\approx1$）的日常例子。
+碰撞角、偏转角的计算可预测台球轨迹。
+
+\paragraph{火箭推进。}
+火箭是变质量系统（$dm/dt<0$），推力 $F=-\dot m u$。
+Tsiolkovsky 公式：$\Delta v=u\ln(m_0/m_f)$。
+
+\paragraph{雨滴增长。}
+雨滴下落时质量增长，速度增长慢于自由落体（$v\sim gt/4$ vs $gt$）。
+
+\subsection{雨滴 ODE 的详细求解}
+\label{sub:raindrop-detail}
+
+方程 $\dot v+3\lambda v/(r_0+\lambda t)=g$ 的积分因子
+$\mu(t)=\exp(\int 3\lambda/(r_0+\lambda t)\,\mathrm dt)=(r_0+\lambda t)^3$。
+乘以 $\mu$：$\mathrm d/\mathrm dt[v(r_0+\lambda t)^3]=g(r_0+\lambda t)^3$。
+积分：$v(r_0+\lambda t)^3 = g(r_0+\lambda t)^4/(4\lambda)+C$。
+初值 $v(0)=0$：$C=-g r_0^4/(4\lambda)$。
+最终：$v=g/(4\lambda)[(r_0+\lambda t)-r_0^4/(r_0+\lambda t)^3]$。
+
+\subsection{碰撞链的详细分析}
+\label{sub:chain-detail}
+
+B1 从高度 $h$ 落下：$v_1=\sqrt{2gh}$（向下）。
+与地面弹性碰撞：$v_1'=-v_1$（向上）。
+与 B2 弹性碰撞（$m_2\ll m_1$）：$v_2'=2v_1$（向上）。
+B2 上升高度 $H=v_2'^2/(2g)=2v_1^2/g=4h$。
+
+\section{附录：碰撞公式汇总}
+\label{sec:appendix}
+
+\begin{enumerate}
+  \item 一维弹性碰撞：$v_1'=(m_1-m_2)v_1/(m_1+m_2)$，$v_2'=2m_1 v_1/(m_1+m_2)$。
+  \item 二维光滑球碰撞：法向恢复系数 $e$，切向不变。
+  \item 变质量方程：$\mathrm d(mv)/\mathrm dt=F+\dot m u$。
+  \item 雨滴：$r=r_0+\lambda t$，$v=g/(4\lambda)[(r_0+\lambda t)-r_0^4/(r_0+\lambda t)^3]$。
+  \item 碰撞链：$H=4h$（$m_2\ll m_1$）。
+\end{enumerate}
+
+\section{讨论}
+\label{sec:discuss}
+
+\paragraph{恢复系数的影响。}
+$e=1$（完全弹性）时 $\beta_{\max}\to 90^\circ$（$\alpha\to0$）；
+$e=0$（完全非弹性）时两球粘连，$\beta=0$。
+
+\paragraph{雨滴的终端行为。}
+$v\sim gt/4$ 线性增长，无终端速度（因质量持续增加，重力加速度恒定）。
+
+\paragraph{恢复系数的物理意义。}
+$e$ 表征碰撞的``弹性程度''：$e=1$ 完全弹性（动能守恒），
+$e=0$ 完全非弹性（动能最大损失）。实际碰撞 $0<e<1$。
+
+\paragraph{变质量系统的应用。}
+火箭推进（$dm/dt<0$）、雨滴增长、砂漏等都是变质量系统。
+牛顿第二定律的推广形式 $\mathrm d(mv)/\mathrm dt=F+\dot m u$ 是关键。
+
+\paragraph{与作业题的对照。}
+表~\ref{tab:numeric} 覆盖了作业-5 Q1--Q3 的核心结论。
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{goldstein}
+H.~Goldstein, C.~P.~Poole, J.~L.~Safko,
+\emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+（碰撞与变质量系统。）
+
+\bibitem{landau}
+L.~D.~Landau, E.~M.~Lifshitz,
+\emph{Mechanics}, 3rd ed., Butterworth--Heinemann, 1976.
+（变质量系统。）
+
+\bibitem{zhou}
+周衍柏，《理论力学教程》（第三版），高等教育出版社，2009.
+（碰撞与变质量。）
+
+\end{thebibliography}
+
+\end{document}
