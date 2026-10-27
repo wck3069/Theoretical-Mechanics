@@ -245,7 +245,7 @@ function updateHUD(){
   } else {
     hudT.textContent = '-';
     hudCorr.textContent = '-';
-    hudState.textContent = '脱离';
+    hudState.textContent = '在轨 (theta<' + detachAngle().toFixed(1) + ' deg)';
   }
 }
 

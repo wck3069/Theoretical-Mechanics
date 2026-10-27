@@ -224,7 +224,7 @@ function stepSim() {
 
 function viewScale() {
   var maxR = Math.max(comR1(), P.a - comR1());
-  return Math.min(W, H) * 0.38 / (maxR * 1.2 + 0.1);
+  return Math.min(W, H) * 0.30 / (maxR * 1.2 + 0.1);
 }
 
 function draw() {
@@ -276,22 +276,33 @@ function draw() {
   ctx.shadowColor = 'rgba(94,162,255,.8)'; ctx.shadowBlur = 8;
   ctx.beginPath(); ctx.arc(px, py, 4, 0, 2*Math.PI); ctx.fill();
   ctx.shadowBlur = 0;
-  // RV curve (bottom-right inset)
-  var rvX0 = W * 0.6, rvY0 = H * 0.7, rvW = W * 0.35, rvH = H * 0.25;
+  // RV curve (bottom-left inset, clear of orbit)
+  var rvX0 = 20, rvY0 = H * 0.65, rvW = W * 0.32, rvH = H * 0.30;
   ctx.strokeStyle = 'rgba(120,160,255,.2)';
   ctx.strokeRect(rvX0, rvY0, rvW, rvH);
   ctx.fillStyle = '#8a98c0'; ctx.font = '10px ui-monospace,monospace';
-  ctx.fillText('RV(t)', rvX0 + 4, rvY0 - 4);
+  ctx.fillText('RV(t) m/s', rvX0 + 4, rvY0 - 4);
+  // draw zero line
+  ctx.strokeStyle = 'rgba(120,160,255,.15)';
+  ctx.beginPath(); ctx.moveTo(rvX0, rvY0 + rvH/2); ctx.lineTo(rvX0 + rvW, rvY0 + rvH/2); ctx.stroke();
   if (rvData.length > 1) {
-    var vmax = v1() * 1.2;
+    var vmax = Math.max(0.001, v1() * 1.2);
     ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 1.4;
     ctx.beginPath();
     for (var i = 0; i < rvData.length; i++) {
-      var rx = rvX0 + (i / 500) * rvW;
+      var rx = rvX0 + (i / Math.max(1, rvData.length - 1)) * rvW;
       var ry = rvY0 + rvH/2 - (rvData[i].v / vmax) * (rvH/2);
       if (i === 0) ctx.moveTo(rx, ry); else ctx.lineTo(rx, ry);
     }
     ctx.stroke(); ctx.lineWidth = 1;
+  }
+  // draw current value dot
+  if (rvData.length > 0) {
+    var last = rvData[rvData.length-1];
+    var vmax2 = Math.max(0.001, v1() * 1.2);
+    var dx = rvX0 + rvW, dy = rvY0 + rvH/2 - (last.v / vmax2) * (rvH/2);
+    ctx.fillStyle = '#ffcf6b';
+    ctx.beginPath(); ctx.arc(dx, dy, 3, 0, 2*Math.PI); ctx.fill();
   }
 }
 

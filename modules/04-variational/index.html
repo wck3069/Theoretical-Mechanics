@@ -214,7 +214,7 @@ function stepParticles() {
 }
 
 function viewScale() {
-  return Math.min(W, H) * 0.4 / (4 * P.a + 0.5);
+  return Math.min(W, H) * 0.65 / (4 * P.a + 0.5);
 }
 
 function draw() {
@@ -244,7 +244,8 @@ function draw() {
     ctx.beginPath(); ctx.arc(px, py, 5, 0, 2*Math.PI); ctx.fill();
     // Label
     ctx.fillStyle = '#dbe4ff'; ctx.font = '10px ui-monospace,monospace';
-    ctx.fillText('s0=' + p.s0.toFixed(1) + ' t=' + p.t.toFixed(2), px + 8, py - 8);
+    ctx.fillText('s0=' + p.s0.toFixed(1), px + 8, py - 8);
+    ctx.fillText('t=' + p.t.toFixed(2), px + 8, py + 4);
   }
   // Draw bottom point
   ctx.fillStyle = '#ffcf6b';

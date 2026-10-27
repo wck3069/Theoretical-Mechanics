@@ -205,15 +205,14 @@ function draw() {
     ctx.setLineDash([4,4]);
     ctx.beginPath(); ctx.moveTo(cx - sc, planeY); ctx.lineTo(cx + sc, planeY); ctx.stroke();
     ctx.setLineDash([]);
-    // Draw cap (shaded)
-    ctx.fillStyle = 'rgba(94,162,255,.15)';
+    // Draw cap (shaded) - region of circle above the cutting plane
+    ctx.save();
     ctx.beginPath();
-    for (var th = 0; th <= Math.PI; th += 0.01) {
-      var x = cx + sc * Math.sin(th);
-      var y = cy - sc * Math.cos(th);
-      if (y <= planeY) { if (th === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
-    }
-    ctx.closePath(); ctx.fill();
+    ctx.arc(cx, cy, sc, 0, 2*Math.PI);
+    ctx.clip();
+    ctx.fillStyle = 'rgba(94,162,255,.15)';
+    ctx.fillRect(cx - sc, cy - sc, 2*sc, planeY - (cy - sc) + 1);
+    ctx.restore();
     // Centroid
     var d = capCentroid(P.R, P.b);
     var centY = planeY - d / P.R * sc;
