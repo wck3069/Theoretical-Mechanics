@@ -323,8 +323,8 @@ function setNotice(msg, bad){
 function updateHUD(){
   hudT.textContent = t.toFixed(2);
   hudR1.textContent = fmt(comR1(), 3) + ' AU';
-  hudV1.textContent = fmt(v1(), 3) + ' m/s';
-  hudK.textContent = fmt(v1(), 3) + ' m/s';
+  hudV1.textContent = fmt(v1() * 4740, 2) + ' m/s';
+  hudK.textContent = fmt(v1() * 4740, 2) + ' m/s';
   hudDl.textContent = fmt(dopplerShift(500), 5) + ' nm';
   hudP.textContent = fmt(period(), 3) + ' yr';
   hudState.textContent = '运行中';
