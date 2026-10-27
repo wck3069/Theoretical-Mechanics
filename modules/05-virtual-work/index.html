@@ -192,10 +192,7 @@ function draw() {
   var mu = P.mu;
   var tmin = thetaMin(mu);
   var isCrit = Math.abs(P.theta - tmin) < 1;
-  ctx.fillStyle = isCrit ? '#ff7b7b' : '#8a98c0';
-  ctx.font = '12px ui-monospace,monospace';
-  ctx.fillText('theta=' + P.theta.toFixed(1) + ' deg  theta_min=' + tmin.toFixed(1) + ' deg', 20, H - 40);
-  ctx.fillText(isCrit ? '临界状态' : (P.theta > tmin ? '稳定' : '滑动!'), 20, H - 20);
+  // debug text removed to avoid overlap with title/HUD
 }
 
 // ==================== 5) HUD ====================

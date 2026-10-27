@@ -290,7 +290,7 @@ function draw() {
   ctx.strokeStyle = 'rgba(120,160,255,.15)';
   ctx.beginPath(); ctx.moveTo(rvX0, rvY0 + rvH/2); ctx.lineTo(rvX0 + rvW, rvY0 + rvH/2); ctx.stroke();
   if (rvData.length > 1) {
-    var vmax = Math.max(0.001, v1() * 1.2);
+    var vmax = Math.max(0.0001, v1() * 1.5);
     ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 1.4;
     ctx.beginPath();
     for (var i = 0; i < rvData.length; i++) {
