@@ -234,7 +234,7 @@ window.addEventListener('resize', resize);
 
 // Trajectory state
 var traj = []; // array of {x,y}
-var sim = {x:0, y:0, vx:0, vy:0, running:false, done:false};
+var sim = {x:0, y:0, vx:0, vy:0, running:false, done:false, captured:false};
 var trailMax = 2000;
 
 function initTraj() {
@@ -242,7 +242,7 @@ function initTraj() {
   var v0 = Math.sqrt(2 * P.E);
   var x0 = -15;
   sim.x = x0; sim.y = P.b; sim.vx = v0; sim.vy = 0;
-  sim.done = false; sim.running = true;
+  sim.done = false; sim.captured = false; sim.running = true;
   traj.push({x: sim.x, y: sim.y});
 }
 
@@ -255,7 +255,7 @@ function stepTraj() {
     var s = rk4Step(sim.x, sim.y, sim.vx, sim.vy, h);
     sim.x = s.x; sim.y = s.y; sim.vx = s.vx; sim.vy = s.vy;
     var r = Math.sqrt(sim.x*sim.x + sim.y*sim.y);
-    if (r < 0.05) { sim.done = true; sim.running = false; break; }
+    if (r < 0.05) { sim.done = true; sim.captured = (P.mode === 'capture'); sim.running = false; break; }
     if (sim.x > 15) { sim.done = true; sim.running = false; break; }
     traj.push({x: sim.x, y: sim.y});
     if (traj.length > trailMax) traj.shift();
@@ -327,14 +327,16 @@ function updateHUD(){
     hudTheta.textContent = (theta/Math.PI*180).toFixed(1) + '°';
     hudBc.textContent = '-';
     hudSigma.textContent = '∞ (长程)';
-    hudState.textContent = sim.done ? '已出射' : '积分中';
+    if (sim.captured) hudState.textContent = '被捕获 (r→0)';
+    else hudState.textContent = sim.done ? '已出射' : '积分中';
   } else {
     var bc = bcFormula(P.k, P.E);
     var sig = sigmaCapture(P.k, P.E);
     hudTheta.textContent = '-';
     hudBc.textContent = fmt(bc, 4);
     hudSigma.textContent = fmt(sig, 4);
-    if (P.b < bc) hudState.textContent = '俘获 (b<bc)';
+    if (sim.captured) hudState.textContent = '被捕获 (r→0)';
+    else if (P.b < bc) hudState.textContent = '俘获 (b<bc)';
     else hudState.textContent = '散射 (b≥bc)';
   }
 }

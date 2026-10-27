@@ -440,6 +440,23 @@ function drawVeffPanel(x0, x1, y0, y1){
   ctx.strokeStyle = 'rgba(255,207,107,.85)'; ctx.setLineDash([5, 4]);
   ctx.beginPath(); ctx.moveTo(x0 + ml, yv(P.E)); ctx.lineTo(x1 - mr, yv(P.E)); ctx.stroke();
   ctx.setLineDash([]);
+  // Shaded region: radial kinetic energy 1/2 m v_r^2 = E - V_eff(r)
+  ctx.fillStyle = 'rgba(94,162,255,.08)';
+  for (i = 0; i < n; i++){
+    r = R_MIN + (R_SCAN - R_MIN) * i / n; v = vals[i];
+    var v2 = vals[i+1];
+    if (v !== v || v2 !== v2) continue;
+    if (v <= P.E && v2 <= P.E) {
+      ctx.fillRect(xr(r), yv(v), pw/n + 1, yv(P.E) - yv(v));
+    }
+  }
+  // Label for radial kinetic energy
+  ctx.fillStyle = 'rgba(94,162,255,.5)'; ctx.font = '10px ui-monospace,monospace';
+  var midR = R_MIN + (R_SCAN - R_MIN) * 0.5;
+  var midV = Veff(midR);
+  if (midV < P.E && midV >= lo && midV <= hi) {
+    ctx.fillText('1/2 m v_r^2 = E - V_eff', xr(midR) - 40, (yv(midV) + yv(P.E)) / 2);
+  }
   ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 1.8; ctx.beginPath();
   var started = false;
   for (i = 0; i <= n; i++){
