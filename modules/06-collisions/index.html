@@ -78,7 +78,7 @@
       <span>e <b id="hudE">-</b></span>
       <span>alpha <b id="hudAlpha">-</b></span>
       <span>beta <b id="hudBeta">-</b></span>
-      <span>v <b id="hudV">-</b></span>
+      <span>γ <b id="hudV">-</b></span>
       <span>状态 <b id="hudState">-</b></span>
     </div>
     <div id="notice" class="notice" hidden></div>
@@ -251,7 +251,7 @@ function updateHUD(){
   hudE.textContent = fmt(P.e, 2);
   hudAlpha.textContent = fmt(P.alpha, 1) + ' deg';
   hudBeta.textContent = fmt(betaDeflection(P.e, P.alpha), 2) + ' deg';
-  hudV.textContent = (P.mode === 'raindrop') ? fmt(raindropV(10, 1, 0.1, 1), 3) : fmt(betaDeflection(P.e, P.alpha), 2) + ' deg';
+  hudV.textContent = (P.mode === 'raindrop') ? fmt(raindropV(10, 1, 0.1, 1), 3) : fmt(P.e, 2);
   hudState.textContent = P.mode;
 }
 

@@ -166,8 +166,8 @@ window.addEventListener('resize', resize);
 function draw() {
   ctx.clearRect(0, 0, W, H);
   var th = P.theta * Math.PI / 180;
-  var ladderLen = Math.min(W, H) * 0.5;
-  var baseX = W * 0.3, baseY = H * 0.8;
+  var ladderLen = Math.min(W, H) * 0.65;
+  var baseX = W * 0.25, baseY = H * 0.85;
   var topX = baseX + ladderLen * Math.cos(th);
   var topY = baseY - ladderLen * Math.sin(th);
   // Ground

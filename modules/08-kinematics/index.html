@@ -187,12 +187,26 @@ function draw() {
     ctx.strokeStyle = 'rgba(120,160,255,.4)';
     ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(cx, cy, sc, 0, 2*Math.PI); ctx.stroke();
-    // Draw particle at detachment point
+    // Draw center marker
+    ctx.fillStyle = 'rgba(255,207,107,.6)';
+    ctx.beginPath(); ctx.arc(cx, cy, 3, 0, 2*Math.PI); ctx.fill();
+    // Draw radius line to particle
     var th = detachAngle() * Math.PI / 180;
     var px = cx + sc * Math.sin(th);
     var py = cy - sc * Math.cos(th);
+    ctx.strokeStyle = 'rgba(255,207,107,.4)';
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+    ctx.setLineDash([]);
+    // Draw particle
     ctx.fillStyle = '#5ea2ff';
     ctx.beginPath(); ctx.arc(px, py, 6, 0, 2*Math.PI); ctx.fill();
+    // Draw angle arc
+    ctx.strokeStyle = 'rgba(127,227,160,.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, sc*0.3, -Math.PI/2, -Math.PI/2 + th); ctx.stroke();
+    ctx.fillStyle = '#7fe3a0'; ctx.font = '10px ui-monospace,monospace';
+    ctx.fillText('theta', cx + sc*0.35, cy - sc*0.15);
     // Draw path
     ctx.strokeStyle = 'rgba(94,162,255,.5)';
     ctx.lineWidth = 1.5;

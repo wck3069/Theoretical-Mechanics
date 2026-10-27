@@ -218,13 +218,13 @@ function stepParticles() {
 }
 
 function viewScale() {
-  return Math.min(W, H) * 0.65 / (4 * P.a + 0.5);
+  return Math.min(W, H) * 0.75 / (4 * P.a + 0.5);
 }
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
   var sc = viewScale();
-  var cx = W * 0.5, cy = H * 0.8;
+  var cx = W * 0.5, cy = H * 0.75;
   // Draw cycloid
   ctx.strokeStyle = 'rgba(120,160,255,.3)';
   ctx.lineWidth = 1.5;
