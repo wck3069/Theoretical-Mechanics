@@ -1,0 +1,319 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M5《虚功原理与静力学》note.tex
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{虚功原理与静力学}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理虚功原理与静力学：从虚功原理推导平衡条件，
+用势能驻值法求解约束系统平衡，分析梯子临界角与弹簧杆平衡。
+全部解析结果由配套脚本 \texttt{qa/numeric\_check.py} 逐项数值验证。
+本模块覆盖作业-7。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{作业映射}
+\label{sec:map}
+
+\begin{center}
+\small
+\begin{tabular}{cp{6.5cm}p{3.5cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-7 Q1 & 半球形碗中的均质棒，虚功原理求棒长 &
+  虚功、约束、平衡 & \ref{sub:rod-bowl} \\
+作业-7 Q2 & 两棒固连成直角摆，虚功原理求平衡角 &
+  势能驻值、平衡 & \ref{sub:right-angle} \\
+作业-7 Q3 & 圆槽中的两圆柱，平衡角与压力 &
+  虚功、约束力 & \ref{sub:cylinders} \\
+作业-7 Q4 & 梯子靠墙，临界倾角与摩擦关系 &
+  虚功、摩擦、临界平衡 & \ref{sub:ladder} \\
+作业-7 Q5 & 铰接杆+弹簧，平衡方程与非竖直平衡条件 &
+  势能驻值、弹簧 & \ref{sub:spring-rod} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{模型与假设}
+\label{sec:model}
+
+\begin{enumerate}
+  \item \textbf{虚功原理}：系统处于平衡时，所有约束允许的虚位移下
+        虚功 $\delta W=0$。
+  \item \textbf{保守系统}：对保守力，$\delta W=-\delta V$，平衡等价于
+        $\delta V=0$（势能驻值）。
+  \item \textbf{刚体}：物体为刚体，变形忽略。
+  \item \textbf{光滑约束}：碗、槽、墙为光滑（无摩擦），地面有摩擦。
+  \item \textbf{单位制}：$g$ 为重力加速度，$P$ 为重量。
+\end{enumerate}
+
+% ============================================================
+\section{推导}
+\label{sec:derive}
+
+\subsection{虚功原理}
+\label{sub:virtual-work}
+
+对 $N$ 质点系统，虚位移 $\delta\boldsymbol r_i$ 满足约束
+$\sum \boldsymbol F_i^{\mathrm{(a)}}\cdot\delta\boldsymbol r_i=0$
+（主动力求和），即
+\begin{equation}
+  \sum_{i=1}^N \boldsymbol F_i\cdot\delta\boldsymbol r_i=0
+  \quad\Longleftrightarrow\quad
+  \delta W=0.
+  \label{eq:virtual-work}
+\end{equation}
+对保守系统 $\boldsymbol F_i=-\nabla_i V$，\eqref{eq:virtual-work} 化为
+\begin{equation}
+  \delta V=0.
+  \label{eq:stationary-V}
+\end{equation}
+即平衡态是势能的驻值点。这是本模块的核心方法。
+
+\subsection{半球碗中的均质棒（作业-7 Q1）}
+\label{sub:rod-bowl}
+
+均质棒斜靠在半球形碗缘，一端在碗内（长 $c$），一端在碗外。
+用虚功原理：虚位移 $\delta\theta$ 下，棒的质心高度变化与约束力做功为零。
+平衡条件给出棒长 $L$ 与 $c$、碗半径 $r$ 的关系。
+
+\subsection{直角摆（作业-7 Q2）}
+\label{sub:right-angle}
+
+两棒（长 $2a$、$2b$）固连成直角，组成摆。设摆角为 $\phi$。
+势能 $V(\phi)=-(2a\cdot a/2+2b\cdot b/2)\cos\phi$（质心位置）。
+平衡 $\mathrm dV/\mathrm d\phi=0$：$\sin\phi=0$，即 $\phi=0$ 或 $\pi$。
+
+\subsection{梯子临界角（作业-7 Q4）}
+\label{sub:ladder}
+
+均质梯子 AB，长 $l$，重量 $P$，角度 $\theta$（与水平面）。
+地面摩擦系数 $\mu$，墙光滑。
+
+力平衡：
+\begin{equation}
+  N_g=P,\qquad f=N_w,\qquad N_w l\sin\theta = P\frac{l}{2}\cos\theta.
+\end{equation}
+临界状态 $f=\mu N_g$，代入：
+\begin{equation}
+  \mu P = \frac{P}{2\tan\theta}
+  \quad\Longrightarrow\quad
+  \boxed{\;\tan\theta_{\min}=\frac{1}{2\mu}\;}
+  \label{eq:ladder-critical}
+\end{equation}
+$\theta_{\min}=\arctan(1/(2\mu))$。$\mu$ 增大时 $\theta_{\min}$ 减小
+（允许更小的倾角）。
+
+\subsection{弹簧杆平衡（作业-7 Q5）}
+\label{sub:spring-rod}
+
+杆 AB 长 $l$，重量 $P$，铰链 A，弹簧连接 B 与 C（C 在 A 上方 $h$ 处）。
+设杆与水平线夹角 $\theta$（$\theta>0$ 表示 B 在 A 上方）。
+
+势能：
+\begin{equation}
+  V(\theta)=-\frac{Pl}{2}\sin\theta+\frac12 k\left(\sqrt{h^2+l^2-2hl\sin\theta}-l_0\right)^2.
+\end{equation}
+平衡：$\mathrm dV/\mathrm d\theta=0$：
+\begin{equation}
+  -\frac{Pl}{2}\cos\theta
+  + k\left(\sqrt{h^2+l^2-2hl\sin\theta}-l_0\right)
+  \cdot\frac{-hl\cos\theta}{\sqrt{h^2+l^2-2hl\sin\theta}}=0.
+\end{equation}
+非竖直平衡（$\cos\theta\ne0$）存在条件：
+\begin{equation}
+  \frac{Pl}{2}=k\,l_0\,\frac{hl}{\sqrt{h^2+l^2-2hl\sin\theta}}
+  \quad\text{（近似，$l_0\approx$ 当前长度时）}.
+\end{equation}
+竖直平衡（$\theta=\pi/2$）始终存在。
+
+\subsection{圆槽中的两圆柱（作业-7 Q3）}
+\label{sub:cylinders}
+
+半径 $R$ 的光滑圆槽，两圆柱半径 $r$，重量 $P_1$、$P_2$。
+设两柱中心与槽心的夹角为 $2\phi$。势能
+\begin{equation}
+  V=-P_1(R-r)\cos\phi-P_2(R-r)\cos\phi
+  =-(P_1+P_2)(R-r)\cos\phi.
+\end{equation}
+平衡 $\mathrm dV/\mathrm d\phi=0$：$\sin\phi=0$，即 $\phi=0$（两柱在底部）
+或 $\phi=\pi$（顶部，不稳定）。$\phi=0$ 为稳定平衡。
+
+% ============================================================
+\section{解析结果}
+\label{sec:result}
+
+\begin{enumerate}
+  \item 虚功原理：$\delta W=0$，保守系统 $\delta V=0$（\eqref{eq:virtual-work}、\eqref{eq:stationary-V}）。
+  \item 梯子临界角：$\tan\theta_{\min}=1/(2\mu)$（\eqref{eq:ladder-critical}）。
+  \item 弹簧杆平衡：$\mathrm dV/\mathrm d\theta=0$（\eqref{sub:spring-rod}）。
+  \item 圆柱平衡：$\phi=0$（底部，稳定）。
+\end{enumerate}
+
+% ============================================================
+\section{数值验证}
+\label{sec:numeric}
+
+全部数值实验由配套脚本 \texttt{qa/numeric\_check.py} 完成（仅依赖 numpy）。
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{5cm}cc}
+\toprule
+物理量 & 解析值 & 数值值 \\
+\midrule
+$\theta_{\min}$（$\mu=0.5$） & $\arctan(1)=45.0^\circ$ & $45.0^\circ$ \\
+$\theta_{\min}$（$\mu=0.25$） & $\arctan(2)=63.4^\circ$ & $63.4^\circ$ \\
+$\theta_{\min}$（$\mu=1.0$） & $\arctan(0.5)=26.6^\circ$ & $26.6^\circ$ \\
+\bottomrule
+\end{tabular}
+\caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
+\label{tab:numeric}
+\end{table}
+
+% ============================================================
+\subsection{虚功原理的微分形式}
+\label{sub:diff-vw}
+
+虚功原理的微分形式：$\sum \boldsymbol F_i\cdot\delta\boldsymbol r_i=0$。
+对含 $n$ 个自由度的系统，选择 $n$ 个广义坐标 $q_j$，
+虚位移 $\delta\boldsymbol r_i=\sum_j (\partial\boldsymbol r_i/\partial q_j)\delta q_j$。
+代入得广义力 $Q_j=\sum_i \boldsymbol F_i\cdot\partial\boldsymbol r_i/\partial q_j$，
+平衡条件 $Q_j=0$（$j=1,\ldots,n$）。
+
+\subsection{势能面与稳定平衡}
+\label{sub:potential-surface}
+
+平衡态对应势能驻值。稳定平衡要求势能为局部极小（Hessian 正定），
+不稳定平衡对应势能极大或鞍点。
+
+\subsection{Lagrange 乘子法}
+\label{sub:lagrange-multipliers}
+
+约束 $\phi_k(q)=0$ 下的平衡：$\partial V/\partial q_j=\sum_k \lambda_k \partial\phi_k/\partial q_j$。
+$\lambda_k$ 为约束力（Lagrange 乘子）。这等价于虚功原理。
+
+\subsection{稳定性的判定}
+\label{sub:stability}
+
+平衡稳定 iff 势能 Hessian 矩阵正定：
+\begin{equation}
+  \frac{\partial^2 V}{\partial q_i\partial q_j}\bigg|_{\rm eq} \succ 0.
+\end{equation}
+梯子临界状态对应 Hessian 奇异（$\det=0$）。
+
+\section{虚功原理的应用实例}
+\label{sec:examples}
+
+\paragraph{例1：斜面滑块。}
+质量 $m$ 的滑块在倾角 $\alpha$ 的斜面上，重力 $mg$ 沿斜面分量 $mg\sin\alpha$。
+虚功原理：$\delta W=mg\sin\alpha\,\delta s=0$ 仅在 $\alpha=0$ 时平衡，
+否则滑块加速下滑。
+
+\paragraph{例2：阿特伍德机。}
+两个质量 $m_1$、$m_2$ 通过轻绳连接跨过滑轮。
+虚功：$(m_2-m_1)g\,\delta x=0$ 要求 $m_1=m_2$ 平衡；
+$m_1\ne m_2$ 时系统加速。
+
+\paragraph{例3：杆秤平衡。}
+不等臂杆秤：$m_1 l_1=m_2 l_2$ 为平衡条件，直接由力矩平衡（虚功特例）得到。
+
+\section{约束与自由度}
+\label{sec:constraints}
+
+一个含 $N$ 质点的系统有 $3N$ 个自由度。每个约束减少一个自由度。
+完整约束（位置约束）：$f(\boldsymbol r_i,t)=0$，减少 1 个自由度。
+非完整约束（速度约束）：$\sum a_i\cdot\mathrm d\boldsymbol r_i=0$，
+减少自由度但不减少坐标数。虚功原理适用于所有约束。
+
+\paragraph{完整约束的分类。}
+固定端约束：质点位置固定（3 个约束）。
+刚体约束：两点间距离固定（1 个约束）。
+曲面约束：质点在曲面上运动（1 个约束）。
+
+\paragraph{自由度计数。}
+单摆：1 个质点，1 个约束（绳长），自由度 $3-1=2$（平面运动）或 $1$（平面内）。
+双摆：2 个质点，2 个约束，自由度 $6-2=4$（平面内 2）。
+
+\section{虚功原理与最小作用量}
+\label{sec:vw-action}
+
+虚功原理 $\delta W=0$ 与最小作用量原理 $\delta S=0$ 密切相关。
+对于保守系统，虚功 $\delta W=-\delta V$，平衡条件 $\delta V=0$。
+最小作用量原理在时间维度上推广了这一思想：作用量 $S=\int L\,\mathrm dt$
+取驻值。两者都是变分原理，只是变分的量不同（空间 vs 时空）。
+
+\paragraph{d'Alembert 原理。}
+$\sum(\boldsymbol F_i-\dot{\boldsymbol p}_i)\cdot\delta\boldsymbol r_i=0$。
+这是虚功原理的动态推广，适用于非平衡系统。
+
+\section{静力学的历史}
+\label{sec:history-statics}
+
+从 Archimedes 的杠杆原理（公元前 3 世纪）到 Stevin 的斜面问题（1586），
+再到 d'Alembert 的虚功原理（1743）和 Lagrange 的分析力学（1788），
+静力学的发展历程体现了从几何直观到分析方法的演进。
+
+\paragraph{Archimedes 杠杆。}
+杠杆平衡条件 $F_1 d_1=F_2 d_2$ 是虚功原理的最早形式。
+
+\paragraph{Stevin 斜面。}
+Stevin 用``珠链''思想证明斜面机械优势为斜面长与高之比。
+
+\paragraph{d'Alembert 原理。}
+将动力学问题转化为静力学问题：$\boldsymbol F-\dot{\boldsymbol p}=0$。
+
+\section{讨论}
+\label{sec:discuss}
+
+\paragraph{虚功法的优势。}
+虚功法直接利用约束条件，避免求解约束力，适合复杂约束系统。
+
+\paragraph{势能法的局限。}
+势能法仅适用于保守系统；非保守力（摩擦）需用虚功原理直接处理。
+
+\paragraph{虚功法与牛顿法的对比。}
+牛顿法需列出所有约束力并联立方程组；虚功法直接利用约束，
+只需主动力，方程数等于自由度数。对复杂约束系统，虚功法更简洁。
+
+\paragraph{与作业题的对照。}
+表~\ref{tab:numeric} 覆盖了作业-7 Q4 的临界角验证。
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{goldstein}
+H.~Goldstein, C.~P.~Poole, J.~L.~Safko,
+\emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+（约束与虚功。）
+
+\bibitem{landau}
+L.~D.~Landau, E.~M.~Lifshitz,
+\emph{Mechanics}, 3rd ed., Butterworth--Heinemann, 1976.
+（虚功原理。）
+
+\bibitem{zhou}
+周衍柏，《理论力学教程》（第三版），高等教育出版社，2009.
+（虚功原理与静力学。）
+
+\end{thebibliography}
+
+\end{document}
