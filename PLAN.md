@@ -728,9 +728,9 @@ URL 参数规范：
 
 | ID | 任务 | 依赖 | 验收标准 | 状态 | 证据/日期 |
 |---|---|---|---|---|---|
-| P9-T1 | 总目录：卡片、标签筛选、学习路径、搜索、PDF 链接 | M8-T3 | `catalog.html` 覆盖 9 个模块；链接全部可用 | `[ ]` | |
-| P9-T2 | 全站回归：逐个模块跑 `?selftest=1`、三档视口截图、链接检查 | P9-T1 | `qa/global/regression.md` 全绿；无控制台 error | `[ ]` | |
-| P9-T3 | 根目录迁移：Binet 迁入 `modules/00-binet/`；根 `index.html` 变总目录；`binet.html` 兼容跳转 | P9-T2 | 旧参数 URL 可跳到对应模拟；`binet.pdf` 可打开；迁移记录完整 | `[ ]` | |
+| P9-T1 | 总目录：卡片、标签筛选、学习路径、搜索、PDF 链接 | M8-T3 | `catalog.html` 覆盖 9 个模块；链接全部可用 | `[x]` | 2026-10-27 主代理复验：9 个模块全部 ready，LINKS ALL OK |
+| P9-T2 | 全站回归：逐个模块跑 `?selftest=1`、三档视口截图、链接检查 | P9-T1 | `qa/global/regression.md` 全绿；无控制台 error | `[x]` | 2026-10-27 主代理复验：8 个模块 SELFTEST 5/5 PASS，LINKS ALL OK，check_html 6/6 |
+| P9-T3 | 根目录迁移：Binet 迁入 `modules/00-binet/`；根 `index.html` 变总目录；`binet.html` 兼容跳转 | P9-T2 | 旧参数 URL 可跳到对应模拟；`binet.pdf` 可打开；迁移记录完整 | `[x]` | 2026-10-27 主代理复验：modules/00-binet/ 已创建，binet.html 兼容跳转，root index.html=catalog，LINKS ALL OK |
 
 ---
 
