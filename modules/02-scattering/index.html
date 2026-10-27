@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>散射与俘获 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:12px; color:var(--muted);
+       display:flex; gap:14px; flex-wrap:wrap; pointer-events:none}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice{position:absolute; right:16px; bottom:16px; max-width:60%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .notice.bad{color:#ffd7d7; border-color:rgba(255,123,123,.5); background:rgba(60,10,16,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35);
+    transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  button.active{background:rgba(94,162,255,.35); border-color:var(--accent)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="stage-canvas"></canvas>
+    <div class="brand">
+      <h1>散射与俘获</h1>
+      <p>中心力场中的散射角、微分散射截面、俘获临界参数与俘获截面</p>
+    </div>
+    <div class="hud">
+      <span>t <b id="hudT">0.00</b></span>
+      <span>r <b id="hudR">-</b></span>
+      <span>θ <b id="hudTh">-</b></span>
+      <span>E <b id="hudE">-</b></span>
+      <span>Θ <b id="hudTheta">-</b></span>
+      <span>b <b id="hudB">-</b></span>
+      <span>bc <b id="hudBc">-</b></span>
+      <span>σ <b id="hudSigma">-</b></span>
+      <span>状态 <b id="hudState">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="eq">
+      <div><span class="num">散射：</span> V = k/r²（排斥）</div>
+      <div><span class="num">俘获：</span> V = -α/r⁴（吸引）</div>
+      <div><span class="num">Θ</span> = π(1 - 1/√(1+k/(Eb²)))</div>
+      <div><span class="num">b_c</span> = (4α/E)^{1/4}</div>
+      <div><span class="num">σ</span> = π b_c² = 2π√(α/E)</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sel-mode">模式</label></div>
+      <select id="sel-mode" aria-label="模式">
+        <option value="scatter">散射（排斥 k/r²）</option>
+        <option value="capture">俘获（吸引 -α/r⁴）</option>
+      </select>
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-E">能量 E</label><span class="val" id="val-E">1.00</span></div>
+      <input id="param-E" type="range" min="0.1" max="5" step="0.01" value="1.0" aria-label="能量 E">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-k">势强度 k/α</label><span class="val" id="val-k">1.00</span></div>
+      <input id="param-k" type="range" min="0.1" max="5" step="0.01" value="1.0" aria-label="势强度">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-b">碰撞参数 b</label><span class="val" id="val-b">1.00</span></div>
+      <input id="param-b" type="range" min="0" max="5" step="0.01" value="1.0" aria-label="碰撞参数 b">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-speed">动画速度</label><span class="val" id="val-speed">1.00</span></div>
+      <input id="param-speed" type="range" min="0.1" max="3" step="0.1" value="1.0" aria-label="动画速度">
+    </div>
+    <div class="btns">
+      <button id="btn-pause">暂停</button>
+      <button id="btn-reset">重置</button>
+      <button id="btn-p-scatter">散射预设</button>
+      <button id="btn-p-capture">俘获预设</button>
+      <button id="btn-p-critical">临界 b_c</button>
+      <button id="btn-p-graze">掠射</button>
+    </div>
+    <div class="tag">URL 可复现：<span>?mode=…&E=…&k=…&b=…&speed=…</span><br>
+    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+    <a class="doc" href="../../index.html">← 上一模块：有效势与轨道稳定性</a>
+    <span class="doc">下一模块：两体问题与系外行星（M3 待建）</span>
+    <details class="mapping">
+      <summary>作业映射（本模块覆盖：作业-3 Q2、Q3）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-3 Q2</td><td>排斥势 k/r² 散射：散射角、微分散射截面、总截面</td><td>模式=散射；HUD 显示 Θ；轨迹可视化</td></tr>
+        <tr><td>作业-3 Q3</td><td>吸引势 -α/r⁴ 俘获：临界 b_c、俘获截面 σ</td><td>模式=俘获；HUD 显示 b_c、σ；螺旋轨迹</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+// ==================== 1) PARAMS ====================
+var DEFAULTS = {mode:'scatter', E:1.0, k:1.0, b:1.0, speed:1.0};
+var RANGE = {E:[0.1,5], k:[0.1,5], b:[0,5], speed:[0.1,3]};
+var P = {mode:DEFAULTS.mode, E:DEFAULTS.E, k:DEFAULTS.k, b:DEFAULTS.b, speed:DEFAULTS.speed};
+
+// ==================== 2) URL 同步 ====================
+function loadFromURL(){
+  var q = {};
+  var s = window.location.search.replace(/^\?/, '');
+  if (s) {
+    var parts = s.split('&');
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split('=');
+      if (kv.length === 2) q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+    }
+  }
+  P.mode = (q.mode === 'capture') ? 'capture' : 'scatter';
+  if (q.E !== undefined) P.E = Math.min(Math.max(parseFloat(q.E), RANGE.E[0]), RANGE.E[1]) || DEFAULTS.E;
+  if (q.k !== undefined) P.k = Math.min(Math.max(parseFloat(q.k), RANGE.k[0]), RANGE.k[1]) || DEFAULTS.k;
+  if (q.b !== undefined) P.b = Math.min(Math.max(parseFloat(q.b), RANGE.b[0]), RANGE.b[1]);
+  if (q.speed !== undefined) P.speed = Math.min(Math.max(parseFloat(q.speed), RANGE.speed[0]), RANGE.speed[1]) || DEFAULTS.speed;
+  return q;
+}
+function syncURL(){
+  var s = '?mode=' + P.mode + '&E=' + P.E + '&k=' + P.k + '&b=' + P.b + '&speed=' + P.speed;
+  if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
+}
+
+// ==================== 3) 物理 ====================
+function force(x, y) {
+  var r2 = x*x + y*y;
+  var r = Math.sqrt(r2);
+  if (r < 0.01) return {fx:0, fy:0};
+  if (P.mode === 'scatter') {
+    // F = 2k/r^3 * (x,y)/r = 2k (x,y)/r^4
+    var f = 2 * P.k / (r2 * r2);
+    return {fx: f * x, fy: f * y};
+  } else {
+    // F = -4 alpha / r^5 * (x,y)/r = -4 alpha (x,y)/r^6  (alpha=k)
+    var f = -4 * P.k / (r2 * r2 * r2);
+    return {fx: f * x, fy: f * y};
+  }
+}
+function rk4Step(x, y, vx, vy, dt) {
+  function derivs(x, y, vx, vy) {
+    var f = force(x, y);
+    return {dx: vx, dy: vy, dvx: f.fx, dvy: f.fy};
+  }
+  var k1 = derivs(x, y, vx, vy);
+  var k2 = derivs(x + 0.5*dt*k1.dx, y + 0.5*dt*k1.dy, vx + 0.5*dt*k1.dvx, vy + 0.5*dt*k1.dvy);
+  var k3 = derivs(x + 0.5*dt*k2.dx, y + 0.5*dt*k2.dy, vx + 0.5*dt*k2.dvx, vy + 0.5*dt*k2.dvy);
+  var k4 = derivs(x + dt*k3.dx, y + dt*k3.dy, vx + dt*k3.dvx, vy + dt*k3.dvy);
+  return {
+    x: x + dt/6*(k1.dx + 2*k2.dx + 2*k3.dx + k4.dx),
+    y: y + dt/6*(k1.dy + 2*k2.dy + 2*k3.dy + k4.dy),
+    vx: vx + dt/6*(k1.dvx + 2*k2.dvx + 2*k3.dvx + k4.dvx),
+    vy: vy + dt/6*(k1.dvy + 2*k2.dvy + 2*k3.dvy + k4.dvy)
+  };
+}
+function scatterAngleFormula(b, k, E) {
+  // theta = pi * (1 - 1/sqrt(1 + k/(E*b^2)))
+  if (b < 1e-9) return Math.PI;
+  var w = k / (E * b * b);
+  return Math.PI * (1 - 1/Math.sqrt(1 + w));
+}
+function bcFormula(k, E) {
+  return Math.pow(4 * k / E, 0.25);
+}
+function sigmaCapture(k, E) {
+  return 2 * Math.PI * Math.sqrt(k / E);
+}
+
+// ==================== 4) 渲染 ====================
+var cv = document.getElementById('stage-canvas');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0;
+function resize(){
+  var dpr = window.devicePixelRatio || 1;
+  var rect = cv.getBoundingClientRect();
+  W = Math.max(80, Math.floor(rect.width));
+  H = Math.max(80, Math.floor(rect.height));
+  cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+// Trajectory state
+var traj = []; // array of {x,y}
+var sim = {x:0, y:0, vx:0, vy:0, running:false, done:false};
+var trailMax = 2000;
+
+function initTraj() {
+  traj = [];
+  var v0 = Math.sqrt(2 * P.E);
+  var x0 = -15;
+  sim.x = x0; sim.y = P.b; sim.vx = v0; sim.vy = 0;
+  sim.done = false; sim.running = true;
+  traj.push({x: sim.x, y: sim.y});
+}
+
+function stepTraj() {
+  if (!sim.running || sim.done) return;
+  var dt = 0.02 * P.speed;
+  var steps = 4;
+  var h = dt / steps;
+  for (var i = 0; i < steps; i++) {
+    var s = rk4Step(sim.x, sim.y, sim.vx, sim.vy, h);
+    sim.x = s.x; sim.y = s.y; sim.vx = s.vx; sim.vy = s.vy;
+    var r = Math.sqrt(sim.x*sim.x + sim.y*sim.y);
+    if (r < 0.05) { sim.done = true; sim.running = false; break; }
+    if (sim.x > 15) { sim.done = true; sim.running = false; break; }
+    traj.push({x: sim.x, y: sim.y});
+    if (traj.length > trailMax) traj.shift();
+  }
+}
+
+function viewScale() {
+  return Math.min(W, H) * 0.35 / 15;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  var sc = viewScale();
+  var cx = W * 0.5, cy = H * 0.5;
+  // Draw axes
+  ctx.strokeStyle = 'rgba(120,160,255,.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+  // Draw origin
+  ctx.fillStyle = (P.mode === 'scatter') ? '#ffcf6b' : '#ff7b7b';
+  ctx.beginPath(); ctx.arc(cx, cy, 6, 0, 2*Math.PI); ctx.fill();
+  // Draw trajectory
+  if (traj.length > 1) {
+    ctx.strokeStyle = 'rgba(94,162,255,.7)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (var i = 0; i < traj.length; i++) {
+      var px = cx + traj[i].x * sc;
+      var py = cy - traj[i].y * sc;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke(); ctx.lineWidth = 1;
+  }
+  // Draw particle
+  if (traj.length > 0) {
+    var last = traj[traj.length-1];
+    ctx.fillStyle = '#eaf2ff';
+    ctx.shadowColor = 'rgba(94,162,255,.9)'; ctx.shadowBlur = 10;
+    ctx.beginPath(); ctx.arc(cx + last.x*sc, cy - last.y*sc, 4, 0, 2*Math.PI); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+  // Draw impact parameter line
+  ctx.strokeStyle = 'rgba(255,207,107,.3)';
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(cx - 16*sc, cy - P.b*sc); ctx.lineTo(cx + 16*sc, cy - P.b*sc); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ==================== 5) HUD ====================
+function $(id){ return document.getElementById(id); }
+var hudT = $('hudT'), hudR = $('hudR'), hudTh = $('hudTh'), hudE = $('hudE');
+var hudTheta = $('hudTheta'), hudB = $('hudB'), hudBc = $('hudBc'), hudSigma = $('hudSigma');
+var hudState = $('hudState'), noticeEl = $('notice');
+function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
+function setNotice(msg, bad){
+  if (!msg){ noticeEl.hidden = true; return; }
+  noticeEl.hidden = false; noticeEl.textContent = msg;
+  noticeEl.className = bad ? 'notice bad' : 'notice';
+}
+function updateHUD(){
+  hudT.textContent = traj.length > 0 ? (traj.length * 0.02 * P.speed).toFixed(2) : '0.00';
+  var last = traj.length > 0 ? traj[traj.length-1] : null;
+  hudR.textContent = last ? fmt(Math.sqrt(last.x*last.x+last.y*last.y), 3) : '-';
+  hudE.textContent = fmt(P.E, 3);
+  hudB.textContent = fmt(P.b, 2);
+  if (P.mode === 'scatter') {
+    var theta = scatterAngleFormula(P.b, P.k, P.E);
+    hudTheta.textContent = (theta/Math.PI*180).toFixed(1) + '°';
+    hudBc.textContent = '-';
+    hudSigma.textContent = '∞ (长程)';
+    hudState.textContent = sim.done ? '已出射' : '积分中';
+  } else {
+    var bc = bcFormula(P.k, P.E);
+    var sig = sigmaCapture(P.k, P.E);
+    hudTheta.textContent = '-';
+    hudBc.textContent = fmt(bc, 4);
+    hudSigma.textContent = fmt(sig, 4);
+    if (P.b < bc) hudState.textContent = '俘获 (b<bc)';
+    else hudState.textContent = '散射 (b≥bc)';
+  }
+}
+
+// ==================== 6) 控制 ====================
+function bindControls() {
+  var modeSel = $('sel-mode');
+  modeSel.value = P.mode;
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; syncURL(); initTraj(); });
+  function bindSlider(id, key, valId, fmtFn) {
+    var sl = $(id), vl = $(valId);
+    sl.value = P[key];
+    vl.textContent = fmtFn(P[key]);
+    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); initTraj(); });
+  }
+  bindSlider('param-E', 'E', 'val-E', function(v){ return v.toFixed(2); });
+  bindSlider('param-k', 'k', 'val-k', function(v){ return v.toFixed(2); });
+  bindSlider('param-b', 'b', 'val-b', function(v){ return v.toFixed(2); });
+  bindSlider('param-speed', 'speed', 'val-speed', function(v){ return v.toFixed(2); });
+  $('btn-pause').addEventListener('click', function(){ sim.running = !sim.running; this.textContent = sim.running ? '暂停' : '继续'; });
+  $('btn-reset').addEventListener('click', function(){ initTraj(); });
+  $('btn-p-scatter').addEventListener('click', function(){ P.mode='scatter'; modeSel.value='scatter'; P.E=1; P.k=1; P.b=1; P.speed=1; syncSliders(); syncURL(); initTraj(); });
+  $('btn-p-capture').addEventListener('click', function(){ P.mode='capture'; modeSel.value='capture'; P.E=1; P.k=1; P.b=0.5; P.speed=1; syncSliders(); syncURL(); initTraj(); });
+  $('btn-p-critical').addEventListener('click', function(){ P.mode='capture'; modeSel.value='capture'; P.E=1; P.k=1; P.b=bcFormula(1,1); syncSliders(); syncURL(); initTraj(); });
+  $('btn-p-graze').addEventListener('click', function(){ P.mode='scatter'; modeSel.value='scatter'; P.E=1; P.k=1; P.b=3; P.speed=1; syncSliders(); syncURL(); initTraj(); });
+}
+function syncSliders() {
+  $('param-E').value = P.E; $('val-E').textContent = P.E.toFixed(2);
+  $('param-k').value = P.k; $('val-k').textContent = P.k.toFixed(2);
+  $('param-b').value = P.b; $('val-b').textContent = P.b.toFixed(2);
+  $('param-speed').value = P.speed; $('val-speed').textContent = P.speed.toFixed(2);
+}
+
+// ==================== 7) 自测 ====================
+function runSelftest() {
+  var saved = {mode:P.mode, E:P.E, k:P.k, b:P.b};
+  var details = [], passN = 0;
+  function T(name, ok, msg){ details.push({name:name, pass:!!ok, msg:msg}); if(ok) passN++; }
+  function restore(){ P.mode=saved.mode; P.E=saved.E; P.k=saved.k; P.b=saved.b; }
+  try {
+    // ST1 散射角公式
+    P.mode='scatter'; P.E=1; P.k=1; P.b=1;
+    var th1 = scatterAngleFormula(P.b, P.k, P.E);
+    var thRef1 = Math.PI*(1 - 1/Math.sqrt(2));
+    T('ST1 scatter angle formula', Math.abs(th1 - thRef1) < 1e-12, 'theta=' + th1.toFixed(6) + ' ref=' + thRef1.toFixed(6));
+    // ST2 dSigma/dOmega at pi/2
+    var x = 0.5;
+    var ds = (P.k/P.E)*(1-x)/(Math.PI*x*x*(2-x)*(2-x)*Math.sin(Math.PI*x));
+    T('ST2 dSigma/dOmega at pi/2', Math.abs(ds - 8/(9*Math.PI)) < 1e-10, 'ds=' + ds.toFixed(6) + ' ref=' + (8/(9*Math.PI)).toFixed(6));
+    // ST3 b_c
+    P.mode='capture'; P.E=1; P.k=1;
+    var bc = bcFormula(P.k, P.E);
+    T('ST3 b_c formula', Math.abs(bc - Math.pow(4,0.25)) < 1e-12, 'bc=' + bc.toFixed(6) + ' ref=' + Math.pow(4,0.25).toFixed(6));
+    // ST4 capture cross section
+    var sig = sigmaCapture(P.k, P.E);
+    T('ST4 sigma capture', Math.abs(sig - 2*Math.PI) < 1e-12, 'sigma=' + sig.toFixed(6) + ' ref=' + (2*Math.PI).toFixed(6));
+    // ST5 trajectory scattering angle matches formula
+    P.mode='scatter'; P.E=1; P.k=1; P.b=2;
+    initTraj();
+    var cnt = 0;
+    while (!sim.done && cnt < 10000) { stepTraj(); cnt++; }
+    var last = traj[traj.length-1];
+    var vAngle = Math.atan2(last.y - (traj.length>10?traj[traj.length-10].y:0), last.x - (traj.length>10?traj[traj.length-10].x:0));
+    // compute scattering angle from final velocity direction
+    var thetaNum = Math.atan2(sim.vy, sim.vx);
+    if (thetaNum < 0) thetaNum += 2*Math.PI;
+    var thetaRef = scatterAngleFormula(P.b, P.k, P.E);
+    T('ST5 trajectory theta vs formula', Math.abs(thetaNum - thetaRef) < 0.05, 'num=' + thetaNum.toFixed(4) + ' ref=' + thetaRef.toFixed(4));
+  } catch(e) {
+    T('ST-EXC', false, String(e));
+  }
+  restore();
+  return {passed: passN, failed: 5 - passN, details: details};
+}
+
+// ==================== 8) 启动 ====================
+var qURL = loadFromURL();
+resize();
+initTraj();
+bindControls();
+if (qURL.selftest === '1') {
+  var rep = runSelftest();
+  window.__selftest = rep;
+  var stEl = $('selftestPanel');
+  stEl.hidden = false;
+  stEl.className = rep.failed ? 'selftest fail' : 'selftest';
+  var txt = 'SELFTEST ' + rep.passed + '/5 PASS';
+  for (var iB = 0; iB < rep.details.length; iB++) {
+    var dB = rep.details[iB];
+    txt += '\n[' + (dB.pass ? 'PASS' : 'FAIL') + '] ' + dB.name + ' : ' + dB.msg;
+  }
+  stEl.textContent = txt;
+}
+var running = true;
+function frame() {
+  if (running && sim.running) { stepTraj(); }
+  draw(); updateHUD();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+// metrics for QA
+var metEl = document.createElement('div');
+metEl.id = 'metrics';
+metEl.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+function metUpdate(){ metEl.textContent = 'METRICS ' + window.innerWidth + ' ' + window.innerHeight + ' ' + document.documentElement.scrollWidth + ' ' + document.documentElement.scrollHeight; }
+metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendChild(metEl);
+</script>
+</body>
+</html>

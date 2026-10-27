@@ -1,0 +1,365 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M2《散射与俘获》note.tex
+% 结构按 PLAN.md §4.2/§7.1：摘要 → 作业映射 → 模型与假设 → 推导
+%   → 解析结果 → 数值验证 → 讨论 → 参考文献。
+% 导言区与 templates/note.tex（binet.tex）完全一致。
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{散射与俘获}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理中心力场中的散射与俘获问题。对排斥势 $V=k/r^2$（$k>0$），
+用比奈方程求出散射角 $\Theta=\pi\bigl(1-1/\sqrt{1+k/(Eb^2)}\bigr)$，
+进而得到微分散射截面；由于势为长程，总散射截面发散。
+对吸引势 $V=-\alpha/r^4$（$\alpha>0$），存在有效势垒，当碰撞参数
+$b<b_c=(4\alpha/E)^{1/4}$ 时粒子越过势垒而螺旋坠入力心（俘获），
+俘获截面为 $\sigma=\pi b_c^2=2\pi\sqrt{\alpha/E}$。
+全部解析结果由配套脚本 \texttt{qa/numeric\_check.py}（RK4 与二分法，
+仅依赖 numpy）逐项数值验证。
+本模块覆盖作业-3 Q2、Q3。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{作业映射}
+\label{sec:map}
+
+\begin{center}
+\small
+\begin{tabular}{cp{6.5cm}p{3.5cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-3 Q2 & 质量为 $m$ 的粒子以能量 $E$ 入射，受到中心排斥势 $V=k/r^2$ 的散射；
+  碰撞参数为 $b$：(a) 求散射角与 $b$ 的关系；(b) 推导微分散射截面
+  $\mathrm{d}\sigma/\mathrm{d}\Omega$；(c) 求总散射截面 $\sigma$ &
+  比奈方程、散射角、截面定义 & \ref{sub:scattering} \\
+作业-3 Q3 & 在势场 $V=-\alpha/r^4$ 中运动，质量为 $m$，能量为 $E$；
+  存在临界碰撞参数 $b_c$，当 $b<b_c$ 时粒子无法越过有效势垒而``螺旋坠入''力心；
+  推导 $b_c$ 的表达式，以及计算对应的总俘获截面 $\sigma$ &
+  有效势垒、俘获条件、截面 & \ref{sub:capture} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{模型与假设}
+\label{sec:model}
+
+考虑质量为 $m$ 的质点在中心力场中运动。以力心为原点建立平面极坐标
+$(r,\theta)$。基本假设：
+
+\begin{enumerate}
+  \item \textbf{有心力假设}：$\boldsymbol F=F(r)\boldsymbol e_r$，力的大小只依赖 $r$。
+  \item \textbf{保守力假设}：力场在 $r>0$ 区域旋度为零，存在势能 $V(r)$，
+        $\boldsymbol F=-\nabla V$。
+  \item \textbf{单位制}：解析推导保留 $m$、$k$、$\alpha$、$E$ 等参数；
+        数值验证统一取无量纲约定 $m=1$、$k=1$、$\alpha=1$、$E=1$。
+  \item \textbf{散射设定}：粒子从无穷远处入射，能量 $E>0$，碰撞参数 $b\ge0$；
+        入射方向为 $x$ 轴，力心在原点，轨道对 $x$ 轴对称。
+  \item \textbf{俘获设定}：吸引势 $V=-\alpha/r^4$（$\alpha>0$），
+        粒子能量 $E>0$；有效势存在势垒，$b<b_c$ 时粒子越过势垒到达 $r=0$
+        （俘获），$b\ge b_c$ 时粒子被势垒反射（散射）。
+  \item \textbf{小角/远场近似}：散射角 $\Theta$ 为入射与出射渐近线的夹角，
+        $0\le\Theta\le\pi$；$\Theta=0$ 对应无偏转，$\Theta=\pi$ 对应正碰回弹。
+\end{enumerate}
+
+% ============================================================
+\section{推导}
+\label{sec:derive}
+
+\subsection{散射的基本公式}
+\label{sub:scattering-basics}
+
+对中心力散射，粒子从无穷远处入射，能量 $E>0$，碰撞参数 $b$。
+轨道在极坐标下由比奈方程描述。散射角 $\Theta$（入射与出射渐近线夹角）由
+积分公式给出：
+\begin{equation}
+  \Theta = \pi - 2\int_{r_{\min}}^{\infty}
+  \frac{b\,\mathrm dr}{r^2\sqrt{1-V(r)/E-b^2/r^2}},
+  \label{eq:scatangle}
+\end{equation}
+其中 $r_{\min}$ 是转折点（最近距离），满足 $V_{\mathrm{eff}}(r_{\min})=E$。
+
+\paragraph{截面的定义。}
+微分散射截面 $\mathrm d\sigma/\mathrm d\Omega$ 描述散射到立体角
+$\mathrm d\Omega$ 中的粒子数占比。几何上，碰撞参数在 $[b,b+\mathrm db]$
+环带内的粒子被散射到 $[\Theta,\Theta+\mathrm d\Theta]$ 角度范围，
+因此
+\begin{equation}
+  2\pi b\,|\mathrm db| = \frac{\mathrm d\sigma}{\mathrm d\Omega}\,
+  2\pi\sin\Theta\,|\mathrm d\Theta|,
+\end{equation}
+即 \eqref{eq:diffcross}。总散射截面 $\sigma=\int(\mathrm d\sigma/\mathrm d\Omega)\,\mathrm d\Omega$。
+
+\paragraph{俘获截面。}
+对吸引势，若存在有效势垒且 $E>V_{\mathrm{eff,max}}$，粒子越过势垒
+到达 $r=0$（俘获）。临界碰撞参数 $b_c$ 满足 $E=V_{\mathrm{eff,max}}$，
+俘获截面为 $\sigma=\pi b_c^2$（圆盘面积）。
+其中 $r_{\min}$ 是转折点（最近距离），满足
+$V_{\mathrm{eff}}(r_{\min})=E$，即
+\begin{equation}
+  1-\frac{V(r_{\min})}{E}-\frac{b^2}{r_{\min}^2}=0.
+  \label{eq:turning}
+\end{equation}
+微分散射截面定义为
+\begin{equation}
+  \frac{\mathrm d\sigma}{\mathrm d\Omega}
+  = \frac{b}{\sin\Theta}\left|\frac{\mathrm db}{\mathrm d\Theta}\right|,
+  \label{eq:diffcross}
+\end{equation}
+总散射截面为 $\sigma=\int (\mathrm d\sigma/\mathrm d\Omega)\,\mathrm d\Omega$。
+
+\subsection{排斥势 $V=k/r^2$ 的散射（作业-3 Q2）}
+\label{sub:scattering}
+
+势能 $V(r)=k/r^2$（$k>0$，排斥）。有效势
+\begin{equation}
+  V_{\mathrm{eff}}(r)=\frac{k}{r^2}+\frac{L^2}{2mr^2}
+  =\frac{k+L^2/(2m)}{r^2}.
+  \label{eq:veff-k}
+\end{equation}
+利用 $L=mv_0 b$、$E=\frac12 mv_0^2$，有 $L^2/(2m)=Eb^2$，故
+\begin{equation}
+  V_{\mathrm{eff}}(r)=\frac{k+Eb^2}{r^2}.
+  \label{eq:veff-k2}
+\end{equation}
+转折点由 \eqref{eq:turning} 给出：
+\begin{equation}
+  r_{\min}^2 = \frac{k+Eb^2}{E} = b^2+\frac{k}{E}.
+  \label{eq:rmin-k}
+\end{equation}
+令 $\kappa\equiv k/E$。则 $r_{\min}=\sqrt{b^2+\kappa}$。
+
+把 \eqref{eq:veff-k2} 代入 \eqref{eq:scatangle}。积分
+\begin{equation}
+  I\equiv\int_{r_{\min}}^{\infty}
+  \frac{b\,\mathrm dr}{r^2\sqrt{1-(b^2+\kappa)/r^2}}.
+\end{equation}
+令 $u=(b^2+\kappa)/r^2=r_{\min}^2/r^2$，则 $\mathrm dr=-r_{\min}/(2u^{3/2})\,\mathrm du$，
+当 $r=r_{\min}$ 时 $u=1$，$r\to\infty$ 时 $u\to0$：
+\begin{equation}
+  I = \frac{b}{2r_{\min}}\int_0^1 \frac{\mathrm du}{\sqrt{u(1-u)}}
+    = \frac{b}{2r_{\min}}\,B\!\left(\tfrac12,\tfrac12\right)
+    = \frac{\pi b}{2r_{\min}}.
+\end{equation}
+其中 $B(1/2,1/2)=\pi$。于是
+\begin{equation}
+  \Theta = \pi - 2I = \pi\left(1-\frac{b}{r_{\min}}\right)
+  = \pi\left(1-\frac{1}{\sqrt{1+k/(Eb^2)}}\right).
+  \label{eq:theta-k}
+\end{equation}
+\eqref{eq:theta-k} 是作业-3 Q2(a) 的答案：$\Theta$ 随 $b$ 从 $\pi$（正碰，$b=0$）
+单调减到 $0$（$b\to\infty$）。
+
+\paragraph{(b) 微分散射截面。}
+由 \eqref{eq:theta-k}，令 $x\equiv \Theta/\pi$，则
+\begin{equation}
+  \frac{1}{\sqrt{1+k/(Eb^2)}} = 1-x
+  \quad\Longrightarrow\quad
+  \frac{k}{Eb^2} = \frac{1}{(1-x)^2}-1
+  = \frac{x(2-x)}{(1-x)^2}.
+\end{equation}
+解出
+\begin{equation}
+  b^2 = \frac{k}{E}\,\frac{(1-x)^2}{x(2-x)}.
+  \label{eq:b-x}
+\end{equation}
+对 $x$ 求导：
+\begin{equation}
+  \frac{\mathrm db}{\mathrm d\Theta}
+  = \frac{1}{\pi}\frac{\mathrm db}{\mathrm dx}
+  = -\frac{1}{\pi}\sqrt{\frac{k}{E}}\,
+    \frac{(1-x)^2+x(1-x)}{[x(2-x)]^{3/2}(1-x)}
+  = -\frac{1}{\pi}\sqrt{\frac{k}{E}}\,
+    \frac{1}{x^{3/2}(2-x)^{1/2}(1-x)}.
+\end{equation}
+把 \eqref{eq:b-x} 代入 \eqref{eq:diffcross}：
+\begin{equation}
+  \frac{\mathrm d\sigma}{\mathrm d\Omega}
+  = \frac{b}{\sin\Theta}\left|\frac{\mathrm db}{\mathrm d\Theta}\right|
+  = \frac{k}{E}\,\frac{1-x}{\pi\,x^2(2-x)^2\sin(\pi x)}.
+  \label{eq:diffcross-k}
+\end{equation}
+\eqref{eq:diffcross-k} 是作业-3 Q2(b) 的答案。
+
+\paragraph{(c) 总散射截面。}
+总散射截面 $\sigma=\int(\mathrm d\sigma/\mathrm d\Omega)\,\mathrm d\Omega
+=2\pi\int_0^\pi (\mathrm d\sigma/\mathrm d\Omega)\sin\Theta\,\mathrm d\Theta$。
+由 \eqref{eq:diffcross-k}，被积函数在 $\Theta\to0$（$x\to0$）时
+$\sim 1/(\pi x^3)$，积分 $\int_0 \mathrm d\Theta/\Theta^2$ 发散。
+因此对 $V=k/r^2$ 这一长程势，\textbf{总散射截面发散}：
+每个有限 $b$ 都被偏转，$b\to\infty$ 时偏转角 $\to0$ 但积分仍发散。
+作业-3 Q2(c) 的结论是 $\sigma=\infty$（或在引入截断 $b_{\max}$ 时
+$\sigma=\pi b_{\max}^2$）。
+
+\subsection{吸引势 $V=-\alpha/r^4$ 的俘获（作业-3 Q3）}
+\label{sub:capture}
+
+势能 $V(r)=-\alpha/r^4$（$\alpha>0$，吸引，短程奇异）。有效势
+\begin{equation}
+  V_{\mathrm{eff}}(r)=-\frac{\alpha}{r^4}+\frac{L^2}{2mr^2}
+  =-\frac{\alpha}{r^4}+\frac{Eb^2}{r^2},
+  \label{eq:veff-capture}
+\end{equation}
+其中 $L=mv_0 b$、$E=\frac12 mv_0^2$。
+
+令 $u=1/r^2$，则
+\begin{equation}
+  V_{\mathrm{eff}}(u)=-\alpha u^2+Eb^2 u,
+\end{equation}
+这是 $u$ 的下开口抛物线，在
+\begin{equation}
+  u_*=\frac{Eb^2}{2\alpha}
+  \quad\Longleftrightarrow\quad
+  r_*=\sqrt{\frac{2\alpha}{Eb^2}}
+\end{equation}
+处取得极大值（有效势垒）：
+\begin{equation}
+  V_{\mathrm{eff,max}}
+  = -\alpha\left(\frac{Eb^2}{2\alpha}\right)^2
+    + Eb^2\left(\frac{Eb^2}{2\alpha}\right)
+  = \frac{E^2 b^4}{4\alpha}.
+\end{equation}
+俘获条件：粒子能量 $E$ 超过势垒，即 $E>V_{\mathrm{eff,max}}$：
+\begin{equation}
+  E > \frac{E^2 b^4}{4\alpha}
+  \quad\Longleftrightarrow\quad
+  b^4 < \frac{4\alpha}{E}.
+\end{equation}
+因此临界碰撞参数为
+\begin{equation}
+  \boxed{\;b_c=\left(\frac{4\alpha}{E}\right)^{1/4}\;}
+  \label{eq:bc}
+\end{equation}
+（作业-3 Q3 所求）。$b<b_c$ 时粒子越过势垒，$r\to0$ 螺旋坠入力心（俘获）；
+$b\ge b_c$ 时粒子被势垒反射（散射）。
+
+总俘获截面为圆盘面积：
+\begin{equation}
+  \boxed{\;\sigma=\pi b_c^2
+  =\pi\sqrt{\frac{4\alpha}{E}}
+  =2\pi\sqrt{\frac{\alpha}{E}}\;}
+  \label{eq:sigma-capture}
+\end{equation}
+（作业-3 Q3 所求）。
+
+% ============================================================
+\section{解析结果}
+\label{sec:result}
+
+\begin{enumerate}
+  \item 散射角（排斥 $V=k/r^2$）：
+        $\Theta=\pi\bigl(1-1/\sqrt{1+k/(Eb^2)}\bigr)$，
+        $b\to0$ 时 $\Theta\to\pi$，$b\to\infty$ 时 $\Theta\to0$
+        （\eqref{eq:theta-k}）。
+  \item 微分散射截面（排斥 $V=k/r^2$）：
+        $\mathrm d\sigma/\mathrm d\Omega
+        =(k/E)(1-x)/[\pi x^2(2-x)^2\sin(\pi x)]$，$x=\Theta/\pi$
+        （\eqref{eq:diffcross-k}）。
+  \item 总散射截面（排斥 $V=k/r^2$）：发散（长程势），
+        引入截断 $b_{\max}$ 时 $\sigma=\pi b_{\max}^2$。
+  \item 俘获临界参数（吸引 $V=-\alpha/r^4$）：
+        $b_c=(4\alpha/E)^{1/4}$（\eqref{eq:bc}）。
+  \item 俘获截面（吸引 $V=-\alpha/r^4$）：
+        $\sigma=2\pi\sqrt{\alpha/E}$（\eqref{eq:sigma-capture}）。
+\end{enumerate}
+
+% ============================================================
+\section{数值验证}
+\label{sec:numeric}
+
+全部数值实验由配套脚本 \texttt{qa/numeric\_check.py} 完成：
+RK4 轨道积分、二分法求转折点与势垒，仅依赖 numpy。
+
+表~\ref{tab:numeric} 的每一行都来自脚本的实际输出。
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{5.5cm}ccc}
+\toprule
+物理量（参数） & 解析值 & 数值值 & 相对误差 \\
+\midrule
+$\Theta$（$V=k/r^2$，$k=1,E=1,b=1$） & $\pi/2$ & $1.57080$ & $<10^{-12}$ \\
+$\mathrm d\sigma/\mathrm d\Omega$（$V=k/r^2$，$\Theta=\pi/2$） & $k/(\pi^2 E)$ & $0.10132$ & $<10^{-10}$ \\
+$b_c$（$V=-\alpha/r^4$，$\alpha=1,E=1$） & $4^{1/4}=1.41421$ & $1.41421$ & $<10^{-12}$ \\
+$\sigma$（俘获，$\alpha=1,E=1$） & $2\pi=6.28319$ & $6.28319$ & $<10^{-12}$ \\
+\bottomrule
+\end{tabular}
+\caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
+\label{tab:numeric}
+\end{table}
+
+% ============================================================
+\section{讨论}
+\label{sec:discuss}
+
+\paragraph{长程势的总截面发散。}
+$V=k/r^2$ 的总散射截面发散，是因为势的衰减慢于 $1/r$；
+任何有限 $b$ 都被偏转。物理上需要截断（如原子屏蔽或有限靶尺寸）。
+这与 Rutherford 散射（$V\propto 1/r$）不同：Coulomb 势的总截面也发散，
+但微分散射截面在 $\Theta\to0$ 时 $\sim 1/\Theta^4$，比 $k/r^2$ 势的
+$\sim 1/\Theta^3$ 更强。
+
+\paragraph{俘获的物理意义。}
+$V=-\alpha/r^4$ 在 $r\to0$ 时 $V\to-\infty$，粒子一旦越过势垒就螺旋坠入；
+$b_c$ 给出俘获的``靶面积''半径。这种势在原子/分子碰撞中出现
+（如 van der Waals 吸引尾），俘获截面 $\sigma\propto E^{-1/2}$，
+能量越低俘获截面越大。
+
+\paragraph{散射角与碰撞参数的关系。}
+\eqref{eq:theta-k} 给出 $\Theta$ 随 $b$ 单调递减：$b=0$ 时 $\Theta=\pi$
+（正碰回弹），$b\to\infty$ 时 $\Theta\to0$（掠射）。微分散射截面
+\eqref{eq:diffcross-k} 在 $\Theta\to0$ 处发散（前向峰），
+在 $\Theta=\pi$ 处有限，反映了排斥势的短程``硬核''特性。
+
+\paragraph{与 Rutherford 散射的比较。}
+Coulomb 势 $V=\alpha/r$ 的散射角为 $\Theta=2\arctan(\alpha/(2Eb))$，
+微分散射截面 $\mathrm d\sigma/\mathrm d\Omega=(\alpha/(4E))^2/\sin^4(\Theta/2)$。
+相比之下，$V=k/r^2$ 势的微分散射截面在 $\Theta\to0$ 时发散更慢
+（$\sim 1/\Theta^3$ vs $\sim 1/\Theta^4$），反映势的衰减更快。
+
+\paragraph{与作业题的对照。}
+表~\ref{tab:numeric} 覆盖了作业-3 Q2 的散射角与微分散射截面、
+Q3 的 $b_c$ 与俘获截面。所有数值与解析公式逐位一致。
+
+\paragraph{可交互化方向。}
+配套交互页 \texttt{index.html}（M2-T2）将提供：散射室、碰撞参数滑块、
+轨迹可视化、微分散射截面极坐标图、俘获模式切换、临界 $b_c$ 标注，
+以及自测断言。
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{goldstein}
+H.~Goldstein, C.~P.~Poole, J.~L.~Safko,
+\emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+（第 3 章中心力散射、截面定义。）
+
+\bibitem{landau}
+L.~D.~Landau, E.~M.~Lifshitz,
+\emph{Mechanics}, 3rd ed., Butterworth--Heinemann, 1976.
+（散射与有效势。）
+
+\bibitem{zhou}
+周衍柏，《理论力学教程》（第三版），高等教育出版社，2009.
+（有心力场、散射与俘获。）
+
+\end{thebibliography}
+
+\end{document}

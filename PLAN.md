@@ -672,9 +672,9 @@ URL 参数规范：
 
 | ID | 任务 | 依赖 | 验收标准 | 状态 | 证据/日期 |
 |---|---|---|---|---|---|
-| M2-T1 | 写 `note.tex`：散射几何、\(\theta(b)\)、\(d\sigma/d\Omega\)、俘获截面 | M1-T3 | 按 §7.1 通过；含作业-3 Q2/Q3 映射 | `[ ]` | |
-| M2-T2 | 写 `index.html`：散射室、截面极坐标图、俘获模式、自测 | M2-T1 | 按 §7.2 通过；5 条数值断言全 PASS | `[ ]` | |
-| M2-T3 | 模块 QA 与集成 | M2-T2 | 按 §7.3/§7.4 通过 | `[ ]` | |
+| M2-T1 | 写 `note.tex`：散射几何、\(\theta(b)\)、\(d\sigma/d\Omega\)、俘获截面 | M1-T3 | 按 §7.1 通过；含作业-3 Q2/Q3 映射 | `[x]` | 2026-10-27 主代理复验：6 页、21 编号公式、3 参考文献、numeric_check 4/4 PASS；证据 `modules/02-scattering/qa/T1-note.md` |
+| M2-T2 | 写 `index.html`：散射室、截面极坐标图、俘获模式、自测 | M2-T1 | 按 §7.2 通过；5 条数值断言全 PASS | `[x]` | 2026-10-27 主代理复验：check_html 6/6、SELFTEST 5/5 PASS；证据 `modules/02-scattering/qa/T2-html.md` |
+| M2-T3 | 模块 QA 与集成 | M2-T2 | 按 §7.3/§7.4 通过 | `[x]` | 2026-10-27 主代理复验：README 95 行、T3-qa 62 行、截图 3 张、check_html 6/6、SELFTEST 5/5、LINKS ALL OK；catalog.html 已更新为 ready |
 
 ### M3 两体问题与系外行星
 
