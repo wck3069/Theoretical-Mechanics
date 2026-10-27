@@ -114,3 +114,15 @@ Chrome 无头模式将视口钳制到最小 500px，移动端截图使用 360 �
 | M8 窄屏控制区 | 面板 42vh→46vh、画布 58vh→54vh，减少首屏裁切 |
 | M0 遗留说明 | 新增 `modules/00-binet/qa/T0-legacy.md`：只读样板、不参与 selftest、check_html 6/6、PDF 5 页 |
 | M8 双摆轨迹 | trailMax 500→1200、预跑 320→600 步，轨迹覆盖更完整 |
+
+## 2026-10-27 收尾（清理 / 去冗余 / 发布）
+
+| 项 | 结果 |
+|---|---|
+| 作业 PDF 入库 | **已从索引与全部历史移除**（`git filter-repo --path 作业 --invert-paths`），远端 `作业` 路径数 = 0；本地文件保留 |
+| .git 体积 | 13M → 8.4M |
+| 导航链接 | 全部模块上一/下一链接改指真实模块（原统一指向根目录，P9 迁移后语义错误）；M8 末页"返回总目录" |
+| 目录双副本 | 根 `index.html` 为唯一正文；`catalog.html` 改为重定向（保 query/hash），消除 30KB 重复与漂移 |
+| 全新克隆验收 | `git clone --depth 1` 到 /tmp：8/8 模块 `check_html 6/6` + `selftest 5/5`；目录渲染 9 张卡片 |
+| 控制台 | 9 个页面全部无 error（含 binet legacy） |
+| 链接检查 | ALL OK |
