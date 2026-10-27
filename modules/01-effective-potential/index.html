@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <!-- ============================================================
-  理论力学 · 交互讲义 —— index.html 模板（P0-T2）
-  由 tools/new_module.py 复制到模块目录并替换占位符：
-    有效势与轨道稳定性  模块标题    01-effective-potential  模块代号
+  理论力学 · 交互讲义 —— modules/01-effective-potential/index.html
+  M1：有效势与轨道稳定性（m=1 约化模型，与 note.tex / qa/numeric_check.py 一致）
+    V(r) = V_base(r) + gam/r^3；V_eff = V + L^2/(2 r^2)
+    r'' = -dV_eff/dr（四阶 Runge-Kutta），theta' = L/r^2
   硬性约束（tools/check_html.py 强制检查）：
     - 单文件、零外部依赖：不得引用任何外部 URL、CDN、网络字体；
     - 不得发起网络请求或动态加载外部模块；数据一律内联；
-    - 内联 JS 限用 esprima 4.0.1 可解析的语法（ES2017 及以下，
-      不用可选链、空值合并等新语法；见 qa/global/toolchain.md）。
-  实现模块时的 TODO 清单（见文末 <script> 头部）：
-    1) PARAMS 参数定义  2) PRESETS URL 预设  3) step 物理积分
-    4) render 绘制/HUD  5) SELFTEST 断言（?selftest=1，§5.4）
+    - 内联 JS 限用 esprima 4.0.1 可解析的语法（ES2017 及以下）。
   ============================================================ -->
 <!-- allow: SIZE_OK — 单文件约束（PLAN.md §4.2）：CSS/JS 必须内联，无法拆分 -->
 <html lang="zh-CN">
@@ -32,27 +29,31 @@
   }
   .app{display:flex; height:100vh; width:100vw}
   .stage{position:relative; flex:1; min-width:0}
-  canvas{display:block; width:100%; height:100%; touch-action:none}
-  .brand{position:absolute; top:22px; left:26px; pointer-events:none}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:20px; left:24px; pointer-events:none; max-width:72%}
   .brand h1{margin:0; font-size:19px; letter-spacing:.5px; font-weight:650}
   .brand p{margin:5px 0 0; font-size:12.5px; color:var(--muted)}
-  .hud{position:absolute; left:26px; bottom:22px; font-size:12.5px; color:var(--muted);
-       display:flex; gap:18px; flex-wrap:wrap; pointer-events:none}
+  .hud{position:absolute; left:24px; bottom:20px; font-size:12px; color:var(--muted);
+       display:flex; gap:16px; flex-wrap:wrap; pointer-events:none}
   .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice{position:absolute; right:16px; bottom:20px; max-width:62%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .notice.bad{color:#ffd7d7; border-color:rgba(255,123,123,.5); background:rgba(60,10,16,.6)}
 
   .panel{
-    width:340px; flex:none; padding:22px 22px 18px; overflow-y:auto;
+    width:344px; flex:none; padding:20px 22px 18px; overflow-y:auto;
     background:var(--panel); border-left:1px solid var(--line);
   }
   .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
   .eq{
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px; line-height:1.9;
-    padding:12px 14px; border:1px solid var(--line); border-radius:10px;
-    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:20px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; line-height:1.8;
+    padding:11px 13px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:16px;
   }
   .eq .num{color:var(--accent2)}
-  .group{margin-bottom:17px}
-  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px}
+  .group{margin-bottom:13px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px}
   .row label{font-size:13px; color:#b9c6ea}
   .row .val{font-family:ui-monospace,monospace; font-size:13px; color:var(--accent2); font-variant-numeric:tabular-nums}
   input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
@@ -61,25 +62,32 @@
     background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
   input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent);
     border:2px solid #0a1020; cursor:pointer}
-  .hint{font-size:11.5px; color:#6d7ba3; margin-top:5px; line-height:1.5}
+  input[type=range]:disabled{opacity:.35}
+  .hint{font-size:11px; color:#6d7ba3; margin-top:4px; line-height:1.5}
+  select{
+    width:100%; font:inherit; font-size:13px; padding:8px 10px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);
+  }
 
   .btns{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:6px}
   button{
-    font:inherit; font-size:12.5px; padding:9px 10px; border-radius:9px; cursor:pointer;
+    font:inherit; font-size:12.5px; padding:8px 9px; border-radius:9px; cursor:pointer;
     color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35);
     transition:.15s;
   }
   button:hover{background:rgba(94,162,255,.28)}
   button.primary{background:linear-gradient(180deg,#3f7bff,#2b5fe0); border-color:#4f86ff; color:#fff}
   button.primary:hover{filter:brightness(1.1)}
-  .full{grid-column:1/-1}
+  .presets{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px}
+  .presets button{font-size:11.5px}
+
   a.doc{display:inline-block; margin-top:16px; font-size:12.5px; color:var(--accent); text-decoration:none}
   a.doc:hover{text-decoration:underline}
   details.mapping{margin-top:14px; font-size:12.5px; color:var(--muted)}
   details.mapping summary{cursor:pointer; color:#b9c6ea}
-  details.mapping table{width:100%; border-collapse:collapse; margin-top:8px; font-size:11.5px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:8px; font-size:11px}
   details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left; color:var(--muted)}
-  .tag{display:inline-block; margin-top:14px; font-size:11.5px; color:var(--muted)}
+  .tag{display:inline-block; margin-top:14px; font-size:11px; color:var(--muted); line-height:1.6}
   .tag span{color:var(--accent2)}
 
   .selftest{position:absolute; top:16px; right:16px; max-width:70%; z-index:999; padding:12px 16px;
@@ -103,31 +111,65 @@
     <noscript><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ffd7d7;font-size:14px">需要启用 JavaScript 才能显示实验画面</div></noscript>
     <div class="brand">
       <h1>有效势与轨道稳定性</h1>
-      <p>模板占位副标题：一句话说明本实验做什么（TODO 替换）</p>
+      <p>左图：质点轨道（拖动质点设初始位置）；右图：V_eff(r) 曲线、转折点与稳定圆轨道极小值</p>
     </div>
     <div class="hud">
-      <span>占位量 q₁ <b id="hudQ1">–</b></span>
-      <span>占位量 q₂ <b id="hudQ2">–</b></span>
+      <span>t <b id="hudT">0.00</b></span>
+      <span>r <b id="hudR">–</b></span>
+      <span>θ <b id="hudTh">–</b></span>
+      <span>E <b id="hudE">–</b></span>
+      <span>ω_r <b id="hudWr">–</b></span>
+      <span>ω_θ <b id="hudWt">–</b></span>
+      <span>ΔE/|E| <b id="hudDrift">–</b></span>
       <span>状态 <b id="hudState">运行中</b></span>
     </div>
+    <div id="notice" class="notice" hidden></div>
     <div id="selftestPanel" class="selftest" hidden></div>
   </div>
-
   <aside class="panel">
     <div class="eq">
-      占位方程：d²x/dt² = f(x; <span class="num">a</span>, <span class="num">b</span>)
+      V_eff = V_base(r) + <span class="num">L²</span>/2r² + <span class="num">γ</span>/r³<br>
+      r̈ = −dV_eff/dr（RK4）　θ̇ = <span class="num">L</span>/r²　单位：m=α=1 无量纲
     </div>
 
     <div class="group">
-      <div class="row"><label for="param-a">占位参数 a</label><span class="val" id="val-a">1.00</span></div>
-      <input type="range" id="param-a" min="0.1" max="3" step="0.01" value="1" aria-label="占位参数 a">
-      <div class="hint">TODO：写明 a 的物理含义、单位与对结果的影响。</div>
+      <div class="row"><label for="sel-pot">势能类型</label></div>
+      <select id="sel-pot" aria-label="势能类型">
+        <option value="kepler">开普勒 V=−1/r（作业-2 Q6/Q7）</option>
+        <option value="harm">谐振子 V=r²/2（作业-3 Q1）</option>
+        <option value="gauss">高斯 V=−e^(−r²)（作业-2 Q3）</option>
+        <option value="pow">幂律 V=βr^k（作业-2 Q4）</option>
+      </select>
     </div>
 
     <div class="group">
-      <div class="row"><label for="param-b">占位参数 b</label><span class="val" id="val-b">0.50</span></div>
-      <input type="range" id="param-b" min="0" max="2" step="0.01" value="0.5" aria-label="占位参数 b">
-      <div class="hint">TODO：写明 b 的物理含义。</div>
+      <div class="row"><label for="param-L">角动量 L</label><span class="val" id="val-L">1.20</span></div>
+      <input type="range" id="param-L" min="0.05" max="3" step="0.01" value="1.2" aria-label="角动量 L">
+      <div class="hint">离心项 L²/2r² 产生势垒；高斯势存在上限 L_max=2√2/e≈1.04（作业-2 Q3）。</div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="param-E">总能量 E</label><span class="val" id="val-E">-0.30</span></div>
+      <input type="range" id="param-E" min="-2" max="2" step="0.01" value="-0.3" aria-label="总能量 E">
+      <div class="hint">水平线 E 与 V_eff 的交点即转折点（近/远日点）；越过势垒则逃逸。</div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="param-r0">初始半径 r₀</label><span class="val" id="val-r0">1.00</span></div>
+      <input type="range" id="param-r0" min="0.1" max="5" step="0.01" value="1" aria-label="初始半径 r0">
+      <div class="hint">初始 ṙ₀=√(2(E−V_eff(r₀)))（根号内为负自动截为 0）。也可在左图直接拖动质点。</div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="param-k">幂律指数 k</label><span class="val" id="val-k">2.00</span></div>
+      <input type="range" id="param-k" min="-3" max="3" step="0.01" value="2" aria-label="幂律指数 k" disabled>
+      <div class="hint">仅幂律势生效，β=sign(k)。稳定圆轨道需 k&gt;−2；ω_r/ω_θ=√(k+2)（Bertrand）。</div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="param-gam">微扰 γ/r³</label><span class="val" id="val-gam">0.0000</span></div>
+      <input type="range" id="param-gam" min="0" max="0.02" step="0.0002" value="0" aria-label="微扰 gamma">
+      <div class="hint">模拟作业-2 Q7 的 δV=γ/r³ 修正：轨道不再闭合，近心点每圈进动。</div>
     </div>
 
     <div class="group">
@@ -138,240 +180,522 @@
     <div class="btns">
       <button id="btn-pause" class="primary">暂停</button>
       <button id="btn-reset">重置</button>
-      <button id="btn-preset" class="full">预设：默认（preset=default）</button>
     </div>
 
-    <details class="mapping" id="mapping">
-      <summary>作业映射（TODO：链接到具体作业题）</summary>
+    <div class="presets">
+      <button id="btn-p-kepler">开普勒椭圆</button>
+      <button id="btn-p-circ">近圆轨道</button>
+      <button id="btn-p-gauss">高斯 L→L_max</button>
+      <button id="btn-p-precess">γ 进动</button>
+      <button id="btn-p-pow">幂律 k=2</button>
+      <button id="btn-p-escape">抛物逃逸</button>
+    </div>
+
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+
+    <details class="mapping">
+      <summary>作业映射（本模块覆盖：作业-2 Q3–Q7、作业-3 Q1、作业-5 Q4）</summary>
       <table>
-        <tr><th>来源</th><th>题目</th><th>知识点</th></tr>
-        <tr><td>作业-N QM</td><td>（题面简述）</td><td>（知识点）</td></tr>
-        <tr><td>作业-N QM</td><td>（题面简述）</td><td>（知识点）</td></tr>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-2 Q3</td><td>高斯势稳定圆轨道存在条件、L_max</td><td>势能=高斯；L 滑到 1.04 观察极小值消失</td></tr>
+        <tr><td>作业-2 Q4</td><td>幂律势 ω_r/ω_θ=√(k+2)，a=1/2 对应势</td><td>势能=幂律；HUD 直接显示频率比</td></tr>
+        <tr><td>作业-2 Q6</td><td>椭圆轨道近/远日点角速度比</td><td>开普勒椭圆预设；转折点标记</td></tr>
+        <tr><td>作业-2 Q7</td><td>δV=γ/r³ 导致近心点进动、轨道不闭合</td><td>γ/r³ 滑块；轨迹进动可视化</td></tr>
+        <tr><td>作业-3 Q1</td><td>V=kr²/2 轨道为椭圆（中心在力心）</td><td>势能=谐振子预设</td></tr>
+        <tr><td>作业-5 Q4</td><td>位力定理 ⟨T⟩、⟨V⟩ 验证</td><td>HUD 能量漂移列佐证 T+V 守恒</td></tr>
       </table>
     </details>
 
-    <a class="doc" href="note.pdf" target="_blank">📄 查看推导文档（note.pdf）</a>
-    <div class="tag">数值方法：占位（建议四阶 Runge–Kutta）· 单位制：占位 · 已知限制：占位（TODO 按 §5.2 页脚要求替换）</div>
+    <div class="tag">URL 可复现：<span>?pot=…&amp;L=…&amp;E=…&amp;r0=…&amp;k=…&amp;gam=…&amp;speed=…</span><br>
+    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
   </aside>
 </div>
-
 <script>
-/* ============================================================
- * 有效势与轨道稳定性（01-effective-potential）—— 交互实验模板
- * TODO 清单（实现模块时逐项替换）：
- *   1. PARAMS   参数定义（默认值 / 范围 / HUD 格式 / 物理提示）
- *   2. PRESETS  URL 预设（?preset=...，§4.2 要求至少一个）
- *   3. step()   物理积分（建议 RK4，§5.3；须监控守恒量漂移）
- *   4. render() 绘制与 HUD 更新（单位必须写清）
- *   5. SELFTEST ?selftest=1 断言（§5.4：至少 3 条，FAIL 须显示
- *      期望值、实际值、相对误差）
- * 约束：单文件、零外部依赖；不得发起网络请求或加载外部模块
- * （tools/check_html.py 强制检查）。
- * ============================================================ */
-(() => {
-  'use strict';
+'use strict';
+// ==================== 1) PARAMS ====================
+var DEFAULTS = {pot:'kepler', L:1.2, E:-0.30, r0:1.0, k:2, gam:0, speed:1};
+var RANGE = {L:[0.05,3], E:[-2,2], r0:[0.1,5], k:[-3,3], gam:[0,0.02], speed:[0.1,3]};
+var POT_NAMES = ['kepler','harm','gauss','pow'];
+var P = {pot:DEFAULTS.pot, L:DEFAULTS.L, E:DEFAULTS.E, r0:DEFAULTS.r0, k:DEFAULTS.k, gam:DEFAULTS.gam, speed:DEFAULTS.speed};
+var R_MIN = 0.05, R_SCAN = 12;
 
-  window.addEventListener('error', (e) => {
-    try {
-      let d = document.getElementById('errbox');
-      if (!d) {
-        d = document.createElement('div');
-        d.id = 'errbox';
-        d.style.cssText = 'position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap';
-        document.body.appendChild(d);
-      }
-      d.textContent = '脚本错误：' + (e.message || e.error);
-    } catch (_) {}
-  });
-
-  const cvs = document.getElementById('stage-canvas');
-  const ctx = cvs.getContext('2d');
-  let W = 0, H = 0, DPR = 1;
-
-  /* ---------- 1. 参数定义（TODO：替换为本模块参数） ---------- */
-  const PARAMS = {
-    a:     { def: 1.0, fmt: (v) => v.toFixed(2), hint: '占位参数 a' },
-    b:     { def: 0.5, fmt: (v) => v.toFixed(2), hint: '占位参数 b' },
-    speed: { def: 1.0, fmt: (v) => v.toFixed(1) + '×', hint: '动画速度' }
-  };
-  const state = {};
-  for (const k in PARAMS) state[k] = PARAMS[k].def;
-  state.paused = false;
-
-  /* ---------- 2. URL 预设（TODO：至少一个物理预设） ----------
-   * 解析顺序：先应用 preset，再让显式参数覆盖（?preset=default&a=1.5）；
-   * 非法值一律回退默认，不能白屏（§5.2）。 */
-  const PRESETS = {
-    default: { a: 1.0, b: 0.5 },    // 占位：默认预设
-    example: { a: 2.0, b: 0.25 }    // 占位：第二预设（改名并写明物理场景）
-  };
-
-  const q = new URLSearchParams(location.search);
-
-  function parseParam(k, raw) {
-    const v = parseFloat(raw);
-    return isFinite(v) ? v : PARAMS[k].def;   // 非法值回退默认
-  }
-
-  function applyPreset(name) {
-    if (!PRESETS[name]) return false;         // 未知预设忽略，保持默认
-    for (const k in PRESETS[name]) state[k] = PRESETS[name][k];
-    return true;
-  }
-
-  if (q.has('preset')) applyPreset(q.get('preset'));
-  for (const k in PARAMS) {
-    if (q.has(k)) state[k] = parseParam(k, q.get(k));
-  }
-  if (q.get('paused') === '1') state.paused = true;
-
-  /* ---------- 3. 占位物理：匀速圆周（TODO：替换为真实模型） ---------- */
-  let phase = 0;
-  function step(dt) {
-    phase += dt * state.speed * (0.2 + 0.3 * state.a);   // 占位：角速度与 a 相关
-  }
-
-  /* ---------- 4. 绘制与 HUD ---------- */
-  function resize() {
-    DPR = Math.min(2, window.devicePixelRatio || 1);
-    const rect = cvs.getBoundingClientRect();
-    W = rect.width; H = rect.height;
-    if (!(W > 0 && H > 0)) return;
-    cvs.width = Math.round(W * DPR);
-    cvs.height = Math.round(H * DPR);
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    render();
-  }
-  window.addEventListener('resize', resize);
-  window.addEventListener('load', resize);
-  if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(cvs);
-
-  function render() {
-    if (!(W > 0 && H > 0)) return;
-    ctx.clearRect(0, 0, W, H);
-    const g = ctx.createRadialGradient(W * 0.6, H * 0.35, 0, W * 0.6, H * 0.35, Math.max(W, H) * 0.9);
-    g.addColorStop(0, '#0b1428'); g.addColorStop(0.55, '#060a16'); g.addColorStop(1, '#02030a');
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-
-    // 占位场景：参数驱动的圆周运动示意（TODO：替换为本模块物理场景）
-    const cx = W * 0.5, cy = H * 0.5;
-    const R = Math.min(W, H) * (0.12 + 0.08 * state.b);
-    ctx.strokeStyle = 'rgba(120,160,255,.25)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
-    const x = cx + R * Math.cos(phase), y = cy + R * Math.sin(phase);
-    ctx.fillStyle = '#eaf3ff';
-    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
-
-    document.getElementById('hudQ1').textContent = state.a.toFixed(2);
-    document.getElementById('hudQ2').textContent = state.b.toFixed(2);
-    document.getElementById('hudState').textContent = state.paused ? '已暂停' : '运行中';
-  }
-
-  let last = performance.now();
-  function frame(now) {
-    const dt = Math.min(0.05, (now - last) / 1000);
-    last = now;
-    if (!state.paused) step(dt);
-    render();
-    requestAnimationFrame(frame);
-  }
-
-  /* ---------- 5. ?selftest=1 断言框架（§5.4） ----------
-   * 约定：不启动动画循环；结果写入 window.__selftest = {passed, failed, details}；
-   * 页面显示可读结果面板；FAIL 必须显示期望值、实际值、相对误差。
-   * TODO：把占位断言替换为本模块的物理断言（至少 3 条，§5.3）。 */
-  function runSelftest() {
-    const details = [];
-    const assert = (name, pass, detail) => {
-      details.push({ name: name, pass: !!pass, detail: detail || '' });
-    };
-
-    // 占位断言 1：非法参数回退默认（不白屏，§5.2）
-    const savedA = state.a;
-    state.a = parseParam('a', 'not-a-number');
-    assert('非法参数回退默认值', state.a === PARAMS.a.def,
-           '期望 a=' + PARAMS.a.def + '，实际 a=' + state.a);
-    state.a = savedA;
-
-    // 占位断言 2：预设存在性
-    assert('预设 default 已定义', PRESETS.default !== undefined,
-           '可用预设：' + Object.keys(PRESETS).join(', '));
-
-    // 占位断言 3：语法冒烟（TODO：替换为守恒量漂移等物理断言）
-    assert('占位冒烟断言 1+1=2', 1 + 1 === 2, '');
-
-    const passed = details.filter((r) => r.pass).length;
-    const failed = details.length - passed;
-    window.__selftest = { passed: passed, failed: failed, details: details };
-
-    const panel = document.getElementById('selftestPanel');
-    const lines = details.map((r) =>
-      (r.pass ? 'PASS ' : 'FAIL ') + r.name + (r.detail ? '  [' + r.detail + ']' : ''));
-    panel.hidden = false;
-    panel.className = 'selftest' + (failed ? ' fail' : '');
-    panel.innerHTML = '';
-    const h = document.createElement('h2');
-    h.textContent = 'selftest：' + passed + ' 通过 / ' + failed + ' 失败';
-    panel.appendChild(h);
-    const body = document.createElement('div');
-    body.textContent = lines.join('\n');
-    panel.appendChild(body);
-    return failed === 0;
-  }
-
-  /* ---------- 控件绑定 ---------- */
-  const el = {
-    a: document.getElementById('param-a'),
-    b: document.getElementById('param-b'),
-    speed: document.getElementById('param-speed')
-  };
-  const out = {
-    a: document.getElementById('val-a'),
-    b: document.getElementById('val-b'),
-    speed: document.getElementById('val-speed')
-  };
-  function sync() {
-    for (const k in el) {
-      state[k] = parseFloat(el[k].value);
-      out[k].textContent = PARAMS[k].fmt(state[k]);
+// ==================== 2) PRESETS + URL 同步 ====================
+var PRESETS = {
+  kepler:  {pot:'kepler', L:1.2,  E:-0.30,   r0:1.0,  gam:0,     speed:1},
+  circ:    {pot:'kepler', L:1.2,  E:-0.3472, r0:1.44, gam:0,     speed:1},
+  gauss:   {pot:'gauss',  L:1.0,  E:-0.50,   r0:1.0,  gam:0,     speed:1},
+  precess: {pot:'kepler', L:1.2,  E:-0.30,   r0:1.0,  gam:0.006, speed:1},
+  pow:     {pot:'pow',    L:1.0,  E:0.60,    r0:1.0,  k:2,       speed:1},
+  escape:  {pot:'kepler', L:0.8,  E:0.05,    r0:1.5,  gam:0,     speed:1}
+};
+function numOr(raw, def, range){
+  var v = parseFloat(raw);
+  if (isFinite(v) && v >= range[0] && v <= range[1]) return v;
+  return def;
+}
+function strOr(raw, def, allowed){
+  for (var i = 0; i < allowed.length; i++) if (raw === allowed[i]) return raw;
+  return def;
+}
+function loadFromURL(){
+  var q = {};
+  var s = window.location.search.replace(/^\?/, '');
+  if (s) {
+    var parts = s.split('&');
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split('=');
+      if (kv.length === 2) q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
     }
   }
-  for (const k in el) el[k].addEventListener('input', sync);
+  var base = DEFAULTS;
+  if (q.preset && PRESETS[q.preset]) base = PRESETS[q.preset];
+  P.pot   = strOr(q.pot, base.pot, POT_NAMES);
+  P.L     = numOr(q.L, base.L !== undefined ? base.L : DEFAULTS.L, RANGE.L);
+  P.E     = numOr(q.E, base.E !== undefined ? base.E : DEFAULTS.E, RANGE.E);
+  P.r0    = numOr(q.r0, base.r0 !== undefined ? base.r0 : DEFAULTS.r0, RANGE.r0);
+  P.k     = numOr(q.k, base.k !== undefined ? base.k : DEFAULTS.k, RANGE.k);
+  P.gam   = numOr(q.gam, base.gam !== undefined ? base.gam : DEFAULTS.gam, RANGE.gam);
+  P.speed = numOr(q.speed, base.speed !== undefined ? base.speed : DEFAULTS.speed, RANGE.speed);
+  return q;
+}
+function syncURL(){
+  var s = '?pot=' + P.pot + '&L=' + P.L + '&E=' + P.E + '&r0=' + P.r0 +
+          '&k=' + P.k + '&gam=' + P.gam + '&speed=' + P.speed;
+  if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
+}
 
-  // 把 URL 解析结果写回滑块（刷新后状态可复现，§5.2）
-  for (const k in el) el[k].value = String(state[k]);
-  sync();
+// ==================== 3) 物理：势、RK4、求根 ====================
+function Vbase(r){
+  if (P.pot === 'kepler') return -1 / r;
+  if (P.pot === 'harm')   return 0.5 * r * r;
+  if (P.pot === 'gauss')  return -Math.exp(-r * r);
+  var sgn = P.k < 0 ? -1 : 1;              // pow: V = beta r^k, beta = sign(k)
+  return sgn * Math.pow(r, P.k);
+}
+function dVbase(r){
+  if (P.pot === 'kepler') return 1 / (r * r);
+  if (P.pot === 'harm')   return r;
+  if (P.pot === 'gauss')  return 2 * r * Math.exp(-r * r);
+  var sgn = P.k < 0 ? -1 : 1;
+  return sgn * P.k * Math.pow(r, P.k - 1);
+}
+function Veff(r){ return Vbase(r) + P.L * P.L / (2 * r * r) + P.gam / (r * r * r); }
+function dVeff(r){ return dVbase(r) - P.L * P.L / (r * r * r) - 3 * P.gam / (r * r * r * r); }
+function d2Veff(r){ var h = 1e-5 * Math.max(1, r); return (dVeff(r + h) - dVeff(r - h)) / (2 * h); }
+function energy(s){ return 0.5 * s.vr * s.vr + Veff(s.r); }  // 动能含 rdot；θ 方向已并入 V_eff
 
-  document.getElementById('btn-pause').addEventListener('click', (ev) => {
-    state.paused = !state.paused;
-    ev.target.textContent = state.paused ? '继续' : '暂停';
-    render();
-  });
-  document.getElementById('btn-reset').addEventListener('click', () => {
-    phase = 0;
-    applyPreset('default');
-    for (const k in el) el[k].value = String(state[k]);
-    state.paused = false;
-    document.getElementById('btn-pause').textContent = '暂停';
-    sync();
-    render();
-  });
-  document.getElementById('btn-preset').addEventListener('click', () => {
-    applyPreset('default');
-    for (const k in el) el[k].value = String(state[k]);
-    sync();
-    render();
-  });
-
-  /* ---------- 启动：selftest 模式不进入动画循环（§5.4） ---------- */
-  resize();
-  if (q.get('selftest') === '1') {
-    runSelftest();
-  } else {
-    requestAnimationFrame((t) => { last = t; frame(t); });
+function accel(r){ return -dVeff(r); }
+function rk4(s, dt){
+  var k1r = s.vr,               k1v = accel(s.r),            k1t = P.L / (s.r * s.r);
+  var r2 = s.r + 0.5 * dt * k1r, v2 = s.vr + 0.5 * dt * k1v, t2 = s.th + 0.5 * dt * k1t;
+  var k2r = v2,                 k2v = accel(r2),             k2t = P.L / (r2 * r2);
+  var r3 = s.r + 0.5 * dt * k2r, v3 = s.vr + 0.5 * dt * k2v, t3 = s.th + 0.5 * dt * k2t;
+  var k3r = v3,                 k3v = accel(r3),             k3t = P.L / (r3 * r3);
+  var r4 = s.r + dt * k3r,      v4 = s.vr + dt * k3v,        t4 = s.th + dt * k3t;
+  var k4r = v4,                 k4v = accel(r4),             k4t = P.L / (r4 * r4);
+  return {
+    r:  s.r  + dt / 6 * (k1r + 2 * k2r + 2 * k3r + k4r),
+    vr: s.vr + dt / 6 * (k1v + 2 * k2v + 2 * k3v + k4v),
+    th: s.th + dt / 6 * (k1t + 2 * k2t + 2 * k3t + k4t)
+  };
+}
+function bisect(f, a, b){
+  var fa = f(a);
+  for (var i = 0; i < 90; i++) {
+    var m = 0.5 * (a + b);
+    if (fa * f(m) <= 0) b = m; else { a = m; fa = f(m); }
   }
-})();
+  return 0.5 * (a + b);
+}
+// 在 [R_MIN, R_SCAN] 上扫描 f 的变号点（等距，足够分辨低量子数结构）
+function scanRoots(f){
+  var n = 3000, roots = [], prevR = R_MIN, prevF = f(R_MIN);
+  for (var i = 1; i <= n; i++) {
+    var r = R_MIN + (R_SCAN - R_MIN) * i / n, fr = f(r);
+    if (isFinite(prevF) && isFinite(fr) && prevF * fr < 0) roots.push(bisect(f, prevR, r));
+    prevR = r; prevF = fr;
+  }
+  return roots;
+}
+function equilibria(){
+  var rs = scanRoots(dVeff), out = [];
+  for (var i = 0; i < rs.length; i++) out.push({r: rs[i], stable: d2Veff(rs[i]) > 0});
+  return out;
+}
+function turningPoints(){
+  var g = function(r){ return Veff(r) - P.E; };
+  return scanRoots(g);
+}
+function omegaRatio(rEq){
+  var w2 = d2Veff(rEq);
+  var wr = w2 > 0 ? Math.sqrt(w2) : NaN;
+  var wt = P.L / (rEq * rEq);
+  return {wr: wr, wt: wt, ratio: wr / wt};
+}
+// ==================== 4) 渲染与 HUD ====================
+var cv = document.getElementById('stage-canvas');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0;
+function resize(){
+  var dpr = window.devicePixelRatio || 1;
+  var rect = cv.getBoundingClientRect();
+  W = Math.max(80, Math.floor(rect.width));
+  H = Math.max(80, Math.floor(rect.height));
+  cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+var sim = {r:P.r0, vr:0, th:0, t:0};
+var trail = [], E0 = 0, simState = 'bound';
+var eqs = [], tps = [], freq = null;
+function recompute(){
+  eqs = equilibria(); tps = turningPoints();
+  freq = null;
+  for (var i = 0; i < eqs.length; i++) if (eqs[i].stable) { freq = omegaRatio(eqs[i].r); break; }
+}
+function initState(){
+  sim.r = P.r0; sim.th = 0; sim.t = 0;
+  var kin = 2 * (P.E - Veff(sim.r));
+  sim.vr = kin > 0 ? Math.sqrt(kin) : 0;
+  trail = [{r:sim.r, th:0}];
+  E0 = energy(sim); simState = 'bound';
+  recompute();
+}
+function viewR(){
+  var m = P.r0;
+  for (var i = 0; i < trail.length; i++) if (trail[i].r > m) m = trail[i].r;
+  if (sim.r > m) m = sim.r;
+  return Math.max(0.6, Math.min(m * 1.18, 30));
+}
+function eqsStableR(){
+  for (var i = 0; i < eqs.length; i++) if (eqs[i].stable) return eqs[i].r;
+  return NaN;
+}
+var particlePos = {x:0, y:0};
+function drawOrbitPanel(x0, x1){
+  var w = x1 - x0, h = H, cx = x0 + w / 2, cy = h / 2;
+  var sc = Math.min(w, h) * 0.44 / viewR();
+  var i, x, y;
+  var rEq = eqsStableR();
+  if (rEq === rEq){
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = 'rgba(140,220,160,.35)';
+    ctx.beginPath(); ctx.arc(cx, cy, rEq * sc, 0, 2 * Math.PI); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.fillStyle = '#ffcf6b';
+  ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2 * Math.PI); ctx.fill();
+  if (trail.length > 1){
+    ctx.strokeStyle = 'rgba(94,162,255,.5)'; ctx.lineWidth = 1.4; ctx.beginPath();
+    for (i = 0; i < trail.length; i++){
+      x = cx + trail[i].r * sc * Math.cos(trail[i].th);
+      y = cy - trail[i].r * sc * Math.sin(trail[i].th);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.lineWidth = 1;
+  }
+  x = cx + sim.r * sc * Math.cos(sim.th); y = cy - sim.r * sc * Math.sin(sim.th);
+  ctx.fillStyle = '#eaf2ff';
+  ctx.shadowColor = 'rgba(94,162,255,.9)'; ctx.shadowBlur = 12;
+  ctx.beginPath(); ctx.arc(x, y, 4.5, 0, 2 * Math.PI); ctx.fill();
+  ctx.shadowBlur = 0;
+  particlePos = {x:x, y:y};
+}
+function drawVeffPanel(x0, x1){
+  var ml = 46, mr = 16, mt = 24, mb = 30;
+  var pw = x1 - x0 - ml - mr, ph = H - mt - mb;
+  function xr(r){ return x0 + ml + pw * r / R_SCAN; }
+  var i, n = 480, r, v, vals = [], lo = Infinity, hi = -Infinity;
+  for (i = 0; i <= n; i++){
+    r = R_MIN + (R_SCAN - R_MIN) * i / n; v = Veff(r);
+    vals.push(isFinite(v) ? v : NaN);
+    if (isFinite(v)){ if (v < lo) lo = v; if (v > hi) hi = v; }
+  }
+  lo = Math.max(lo, P.E - 2, -10); hi = Math.min(hi, P.E + 8, 10);
+  if (!(hi > lo)) hi = lo + 1;
+  if (P.E < lo) lo = P.E;
+  if (P.E > hi) hi = P.E;
+  function yv(vv){ return mt + ph * (1 - (vv - lo) / (hi - lo)); }
+  for (i = 0; i < n; i++){
+    var a = vals[i], b = vals[i + 1];
+    if (a === a && b === b && a > P.E && b > P.E){
+      ctx.fillStyle = 'rgba(255,123,123,.07)';
+      ctx.fillRect(xr(R_MIN + (R_SCAN - R_MIN) * i / n), mt, pw / n + 1, ph);
+    }
+  }
+  ctx.strokeStyle = 'rgba(120,160,255,.25)';
+  ctx.beginPath(); ctx.moveTo(x0 + ml, yv(0)); ctx.lineTo(x1 - mr, yv(0)); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,207,107,.85)'; ctx.setLineDash([5, 4]);
+  ctx.beginPath(); ctx.moveTo(x0 + ml, yv(P.E)); ctx.lineTo(x1 - mr, yv(P.E)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 1.8; ctx.beginPath();
+  var started = false;
+  for (i = 0; i <= n; i++){
+    r = R_MIN + (R_SCAN - R_MIN) * i / n; v = vals[i];
+    if (v !== v || v < lo - 0.5 || v > hi + 0.5){ started = false; continue; }
+    if (!started){ ctx.moveTo(xr(r), yv(v)); started = true; } else ctx.lineTo(xr(r), yv(v));
+  }
+  ctx.stroke(); ctx.lineWidth = 1;
+  for (i = 0; i < eqs.length; i++){
+    ctx.fillStyle = eqs[i].stable ? '#7fe3a0' : '#ff7b7b';
+    ctx.beginPath(); ctx.arc(xr(eqs[i].r), yv(Veff(eqs[i].r)), 4, 0, 2 * Math.PI); ctx.fill();
+  }
+  for (i = 0; i < tps.length; i++){
+    ctx.strokeStyle = '#eaf2ff';
+    ctx.beginPath(); ctx.moveTo(xr(tps[i]), yv(P.E) - 6); ctx.lineTo(xr(tps[i]), yv(P.E) + 6); ctx.stroke();
+  }
+  if (sim.r <= R_SCAN){
+    ctx.strokeStyle = 'rgba(234,242,255,.35)';
+    ctx.beginPath(); ctx.moveTo(xr(sim.r), mt); ctx.lineTo(xr(sim.r), mt + ph); ctx.stroke();
+    var vc = Veff(sim.r);
+    if (isFinite(vc) && vc >= lo && vc <= hi){
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(xr(sim.r), yv(vc), 3, 0, 2 * Math.PI); ctx.fill();
+    }
+  }
+  ctx.fillStyle = '#8a98c0'; ctx.font = '11px ui-monospace,monospace';
+  for (i = 0; i <= 4; i++){
+    r = R_SCAN * i / 4;
+    ctx.fillText(String(r), xr(r) - 6, mt + ph + 16);
+  }
+  ctx.fillText('V_eff(r)', x0 + ml + 6, mt - 8);
+  ctx.fillText('r', x1 - mr + 2, yv(0) + 4);
+}
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  var split = Math.round(W * 0.52);
+  drawOrbitPanel(0, split);
+  drawVeffPanel(split, W);
+}
+function $(id){ return document.getElementById(id); }
+var hudT = $('hudT'), hudR = $('hudR'), hudTh = $('hudTh'), hudE = $('hudE');
+var hudWr = $('hudWr'), hudWt = $('hudWt'), hudDrift = $('hudDrift'), hudState = $('hudState');
+var noticeEl = $('notice');
+function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
+function setNotice(msg, bad){
+  if (!msg){ noticeEl.hidden = true; return; }
+  noticeEl.hidden = false;
+  noticeEl.className = bad ? 'notice bad' : 'notice';
+  noticeEl.textContent = msg;
+}
+function updateHUD(){
+  hudT.textContent = sim.t.toFixed(2);
+  hudR.textContent = fmt(sim.r, 3);
+  hudTh.textContent = fmt(sim.th % (2 * Math.PI), 2);
+  hudE.textContent = fmt(energy(sim), 4);
+  hudWr.textContent = freq ? fmt(freq.wr, 3) : '-';
+  hudWt.textContent = freq ? fmt(freq.wt, 3) : '-';
+  var dr = Math.abs(energy(sim) - E0) / Math.max(1e-12, Math.abs(E0));
+  hudDrift.textContent = dr < 1e-6 ? dr.toExponential(1) : dr.toFixed(4);
+  if (simState === 'escaped') hudState.textContent = '已逃逸';
+  else if (simState === 'singular') hudState.textContent = 'r→0 奇异';
+  else if (!tps.length) hudState.textContent = '非束缚';
+  else hudState.textContent = '束缚轨道';
+}
+// ==================== 5) 控件绑定 ====================
+var SL = [
+  ['param-L', 'val-L', 'L', 2], ['param-E', 'val-E', 'E', 2], ['param-r0', 'val-r0', 'r0', 2],
+  ['param-k', 'val-k', 'k', 2], ['param-gam', 'val-gam', 'gam', 4], ['param-speed', 'val-speed', 'speed', 1]
+];
+function refreshUI(){
+  for (var i = 0; i < SL.length; i++){
+    var s = $(SL[i][0]); s.value = P[SL[i][2]];
+    var t = Number(P[SL[i][2]]).toFixed(SL[i][3]);
+    if (SL[i][2] === 'speed') t += '×';
+    $(SL[i][1]).textContent = t;
+  }
+  $('sel-pot').value = P.pot;
+  $('param-k').disabled = P.pot !== 'pow';
+}
+function onParamChange(){ syncURL(); initState(); }
+function applyPreset(nm){
+  var pr = PRESETS[nm];
+  P.pot = pr.pot; P.L = pr.L; P.E = pr.E; P.r0 = pr.r0;
+  if (pr.gam !== undefined) P.gam = pr.gam;
+  if (pr.k !== undefined) P.k = pr.k;
+  if (pr.speed !== undefined) P.speed = pr.speed;
+  onParamChange(); refreshUI(); setNotice('');
+}
+function bindControls(){
+  for (var i = 0; i < SL.length; i++){
+    (function(nm){
+      $('param-' + nm).addEventListener('input', function(){
+        P[nm] = parseFloat(this.value); onParamChange(); refreshUI(); setNotice('');
+      });
+    })(SL[i][2]);
+  }
+  $('sel-pot').addEventListener('change', function(){
+    P.pot = this.value; onParamChange(); refreshUI(); setNotice('');
+  });
+  $('btn-reset').addEventListener('click', function(){ initState(); setNotice(''); });
+  var btnPause = $('btn-pause');
+  btnPause.addEventListener('click', function(){
+    running = !running;
+    btnPause.textContent = running ? '暂停' : '继续';
+  });
+  var names = ['kepler', 'circ', 'gauss', 'precess', 'pow', 'escape'];
+  for (var j = 0; j < names.length; j++){
+    (function(nm){
+      $('btn-p-' + nm).addEventListener('click', function(){ applyPreset(nm); });
+    })(names[j]);
+  }
+}
+// ==================== 6) 拖动设初始态 + 主循环 ====================
+var dragging = false, running = true, DT = 0.004;
+function orbitGeom(){
+  var split = Math.round(W * 0.52);
+  return {split: split, cx: split / 2, cy: H / 2, sc: Math.min(split, H) * 0.44 / viewR()};
+}
+function placeAt(px, py, g){
+  var dx = px - g.cx, dy = py - g.cy;
+  var r = Math.sqrt(dx * dx + dy * dy) / g.sc;
+  r = Math.min(Math.max(r, 0.08), 8);
+  sim.r = r; sim.th = Math.atan2(-dy, dx); sim.t = 0;
+  var kin = 2 * (P.E - Veff(r));
+  sim.vr = kin > 0 ? Math.sqrt(kin) : 0;
+  trail = [{r: sim.r, th: sim.th}];
+  E0 = energy(sim); simState = 'bound';
+  recompute();
+}
+cv.addEventListener('pointerdown', function(ev){
+  var rect = cv.getBoundingClientRect();
+  var px = ev.clientX - rect.left, py = ev.clientY - rect.top;
+  var g = orbitGeom();
+  if (px > g.split) return;
+  dragging = true;
+  if (cv.setPointerCapture) cv.setPointerCapture(ev.pointerId);
+  placeAt(px, py, g);
+});
+cv.addEventListener('pointermove', function(ev){
+  if (!dragging) return;
+  var rect = cv.getBoundingClientRect();
+  placeAt(ev.clientX - rect.left, ev.clientY - rect.top, orbitGeom());
+});
+cv.addEventListener('pointerup', function(){
+  if (!dragging) return;
+  dragging = false;
+  P.r0 = Math.min(Math.max(sim.r, RANGE.r0[0]), RANGE.r0[1]);
+  onParamChange(); refreshUI();
+});
+function frame(){
+  if (running && simState === 'bound' && !dragging){
+    var simDt = P.speed / 60;
+    var steps = Math.max(1, Math.round(simDt / DT)), h = simDt / steps, i;
+    for (i = 0; i < steps; i++){
+      sim = rk4(sim, h); sim.t += h;
+      if (!isFinite(sim.r) || !isFinite(sim.vr) || sim.r < 0.04){
+        simState = 'singular';
+        setNotice('r 趋于 0：势过强或 L 过小，请重置或增大 L。', true);
+        break;
+      }
+      if (sim.r > 14){
+        simState = 'escaped';
+        setNotice('r 超过 14：E 高于势垒，轨道已逃逸（请减小 E 或增大 L）。', true);
+        break;
+      }
+      trail.push({r: sim.r, th: sim.th});
+    }
+    if (trail.length > 4500) trail = trail.slice(-4000);
+  }
+  draw(); updateHUD();
+  requestAnimationFrame(frame);
+}
+// ==================== 7) SELFTEST（?selftest=1，5 项硬断言） ====================
+function stIntegrate(st, dt, tEnd){
+  var t = 0, E0 = energy(st), maxd = 0, prevVr = st.vr;
+  var crossT = [], n = Math.round(tEnd / dt);
+  for (var i = 0; i < n; i++){
+    st = rk4(st, dt); t += dt;
+    if (prevVr > 0 && st.vr <= 0) crossT.push(t);
+    prevVr = st.vr;
+    var d = Math.abs(energy(st) - E0) / Math.max(1e-12, Math.abs(E0));
+    if (d > maxd) maxd = d;
+  }
+  return {st: st, maxDrift: maxd, crossT: crossT};
+}
+function stRadialPeriod(res){
+  if (res.crossT.length < 3) return NaN;
+  var k = res.crossT.length, total = res.crossT[k - 1] - res.crossT[k - 3];
+  return total / 2;
+}
+function runSelftest(){
+  var saved = {pot: P.pot, L: P.L, E: P.E, r0: P.r0, k: P.k, gam: P.gam};
+  var details = [], passN = 0;
+  function T(name, ok, msg){
+    details.push({name: name, pass: !!ok, msg: msg});
+    if (ok) passN++;
+  }
+  function restore(){ P.pot = saved.pot; P.L = saved.L; P.E = saved.E; P.r0 = saved.r0; P.k = saved.k; P.gam = saved.gam; }
+  try {
+    // ST1 开普勒转折点解析精度 <1e-6
+    P.pot = 'kepler'; P.gam = 0; P.L = 1.2; P.E = -0.3;
+    var aK = -1 / (2 * P.E), eK = Math.sqrt(1 + 2 * P.E * P.L * P.L);
+    var roots = turningPoints();
+    var err1 = roots.length === 2 ? Math.abs(roots[0] - aK * (1 - eK)) : 9;
+    var err2 = roots.length === 2 ? Math.abs(roots[1] - aK * (1 + eK)) : 9;
+    T('ST1 kepler turning points', err1 < 1e-6 && err2 < 1e-6,
+      'roots=[' + roots.join(', ') + '] err=' + Math.max(err1, err2).toExponential(1));
+    // ST2 RK4 能量漂移 <1e-8 且径向周期 vs 开普勒 T=2*pi*a^{3/2} 误差 <1e-3
+    var st0 = {r: 1.5, vr: Math.sqrt(Math.max(0, 2 * (P.E - Veff(1.5)))), th: 0};
+    var res2 = stIntegrate(st0, 0.002, 48);
+    var Tr = stRadialPeriod(res2), Ta = 2 * Math.PI * Math.pow(aK, 1.5);
+    var perErr = Math.abs(Tr - Ta) / Ta;
+    T('ST2 RK4 drift+period', res2.maxDrift < 1e-8 && perErr < 1e-3,
+      'drift=' + res2.maxDrift.toExponential(1) + ' Tr=' + Tr.toFixed(5) + ' Ta=' + Ta.toFixed(5) + ' rel=' + perErr.toExponential(1));
+    // ST3 Bertrand 频率比：k=2 -> 2，kepler -> 1（容差 2%）
+    P.pot = 'harm'; P.L = 1.0;
+    var eqH = equilibria(), fH = null;
+    for (var i3 = 0; i3 < eqH.length; i3++) if (eqH[i3].stable) { fH = omegaRatio(eqH[i3].r); break; }
+    P.pot = 'kepler'; P.L = 1.2;
+    var eqK = equilibria(), fK = null;
+    for (var i4 = 0; i4 < eqK.length; i4++) if (eqK[i4].stable) { fK = omegaRatio(eqK[i4].r); break; }
+    T('ST3 Bertrand ratio (k=2:2, kepler:1)',
+      fH && fK && Math.abs(fH.ratio - 2) < 0.02 && Math.abs(fK.ratio - 1) < 0.02,
+      'ratio_harm=' + (fH ? fH.ratio.toFixed(4) : 'NA') + ' ratio_kep=' + (fK ? fK.ratio.toFixed(4) : 'NA'));
+    // ST4 高斯 Lmax=2*sqrt(2)/e≈1.0406：L=0.99 恰 1 稳定极小；L=1.05 无极值
+    P.pot = 'gauss';
+    P.L = 0.99;
+    var eqA = equilibria(), stabA = 0;
+    for (var i5 = 0; i5 < eqA.length; i5++) if (eqA[i5].stable) stabA++;
+    P.L = 1.05;
+    var eqB = equilibria();
+    var lmax = 2 * Math.SQRT2 / Math.E;
+    T('ST4 gauss Lmax=' + lmax.toFixed(4), stabA === 1 && eqB.length === 0,
+      'L=0.99: eq=' + eqA.length + ' stable=' + stabA + '; L=1.05: eq=' + eqB.length);
+    // ST5 gamma/r3 近圆进动：拱点角偏移与解析值 6*pi*gamma/L^4 一致（<5%）
+    P.pot = 'kepler'; P.gam = 0.006; P.L = 1.2;
+    var eqP = equilibria(), rEq = NaN, f5 = null;
+    for (var i6 = 0; i6 < eqP.length; i6++) if (eqP[i6].stable) { rEq = eqP[i6].r; f5 = omegaRatio(rEq); break; }
+    var shift5 = f5 ? Math.abs(2 * Math.PI * (f5.wt / f5.wr - 1)) : NaN;
+    var theo5 = 6 * Math.PI * P.gam / Math.pow(P.L, 4);
+    var ok5 = f5 && f5.wr > 0 && isFinite(shift5) && shift5 > 0.02 &&
+              Math.abs(shift5 - theo5) / theo5 < 0.05;
+    T('ST5 gamma/r3 precession = 6*pi*gam/L^4', ok5,
+      'shift=' + shift5.toFixed(4) + ' theo=' + theo5.toFixed(4));
+  } catch (e){
+    T('ST-EXC no exception', false, String(e));
+  }
+  restore();
+  return {passed: passN, failed: 5 - passN, details: details};
+}
+// ==================== 8) 启动 ====================
+var qURL = loadFromURL();
+if (qURL.selftest === '1'){
+  var rep = runSelftest();
+  window.__selftest = rep;
+  var stEl = $('selftestPanel');
+  stEl.hidden = false;
+  stEl.className = rep.failed ? 'selftest fail' : 'selftest';
+  var txt = 'SELFTEST ' + rep.passed + '/5 PASS';
+  for (var iB = 0; iB < rep.details.length; iB++){
+    var dB = rep.details[iB];
+    txt += '\n' + (dB.pass ? '[PASS] ' : '[FAIL] ') + dB.name + ' : ' + dB.msg;
+  }
+  stEl.textContent = txt;
+}
+resize(); initState(); refreshUI(); bindControls();
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>
