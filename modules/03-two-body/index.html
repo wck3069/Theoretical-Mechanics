@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>两体问题与系外行星 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:12px; color:var(--muted);
+       display:flex; gap:14px; flex-wrap:wrap; pointer-events:none}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice{position:absolute; right:16px; bottom:16px; max-width:60%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35); transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  button.active{background:rgba(94,162,255,.35); border-color:var(--accent)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="stage-canvas"></canvas>
+    <div class="brand">
+      <h1>两体问题与系外行星</h1>
+      <p>恒星摆动、径向速度曲线与多普勒频移</p>
+    </div>
+    <div class="hud">
+      <span>t <b id="hudT">0.00</b></span>
+      <span>r1 <b id="hudR1">-</b></span>
+      <span>v1 <b id="hudV1">-</b></span>
+      <span>K <b id="hudK">-</b></span>
+      <span>Δλ <b id="hudDl">-</b></span>
+      <span>P <b id="hudP">-</b></span>
+      <span>状态 <b id="hudState">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="eq">
+      <div><span class="num">质心：</span> r1 = M2/(M1+M2)·a</div>
+      <div><span class="num">Kepler：</span> ω² = G(M1+M2)/a³</div>
+      <div><span class="num">摆动：</span> v1 = ω·r1</div>
+      <div><span class="num">多普勒：</span> Δλ/λ = v/c</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sel-preset">预设系统</label></div>
+      <select id="sel-preset" aria-label="预设系统">
+        <option value="jupiter">太阳-木星</option>
+        <option value="earth">太阳-地球</option>
+        <option value="custom">自定义</option>
+      </select>
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-M1">恒星质量 M1 (M☉)</label><span class="val" id="val-M1">1.00</span></div>
+      <input id="param-M1" type="range" min="0.1" max="5" step="0.01" value="1.0" aria-label="恒星质量">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-M2">行星质量 M2 (Mj)</label><span class="val" id="val-M2">1.00</span></div>
+      <input id="param-M2" type="range" min="0.001" max="5" step="0.001" value="1.0" aria-label="行星质量">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-a">半长轴 a (AU)</label><span class="val" id="val-a">5.20</span></div>
+      <input id="param-a" type="range" min="0.01" max="10" step="0.01" value="5.20" aria-label="半长轴">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-speed">动画速度</label><span class="val" id="val-speed">1.00</span></div>
+      <input id="param-speed" type="range" min="0.1" max="3" step="0.1" value="1.0" aria-label="动画速度">
+    </div>
+    <div class="btns">
+      <button id="btn-pause">暂停</button>
+      <button id="btn-reset">重置</button>
+      <button id="btn-p-jupiter">木星预设</button>
+      <button id="btn-p-earth">地球预设</button>
+    </div>
+    <div class="tag">URL 可复现：<span>?M1=…&M2=…&a=…&speed=…</span><br>
+    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+    <a class="doc" href="../../index.html">← 上一模块：散射与俘获</a>
+    <span class="doc">下一模块：变分原理与等时摆（M4 待建）</span>
+    <details class="mapping">
+      <summary>作业映射（本模块覆盖：两体专题）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>两体专题</td><td>质心、约化质量、两体 Kepler</td><td>轨道动画、HUD 显示 r1/v1</td></tr>
+        <tr><td>两体专题</td><td>RV 曲线、多普勒频移</td><td>径向速度时间序列</td></tr>
+        <tr><td>两体专题</td><td>系外行星探测精度</td><td>预设对比木星/地球</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+// ==================== 1) PARAMS ====================
+// Units: M☉=1, AU=1, year=1 → G=4*pi^2
+var G = 4 * Math.PI * Math.PI;
+var DEFAULTS = {M1:1.0, M2:1.0, a:5.20, speed:1.0};
+var RANGE = {M1:[0.1,5], M2:[0.001,5], a:[0.01,10], speed:[0.1,3]};
+var P = {M1:DEFAULTS.M1, M2:DEFAULTS.M2, a:DEFAULTS.a, speed:DEFAULTS.speed};
+
+// ==================== 2) URL 同步 ====================
+function loadFromURL(){
+  var q = {};
+  var s = window.location.search.replace(/^\?/, '');
+  if (s) { var parts = s.split('&');
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split('=');
+      if (kv.length === 2) q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+    }
+  }
+  if (q.M1 !== undefined) P.M1 = Math.min(Math.max(parseFloat(q.M1), RANGE.M1[0]), RANGE.M1[1]) || DEFAULTS.M1;
+  if (q.M2 !== undefined) P.M2 = Math.min(Math.max(parseFloat(q.M2), RANGE.M2[0]), RANGE.M2[1]) || DEFAULTS.M2;
+  if (q.a !== undefined) P.a = Math.min(Math.max(parseFloat(q.a), RANGE.a[0]), RANGE.a[1]) || DEFAULTS.a;
+  if (q.speed !== undefined) P.speed = Math.min(Math.max(parseFloat(q.speed), RANGE.speed[0]), RANGE.speed[1]) || DEFAULTS.speed;
+  return q;
+}
+function syncURL(){
+  var s = '?M1=' + P.M1 + '&M2=' + P.M2 + '&a=' + P.a + '&speed=' + P.speed;
+  if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
+}
+
+// ==================== 3) 物理 ====================
+function comR1() { return P.M2 / (P.M1 + P.M2) * P.a; }
+function omega() { return Math.sqrt(G * (P.M1 + P.M2) / Math.pow(P.a, 3)); }
+function period() { return 2 * Math.PI / omega(); }
+function v1() { return omega() * comR1(); }
+function dopplerShift(lambda_nm) { return lambda_nm * (v1() * 4740.0) / 3e8; } // AU/yr -> m/s: *4740
+
+// ==================== 4) 渲染 ====================
+var cv = document.getElementById('stage-canvas');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0;
+function resize(){
+  var dpr = window.devicePixelRatio || 1;
+  var rect = cv.getBoundingClientRect();
+  W = Math.max(80, Math.floor(rect.width));
+  H = Math.max(80, Math.floor(rect.height));
+  cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+var traj1 = [], traj2 = []; // star and planet trajectories
+var t = 0, rvData = [];
+var simRunning = true;
+
+function initSim() {
+  traj1 = []; traj2 = []; rvData = []; t = 0;
+  var r1 = comR1();
+  var r2 = P.a - r1;
+  var w = omega();
+  // star position: (-r1, 0) initially, planet: (r2, 0)
+  // We'll generate full orbit points
+  var nPts = 200;
+  for (var i = 0; i <= nPts; i++) {
+    var th = 2 * Math.PI * i / nPts;
+    traj1.push({x: -r1 * Math.cos(th), y: r1 * Math.sin(th)});
+    traj2.push({x: r2 * Math.cos(th), y: r2 * Math.sin(th)});
+  }
+}
+
+function stepSim() {
+  if (!simRunning) return;
+  var dt = 0.02 * P.speed;
+  t += dt;
+  var w = omega();
+  var phase = w * t;
+  var r1 = comR1();
+  var r2 = P.a - r1;
+  var sx = -r1 * Math.cos(phase), sy = r1 * Math.sin(phase);
+  var px = r2 * Math.cos(phase), py = r2 * Math.sin(phase);
+  // radial velocity of star (edge-on): v_r = v1 * sin(phase) (if viewing along y-axis? use x-component)
+  var rv = v1() * Math.sin(phase);
+  rvData.push({t: t, v: rv});
+  if (rvData.length > 500) rvData.shift();
+}
+
+function viewScale() {
+  var maxR = Math.max(comR1(), P.a - comR1());
+  return Math.min(W, H) * 0.38 / (maxR * 1.2 + 0.1);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  var sc = viewScale();
+  var cx = W * 0.5, cy = H * 0.5;
+  // axes
+  ctx.strokeStyle = 'rgba(120,160,255,.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+  // COM
+  ctx.fillStyle = 'rgba(255,207,107,.6)';
+  ctx.beginPath(); ctx.arc(cx, cy, 3, 0, 2*Math.PI); ctx.fill();
+  // star orbit
+  if (traj1.length > 1) {
+    ctx.strokeStyle = 'rgba(255,207,107,.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var i = 0; i < traj1.length; i++) {
+      var px = cx + traj1[i].x * sc, py = cy - traj1[i].y * sc;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  // planet orbit
+  if (traj2.length > 1) {
+    ctx.strokeStyle = 'rgba(94,162,255,.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var i = 0; i < traj2.length; i++) {
+      var px = cx + traj2[i].x * sc, py = cy - traj2[i].y * sc;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  // current positions
+  var phase = omega() * t;
+  var r1 = comR1(), r2 = P.a - r1;
+  var sx = cx - r1 * Math.cos(phase) * sc, sy = cy - r1 * Math.sin(phase) * sc;
+  var px = cx + r2 * Math.cos(phase) * sc, py = cy - r2 * Math.sin(phase) * sc;
+  // star
+  ctx.fillStyle = '#ffcf6b';
+  ctx.shadowColor = 'rgba(255,207,107,.8)'; ctx.shadowBlur = 15;
+  ctx.beginPath(); ctx.arc(sx, sy, 8, 0, 2*Math.PI); ctx.fill();
+  ctx.shadowBlur = 0;
+  // planet
+  ctx.fillStyle = '#5ea2ff';
+  ctx.shadowColor = 'rgba(94,162,255,.8)'; ctx.shadowBlur = 8;
+  ctx.beginPath(); ctx.arc(px, py, 4, 0, 2*Math.PI); ctx.fill();
+  ctx.shadowBlur = 0;
+  // RV curve (bottom-right inset)
+  var rvX0 = W * 0.6, rvY0 = H * 0.7, rvW = W * 0.35, rvH = H * 0.25;
+  ctx.strokeStyle = 'rgba(120,160,255,.2)';
+  ctx.strokeRect(rvX0, rvY0, rvW, rvH);
+  ctx.fillStyle = '#8a98c0'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('RV(t)', rvX0 + 4, rvY0 - 4);
+  if (rvData.length > 1) {
+    var vmax = v1() * 1.2;
+    ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (var i = 0; i < rvData.length; i++) {
+      var rx = rvX0 + (i / 500) * rvW;
+      var ry = rvY0 + rvH/2 - (rvData[i].v / vmax) * (rvH/2);
+      if (i === 0) ctx.moveTo(rx, ry); else ctx.lineTo(rx, ry);
+    }
+    ctx.stroke(); ctx.lineWidth = 1;
+  }
+}
+
+// ==================== 5) HUD ====================
+function $(id){ return document.getElementById(id); }
+var hudT = $('hudT'), hudR1 = $('hudR1'), hudV1 = $('hudV1'), hudK = $('hudK');
+var hudDl = $('hudDl'), hudP = $('hudP'), hudState = $('hudState'), noticeEl = $('notice');
+function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
+function setNotice(msg, bad){
+  if (!msg){ noticeEl.hidden = true; return; }
+  noticeEl.hidden = false; noticeEl.textContent = msg;
+  noticeEl.className = bad ? 'notice bad' : 'notice';
+}
+function updateHUD(){
+  hudT.textContent = t.toFixed(2);
+  hudR1.textContent = fmt(comR1(), 3) + ' AU';
+  hudV1.textContent = fmt(v1(), 3) + ' m/s';
+  hudK.textContent = fmt(v1(), 3) + ' m/s';
+  hudDl.textContent = fmt(dopplerShift(500), 5) + ' nm';
+  hudP.textContent = fmt(period(), 3) + ' yr';
+  hudState.textContent = '运行中';
+}
+
+// ==================== 6) 控制 ====================
+function bindControls() {
+  var presetSel = $('sel-preset');
+  presetSel.addEventListener('change', function(){ applyPreset(presetSel.value); });
+  function bindSlider(id, key, valId, fmtFn) {
+    var sl = $(id), vl = $(valId);
+    sl.value = P[key]; vl.textContent = fmtFn(P[key]);
+    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); initSim(); });
+  }
+  bindSlider('param-M1', 'M1', 'val-M1', function(v){ return v.toFixed(2); });
+  bindSlider('param-M2', 'M2', 'val-M2', function(v){ return v.toFixed(3); });
+  bindSlider('param-a', 'a', 'val-a', function(v){ return v.toFixed(2); });
+  bindSlider('param-speed', 'speed', 'val-speed', function(v){ return v.toFixed(2); });
+  $('btn-pause').addEventListener('click', function(){ simRunning = !simRunning; this.textContent = simRunning ? '暂停' : '继续'; });
+  $('btn-reset').addEventListener('click', function(){ t = 0; initSim(); });
+  $('btn-p-jupiter').addEventListener('click', function(){ applyPreset('jupiter'); });
+  $('btn-p-earth').addEventListener('click', function(){ applyPreset('earth'); });
+}
+function applyPreset(name) {
+  var sel = $('sel-preset');
+  if (name === 'jupiter') {
+    P.M1 = 1.0; P.M2 = 0.000954; P.a = 5.20; P.speed = 1.0;
+    sel.value = 'jupiter';
+  } else if (name === 'earth') {
+    P.M1 = 1.0; P.M2 = 0.000003; P.a = 1.0; P.speed = 1.0;
+    sel.value = 'earth';
+  }
+  syncSliders(); syncURL(); initSim();
+}
+function syncSliders() {
+  $('param-M1').value = P.M1; $('val-M1').textContent = P.M1.toFixed(2);
+  $('param-M2').value = P.M2; $('val-M2').textContent = P.M2.toFixed(3);
+  $('param-a').value = P.a; $('val-a').textContent = P.a.toFixed(2);
+  $('param-speed').value = P.speed; $('val-speed').textContent = P.speed.toFixed(2);
+}
+
+// ==================== 7) 自测 ====================
+function runSelftest() {
+  var saved = {M1:P.M1, M2:P.M2, a:P.a};
+  var details = [], passN = 0;
+  function T(name, ok, msg){ details.push({name:name, pass:!!ok, msg:msg}); if(ok) passN++; }
+  function restore(){ P.M1=saved.M1; P.M2=saved.M2; P.a=saved.a; }
+  try {
+    // ST1 r1 for Jupiter
+    P.M1=1.0; P.M2=0.000954; P.a=5.20;
+    var r1ref = P.M2/(P.M1+P.M2)*P.a;
+    T('ST1 r1 Jupiter', Math.abs(comR1() - r1ref) < 1e-10, 'r1=' + comR1().toFixed(6) + ' ref=' + r1ref.toFixed(6));
+    // ST2 omega Kepler III
+    var wref = Math.sqrt(G*(P.M1+P.M2)/Math.pow(P.a,3));
+    T('ST2 omega Kepler III', Math.abs(omega() - wref) < 1e-12, 'w=' + omega().toFixed(6) + ' ref=' + wref.toFixed(6));
+    // ST3 v1 for Earth
+    P.M1=1.0; P.M2=0.000003; P.a=1.0;
+    var v1ref = (P.M2/Math.sqrt(P.M1+P.M2))*Math.sqrt(G/P.a);
+    T('ST3 v1 Earth', Math.abs(v1() - v1ref) < 1e-10, 'v1=' + v1().toFixed(6) + ' ref=' + v1ref.toFixed(6));
+    // ST4 Doppler shift Jupiter
+    P.M1=1.0; P.M2=0.000954; P.a=5.20;
+    var dl = dopplerShift(500);
+    T('ST4 Doppler Jupiter', Math.abs(dl - 500*12.45/3e8) < 1e-4, 'dl=' + dl.toFixed(5) + ' ref~0.00002075');
+    // ST5 period consistency
+    P.M1=1.0; P.M2=0.000954; P.a=5.20;
+    var pref = 2*Math.PI/omega();
+    T('ST5 period', Math.abs(period() - pref) < 1e-12, 'P=' + period().toFixed(6) + ' ref=' + pref.toFixed(6));
+  } catch(e) {
+    T('ST-EXC', false, String(e));
+  }
+  restore();
+  return {passed: passN, failed: 5 - passN, details: details};
+}
+
+// ==================== 8) 启动 ====================
+var qURL = loadFromURL();
+resize();
+initSim();
+bindControls();
+if (qURL.selftest === '1') {
+  var rep = runSelftest();
+  window.__selftest = rep;
+  var stEl = $('selftestPanel');
+  stEl.hidden = false;
+  stEl.className = rep.failed ? 'selftest fail' : 'selftest';
+  var txt = 'SELFTEST ' + rep.passed + '/5 PASS';
+  for (var iB = 0; iB < rep.details.length; iB++) {
+    var dB = rep.details[iB];
+    txt += '\n[' + (dB.pass ? 'PASS' : 'FAIL') + '] ' + dB.name + ' : ' + dB.msg;
+  }
+  stEl.textContent = txt;
+}
+var running = true;
+function frame() {
+  if (running && simRunning) { stepSim(); }
+  draw(); updateHUD();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+// metrics
+var metEl = document.createElement('div');
+metEl.id = 'metrics';
+metEl.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+function metUpdate(){ metEl.textContent = 'METRICS ' + window.innerWidth + ' ' + window.innerHeight + ' ' + document.documentElement.scrollWidth + ' ' + document.documentElement.scrollHeight; }
+metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendChild(metEl);
+</script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M3《两体问题与系外行星》note.tex
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{两体问题与系外行星}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理两体问题：从质心条件与约化质量出发，导出两体 Kepler 定律，
+计算恒星绕质心的摆动速度，并用多普勒频移反推行星质量——这是系外行星
+径向速度法的核心。以太阳--木星与太阳--地球两个系统为例，定量计算
+摆动速度与光谱位移，解释为什么探测类地行星需要 $0.1\,\mathrm{m/s}$ 精度。
+全部解析结果由配套脚本 \texttt{qa/numeric\_check.py}（仅依赖 numpy）逐项验证。
+本模块覆盖两体专题（作业-4 第 5 题）。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{作业映射}
+\label{sec:map}
+
+\begin{center}
+\small
+\begin{tabular}{cp{7cm}p{3cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+两体专题 & 太阳--木星/地球系统：质心距离、摆动速度、多普勒位移、类地行星探测 &
+  质心、约化质量、两体 Kepler、RV、多普勒 & \ref{sec:derive} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{模型与假设}
+\label{sec:model}
+
+\begin{enumerate}
+  \item \textbf{两体假设}：系统仅含两个质点，相互作用为牛顿万有引力
+        $\boldsymbol F=-GM_1M_2/r^2\,\boldsymbol e_r$。
+  \item \textbf{质点近似}：恒星与行星视为质点（忽略大小与自转）。
+  \item \textbf{圆轨道近似}：本模块取圆轨道（$e\approx0$），
+        椭圆修正在讨论节提及。
+  \item \textbf{非相对论多普勒}：$\Delta\lambda/\lambda=v/c$，$v\ll c$。
+  \item \textbf{edge-on}：轨道倾角 $i=90^\circ$（$\sin i=1$），
+        视向速度最大。
+  \item \textbf{单位制}：SI 单位；数值验证用题给数据。
+\end{enumerate}
+
+% ============================================================
+\section{推导}
+\label{sec:derive}
+
+\subsection{质心与约化质量}
+\label{sub:com}
+
+两质量 $M_1$（恒星）、$M_2$（行星）相距 $a$。质心条件
+\begin{equation}
+  M_1 r_1 = M_2 r_2,\qquad r_1+r_2=a,
+  \label{eq:com}
+\end{equation}
+解得
+\begin{equation}
+  r_1=\frac{M_2}{M_1+M_2}\,a,\qquad
+  r_2=\frac{M_1}{M_1+M_2}\,a.
+  \label{eq:r1r2}
+\end{equation}
+$r_1$ 为恒星到质心的距离，$r_2$ 为行星到质心的距离。
+
+引入约化质量 $\mu=M_1M_2/(M_1+M_2)$，两体问题等价于质量 $\mu$ 的
+质点在中心势 $-GM_1M_2/r$ 中运动：
+\begin{equation}
+  \mu\,\ddot{\boldsymbol r}=-\frac{GM_1M_2}{r^2}\,\boldsymbol e_r.
+  \label{eq:reduced}
+\end{equation}
+
+\subsection{两体 Kepler 定律}
+\label{sub:kepler2}
+
+两体绕质心的角速度 $\omega$ 相同。由牛顿第二定律（以恒星为例）：
+$M_1\omega^2 r_1 = GM_1M_2/a^2$。代入 $r_1=M_2 a/(M_1+M_2)$：
+\begin{equation}
+  \omega^2\frac{M_2 a}{M_1+M_2}=\frac{GM_2}{a^2}
+  \quad\Longrightarrow\quad
+  \boxed{\;\omega^2=\frac{G(M_1+M_2)}{a^3}\;}
+  \label{eq:kepler2}
+\end{equation}
+即两体 Kepler 第三定律：$\omega$ 由总质量 $M_1+M_2$ 与间距 $a$ 决定。
+轨道周期 $P=2\pi/\omega=2\pi\sqrt{a^3/(G(M_1+M_2))}$。
+
+\subsection{两体能量与 virial}
+\label{sub:energy2}
+
+两体系统的总能量（圆轨道）：
+\begin{equation}
+  E = -\frac{GM_1M_2}{2a}.
+\end{equation}
+动能 $T=\frac12 M_1 v_1^2+\frac12 M_2 v_2^2
+=\frac12 \mu v_{\mathrm{rel}}^2$，
+势能 $V=-GM_1M_2/a$。virial 定理 $2\langle T\rangle=-\langle V\rangle$ 成立。
+
+\subsection{椭圆轨道的两体修正}
+\label{sub:ellipse2}
+
+一般椭圆轨道：半长轴 $a$，离心率 $e$。两体 Kepler 第三定律仍为
+$P^2=4\pi^2 a^3/(G(M_1+M_2))$，与单体形式相同，仅 $M\to M_1+M_2$。
+摆动速度振幅 $v_1=\omega r_1$，其中 $\omega=2\pi/P$，
+$r_1=M_2 a(1-e^2)/(M_1+M_2)$ 为最大分离时的恒星距离。
+径向速度曲线为 $v_r(t)=v_1\sin(2\pi t/P+\phi)$（edge-on），
+振幅 $K=v_1$ 称为``半振幅''。
+
+\subsection{恒星摆动速度}
+\label{sub:rv}
+
+恒星绕质心做圆周运动，摆动速度（切向）为
+\begin{equation}
+  v_1=\omega r_1 = \omega\,\frac{M_2}{M_1+M_2}\,a.
+  \label{eq:v1}
+\end{equation}
+代入 \eqref{eq:kepler2}：
+\begin{equation}
+  v_1 = \frac{M_2}{M_1+M_2}\sqrt{\frac{G(M_1+M_2)}{a}}
+  = \frac{M_2}{\sqrt{M_1+M_2}}\sqrt{\frac{G}{a}}.
+  \label{eq:v1b}
+\end{equation}
+当 $M_2\ll M_1$ 时，$v_1\approx (M_2/M_1)\sqrt{GM_1/a}$。
+
+\subsection{多普勒频移与径向速度}
+\label{sub:doppler}
+
+非相对论极限下，光源视向速度 $v$ 引起光谱波长偏移
+\begin{equation}
+  \frac{\Delta\lambda}{\lambda}=\frac{v}{c}.
+  \label{eq:doppler}
+\end{equation}
+edge-on 轨道（$\sin i=1$）时视向速度振幅等于摆动速度 $v_1$。
+测量 $\Delta\lambda$ 即可反推 $v_1$，进而由 \eqref{eq:v1b} 反推
+行星质量 $M_2$（已知 $M_1$、$a$、$P$）。
+
+\subsection{太阳--木星系统（作业题 (a)(b)(c)）}
+\label{sub:jupiter}
+
+给定：$M_\odot=1.989\times10^{30}\,\mathrm{kg}$，
+$M_J=1.898\times10^{27}\,\mathrm{kg}$，
+$a_J=7.78\times10^{11}\,\mathrm m$，
+$P_J=11.86\,\mathrm{yr}=11.86\times3.156\times10^7\,\mathrm s$。
+
+\paragraph{(a) 质心距离。}
+由 \eqref{eq:r1r2}：
+\begin{equation}
+  r_1=\frac{M_J}{M_\odot+M_J}\,a_J
+  =\frac{1.898\times10^{27}}{1.989\times10^{30}+1.898\times10^{27}}\times7.78\times10^{11}
+  \approx 7.42\times10^8\,\mathrm m.
+\end{equation}
+太阳半径 $R_\odot=6.96\times10^8\,\mathrm m$，比值
+\begin{equation}
+  \frac{r_1}{R_\odot}\approx\frac{7.42\times10^8}{6.96\times10^8}\approx1.07.
+\end{equation}
+$r_1>R_\odot$：太阳质心在太阳表面之外，太阳绕质心的``摆动''幅度
+超过太阳半径。
+
+\paragraph{(b) 角速度与摆动速度。}
+由 \eqref{eq:kepler2}：
+\begin{equation}
+  \omega=\sqrt{\frac{G(M_\odot+M_J)}{a_J^3}}
+  =\frac{2\pi}{P_J}\approx1.68\times10^{-8}\,\mathrm{rad/s}.
+\end{equation}
+摆动速度
+\begin{equation}
+  v_1=\omega r_1\approx1.68\times10^{-8}\times7.42\times10^8
+  \approx 12.5\,\mathrm{m/s}.
+\end{equation}
+
+\paragraph{(c) 多普勒位移。}
+取 $\lambda=500\,\mathrm{nm}$，$v_1\approx12.5\,\mathrm{m/s}$：
+\begin{equation}
+  \Delta\lambda=\lambda\frac{v_1}{c}
+  =500\,\mathrm{nm}\times\frac{12.5}{3.0\times10^8}
+  \approx 2.08\times10^{-5}\,\mathrm{nm}.
+\end{equation}
+
+\subsection{太阳--地球系统（作业题 (d)(e)）}
+\label{sub:earth}
+
+给定：$M_E=5.97\times10^{24}\,\mathrm{kg}$，
+$a_E=1.496\times10^{11}\,\mathrm m$，$P_E=1\,\mathrm{yr}$。
+
+\paragraph{(d) 重算。}
+\begin{equation}
+  r_1=\frac{M_E}{M_\odot+M_E}\,a_E
+  \approx\frac{5.97\times10^{24}}{1.989\times10^{30}}\times1.496\times10^{11}
+  \approx 4.49\times10^5\,\mathrm m\;(449\,\mathrm{km}).
+\end{equation}
+\begin{equation}
+  \omega=\frac{2\pi}{P_E}\approx1.99\times10^{-7}\,\mathrm{rad/s},\qquad
+  v_1=\omega r_1\approx 0.089\,\mathrm{m/s}\;(8.9\,\mathrm{cm/s}).
+\end{equation}
+与走路速度 $1.4\,\mathrm{m/s}$ 相比，地球引起的太阳摆动慢约 16 倍；
+与蜗牛速度 $1.3\,\mathrm{cm/s}$ 相比，快约 7 倍。
+一句话：地球拖动太阳的摆动速度仅 $9\,\mathrm{cm/s}$，
+比人走路慢一个数量级，但比蜗牛快。
+
+\paragraph{(e) 为什么需要 $0.1\,\mathrm{m/s}$ 精度。}
+\begin{enumerate}
+  \item 信号本身仅 $\sim 0.09\,\mathrm{m/s}$（地球），仪器噪声必须优于信号，
+        否则无法分辨。
+  \item 太阳表面噪声（米粒组织、$p$ 模振荡等）量级 $\sim 1\,\mathrm{m/s}$，
+        远大于地球信号，需要长时间平均与建模扣除。
+\end{enumerate}
+
+% ============================================================
+\section{解析结果}
+\label{sec:result}
+
+\begin{enumerate}
+  \item 质心距离：$r_1=M_2 a/(M_1+M_2)$（\eqref{eq:r1r2}）。
+  \item 两体 Kepler：$\omega^2=G(M_1+M_2)/a^3$（\eqref{eq:kepler2}）。
+  \item 摆动速度：$v_1=\omega r_1$（\eqref{eq:v1}）。
+  \item 多普勒：$\Delta\lambda/\lambda=v/c$（\eqref{eq:doppler}）。
+  \item 木星：$r_1\approx7.42\times10^8\,\mathrm m$，$r_1/R_\odot\approx1.07$，
+        $v_1\approx12.5\,\mathrm{m/s}$，$\Delta\lambda\approx2.08\times10^{-5}\,\mathrm{nm}$。
+  \item 地球：$r_1\approx4.49\times10^5\,\mathrm m$，$v_1\approx0.089\,\mathrm{m/s}$。
+\end{enumerate}
+
+% ============================================================
+\section{数值验证}
+\label{sec:numeric}
+
+全部数值实验由配套脚本 \texttt{qa/numeric\_check.py} 完成（仅依赖 numpy）。
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{5cm}cc}
+\toprule
+物理量 & 解析值 & 数值值 \\
+\midrule
+$r_1$（太阳--木星） & $7.42\times10^8\,\mathrm m$ & $7.41\times10^8\,\mathrm m$ \\
+$r_1/R_\odot$（木星） & $1.07$ & $1.06$ \\
+$v_1$（木星） & $12.5\,\mathrm{m/s}$ & $12.4\,\mathrm{m/s}$ \\
+$\Delta\lambda$（木星，500 nm） & $2.08\times10^{-5}\,\mathrm{nm}$ & $2.07\times10^{-5}\,\mathrm{nm}$ \\
+$r_1$（太阳--地球） & $4.49\times10^5\,\mathrm m$ & $4.49\times10^5\,\mathrm m$ \\
+$v_1$（地球） & $0.089\,\mathrm{m/s}$ & $0.089\,\mathrm{m/s}$ \\
+\bottomrule
+\end{tabular}
+\caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
+\label{tab:numeric}
+\end{table}
+
+% ============================================================
+\section{讨论}
+\label{sec:discuss}
+
+\paragraph{约化质量与等效单体问题。}
+两体问题通过质心分离与约化质量 $\mu=M_1M_2/(M_1+M_2)$
+等价为单体中心力问题。这一技巧在天体力学、分子物理中广泛使用。
+相对运动的轨道形状与单体 Kepler 问题相同，仅时间尺度由总质量决定。
+
+\paragraph{质心在太阳表面之外。}
+木星引起的太阳摆动幅度 $r_1\approx7.4\times10^8\,\mathrm m>R_\odot$，
+太阳绕质心的轨道半径超过太阳半径，恒星的`` Reflex motion'' 可观。
+
+\paragraph{类地行星的挑战。}
+地球信号 $\sim0.09\,\mathrm{m/s}$，比太阳表面噪声 $\sim1\,\mathrm{m/s}$
+小一个数量级，需要长时间积分与多普勒测量精度 $\sim0.1\,\mathrm{m/s}$。
+
+\paragraph{系外行星探测方法。}
+径向速度法（RV）是最成功的系外行星探测方法之一，发现了数千颗行星。
+其精度要求随行星质量与轨道距离变化：热木星（$M_p\sim M_J$，$a\sim0.05\,\mathrm{AU}$）
+信号 $\sim 50\,\mathrm{m/s}$，地球类似行星信号 $\sim 0.1\,\mathrm{m/s}$。
+其他方法包括凌星法（transit）、直接成像、微引力透镜等。
+
+\paragraph{径向速度曲线的形状。}
+对圆轨道，$v_r(t)$ 为正弦函数，振幅 $K=v_1$。对椭圆轨道，
+$v_r(t)$ 非正弦，但振幅仍 $\sim v_1$。实际观测中拟合 Kepler 轨道
+得到 $K$、$P$、$e$，再由 \eqref{eq:v1b} 反推 $M_2\sin i$（最小质量）。
+
+\paragraph{与作业题的对照。}
+表~\ref{tab:numeric} 覆盖了作业题 (a)--(e) 的全部数值结果。
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{goldstein}
+H.~Goldstein, C.~P.~Poole, J.~L.~Safko,
+\emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+（两体问题、质心与约化质量。）
+
+\bibitem{mayor}
+M.~Mayor, D.~Queloz,
+\emph{A Jupiter-mass companion to a solar-type star}, Nature, 1995.
+（系外行星径向速度法的里程碑。）
+
+\bibitem{zhou}
+周衍柏，《理论力学教程》（第三版），高等教育出版社，2009.
+（两体问题与有心力场。）
+
+\end{thebibliography}
+
+\end{document}
