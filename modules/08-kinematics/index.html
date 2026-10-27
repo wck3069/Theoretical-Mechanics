@@ -284,7 +284,7 @@ function runSelftest() {
     T('ST2 cos detach=2/3', Math.abs(Math.cos(detachAngle()*Math.PI/180) - 2/3) < 1e-9, 'cos=' + Math.cos(detachAngle()*Math.PI/180).toFixed(6));
     // ST3 pendulum correction
     var corr = (10 * Math.PI / 180) * (10 * Math.PI / 180) / 16;
-    T('ST3 pendulum correction', Math.abs(corr - 0.001904) < 1e-5, 'corr=' + corr.toFixed(6) + ' ref=0.001904');
+    T('ST3 pendulum correction', Math.abs(corr - 0.000625) < 1e-6, 'corr=' + corr.toFixed(6) + ' ref=0.000625');
     // ST4 pendulum period
     P.L = 1.0; P.g = 1.0; P.theta0 = 10;
     var Tp = pendulumPeriod(P.L, P.g, P.theta0);

@@ -92,9 +92,22 @@
   </header>
 
   <nav class="filters" id="filters" aria-label="按里程碑筛选"></nav>
+  <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <input id="search" type="search" placeholder="搜索模块标题、标签、来源..." aria-label="搜索模块"
+      style="flex:1;min-width:200px;padding:8px 12px;border-radius:9px;border:1px solid rgba(94,162,255,.35);background:#111a33;color:#cfdcff;font:inherit;font-size:13px">
+    <nav class="filters" id="tagFilters" aria-label="按标签筛选" style="margin-bottom:0"></nav>
+  </div>
 
   <main class="grid" id="grid"></main>
   <noscript><p style="color:#ffd7d7;font-size:14px">需要启用 JavaScript 才能显示模块目录。</p></noscript>
+
+  <section style="margin-top:30px;padding:16px 20px;border:1px solid var(--line);border-radius:12px;background:rgba(10,16,32,.5)">
+    <h2 style="margin:0 0 10px;font-size:16px;color:var(--accent2)">学习路径</h2>
+    <p style="margin:0;font-size:13px;color:var(--muted);line-height:1.8">
+      推荐顺序：M0（比奈方程样板）→ M1（有效势）→ M2（散射）→ M3（两体）→ M4（变分）→ M5（虚功）→ M6（碰撞）→ M7（刚体）→ M8（运动学）。
+      每个模块含讲义 PDF、交互模拟、自测断言，可独立学习。
+    </p>
+  </section>
 
   <footer class="page">
     内容来源：<b>作业/ 目录共 8 份 PDF</b>（7 次作业 + 1 个两体问题专题）<br>
@@ -125,9 +138,24 @@
   var filters = document.getElementById('filters');
 
   /* ---------- 卡片渲染 ---------- */
+  function matchesSearch(m, q) {
+    if (!q) return true;
+    var hay = (m.title + ' ' + m.src + ' ' + (m.tags||'') + ' ' + m.slug + ' ' + m.milestone).toLowerCase();
+    return hay.indexOf(q.toLowerCase()) !== -1;
+  }
+  function matchesTag(m, tag) {
+    if (!tag || tag === 'all') return true;
+    return (m.tags || '').indexOf(tag) !== -1;
+  }
   function renderCards() {
     grid.textContent = '';
+    var q = (document.getElementById('search').value || '').trim();
+    var activeTag = (document.querySelector('#tagFilters button.active') || {}).getAttribute('data-tag') || 'all';
+    var activeMs = (document.querySelector('#filters button.active') || {}).getAttribute('data-key') || 'all';
     MODULES.forEach(function (m) {
+      if (activeMs !== 'all' && m.milestone !== activeMs) return;
+      if (!matchesSearch(m, q)) return;
+      if (!matchesTag(m, activeTag)) return;
       var card = document.createElement('article');
       card.className = 'card' + (m.status === 'ready' ? '' : ' disabled');
       card.setAttribute('data-milestone', m.milestone);
@@ -209,15 +237,40 @@
     Array.prototype.forEach.call(btns, function (b) {
       b.classList.toggle('active', b.getAttribute('data-key') === key);
     });
-    var cards = grid.querySelectorAll('.card');
-    Array.prototype.forEach.call(cards, function (c) {
-      var show = key === 'all' || c.getAttribute('data-milestone') === key;
-      c.hidden = !show;
-    });
+    renderCards();
   }
 
-  renderCards();
+  // Collect unique tags
+  var allTags = {};
+  MODULES.forEach(function (m) {
+    if (m.tags) m.tags.split('·').forEach(function (t) { var tt = t.trim(); if (tt) allTags[tt] = true; });
+  });
+  function renderTagFilters() {
+    var tf = document.getElementById('tagFilters');
+    tf.textContent = '';
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.textContent = '全部标签'; btn.setAttribute('data-tag', 'all');
+    btn.classList.add('active');
+    btn.addEventListener('click', function () { applyTag('all'); });
+    tf.appendChild(btn);
+    Object.keys(allTags).sort().forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = t; b.setAttribute('data-tag', t);
+      b.addEventListener('click', function () { applyTag(t); });
+      tf.appendChild(b);
+    });
+  }
+  function applyTag(tag) {
+    var btns = document.querySelectorAll('#tagFilters button');
+    Array.prototype.forEach.call(btns, function (b) {
+      b.classList.toggle('active', b.getAttribute('data-tag') === tag);
+    });
+    renderCards();
+  }
+  document.getElementById('search').addEventListener('input', renderCards);
   renderFilters();
+  renderTagFilters();
+  renderCards();
 })();
 </script>
 </body>
