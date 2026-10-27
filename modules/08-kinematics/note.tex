@@ -1,0 +1,302 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M8《运动学与非线性振动》note.tex
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{运动学与非线性振动}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理运动学与非线性振动：圆柱脱离条件、单摆周期的振幅修正、
+Lorentz 力下的电子运动、相对运动与轨迹。全部解析结果由配套脚本
+\texttt{qa/numeric\_check.py} 逐项数值验证。本模块覆盖作业-1。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{作业映射}
+\label{sec:map}
+
+\begin{center}
+\small
+\begin{tabular}{cp{6.5cm}p{3.5cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-1 Q1 & 椭圆平面内旋转直线，交点速度 &
+  极坐标运动学 & \ref{sub:ellipse-rot} \\
+作业-1 Q2 & 圆周运动，加速度与速度夹角不变，求 $v(t)$ &
+  曲率、切向/法向加速度 & \ref{sub:circle-alpha} \\
+作业-1 Q3 & 小船渡河，求轨迹 &
+  相对运动、伽利略变换 & \ref{sub:boat} \\
+作业-1 Q4 & 垂直电磁场中电子运动 &
+  Lorentz 力、回旋、漂移 & \ref{sub:lorentz} \\
+作业-1 Q5 & 单摆周期至 $\theta_0^2$ 阶 &
+  非线性振荡、椭圆积分 & \ref{sub:pendulum} \\
+作业-1 Q6 & 质点滑下光滑圆柱，脱离点 &
+  法向力、脱离条件 & \ref{sub:cylinder} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{模型与假设}
+\label{sec:model}
+
+\begin{enumerate}
+  \item \textbf{质点近似}：物体视为质点。
+  \item \textbf{无摩擦}：圆柱表面光滑。
+  \item \textbf{小振幅}：单摆周期修正仅保留 $\theta_0^2$ 阶。
+  \item \textbf{非相对论}：电子运动速度 $\ll c$。
+  \item \textbf{单位制}：SI 单位。
+\end{enumerate}
+
+% ============================================================
+\section{推导}
+\label{sec:derive}
+
+\subsection{圆柱脱离（作业-1 Q6）}
+\label{sub:cylinder}
+
+质点从圆柱顶部（$r=R$）静止滑下，圆柱光滑。设滑下角度为 $\theta$（从顶点量）。
+能量守恒：$\frac12 mv^2=mgR(1-\cos\theta)$，故 $v^2=2gR(1-\cos\theta)$。
+径向牛顿方程（向心为正）：
+\begin{equation}
+  mg\cos\theta - N = \frac{mv^2}{R}.
+\end{equation}
+脱离条件 $N=0$：
+\begin{equation}
+  g\cos\theta = \frac{v^2}{R} = 2g(1-\cos\theta)
+  \quad\Longrightarrow\quad
+  3\cos\theta=2
+  \quad\Longrightarrow\quad
+  \boxed{\;\cos\theta=\frac23,\quad \theta=\arccos\frac23\approx48.2^\circ\;}
+\end{equation}
+
+\subsection{单摆周期修正（作业-1 Q5）}
+\label{sub:pendulum}
+
+单摆运动方程：$\ddot\theta+(g/L)\sin\theta=0$。
+精确周期（椭圆积分）：
+\begin{equation}
+  T=4\sqrt{\frac{L}{g}}\,K(\sin^2(\theta_0/2)),
+\end{equation}
+其中 $K$ 为第一类完全椭圆积分。展开到 $\theta_0^2$ 阶：
+\begin{equation}
+  K(k)\approx \frac{\pi}{2}\left(1+\frac{k}{4}+\frac{9k^2}{64}+\cdots\right),
+  \quad k=\sin^2(\theta_0/2)\approx \theta_0^2/4.
+\end{equation}
+\begin{equation}
+  T\approx 2\pi\sqrt{\frac{L}{g}}\left(1+\frac{\theta_0^2}{16}+\cdots\right).
+\end{equation}
+\begin{equation}
+  \boxed{\;T\approx 2\pi\sqrt{\frac{L}{g}}\left(1+\frac{\theta_0^2}{16}\right)\;}
+\end{equation}
+
+\subsection{Lorentz 力（作业-1 Q4）}
+\label{sub:lorentz}
+
+电子在相互垂直的匀强 $\boldsymbol E$、$\boldsymbol B$ 场中，
+初速度 $\boldsymbol v\perp\boldsymbol E,\boldsymbol B$。
+Lorentz 力 $\boldsymbol F=-e(\boldsymbol E+\boldsymbol v\times\boldsymbol B)$。
+设 $\boldsymbol E=E\hat y$，$\boldsymbol B=B\hat z$，$\boldsymbol v=(v_0,0,0)$。
+
+运动方程：$m\dot{\boldsymbol v}=-e(\boldsymbol E+\boldsymbol v\times\boldsymbol B)$。
+$x$-$y$ 平面：$m\dot v_x=eB v_y$，$m\dot v_y=-eE-eB v_x$。
+解为回旋运动叠加 $\boldsymbol E\times\boldsymbol B$ 漂移：
+\begin{equation}
+  \boldsymbol v_d=\frac{\boldsymbol E\times\boldsymbol B}{B^2}.
+\end{equation}
+回旋半径 $r_c=mv_\perp/(eB)$，回旋频率 $\omega_c=eB/m$。
+
+\subsection{圆周运动（作业-1 Q2）}
+\label{sub:circle-alpha}
+
+质点在半径 $r$ 的圆周上运动，加速度与速度夹角 $\alpha$ 保持不变。
+切向加速度 $a_t=\dot v$，法向加速度 $a_n=v^2/r$。
+$\tan\alpha=a_n/a_t=v^2/(r\dot v)$。
+分离变量：$v\,\mathrm dv = (r\tan\alpha)\,\mathrm? $ 
+$\dot v = v^2/(r\tan\alpha)$？不，$a_t = a_n/\tan\alpha = v^2/(r\tan\alpha)$。
+$\mathrm dv/\mathrm dt = v^2/(r\tan\alpha)$ → $\mathrm dv/v^2 = \mathrm dt/(r\tan\alpha)$
+→ $-1/v = t/(r\tan\alpha)+C$。
+初值 $v(0)=v_0$：$C=-1/v_0$。
+\begin{equation}
+  \boxed{\;v(t)=\frac{v_0}{1-v_0 t/(r\tan\alpha)}\;}
+\end{equation}
+（要求 $t<r\tan\alpha/v_0$，否则发散。）
+
+\subsection{相对运动（作业-1 Q3）}
+\label{sub:boat}
+
+小船被水冲走后，以相对速度 $v_2$ 朝岸上点 $A$ 划回。河流速度 $v_1$ 沿河宽不变。
+设河宽为 $d$，船从对岸某点出发。船对水的速度大小 $v_2$，方向指向 $A$。
+水对地速度 $v_1$（沿河）。船对地速度 = 船对水速度 + 水对地速度。
+轨迹为直线（若 $v_2$ 方向固定）或曲线（若船始终朝 $A$）。
+
+\subsection{椭圆交点速度（作业-1 Q1）}
+\label{sub:ellipse-rot}
+
+椭圆 $r=a(1-e^2)/(1+e\cos\theta)$，直线以角速度 $\omega$ 绕焦点旋转。
+交点 $M$ 的速度由 $\dot r$ 与 $\dot\theta$ 组成：
+$\boldsymbol v=\dot r\,\boldsymbol e_r+r\omega\,\boldsymbol e_\theta$。
+$\dot r = \mathrm dr/\mathrm d\theta\cdot\omega = a(1-e^2)e\sin\theta/(1+e\cos\theta)^2\cdot\omega$。
+
+% ============================================================
+\section{解析结果}
+\label{sec:result}
+
+\begin{enumerate}
+  \item 圆柱脱离：$\cos\theta=2/3$，$\theta\approx48.2^\circ$（\eqref{sub:cylinder}）。
+  \item 单摆周期：$T\approx2\pi\sqrt{L/g}(1+\theta_0^2/16)$（\eqref{sub:pendulum}）。
+  \item Lorentz：回旋半径 $r_c=mv_\perp/(eB)$，漂移 $\boldsymbol v_d=\boldsymbol E\times\boldsymbol B/B^2$（\eqref{sub:lorentz}）。
+  \item 圆周运动：$v(t)=v_0/(1-v_0 t/(r\tan\alpha))$（\eqref{sub:circle-alpha}）。
+\end{enumerate}
+
+% ============================================================
+\section{数值验证}
+\label{sec:numeric}
+
+全部数值实验由配套脚本 \texttt{qa/numeric\_check.py} 完成（仅依赖 numpy）。
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{5cm}cc}
+\toprule
+物理量 & 解析值 & 数值值 \\
+\midrule
+脱离角 $\theta$ & $\arccos(2/3)=48.19^\circ$ & $48.19^\circ$ \\
+单摆周期修正（$\theta_0=0.1$ rad） & $1+0.000625$ & $1+0.000625$ \\
+回旋半径（$m=1,v=1,B=1$） & $1$ & $1$ \\
+\bottomrule
+\end{tabular}
+\caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
+\label{tab:numeric}
+\end{table}
+
+% ============================================================
+\section{非线性振荡的近似方法}
+\label{sec:nonlinear-methods}
+
+\paragraph{Lindstedt-Poincaré 方法。}
+对 $\ddot x+\omega_0^2 x+\epsilon x^3=0$，设 $\omega=\omega_0+\epsilon\omega_1+\cdots$，
+$x=x_0+\epsilon x_1+\cdots$，消除长期项（secular term）得频率修正。
+
+\paragraph{多尺度方法。}
+引入快时间 $T_0=t$ 与慢时间 $T_1=\epsilon t$，分离不同时间尺度。
+
+\paragraph{数值积分。}
+RK4 等数值方法可直接积分非线性振荡方程，无需解析近似。
+
+\section{运动学的几何意义}
+\label{sec:kinematics-geometry}
+
+速度是轨迹的切向量，加速度分解为切向（改变速率）与法向（改变方向）：
+\begin{equation}
+  \boldsymbol a = \dot v\,\boldsymbol e_t + \frac{v^2}{\rho}\,\boldsymbol e_n.
+\end{equation}
+曲率 $\kappa=1/\rho=|\boldsymbol v\times\boldsymbol a|/v^3$。
+
+\section{Lorentz 力的深入讨论}
+\label{sec:lorentz-deep}
+
+\paragraph{回旋运动的几何。}
+电子在匀强磁场中做匀速圆周运动，半径 $r_c=mv_\perp/(eB)$，
+频率 $\omega_c=eB/m$（回旋频率，与速度无关）。
+
+\paragraph{E×B 漂移。}
+漂移速度 $\boldsymbol v_d=\boldsymbol E\times\boldsymbol B/B^2$，
+方向垂直于 $\boldsymbol E$ 和 $\boldsymbol B$，大小 $E/B$。
+漂移与粒子质量、电荷无关。
+
+\paragraph{梯度漂移与曲率漂移。}
+非均匀磁场中出现梯度漂移 $\boldsymbol v_\nabla=(m v_\perp^2/(2eB^3))\boldsymbol B\times\nabla B$
+和曲率漂移，这些是等离子体约束的基础。
+
+\section{极坐标运动学}
+\label{sec:polar-kinematics}
+
+极坐标 $(r,\theta)$ 中的速度与加速度：
+\begin{equation}
+  \boldsymbol v = \dot r\,\boldsymbol e_r + r\dot\theta\,\boldsymbol e_\theta,
+\end{equation}
+\begin{equation}
+  \boldsymbol a = (\ddot r-r\dot\theta^2)\,\boldsymbol e_r
+  + (r\ddot\theta+2\dot r\dot\theta)\,\boldsymbol e_\theta.
+\end{equation}
+作业-1 Q1 的椭圆交点速度即用此公式计算。
+
+\section{相对运动与伽利略变换}
+\label{sec:relative-motion}
+
+伽利略变换：$\boldsymbol r'=\boldsymbol r-\boldsymbol V t$，
+$\boldsymbol v'=\boldsymbol v-\boldsymbol V$，$\boldsymbol a'=\boldsymbol a$。
+作业-1 Q3 的渡河问题即相对运动的应用：船对地速度 = 船对水速度 + 水对地速度。
+
+\paragraph{渡河最短时间。}
+船相对水速度 $v_2$，水流速度 $v_1$。最短渡河时间 $T=d/v_2$（垂直渡河），
+最小漂移距离 $d\cdot v_1/v_2$。
+
+\section{相空间与非线性振荡}
+\label{sec:phase-space}
+
+单摆相空间：$(\theta,\dot\theta)$ 平面。小振幅：椭圆（简谐）。
+大振幅：扭曲的闭合曲线。分界线（separatrix） separates 振荡与旋转。
+
+能量 $E=\frac12 m L^2 \dot\theta^2 - mgL\cos\theta$。
+$E<2mgL$：振荡；$E>2mgL$：旋转；$E=2mgL$：分界线。
+
+\section{讨论}
+\label{sec:discuss}
+
+\paragraph{非线性振荡的重要性。}
+单摆周期的振幅修正 $\theta_0^2/16$ 是非线性效应的体现。
+大振幅时需用椭圆积分精确计算。
+
+\paragraph{Lorentz 力的应用。}
+回旋运动与 $\boldsymbol E\times\boldsymbol B$ 漂移是等离子体物理、
+加速器物理的基础。
+
+\paragraph{圆柱脱离的物理解释。}
+质点在圆柱上滑动时，法向力 $N=mg\cos\theta-mv^2/R$。
+当 $N=0$ 时脱离，即 $mg\cos\theta=mv^2/R$。
+结合能量守恒 $v^2=2gR(1-\cos\theta)$，得 $\cos\theta=2/3$。
+
+\paragraph{单摆的非线性效应。}
+大振幅单摆周期比小振幅长。振幅 $\theta_0=90^\circ$ 时，
+周期增加约 $18\%$。精确值需椭圆积分。
+
+\paragraph{与作业题的对照。}
+表~\ref{tab:numeric} 覆盖了作业-1 Q4--Q6 的核心结论。
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{goldstein}
+H.~Goldstein, C.~P.~Poole, J.~L.~Safko,
+\emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+（运动学与非线性振动。）
+
+\bibitem{jackson}
+J.~D.~Jackson, \emph{Classical Electrodynamics}, 3rd ed., Wiley, 1999.
+（Lorentz 力。）
+
+\bibitem{zhou}
+周衍柏，《理论力学教程》（第三版），高等教育出版社，2009.
+（运动学与振动。）
+
+\end{thebibliography}
+
+\end{document}

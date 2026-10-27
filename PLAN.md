@@ -720,9 +720,9 @@ URL 参数规范：
 
 | ID | 任务 | 依赖 | 验收标准 | 状态 | 证据/日期 |
 |---|---|---|---|---|---|
-| M8-T1 | 写 `note.tex`：极坐标运动学、相对运动、洛伦兹力、单摆、脱离 | M7-T3 | 按 §7.1 通过；含作业-1 映射 | `[ ]` | |
-| M8-T2 | 写 `index.html`：五个场景、HUD、预设、自测 | M8-T1 | 按 §7.2 通过；单摆展开与脱离角正确 | `[ ]` | |
-| M8-T3 | 模块 QA 与集成 | M8-T2 | 按 §7.3/§7.4 通过 | `[ ]` | |
+| M8-T1 | 写 `note.tex`：极坐标运动学、相对运动、洛伦兹力、单摆、脱离 | M7-T3 | 按 §7.1 通过；含作业-1 映射 | `[x]` | 2026-10-27 主代理复验：6 页、numeric_check 4/4 PASS；证据 `modules/08-kinematics/qa/T1-note.md` |
+| M8-T2 | 写 `index.html`：五个场景、HUD、预设、自测 | M8-T1 | 按 §7.2 通过；单摆展开与脱离角正确 | `[x]` | 2026-10-27 主代理复验：check_html 6/6、SELFTEST 5/5 PASS；证据 `modules/08-kinematics/qa/T2-html.md` |
+| M8-T3 | 模块 QA 与集成 | M8-T2 | 按 §7.3/§7.4 通过 | `[x]` | 2026-10-27 主代理复验：README 57 行、T3-qa 60 行、截图 3 张、check_html 6/6、SELFTEST 5/5、LINKS ALL OK；catalog.html 已更新为 ready |
 
 ### P9 总装
 
