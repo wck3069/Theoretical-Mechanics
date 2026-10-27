@@ -167,13 +167,18 @@ function syncURL(){
 }
 
 // ==================== 2.5) BEETLE ANIMATION ====================
-var beetle = {angle:0, running:true, done:false};
+var beetle = {angle:0, running:true, done:false, trail:[]};
 function beetleStep(){
   if (P.mode !== 'beetle' || !beetle.running) return;
   beetle.angle += 0.02;
+  beetle.trail.push(beetle.angle);
+  if (beetle.trail.length > 400) beetle.trail.shift();
   if (beetle.angle >= 2*Math.PI) { beetle.angle = 2*Math.PI; beetle.running = false; beetle.done = true; }
 }
-function ringRotation(){ return -beetle.angle/2; }  // angular momentum conservation: ring turns -pi per lap
+function ringRotation(){ return -beetle.angle/2; }
+function prewarmBeetle(n){
+  for (var i=0;i<(n||130);i++){ beetle.angle += 0.02; beetle.trail.push(beetle.angle); }
+}  // angular momentum conservation: ring turns -pi per lap
 
 // ==================== 3) 物理 ====================
 function capCentroid(R, h) {
@@ -248,9 +253,16 @@ function draw() {
     ctx.lineTo(cx + Math.cos(ra) * (sc + 12), cy - Math.sin(ra) * (sc + 12));
     ctx.stroke();
     // Beetle trail (world frame)
-    ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(94,162,255,.45)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(cx, cy, sc, 0, -beetle.angle, true); ctx.stroke();
-    ctx.setLineDash([]);
+    if (beetle.trail.length > 1) {
+      ctx.strokeStyle = 'rgba(94,162,255,.9)'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (var ti = 0; ti < beetle.trail.length; ti++) {
+        var ta = -beetle.trail[ti];
+        var tx = cx + Math.cos(ta) * sc, ty = cy + Math.sin(ta) * sc;
+        if (ti === 0) ctx.moveTo(tx, ty); else ctx.lineTo(tx, ty);
+      }
+      ctx.stroke(); ctx.lineWidth = 1;
+    }
     // Beetle body
     var ba = -beetle.angle;
     var bx = cx + Math.cos(ba) * sc, by = cy + Math.sin(ba) * sc;
@@ -258,10 +270,10 @@ function draw() {
     ctx.beginPath(); ctx.ellipse(bx, by, 7, 5, ba + Math.PI/2, 0, 2*Math.PI); ctx.fill();
     // Labels
     ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('beetle = ' + (beetle.angle*180/Math.PI).toFixed(1) + ' deg', 20, 30);
-    ctx.fillText('ring = ' + (ra*180/Math.PI).toFixed(1) + ' deg', 20, 50);
+    ctx.fillText('beetle = ' + (beetle.angle*180/Math.PI).toFixed(1) + ' deg', W - 230, 30);
+    ctx.fillText('ring   = ' + (ra*180/Math.PI).toFixed(1) + ' deg', W - 230, 50);
     ctx.fillStyle = '#7fe3a0';
-    ctx.fillText('expected ring at lap end: 180 deg', 20, 70);
+    ctx.fillText('lap end ring: 180 deg', W - 230, 70);
     ctx.lineWidth = 1;
   } else if (P.mode === 'disk') {
     ctx.strokeStyle = 'rgba(120,160,255,.4)';
@@ -332,7 +344,7 @@ function updateHUD(){
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
-  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; beetle.angle=0; beetle.running=true; beetle.done=false; syncURL(); });
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; beetle.angle=0; beetle.running=true; beetle.done=false; beetle.trail=[]; if (P.mode==='beetle') prewarmBeetle(130); syncURL(); });
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
@@ -385,6 +397,7 @@ var qURL = loadFromURL();
 resize();
 bindControls();
 syncSliders();
+if (P.mode === 'beetle') prewarmBeetle(130);
 if (qURL.selftest === '1') {
   var rep = runSelftest();
   window.__selftest = rep;
