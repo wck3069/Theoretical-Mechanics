@@ -232,9 +232,9 @@ function draw() {
   ctx.lineTo(baseXp + L*Math.cos(tminRad), baseYp - L*Math.sin(tminRad));
   ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle = 'rgba(255,123,123,.75)'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillStyle = 'rgba(255,123,123,.8)'; ctx.font = '11px ui-monospace,monospace';
   ctx.fillText('critical ' + thetaMin(P.mu).toFixed(1) + ' deg',
-    baseXp + L*Math.cos(tminRad) + 6, baseYp - L*Math.sin(tminRad) - 6);
+    baseXp + (L*0.55)*Math.cos(tminRad) + 14, baseYp - (L*0.55)*Math.sin(tminRad) + 18);
 
   // ladder
   ctx.strokeStyle = lad.falling ? '#ff7b7b' : '#5ea2ff'; ctx.lineWidth = 3;
@@ -256,7 +256,7 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(topX, topY); ctx.lineTo(topX - nwLen, topY); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(topX-nwLen, topY); ctx.lineTo(topX-nwLen+8, topY-5); ctx.moveTo(topX-nwLen, topY); ctx.lineTo(topX-nwLen+8, topY+5); ctx.stroke();
     ctx.fillStyle = '#7fe3a0';
-    ctx.fillText('N_w=' + nw.toFixed(3), topX - nwLen - 6, topY - 8);
+    ctx.fillText('N_w=' + nw.toFixed(3), topX - nwLen - 62, topY - 12);
   } else {
     ctx.fillStyle = 'rgba(255,123,123,.8)';
     ctx.fillText('N_w=0 (contact lost)', topX + 8, topY - 8);
