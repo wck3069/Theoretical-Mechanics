@@ -252,9 +252,11 @@ function draw() {
     ctx.fillText('s0=' + p.s0.toFixed(1), px + 8, py - 8);
     ctx.fillText('t=' + p.t.toFixed(2), px + 8, py + 4);
   }
-  // Draw bottom point
+  // Bottom point (cycloid lowest point)
   ctx.fillStyle = '#ffcf6b';
   ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle = 'rgba(255,207,107,.8)'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillText('lowest point', cx + 8, cy + 4);
 }
 
 // ==================== 5) HUD ====================

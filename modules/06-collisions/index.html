@@ -202,41 +202,38 @@ function draw() {
     var alpha = P.alpha * Math.PI / 180;
     var e = P.e;
     var beta = betaDeflection(e, P.alpha) * Math.PI / 180;
-    var phase = animT;
-    // Ball 1: approach (0-1), collision at 1, scatter (1-2)
-    var x1, y1;
-    if (phase < 1) {
-      x1 = cx - 120 + phase * 120; y1 = cy - phase * 120 * Math.sin(alpha);
-    } else if (phase < 2) {
-      var t2 = phase - 1;
-      x1 = cx + t2 * 80 * Math.cos(beta); y1 = cy - t2 * 80 * Math.sin(beta);
-    } else {
-      x1 = cx + 80 * Math.cos(beta); y1 = cy - 80 * Math.sin(beta);
-    }
-    // Ball 2: stationary until collision, then moves
-    var x2, y2;
-    if (phase < 1) {
-      x2 = cx + 40; y2 = cy;
-    } else {
-      var t2 = phase - 1;
-      x2 = cx + 40 + t2 * 60; y2 = cy - t2 * 20;
-    }
-    // Draw ball 1
+    var sc2 = Math.min(W, H) * 0.28;
+    var bx0 = W*0.5, by0 = H*0.55;
+    var p1x = bx0 + col.x1*sc2, p1y = by0 - col.y1*sc2;
+    var p2x = bx0 + col.x2*sc2, p2y = by0 - col.y2*sc2;
+    // guide lines
+    ctx.strokeStyle = 'rgba(120,160,255,.18)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, by0); ctx.lineTo(W, by0); ctx.stroke();
+    // ball 1
     ctx.fillStyle = '#5ea2ff';
-    ctx.beginPath(); ctx.arc(x1, y1, 12, 0, 2*Math.PI); ctx.fill();
-    // Draw ball 2
+    ctx.beginPath(); ctx.arc(p1x, p1y, 12, 0, 2*Math.PI); ctx.fill();
+    // ball 2
     ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(x2, y2, 12, 0, 2*Math.PI); ctx.fill();
-    // Draw velocity vector for ball 1 (before collision)
-    if (phase < 1) {
-      ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + 40*Math.cos(alpha), y1 - 40*Math.sin(alpha)); ctx.stroke();
+    ctx.beginPath(); ctx.arc(p2x, p2y, 12, 0, 2*Math.PI); ctx.fill();
+    // velocity vectors
+    ctx.strokeStyle = '#7fe3a0'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(p1x, p1y); ctx.lineTo(p1x + col.v1.x*70, p1y - col.v1.y*70); ctx.stroke();
+    if (Math.hypot(col.v2.x, col.v2.y) > 1e-6) {
+      ctx.beginPath(); ctx.moveTo(p2x, p2y); ctx.lineTo(p2x + col.v2.x*70, p2y - col.v2.y*70); ctx.stroke();
     }
+    ctx.lineWidth = 1;
+    // momentum check (equal masses, m=1)
+    var psumX = col.v1.x + col.v2.x, psumY = col.v1.y + col.v2.y;
+    var p0x = Math.cos(P.alpha*Math.PI/180), p0y = Math.sin(P.alpha*Math.PI/180);
+    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('phase: ' + col.phase, W - 240, 30);
+    ctx.fillText('P_before = (' + p0x.toFixed(3) + ', ' + p0y.toFixed(3) + ')', W - 240, 50);
+    ctx.fillText('P_after  = (' + psumX.toFixed(3) + ', ' + psumY.toFixed(3) + ')', W - 240, 68);
+    ctx.fillStyle = Math.abs(psumX-p0x) < 1e-9 && Math.abs(psumY-p0y) < 1e-9 ? '#7fe3a0' : '#ff7b7b';
+    ctx.fillText('momentum conserved: ' + ((Math.abs(psumX-p0x)<1e-9 && Math.abs(psumY-p0y)<1e-9) ? 'YES' : 'NO'), W - 240, 86);
     // Labels
     ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('alpha=' + P.alpha.toFixed(1) + ' deg', W - 180, 30);
-    ctx.fillText('beta=' + betaDeflection(e, P.alpha).toFixed(2) + ' deg', W - 180, 50);
-    ctx.fillText('beta_max=' + betaMax(e).toFixed(2) + ' deg', W - 180, 70);
+
   } else {
     // Raindrop: draw v(t) curve
     var g = 1, lam = 0.1, r0 = 1;
@@ -255,15 +252,43 @@ function draw() {
   }
 }
 
-// ==================== 4.5) 动画 ====================
+// ==================== 4.5) 动画（动量守恒）====================
 var animT = 0, animRunning = true;
-function stepAnim() {
+var col = {phase:'approach', v1:null, v2:null, x1:0, y1:0, x2:0, y2:0};
+function resetCollision(){
+  var a = P.alpha * Math.PI/180, e = P.e, v0 = 1.0;   // speed 1 (dimensionless)
+  col.v1 = {x: v0*Math.cos(a), y: v0*Math.sin(a)};     // ball1 velocity (normal = x axis)
+  col.v2 = {x: 0, y: 0};
+  col.x1 = -1.2; col.y1 = 0;                            // ball1 starts left
+  col.x2 = 0;    col.y2 = 0;                            // ball2 at origin
+  col.phase = 'approach';
+  animT = 0;
+}
+function stepAnim(){
   if (!animRunning) return;
-  animT += 0.02 * P.speed;
-  if (animT > 4) animT = 0; // loop
+  var dt = 0.02 * P.speed;
+  if (col.phase === 'approach') {
+    col.x1 += col.v1.x*dt; col.y1 += col.v1.y*dt;
+    // contact when centers are 0.24 apart (radius 0.12 each)
+    var dx = col.x2-col.x1, dy = col.y2-col.y1;
+    if (Math.sqrt(dx*dx+dy*dy) <= 0.24 || col.x1 >= col.x2) {
+      // resolve along line of centers (normal = x axis by construction)
+      var e = P.e;
+      var v1n = col.v1.x, v1t = col.v1.y;   // v2n = v2t = 0
+      var v1n2 = (1-e)/2 * v1n, v2n2 = (1+e)/2 * v1n;
+      col.v1 = {x: v1n2, y: v1t};
+      col.v2 = {x: v2n2, y: 0};
+      col.phase = 'separate';
+    }
+  } else if (col.phase === 'separate') {
+    col.x1 += col.v1.x*dt; col.y1 += col.v1.y*dt;
+    col.x2 += col.v2.x*dt; col.y2 += col.v2.y*dt;
+    if (col.x1 > 1.9 || col.x2 > 1.9) { resetCollision(); }
+  }
+  animT += dt;
 }
 
-// ==================== 5) HUD ====================
+// ==================== 5) HUD ====================// ==================== 5) HUD ====================
 function $(id){ return document.getElementById(id); }
 var hudE = $('hudE'), hudAlpha = $('hudAlpha'), hudBeta = $('hudBeta');
 var hudV = $('hudV'), hudState = $('hudState'), noticeEl = $('notice');
@@ -285,17 +310,17 @@ function updateHUD(){
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
-  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; syncURL(); });
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; resetCollision(); syncURL(); });
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
-    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); });
+    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); if (typeof resetCollision==='function') resetCollision(); });
   }
   bindSlider('param-e', 'e', 'val-e', function(v){ return v.toFixed(2); });
   bindSlider('param-alpha', 'alpha', 'val-alpha', function(v){ return v.toFixed(1); });
   bindSlider('param-speed', 'speed', 'val-speed', function(v){ return v.toFixed(2); });
   $('btn-pause').addEventListener('click', function(){});
-  $('btn-reset').addEventListener('click', function(){ P.e = DEFAULTS.e; P.alpha = DEFAULTS.alpha; syncSliders(); syncURL(); });
+  $('btn-reset').addEventListener('click', function(){ P.e = DEFAULTS.e; P.alpha = DEFAULTS.alpha; syncSliders(); syncURL(); resetCollision(); });
 }
 function syncSliders() {
   $('param-e').value = P.e; $('val-e').textContent = P.e.toFixed(2);
@@ -341,6 +366,7 @@ var qURL = loadFromURL();
 resize();
 bindControls();
 syncSliders();
+resetCollision();
 if (qURL.selftest === '1') {
   var rep = runSelftest();
   window.__selftest = rep;
