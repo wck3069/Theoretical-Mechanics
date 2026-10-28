@@ -92,3 +92,10 @@ Cloudflare Zero Trust → Access 里加邮箱/组织策略。详见 `deploy/clou
 - AI 输出可能有错：页面上保留“以讲义推导为准”的提示。
 - 定期看服务端 stderr 日志（方法/路径/状态/耗时，不记录问题正文）。
 - 作业 PDF 属于私有资料，`export_static.sh` 不会导出 `作业/`。
+
+## GitHub Pages（已启用）
+
+- 源：`gh-pages` 分支根目录（由 `dist/` 生成，不含 tools/qa/data）
+- 地址：<https://wck3069.github.io/Theoretical-Mechanics/>
+- 更新：`bash tools/publish_pages.sh`（自动导出 dist、重建 gh-pages、推送）
+- 静态托管没有 `/api`，AI 面板会自动降级为离线检索

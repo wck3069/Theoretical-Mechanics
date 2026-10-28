@@ -7,6 +7,9 @@ mkdir -p "$OUT"
 cp "$ROOT/index.html" "$ROOT/catalog.html" "$OUT/"
 cp -r "$ROOT/modules" "$OUT/modules"
 find "$OUT/modules" -type d -name qa -prune -exec rm -rf {} + 2>/dev/null || true
+find "$OUT/modules" \( -name '*.aux' -o -name '*.log' -o -name '*.out' -o -name '*.toc' \
+  -o -name '*.fls' -o -name '*.fdb_latexmk' -o -name '*.xdv' -o -name '*.synctex.gz' \) -delete
+: > "$OUT/.nojekyll"
 if grep -rIl --include='*.html' -e '127\.0\.0\.1' -e 'localhost' "$OUT"; then
   echo "WARNING: localhost reference found in exported HTML" >&2
 fi
