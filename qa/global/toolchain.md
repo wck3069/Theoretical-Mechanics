@@ -85,3 +85,32 @@ google-chrome --headless=new --screenshot ... "file:///tmp/t2-selftest/index.htm
 
 结果：骨架生成 ✓、编译退出码 0 ✓、HTML 检查 6/6 PASS ✓、
 `?selftest=1` 面板 3/3 PASS（占位断言）✓、截图方法可用 ✓。
+
+## AI 模型路由（长期平衡态，2026-10-28 定稿）
+
+### 本地 Maya（强、慢、单并发）
+- 端点 `http://127.0.0.1:8080/v1`，模型 id `deepseek-v4.1-flash`（DeepSeek-V4.1-Flash-1017，Maya-S IQ2_XXS，339.5GB）
+- 实测：prefill **331 tok/s**，decode **3.6–6 tok/s**，24GB 显存（RTX 5090 D v2）+ 503GB RAM
+- 固定参数（勿改）：`--context 32768 --drafting off --vram-reserve-mib 512`
+  - 曾用 262144 上下文 → 显存被 KV 占满，专家只能读盘 → **0 tok/s**，已弃用
+- **默认 `reasoning_effort` 必须是 `none`/`low`**：high 会吃掉全部 max_tokens 预算（实测 12000 token 全用于 thinking，无 HTML 输出）
+- **单并发**：一个长生成会阻塞后续请求 → 长任务一律后台跑，交互问答走云端
+- 启停/体检：`~/bin/maya-start`、`~/bin/maya-stop`、`~/bin/ai-health`
+
+### 云端免费（快、但会时段性不可用）
+- `opencode-go/beam-free`：唯一稳定可用的
+- `opencode/deepseek-v4.1-flash-free`、`opencode/nemotron-3-ultra-free`：多次返回 `Model is unavailable`
+
+### 分工表（omo.jsonc / opencode.json 已写入）
+| 场景 | 模型 | 理由 |
+|---|---|---|
+| quick / unspecified-* / writing / artistry / deep-low | beam-free | 1–3s，成本零 |
+| deep-high / ultrabrain / oracle / metis | **maya/deepseek-v4.1-flash** | 长上下文、强推理；慢，后台执行 |
+| visual-engineering / multimodal-looker | **maya/deepseek-v4.1-flash** | 支持图像输入 |
+| 所有角色的兜底 | beam-free（Maya 不可用）/ maya（云端不可用） | 双向前提 |
+
+### 执行规则（避免再踩坑）
+1. 需要长文本生成（>3k token）→ 交 Maya，`reasoning_effort:none`，`max_tokens≥12000`，后台运行并轮询日志。
+2. 需要"边改边看"的小步迭代 → 交云端 beam-free，不占本地单槽。
+3. 提交前一律跑 `tools/check_html.py` + `?selftest=1`，模型产出不作验收依据。
+4. Maya 忙时 `~/bin/ai-health` 的 probe 会超时——这是正常排队，不是故障。
