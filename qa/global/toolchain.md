@@ -114,3 +114,30 @@ google-chrome --headless=new --screenshot ... "file:///tmp/t2-selftest/index.htm
 2. 需要"边改边看"的小步迭代 → 交云端 beam-free，不占本地单槽。
 3. 提交前一律跑 `tools/check_html.py` + `?selftest=1`，模型产出不作验收依据。
 4. Maya 忙时 `~/bin/ai-health` 的 probe 会超时——这是正常排队，不是故障。
+
+## 2026-10-28 本地模型更替（Maya → Ollama）
+
+### 删除
+- Maya / DeepSeek-V4.1-Flash-1017（Maya-S，339.5GB）：`~/maya-models`、`~/project-maya` 已删除，释放 325GB，显存释放
+- 删除原因：24GB 显存跑 748B MoE 只能读盘 → 解码 3.6–6 tok/s、单并发阻塞、340GB 磁盘 + 160GB 常驻内存，性价比低
+
+### strata / 千问 3.8 现状：**无法恢复**
+- `~/.local/bin/strata` 为断链（指向已删除的 `~/.local/share/strata/terminal/current/bin/strata`）
+- 无安装包、无 shell 历史安装命令、无备份；两者此前按指示删除
+- 恢复需原始安装包/下载源（strata 账号或安装脚本）
+
+### 当前本地替代：Ollama `qwen3:32b-ctx8k`
+| 项 | 值 |
+|---|---|
+| 规格 | Qwen3-32B Q4_K_M，32.8B dense |
+| 显存 | 22GB / **100% GPU** |
+| 上下文 | 8192（Modelfile 固定） |
+| 解码 | **55.6 tok/s**（实测 111 token / 2.0s） |
+| 探针 | `OK` in 451ms |
+| 关思考 | 客户端需带 `reasoning_effort:"none"`，否则 content 为空（只出 reasoning 字段） |
+
+### 路由（opencode.json / omo.jsonc 已改）
+- `deep-high` / `ultrabrain` / `oracle` / `metis` / `visual-engineering` / `multimodal-looker` → `ollama/qwen3:32b-ctx8k`（`reasoningEffort: none`）
+- `quick` / `explore` / `librarian` / `general` / `writing` / `deep-low` → `opencode-go/beam-free`
+- 双向兜底：本地/云端任一不可用即切换
+- 运维：`~/bin/ai-health`（本地模型 + 路由自检）
