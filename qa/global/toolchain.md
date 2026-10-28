@@ -172,3 +172,23 @@ strata launch --model iq3_s --family qwen --context 128k --vision gpu --tune ski
 - 解压至 `~/kvmem/`，`sha256sum -c SHA256SUMS` 全 OK，`bin/llama-kvmem-server --help` 正常
 - 是 llama.cpp 系（`llama-kvmem-server` / `start-iq3.sh` / `start-iq4.sh`），自带 CUDA 运行时，无需 toolkit
 - **与 strata 争用同一张 24GB 显卡**：实测需先停 strata 才能跑
+
+## 2026-10-28 KVMem 实测结论：**不适用于 Qwen3.8-Flash-Next**
+
+包：`kvmem-v0.16.0-rc1-linux-x86_64-cuda13-sm120a`（440MB，sha 校验通过），llama.cpp 系（`llama-kvmem-server`），自带 CUDA 运行时。
+
+| 配置 | 结果 |
+|---|---|
+| `-ngl 12 --kvmem-budget 8192 --kvmem-cpu-gb 32` + 视觉 | 启动成功（显存 15.7GB），首个 `/chat/completions` 请求 **崩溃** |
+| `-ngl 8 --kvmem-budget 4096 --no-mmproj` | **启动即 abort**（`llama_init_from_model`） |
+| `--no-kvmem -ngl 0`（纯 CPU） | ✅ 可用，生成 3.2 tok/s |
+
+**根因（引擎内断言原文）**：
+```
+llama.cpp/src/models/qwen4exp.cpp:357: GGML_ASSERT(
+  mctx_idx->get_n_kv() == inp->mctx->get_attn()->get_n_kv()
+  && "the indexer cache must track the attention cache cell for cell") failed
+```
+Qwen3.8-Flash-Next（`Qwen4Exp`）要求 **indexer cache 与 attention KV cache 逐 cell 对齐**，而 KVMem 的"GPU 工作集预算"会缩小 KV 池 → 断言失败。即 **KVMem 的 KV 分页机制与该架构不兼容**（其发布包面向 27B ternary 线）。
+
+**结论**：KVMem 无法在 24GB 显存上为 Qwen3.8 提供 262K 上下文；strata（原生 131072 上下文、36 tok/s）仍是本机最优解。
