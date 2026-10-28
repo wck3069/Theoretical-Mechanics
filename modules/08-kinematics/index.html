@@ -139,8 +139,9 @@ function dpStep(dt) {
   function derivs(th1, th2, w1, w2) {
     var c12 = Math.cos(th1-th2), s12 = Math.sin(th1-th2);
     var d = 2 - c12*c12;
-    var a1 = (-g*(2*Math.sin(th1)+Math.sin(th2)*c12) - s12*(w2*w2 + w1*w1*c12)) / (L1*d);
-    var a2 = (2*s12*(w1*w1 + g*(Math.cos(th1)-Math.cos(th2))*2) + w2*w2*s12*c12) / (L2*d);
+    // 等质量等长双摆（theta 为相对竖直的绝对角），拉格朗日推导并以能量守恒校验
+    var a1 = (-g*(2*Math.sin(th1) - Math.sin(th2)*c12) - L1*s12*(w1*w1*c12 + w2*w2)) / (L1*d);
+    var a2 = (2*g*(c12*Math.sin(th1) - Math.sin(th2)) + L2*s12*(2*w1*w1 + w2*w2*c12)) / (L2*d);
     return {dth1: w1, dth2: w2, dw1: a1, dw2: a2};
   }
   var h = dt;
@@ -188,6 +189,13 @@ function syncURL(){
 function prewarmDouble(n){
   for (var i=0;i<(n||320);i++) dpStep(0.02);
 }
+function dpEnergy(th1, w1, th2, w2){
+  var g = P.g, L = 1, m = 1, d = th1 - th2;
+  var T = 0.5*m*L*L*(2*w1*w1 + w2*w2 + 2*w1*w2*Math.cos(d));
+  var V = -m*g*L*(2*Math.cos(th1) + Math.cos(th2));
+  return T + V;
+}
+
 // ==================== 3) 物理 ====================
 function detachAngle() { return Math.acos(2/3) * 180 / Math.PI; }
 function pendulumPeriod(L, g, theta0) {
@@ -392,10 +400,17 @@ function runSelftest() {
     var Tp = pendulumPeriod(P.L, P.g, P.theta0);
     var Tref = 2 * Math.PI * Math.sqrt(1.0/1.0) * (1 + (10*Math.PI/180)*(10*Math.PI/180)/16);
     T('ST4 pendulum period', Math.abs(Tp - Tref) < 1e-9, 'T=' + Tp.toFixed(6) + ' ref=' + Tref.toFixed(6));
-    // ST5 double pendulum step
-    dp.th1=0.5; dp.th2=0.3; dp.w1=0; dp.w2=0; dp.trail=[];
-    dpStep(0.01);
-    T('ST5 double pendulum step', isFinite(dp.th1) && isFinite(dp.th2), 'th1=' + dp.th1.toFixed(4) + ' th2=' + dp.th2.toFixed(4));
+    // ST5 double pendulum energy conservation (physical, not just finiteness)
+    dp.th1=1.0; dp.th2=0.7; dp.w1=0; dp.w2=0; dp.trail=[];
+    var e0 = dpEnergy(dp.th1, dp.w1, dp.th2, dp.w2), emax = 0;
+    for (var k5=0;k5<200;k5++){
+      dpStep(0.002);
+      var e = dpEnergy(dp.th1, dp.w1, dp.th2, dp.w2);
+      if (!isFinite(e)) { emax = 1e9; break; }
+      if (Math.abs(e-e0) > emax) emax = Math.abs(e-e0);
+    }
+    T('ST5 double pendulum energy drift', emax < 1e-6,
+      'drift=' + emax.toExponential(1) + ' (200 steps @2ms)');
   } catch(e) {
     T('ST-EXC', false, String(e));
   }
