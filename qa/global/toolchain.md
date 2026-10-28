@@ -192,3 +192,40 @@ llama.cpp/src/models/qwen4exp.cpp:357: GGML_ASSERT(
 Qwen3.8-Flash-Next（`Qwen4Exp`）要求 **indexer cache 与 attention KV cache 逐 cell 对齐**，而 KVMem 的"GPU 工作集预算"会缩小 KV 池 → 断言失败。即 **KVMem 的 KV 分页机制与该架构不兼容**（其发布包面向 27B ternary 线）。
 
 **结论**：KVMem 无法在 24GB 显存上为 Qwen3.8 提供 262K 上下文；strata（原生 131072 上下文、36 tok/s）仍是本机最优解。
+
+## 2026-10-29 KVMem + Qwen3.8-**27B** 实测（成功）
+
+前置：KVMem 仅支持 **Qwen Dense**（27B 线）；`qwen4_exp`（Flash-Next）被明确拒绝（`docs/multi-backend-differences.md`）。
+模型：`ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` 的 `Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf`（12.12GB，sha256 校验通过）+ `unsloth/Qwen3.8-27B-GGUF` 的 `mmproj-BF16.gguf`。
+
+启动（配方 iq3：KV q8_0、GPU 工作集 36864、reserve 16384、逻辑上下文 262144）：
+```bash
+PORT=18200 CUDA_VISIBLE_DEVICES=0 \
+  MODEL=~/kvmem-models/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf \
+  MMPROJ=~/kvmem-models/mmproj-BF16.gguf \
+  ~/kvmem/kvmem-v0.16.0-rc1-linux-x86_64-cuda13-sm120a/scripts/start-iq3.sh
+```
+
+### 实测（RTX 5090 24GB）
+| 项 | 结果 |
+|---|---|
+| 显存 | **15.6–16.7 GB**（含视觉） |
+| 解码 | **112.6 tok/s**（strata 36 tok/s 的 3 倍） |
+| 短答 | 1.0 s |
+| 长文召回（24,129 tok） | 12.4 s，答案正确 |
+| 长文召回（75,504 tok，**超 GPU 工作集**） | 43.8 s，**答案正确**（KVMem 分页生效） |
+| 长文召回（141,337 tok，**≈4× 超预算**） | 97.2 s，**答案正确**，显存仍 16.7 GB |
+
+### 与 strata 的取舍
+| | strata 千问 3.8 Flash-Next | KVMem Qwen3.8-27B |
+|---|---|---|
+| 模型规模 | 大 MoE（IQ3_S 79GB） | 27B Dense（IQ3_S 12GB） |
+| 解码 | 36 tok/s | **112 tok/s** |
+| 上下文 | 131,072（硬上限） | **262,144 逻辑**，实测 141K 正确 |
+| 显存 | 23.6 GB | **16.7 GB** |
+| 质量 | 更强（大模型） | 较弱（27B） |
+| 并发 | 单槽 | 单槽 |
+
+**两者不能同时驻留**（23.6 + 16.7 > 24GB）。切换脚本：
+- `~/bin/ai-strata` → 8080，质量优先（默认）
+- `~/bin/ai-kvmem` → 18200，速度/超长上下文优先
