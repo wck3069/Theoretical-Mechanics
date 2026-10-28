@@ -14,7 +14,7 @@
   color:var(--tmai-text); font-size:13px; font-weight:600; letter-spacing:.3px;
   background:linear-gradient(160deg,rgba(26,36,66,.72),rgba(6,10,22,.88));
   border:1px solid rgba(146,182,255,.28);
-  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
   box-shadow:0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(255,210,122,.12);
   transition:transform .15s ease, box-shadow .15s ease;
 }
@@ -223,6 +223,8 @@
 
   var root = document.getElementById('tm-ai-root');
   if (!root) return;
+  var API_BASE = (location.protocol === 'file:') ? 'http://127.0.0.1:8765' : '';
+  var healthOk = false;
 
   var launcher = document.getElementById('tmai-launcher');
   var panel = document.getElementById('tmai-panel');
@@ -352,7 +354,7 @@
   function localAnswer(question) {
     var mods = getModules();
     if (!mods) {
-      return { answer: '当前为离线检索模式（未连接教室 AI 服务器）。讲义正文与 PDF 仍可正常使用；需要 AI 答疑时请联系老师开启教室服务器。', sources: [] };
+      return { answer: '当前为离线检索模式（未连接本地 AI 服务）。讲义正文与 PDF 仍可正常使用；本地版请先运行 bash tools/serve.sh，再关闭并重新打开本面板。', sources: [] };
     }
     var qBigrams = cjkBigrams(question);
     var qTokens = latinTokens(question);
@@ -461,25 +463,21 @@
     isOpen = true;
     panel.hidden = false;
     launcher.setAttribute('aria-expanded', 'true');
-    if (!healthChecked) {
-      healthChecked = true;
-      if (location.protocol === 'file:') {
-        setStatus('offline');
-      } else {
-        setStatus('checking');
-        fetch('/api/health').then(function (res) {
-          if (!res.ok) throw new Error('bad');
-          return res.json();
-        }).then(function (data) {
-          if (data && data.ok && data.upstream) {
-            setStatus('online', data.model);
-          } else {
-            setStatus('offline');
-          }
-        }).catch(function () {
+    if (!healthOk) {
+      setStatus('checking');
+      fetch(API_BASE + '/api/health').then(function (res) {
+        if (!res.ok) throw new Error('bad');
+        return res.json();
+      }).then(function (data) {
+        if (data && data.ok && data.upstream) {
+          healthOk = true;
+          setStatus('online', data.model);
+        } else {
           setStatus('offline');
-        });
-      }
+        }
+      }).catch(function () {
+        setStatus('offline');
+      });
     }
     setTimeout(function () { try { inputEl.focus(); } catch (e) {} }, 50);
   }
@@ -506,7 +504,7 @@
     inputEl.value = '';
     typingEl = appendMessage({ role: 'assistant', content: '', typing: true });
     var history = conversation.slice(-6);
-    fetch('/api/ask', {
+    fetch(API_BASE + '/api/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question: text, module: moduleContext, mode: mode, history: history })

@@ -118,3 +118,39 @@ python3 tools/layout_qa.py
 - 审核与修复报告：`qa/P10-content-audit.md`、`qa/P10-physics-audit.md`、`qa/P10-fixes-ui-*.md`、`qa/P10-physics-fixes.md`、本报告
 
 > 未执行 `git commit` / `git push`（按规则需你明确指示）。`dist/`、`.omo/`、`tmp/`、`__pycache__/` 已加入 `.gitignore`。
+
+---
+
+# 第二轮：美术、动画与物理缺口修复（2026-10-29 凌晨）
+
+## 参考研究（只学方法，不搬素材/代码）
+细读 `luoluo-121/neural-creator-dashboard` 的 `NetworkCanvas.jsx`、`Home.jsx`、`neural.css` 后，提取的是动效原则：
+弹簧/缓动驱动的位移、分层辉光与 additive 混合、入场错峰、悬停放大、深度与拖尾；
+没有复制其水母/光球视频、银灰配色或任何代码。我们的实现全部是 Canvas 2D 的球体高光、3D 投影与轨道系统。
+
+## 首页流畅度
+- 星空/星云/暗角一次性预渲染到离屏画布，每帧只 blit + 一小部分闪烁星，消除每帧创建渐变。
+- 行星/辉光改为预渲染 sprite（含高光与边缘光），不再每帧 `createRadialGradient`。
+- 行星拖尾、悬停弹簧放大、选中环、入场错峰（easeOutCubic）。
+- 顶部栏/目录/命令栏/AI 面板的毛玻璃模糊半径下调一档，降低低端机 GPU 压力。
+
+## 模块级修复
+- **M4**：折射与最短路径从“死模式”变为可用；新增折射率 n；Snell 数值求交、光脉冲、直线 vs 下凹轨道赛跑。
+- **M5**：梯子打滑改为 3×3 牛顿–欧拉方程 + 库仑摩擦（static / slide / detached 三态）；3D 木梯、N_w/N_f/f/P 箭头、摩擦锥；移动端字号 ≥11px。
+- **M6**：碰撞判定改用真实半径，二维法向冲量；球体 3D 高光/拖尾；0.5s 接触停顿 + 白色闪光；`?demo=contact` 可确定性展示接触瞬间。
+- **M7**：球冠改为可拖拽旋转的 3D 球面 + 切割圆盘 + 质心标记；h 上限改为直径 2R；甲虫-圆环恢复为 3D 圆环 + 甲虫 + 拖尾，可拖拽旋转。
+- **M8**：圆柱脱离、单摆、双摆全部动画化，3D 球体与拖尾。
+
+## 本地 AI 接入修复（file:// 也可用）
+- 原因：面板原本在 `location.protocol === 'file:'` 时直接跳过健康检查，所以双击打开永远是“离线”。
+- 修复：file:// 下自动请求 `http://127.0.0.1:8765/api/health` 与 `/api/ask`；服务端已有 CORS `*`。
+- `tools/check_html.py` 仅放行本机环回 `http://127.0.0.1:8765` 与 `API_BASE + '/api/...'`，外部 URL 仍然 FAIL。
+- 面板未连接时，关闭再打开会重新探测，不必刷新页面。
+- 注意：GitHub Pages 没有 `/api`，线上 AI 面板仍按设计降级为离线检索。
+
+## 第二轮的验收数字
+- `check_html.py`：10 个 HTML × 6/6 = **60/60**
+- `verify_selftest.py`：**9/9**（8 个有契约模块 + M0 SKIP）
+- `layout_qa.py`：**20/20**
+- 免费视觉模型逐张确认：M4 折射/最短路径、M6 接触闪光、M7 3D 球冠/甲虫、M8 三模式动画、首页构图
+- AI：`file://` 与 `http://127.0.0.1:8765` 均显示“本地模型在线 · qwen3.8-flash-next-iq3_s”

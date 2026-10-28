@@ -160,7 +160,7 @@ body {
 .panel {
   background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
   border-left: 1px solid rgba(183, 155, 255, .35);
-  backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
@@ -369,6 +369,82 @@ details.mapping {
   }
 }
 </style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
 <!-- TM-THEME-HEAD:END -->
 </head>
 <body>
@@ -398,8 +474,8 @@ details.mapping {
       <div class="row"><label for="sel-mode">模式</label></div>
       <select id="sel-mode" aria-label="模式">
         <option value="cycloid">等时摆 (摆线)</option>
-        <option value="refraction" disabled>折射（推导见 note.pdf）</option>
-        <option value="shortest" disabled>最短路径（推导见 note.pdf）</option>
+        <option value="refraction">折射</option>
+        <option value="shortest">最短路径</option>
       </select>
     </div>
     <div class="group">
@@ -415,6 +491,11 @@ details.mapping {
     <div class="group">
       <div class="row"><label for="param-speed">动画速度（无量纲倍率，不改变物理）</label><span class="val" id="val-speed">1.00</span></div>
       <input id="param-speed" type="range" min="0.1" max="3" step="0.1" value="1.0" aria-label="动画速度">
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-n">折射率比 n2/n1</label><span class="val" id="val-n">1.50</span></div>
+      <input id="param-n" type="range" min="1.0" max="2.5" step="0.1" value="1.5" aria-label="折射率比 n">
+      <div class="hint">仅折射模式使用：n2/n1 越大偏折越强。</div>
     </div>
     <div class="btns">
       <button id="btn-pause">暂停</button>
@@ -442,9 +523,9 @@ details.mapping {
 <script>
 'use strict';
 // ==================== 1) PARAMS ====================
-var DEFAULTS = {mode:'cycloid', a:1.0, g:1.0, speed:1.0};
-var RANGE = {a:[0.1,3], g:[0.1,3], speed:[0.1,3]};
-var P = {mode:DEFAULTS.mode, a:DEFAULTS.a, g:DEFAULTS.g, speed:DEFAULTS.speed};
+var DEFAULTS = {mode:'cycloid', a:1.0, g:1.0, speed:1.0, n:1.5};
+var RANGE = {a:[0.1,3], g:[0.1,3], speed:[0.1,3], n:[1.0,2.5]};
+var P = {mode:DEFAULTS.mode, a:DEFAULTS.a, g:DEFAULTS.g, speed:DEFAULTS.speed, n:DEFAULTS.n};
 
 // ==================== 2) URL 同步 ====================
 function loadFromURL(){
@@ -460,31 +541,81 @@ function loadFromURL(){
   if (q.a !== undefined) P.a = Math.min(Math.max(parseFloat(q.a), RANGE.a[0]), RANGE.a[1]) || DEFAULTS.a;
   if (q.g !== undefined) P.g = Math.min(Math.max(parseFloat(q.g), RANGE.g[0]), RANGE.g[1]) || DEFAULTS.g;
   if (q.speed !== undefined) P.speed = Math.min(Math.max(parseFloat(q.speed), RANGE.speed[0]), RANGE.speed[1]) || DEFAULTS.speed;
+  if (q.n !== undefined) P.n = Math.min(Math.max(parseFloat(q.n), RANGE.n[0]), RANGE.n[1]) || DEFAULTS.n;
   return q;
 }
 function syncURL(){
-  var s = '?mode=' + P.mode + '&a=' + P.a + '&g=' + P.g + '&speed=' + P.speed;
+  var s = '?mode=' + P.mode + '&a=' + P.a + '&g=' + P.g + '&speed=' + P.speed + '&n=' + P.n;
   if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
 }
 
-// ==================== 3) 物理 ====================
-// Cycloid: x = a(theta - sin theta), h = a(1+cos theta), theta in [0, pi]
-// s = 4a cos(theta/2), h = s^2/(8a)
+// ==================== 3) 物理 / 工具 ====================
 function cycloidPoint(theta) {
   return {x: P.a * (theta - Math.sin(theta)), h: P.a * (1 + Math.cos(theta))};
 }
 function thetaFromS(s) {
-  // s = 4a cos(theta/2) => cos(theta/2) = s/(4a) => theta = 2 acos(s/(4a))
   var c = s / (4 * P.a);
   if (c > 1) c = 1; if (c < 0) c = 0;
   return 2 * Math.acos(c);
 }
 function cycloidT(s0) {
-  // T = pi * sqrt(a/g)
   return Math.PI * Math.sqrt(P.a / P.g);
 }
+function easeOutCubic(t){ if(t<0) t=0; if(t>1) t=1; return 1 - Math.pow(1-t,3); }
+function clamp(v,lo,hi){ return Math.min(Math.max(v,lo),hi); }
 
-// ==================== 4) 渲染 ====================
+// 3D 球体 sprite（预渲染，避免每帧新建渐变）
+var sphereSprite = (function(){
+  var sz = 48;
+  var c = document.createElement('canvas'); c.width = sz; c.height = sz;
+  var g = c.getContext('2d');
+  var grad = g.createRadialGradient(sz*0.32, sz*0.28, 1, sz/2, sz/2, sz/2);
+  grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+  grad.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+  grad.addColorStop(0.7, 'rgba(80,100,160,0.18)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = grad; g.fillRect(0,0,sz,sz);
+  return c;
+})();
+
+function drawSphere(x,y,r,color){
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.arc(x,y,r,0,2*Math.PI); ctx.fill();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.drawImage(sphereSprite, x - r*1.35, y - r*1.35, r*2.7, r*2.7);
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function drawTrail(trail,color){
+  for (var i = 0; i < trail.length; i++) {
+    var a = (i+1)/trail.length;
+    ctx.globalAlpha = a*0.55;
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(trail[i].x, trail[i].y, 2, 0, 2*Math.PI); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ==================== 4) 状态 ====================
+var particles = [];
+var refr = {phase:0, trail:[]};
+var shortState = {straight:{d:0,t:0,done:false,trail:[]}, curve:{d:0,t:0,done:false,trail:[]}};
+var running = true;
+
+function initParticles() {
+  particles = [];
+  var s0s = [0.5, 1.0, 1.5, 2.0];
+  for (var i = 0; i < s0s.length; i++) {
+    if (s0s[i] <= 4 * P.a) {
+      particles.push({s0: s0s[i], s: s0s[i] * 0.999, t: 0, done: false, trail: []});
+    }
+  }
+  refr.phase = 0; refr.trail = [];
+  shortState.straight = {d:0, t:0, done:false, trail:[]};
+  shortState.curve = {d:0, t:0, done:false, trail:[]};
+}
+
+// ==================== 5) 渲染基础 ====================
 var cv = document.getElementById('stage-canvas');
 var ctx = cv.getContext('2d');
 var W = 0, H = 0;
@@ -498,45 +629,137 @@ function resize(){
 }
 window.addEventListener('resize', resize);
 
-var particles = []; // {s0, s, t, done}
-var running = true;
-
-function initParticles() {
-  particles = [];
-  var s0s = [0.5, 1.0, 1.5, 2.0];
-  for (var i = 0; i < s0s.length; i++) {
-    if (s0s[i] <= 4 * P.a) {
-      particles.push({s0: s0s[i], s: s0s[i] * 0.999, t: 0, done: false});
-    }
-  }
-}
-
-function stepParticles() {
-  if (!running) return;
-  var dt = 0.02 * P.speed;
-  for (var i = 0; i < particles.length; i++) {
-    var p = particles[i];
-    if (p.done) continue;
-    var v = Math.sqrt(P.g / (4 * P.a)) * Math.sqrt(Math.max(0, p.s0*p.s0 - p.s*p.s));
-    if (p.s <= 1e-6) { p.s = 0; p.done = true; continue; }
-    if (v < 1e-9) { v = Math.sqrt(P.g / (4 * P.a)) * Math.sqrt(Math.max(0, p.s0*p.s0 - (p.s-0.001)*(p.s-0.001))); }
-    var ds = v * dt;
-    p.s -= ds;
-    p.t += dt;
-    if (p.s <= 0) { p.s = 0; p.done = true; }
-  }
-}
-
 function viewScale() {
   return Math.min(W * 0.8 / (Math.PI * P.a), H * 0.6 / (2 * P.a));
 }
 
-function draw() {
-  ctx.clearRect(0, 0, W, H);
+// ==================== 6) 物理步进 ====================
+function stepParticles() {
+  if (!running) return;
+  var dt = 0.02 * P.speed;
+  if (P.mode === 'cycloid') {
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      if (p.done) continue;
+      var v = Math.sqrt(P.g / (4 * P.a)) * Math.sqrt(Math.max(0, p.s0*p.s0 - p.s*p.s));
+      if (p.s <= 1e-6) { p.s = 0; p.done = true; continue; }
+      if (v < 1e-9) { v = Math.sqrt(P.g / (4 * P.a)) * Math.sqrt(Math.max(0, p.s0*p.s0 - (p.s-0.001)*(p.s-0.001))); }
+      var ds = v * dt;
+      p.s -= ds;
+      p.t += dt;
+      if (p.s <= 0) { p.s = 0; p.done = true; }
+      var th = thetaFromS(p.s);
+      var pt = cycloidPoint(th);
+      var sc = viewScale();
+      var cx = W * 0.5, cy = H * 0.8;
+      var px = cx + (pt.x - P.a * Math.PI / 2) * sc;
+      var py = cy - pt.h * sc;
+      p.trail.push({x:px, y:py});
+      if (p.trail.length > 40) p.trail.shift();
+    }
+  } else if (P.mode === 'refraction') {
+    refr.phase += dt * 0.4;
+    if (refr.phase > 1) { refr.phase = 0; refr.trail = []; }
+    var pos = refrPosition(refr.phase);
+    refr.trail.push(pos);
+    if (refr.trail.length > 60) refr.trail.shift();
+  } else if (P.mode === 'shortest') {
+    var sPts = shortStraightPts();
+    var cPts = shortCurvePts();
+    var sCum = cumLen(sPts);
+    var cCum = cumLen(cPts);
+    stepBall(shortState.straight, sPts, sCum);
+    stepBall(shortState.curve, cPts, cCum);
+  }
+}
+
+function stepBall(ball, pts, cum) {
+  if (ball.done) return;
+  var total = cum[cum.length-1];
+  var pos = pointAtDist(pts, cum, ball.d);
+  var A = shortA();
+  var drop = pos.y - A.y;
+  var v = Math.sqrt(2 * P.g * 0.01 * Math.max(drop, 0.5));
+  var dt = 0.02 * P.speed;
+  ball.d += v * dt;
+  ball.t += dt;
+  if (ball.d >= total) { ball.d = total; ball.done = true; }
+  var p2 = pointAtDist(pts, cum, ball.d);
+  ball.trail.push({x:p2.x, y:p2.y});
+  if (ball.trail.length > 60) ball.trail.shift();
+}
+
+// ==================== 7) 几何辅助 ====================
+function refrGeom() {
+  var Sx = W*0.15, Sy = H*0.15;
+  var Tx = W*0.85, Ty = H*0.85;
+  var yI = H*0.5;
+  var n1 = 1, n2 = P.n;
+  var lo = 0, hi = W;
+  for (var it = 0; it < 80; it++) {
+    var m1 = lo + (hi-lo)/3;
+    var m2 = hi - (hi-lo)/3;
+    var f1 = n1*Math.hypot(m1-Sx, yI-Sy) + n2*Math.hypot(Tx-m1, Ty-yI);
+    var f2 = n1*Math.hypot(m2-Sx, yI-Sy) + n2*Math.hypot(Tx-m2, Ty-yI);
+    if (f1 < f2) hi = m2; else lo = m1;
+  }
+  var X = (lo+hi)/2;
+  return {Sx:Sx, Sy:Sy, Tx:Tx, Ty:Ty, X:X, yI:yI};
+}
+function refrPosition(phase) {
+  var g = refrGeom();
+  var d1 = Math.hypot(g.X-g.Sx, g.yI-g.Sy);
+  var d2 = Math.hypot(g.Tx-g.X, g.Ty-g.yI);
+  var total = d1 + d2;
+  var dist = phase * total;
+  if (dist <= d1) {
+    var f = d1 > 0 ? dist/d1 : 0;
+    return {x: g.Sx + (g.X-g.Sx)*f, y: g.Sy + (g.yI-g.Sy)*f};
+  } else {
+    var dist2 = dist - d1;
+    var f = d2 > 0 ? dist2/d2 : 0;
+    return {x: g.X + (g.Tx-g.X)*f, y: g.yI + (g.Ty-g.yI)*f};
+  }
+}
+
+function shortA(){ return {x:W*0.1, y:H*0.1}; }
+function shortB(){ return {x:W*0.9, y:H*0.9}; }
+function shortStraightPts(){
+  var A=shortA(), B=shortB();
+  var pts=[]; var N=40;
+  for (var i=0;i<=N;i++){ var u=i/N; pts.push({x:A.x+(B.x-A.x)*u, y:A.y+(B.y-A.y)*u}); }
+  return pts;
+}
+function shortCurvePts(){
+  var A=shortA(), B=shortB();
+  var pts=[]; var N=60;
+  var D = 0.32*(B.y-A.y);
+  for (var i=0;i<=N;i++){ var u=i/N; pts.push({x:A.x+(B.x-A.x)*u, y:A.y+(B.y-A.y)*u + D*Math.sin(Math.PI*u)}); }
+  return pts;
+}
+function cumLen(pts){
+  var cum=[0];
+  for (var i=0;i<pts.length-1;i++){ cum.push(cum[i]+Math.hypot(pts[i+1].x-pts[i].x, pts[i+1].y-pts[i].y)); }
+  return cum;
+}
+function pointAtDist(pts,cum,d){
+  var total = cum[cum.length-1];
+  if (d <= 0) return {x:pts[0].x, y:pts[0].y};
+  if (d >= total) return {x:pts[pts.length-1].x, y:pts[pts.length-1].y};
+  var i = 0;
+  while (i < cum.length-2 && d > cum[i+1]) i++;
+  var segLen = cum[i+1]-cum[i];
+  var tseg = segLen > 0 ? (d-cum[i])/segLen : 0;
+  return {x: pts[i].x + (pts[i+1].x-pts[i].x)*tseg, y: pts[i].y + (pts[i+1].y-pts[i].y)*tseg};
+}
+
+// ==================== 8) 绘制 ====================
+function drawPath(pts){ ctx.beginPath(); for(var i=0;i<pts.length;i++){ if(i===0) ctx.moveTo(pts[i].x,pts[i].y); else ctx.lineTo(pts[i].x,pts[i].y);} ctx.stroke(); }
+
+function drawCycloid(){
   var sc = viewScale();
   var cx = W * 0.5, cy = H * 0.8;
-  // Draw cycloid
-  ctx.strokeStyle = 'rgba(120,160,255,.3)';
+  ctx.strokeStyle = 'rgba(127,224,255,.35)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   for (var th = 0; th <= Math.PI; th += 0.01) {
@@ -546,29 +769,98 @@ function draw() {
     if (th === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
   }
   ctx.stroke(); ctx.lineWidth = 1;
-  // Draw particles
   for (var i = 0; i < particles.length; i++) {
     var p = particles[i];
-    var th = thetaFromS(p.s);
-    var pt = cycloidPoint(th);
-    var px = cx + (pt.x - P.a * Math.PI / 2) * sc;
-    var py = cy - pt.h * sc;
-    var colors = ['#5ea2ff','#ffcf6b','#7fe3a0','#ff7b7b'];
-    ctx.fillStyle = colors[i % colors.length];
-    ctx.beginPath(); ctx.arc(px, py, 5, 0, 2*Math.PI); ctx.fill();
-    // Label
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '10px ui-monospace,monospace';
-    ctx.fillText('s0=' + p.s0.toFixed(1), px + 8, py - 8);
-    ctx.fillText('t=' + p.t.toFixed(2), px + 8, py + 4);
+    var thp = thetaFromS(p.s);
+    var ptp = cycloidPoint(thp);
+    var pxp = cx + (ptp.x - P.a * Math.PI / 2) * sc;
+    var pyp = cy - ptp.h * sc;
+    var colors = ['#ffd27a','#7fe0ff','#7ff0cf','#b79bff'];
+    drawTrail(p.trail, colors[i % colors.length]);
+    drawSphere(pxp, pyp, 6, colors[i % colors.length]);
+    ctx.fillStyle = '#e8eeff'; ctx.font = '10px ui-monospace,monospace';
+    ctx.fillText('s0=' + p.s0.toFixed(1), pxp + 9, pyp - 9);
+    ctx.fillText('t=' + p.t.toFixed(2), pxp + 9, pyp + 5);
   }
-  // Bottom point (cycloid lowest point)
-  ctx.fillStyle = '#ffcf6b';
+  ctx.fillStyle = '#ffd27a';
   ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2*Math.PI); ctx.fill();
-  ctx.fillStyle = 'rgba(255,207,107,.8)'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillStyle = 'rgba(255,210,122,.8)'; ctx.font = '11px ui-monospace,monospace';
   ctx.fillText('lowest point', cx + 8, cy + 4);
 }
 
-// ==================== 5) HUD ====================
+function drawRefraction(){
+  var g = refrGeom();
+  var Sx=g.Sx,Sy=g.Sy,Tx=g.Tx,Ty=g.Ty,X=g.X,yI=g.yI;
+  ctx.fillStyle = 'rgba(127,224,255,0.04)'; ctx.fillRect(0,0,W,yI);
+  ctx.fillStyle = 'rgba(183,155,255,0.05)'; ctx.fillRect(0,yI,W,H-yI);
+  ctx.strokeStyle = 'rgba(127,224,255,0.5)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0,yI); ctx.lineTo(W,yI); ctx.stroke(); ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(232,238,255,0.35)';
+  ctx.beginPath(); ctx.moveTo(X,yI-70); ctx.lineTo(X,yI+70); ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(Sx,Sy); ctx.lineTo(X,yI); ctx.stroke();
+  ctx.strokeStyle = '#7fe0ff'; ctx.beginPath(); ctx.moveTo(X,yI); ctx.lineTo(Tx,Ty); ctx.stroke();
+  ctx.lineWidth = 1;
+  var d1 = Math.hypot(X-Sx, yI-Sy);
+  var th1 = Math.asin(clamp(Math.abs(X-Sx)/d1,0,1));
+  var d2 = Math.hypot(Tx-X, Ty-yI);
+  var th2 = Math.asin(clamp(Math.abs(Tx-X)/d2,0,1));
+  // arcs
+  ctx.strokeStyle = 'rgba(255,210,122,0.6)'; ctx.beginPath();
+  ctx.arc(X, yI, 26, -Math.PI/2, Math.atan2(Sy-yI, Sx-X), true); ctx.stroke();
+  ctx.strokeStyle = 'rgba(127,224,255,0.6)'; ctx.beginPath();
+  ctx.arc(X, yI, 26, Math.atan2(Ty-yI, Tx-X), Math.PI/2, false); ctx.stroke();
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('θ1 = ' + (th1*180/Math.PI).toFixed(1) + '°', X - 78, yI - 14);
+  ctx.fillText('θ2 = ' + (th2*180/Math.PI).toFixed(1) + '°', X + 14, yI + 26);
+  ctx.fillText('n1 = 1.00   n2 = ' + P.n.toFixed(2), 12, 20);
+  ctx.fillText('n1 sinθ1 = ' + (1*Math.sin(th1)).toFixed(4) + '   n2 sinθ2 = ' + (P.n*Math.sin(th2)).toFixed(4), 12, H - 12);
+  drawTrail(refr.trail, '#ffd27a');
+  var pos = refrPosition(refr.phase);
+  drawSphere(pos.x, pos.y, 7, '#ffd27a');
+  if (Math.abs(pos.y - yI) < 6) {
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = 'rgba(127,224,255,0.35)';
+    ctx.beginPath(); ctx.arc(X, yI, 18, 0, 2*Math.PI); ctx.fill();
+    ctx.restore();
+  }
+  drawSphere(Sx, Sy, 5, '#ffd27a');
+  drawSphere(Tx, Ty, 5, '#7fe0ff');
+}
+
+function drawShortest(){
+  var A = shortA(), B = shortB();
+  var sPts = shortStraightPts();
+  var cPts = shortCurvePts();
+  var sCum = cumLen(sPts);
+  var cCum = cumLen(cPts);
+  ctx.strokeStyle = 'rgba(232,238,255,0.35)'; ctx.lineWidth = 2;
+  drawPath(sPts);
+  ctx.strokeStyle = '#b79bff'; ctx.lineWidth = 2;
+  drawPath(cPts);
+  ctx.lineWidth = 1;
+  drawSphere(A.x, A.y, 6, '#ffd27a');
+  drawSphere(B.x, B.y, 6, '#7fe0ff');
+  drawTrail(shortState.straight.trail, 'rgba(232,238,255,0.5)');
+  drawTrail(shortState.curve.trail, '#b79bff');
+  var sp = pointAtDist(sPts, sCum, shortState.straight.d);
+  var cp = pointAtDist(cPts, cCum, shortState.curve.d);
+  drawSphere(sp.x, sp.y, 8, '#e8eeff');
+  drawSphere(cp.x, cp.y, 8, '#b79bff');
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('直线球  t=' + shortState.straight.t.toFixed(2) + (shortState.straight.done ? '  到达' : ''), 12, 24);
+  ctx.fillText('曲线球  t=' + shortState.curve.t.toFixed(2) + (shortState.curve.done ? '  到达' : ''), 12, 44);
+  ctx.fillText('更短 ≠ 更快：曲线更长却先到 B', 12, H - 12);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  if (P.mode === 'cycloid') drawCycloid();
+  else if (P.mode === 'refraction') drawRefraction();
+  else if (P.mode === 'shortest') drawShortest();
+}
+
+// ==================== 9) HUD ====================
 function $(id){ return document.getElementById(id); }
 var hudT = $('hudT'), hudMode = $('hudMode'), hudState = $('hudState'), noticeEl = $('notice');
 function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
@@ -577,15 +869,24 @@ function setNotice(msg, bad){
   noticeEl.hidden = false; noticeEl.textContent = msg;
   noticeEl.className = bad ? 'notice bad' : 'notice';
 }
+var MODE_LABEL = {cycloid:'等时摆（摆线）', refraction:'折射', shortest:'最短路径'};
 function updateHUD(){
-  var allDone = particles.length > 0 && particles.every(function(p){ return p.done; });
-  hudT.textContent = allDone ? particles[0].t.toFixed(3) : (particles.length > 0 ? particles[0].t.toFixed(3) : '0.00');
-  var MODE_LABEL={cycloid:'等时摆（摆线）',refraction:'折射（见 note.pdf）',shortest:'最短路径（见 note.pdf）'};
+  if (P.mode === 'cycloid') {
+    var allDone = particles.length > 0 && particles.every(function(p){ return p.done; });
+    hudT.textContent = particles.length > 0 ? particles[0].t.toFixed(3) : '0.00';
+    hudState.textContent = allDone ? '全部到达' : '滑动中';
+  } else if (P.mode === 'refraction') {
+    hudT.textContent = refr.phase.toFixed(3);
+    hudState.textContent = '脉冲循环';
+  } else if (P.mode === 'shortest') {
+    hudT.textContent = shortState.curve.t.toFixed(3);
+    var allDone2 = shortState.straight.done && shortState.curve.done;
+    hudState.textContent = allDone2 ? '全部到达' : '滑动中';
+  }
   hudMode.textContent = MODE_LABEL[P.mode] || P.mode;
-  hudState.textContent = allDone ? '全部到达' : '滑动中';
 }
 
-// ==================== 6) 控制 ====================
+// ==================== 10) 控制 ====================
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
@@ -598,40 +899,35 @@ function bindControls() {
   bindSlider('param-a', 'a', 'val-a', function(v){ return v.toFixed(2); });
   bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
   bindSlider('param-speed', 'speed', 'val-speed', function(v){ return v.toFixed(2); });
+  bindSlider('param-n', 'n', 'val-n', function(v){ return v.toFixed(2); });
   $('btn-pause').addEventListener('click', function(){ running = !running; this.textContent = running ? '暂停' : '继续'; });
   $('btn-reset').addEventListener('click', function(){ initParticles(); });
   $('btn-race').addEventListener('click', function(){ initParticles(); });
 }
 
-// ==================== 7) 自测 ====================
+// ==================== 11) 自测 ====================
 function runSelftest() {
   var saved = {a:P.a, g:P.g};
   var details = [], passN = 0;
   function T(name, ok, msg){ details.push({name:name, pass:!!ok, msg:msg}); if(ok) passN++; }
   function restore(){ P.a=saved.a; P.g=saved.g; }
   try {
-    // ST1 isochrony: T same for different s0
     P.a=1.0; P.g=1.0;
     var T1 = cycloidT(0.5), T2 = cycloidT(1.0), T3 = cycloidT(2.0);
     T('ST1 isochrony cycloid', Math.abs(T1-T2) < 1e-12 && Math.abs(T2-T3) < 1e-12, 'T=' + T1.toFixed(6));
-    // ST2 T = pi*sqrt(a/g)
     var Tref = Math.PI * Math.sqrt(1.0/1.0);
     T('ST2 T=pi*sqrt(a/g)', Math.abs(T1 - Tref) < 1e-12, 'T=' + T1.toFixed(6) + ' ref=' + Tref.toFixed(6));
-    // ST3 general isochrony T0 = pi/(2*sqrt(2*g*C))
     var C = 1.0/8.0;
     var T0 = Math.PI / (2 * Math.sqrt(2 * P.g * C));
     var T0ref = Math.PI * Math.sqrt(P.a / P.g);
     T('ST3 general T0', Math.abs(T0 - T0ref) < 1e-12, 'T0=' + T0.toFixed(6) + ' ref=' + T0ref.toFixed(6));
-    // ST4 Snell's law
     var n1=1.0, n2=1.5, th1=Math.PI/6;
     var th2 = Math.asin(n1*Math.sin(th1)/n2);
     T('ST4 Snell law', Math.abs(n1*Math.sin(th1) - n2*Math.sin(th2)) < 1e-12, 'lhs=' + (n1*Math.sin(th1)).toFixed(6));
-    // ST5 discretization isochrony < 0.5%
     P.a=1.0; P.g=1.0;
     var times = [];
     for (var si = 0; si < 2; si++) {
       var s0 = si === 0 ? 1.0 : 2.0;
-      // numerical integration via substitution s = s0*sin(phi), phi from pi/2 to 0
       var N = 10000;
       var t = 0, dt_phi = (Math.PI/2) / N;
       for (var j = 0; j < N; j++) {
@@ -653,7 +949,7 @@ function runSelftest() {
   return {passed: passN, failed: 5 - passN, details: details};
 }
 
-// ==================== 8) 启动 ====================
+// ==================== 12) 启动 ====================
 var qURL = loadFromURL();
 resize();
 initParticles();
@@ -671,7 +967,6 @@ if (qURL.selftest === '1') {
   }
   stEl.textContent = txt;
 }
-var running = true;
 function frame() {
   if (running) { stepParticles(); }
   draw(); updateHUD();
@@ -684,6 +979,7 @@ metEl.id = 'metrics';
 metEl.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
 function metUpdate(){ metEl.textContent = 'METRICS ' + window.innerWidth + ' ' + window.innerHeight + ' ' + document.documentElement.scrollWidth + ' ' + document.documentElement.scrollHeight; }
 metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendChild(metEl);
+
 </script>
 <!-- TM-THEME-BODY:START -->
 <canvas class="tm-stars" aria-hidden="true"></canvas>

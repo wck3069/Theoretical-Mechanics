@@ -159,7 +159,7 @@ body {
 .panel {
   background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
   border-left: 1px solid rgba(183, 155, 255, .35);
-  backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
@@ -368,6 +368,82 @@ details.mapping {
   }
 }
 </style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
 <!-- TM-THEME-HEAD:END -->
 </head>
 <body>
@@ -466,6 +542,94 @@ function dpStep(dt) {
   if (dp.trail.length > dp.trailMax) dp.trail.shift();
 }
 
+// ==================== 0b) 圆柱脱离 & 单摆 动画状态 ====================
+var THD = Math.acos(2/3); // 脱离角（rad，cosθ=2/3）
+var ART = {void:'#03050c', solar:'#ffd27a', cyan:'#7fe0ff', violet:'#b79bff', teal:'#7ff0cf', text:'#e8eeff'};
+var REDUCED = false;
+try { REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (eRM) { REDUCED = false; }
+
+// —— 圆柱脱离：接触段 RK4 θ''=g·sinθ（R=1），脱离后解析抛体 ——
+var cyl = {phase:'contact', th:1e-3, w:0, projT:0, px:0, py:0, vx:0, vy:0, trail:[], alpha:0, fadeOut:0};
+function cylReset(){ cyl.phase='contact'; cyl.th=1e-3; cyl.w=0; cyl.projT=0; cyl.trail.length=0; cyl.alpha=0; cyl.fadeOut=0; }
+function cylContactDerivs(th, w){ return {dth:w, dw:P.g*Math.sin(th)}; }
+function cylStep(h){
+  if (cyl.fadeOut > 0){
+    cyl.fadeOut -= h;
+    cyl.alpha = Math.max(0, cyl.fadeOut / 0.45);
+    if (cyl.fadeOut <= 0) cylReset();
+    return;
+  }
+  if (cyl.alpha < 1) cyl.alpha = Math.min(1, cyl.alpha + h/0.35);
+  if (cyl.phase === 'contact'){
+    var k1 = cylContactDerivs(cyl.th, cyl.w);
+    var k2 = cylContactDerivs(cyl.th + 0.5*h*k1.dth, cyl.w + 0.5*h*k1.dw);
+    var k3 = cylContactDerivs(cyl.th + 0.5*h*k2.dth, cyl.w + 0.5*h*k2.dw);
+    var k4 = cylContactDerivs(cyl.th + h*k3.dth, cyl.w + h*k3.dw);
+    cyl.th += h/6*(k1.dth + 2*k2.dth + 2*k3.dth + k4.dth);
+    cyl.w  += h/6*(k1.dw + 2*k2.dw + 2*k3.dw + k4.dw);
+    if (cyl.th >= THD){
+      cyl.th = THD;
+      var v = Math.sqrt(2 * P.g * (1 - Math.cos(THD))); // θ̇² = 2g(1-cosθ)
+      cyl.px = Math.sin(THD); cyl.py = -Math.cos(THD);
+      cyl.vx = v * Math.cos(THD); cyl.vy = v * Math.sin(THD); // 切向速度 → 水平/竖直分量
+      cyl.projT = 0;
+      cyl.phase = 'proj';
+    }
+  } else {
+    cyl.projT += h;
+  }
+  var x, y;
+  if (cyl.phase === 'contact'){ x = Math.sin(cyl.th); y = -Math.cos(cyl.th); }
+  else {
+    x = cyl.px + cyl.vx * cyl.projT;
+    y = cyl.py + cyl.vy * cyl.projT + 0.5 * P.g * cyl.projT * cyl.projT;
+    if (y > 1.85 && cyl.fadeOut <= 0) cyl.fadeOut = 0.45; // 落出视野后淡出重置
+  }
+  cyl.trail.push({x:x, y:y});
+  if (cyl.trail.length > 90) cyl.trail.shift();
+}
+
+// —— 单摆：RK4 θ''=-(g/L)sinθ，从 θ0 静止释放 ——
+var pend = {th:0, w:0, trail:[]};
+function pendReset(){ pend.th = Math.PI/180 * P.theta0; pend.w = 0; pend.trail.length = 0; }
+function pendDerivs(th, w){ return {dth:w, dw:-(P.g/P.L)*Math.sin(th)}; }
+function pendStep(h){
+  var k1 = pendDerivs(pend.th, pend.w);
+  var k2 = pendDerivs(pend.th + 0.5*h*k1.dth, pend.w + 0.5*h*k1.dw);
+  var k3 = pendDerivs(pend.th + 0.5*h*k2.dth, pend.w + 0.5*h*k2.dw);
+  var k4 = pendDerivs(pend.th + h*k3.dth, pend.w + h*k3.dw);
+  pend.th += h/6*(k1.dth + 2*k2.dth + 2*k3.dth + k4.dth);
+  pend.w  += h/6*(k1.dw + 2*k2.dw + 2*k3.dw + k4.dw);
+  pend.trail.push({x:Math.sin(pend.th), y:Math.cos(pend.th)});
+  if (pend.trail.length > 260) pend.trail.shift();
+}
+
+// —— 3D 球体视觉：优先 TMART.sphere，否则本地径向渐变 + 高光 + 辉光 ——
+function artHex(hex){ var h = hex.replace('#',''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+function artRgba(hex, a){ var c = artHex(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+function artShade(hex, f){ var c = artHex(hex); return 'rgb(' + Math.round(Math.min(255, c[0]*f)) + ',' + Math.round(Math.min(255, c[1]*f)) + ',' + Math.round(Math.min(255, c[2]*f)) + ')'; }
+function tmSphere(x, y, r, color, glow){
+  if (glow === undefined) glow = 0.5;
+  if (window.TMART && typeof window.TMART.sphere === 'function'){
+    window.TMART.sphere(ctx, x, y, r, color, {glow: glow});
+    return;
+  }
+  if (glow > 0){
+    var gl = ctx.createRadialGradient(x, y, r*0.75, x, y, r*2.4);
+    gl.addColorStop(0, artRgba(color, 0.30*glow));
+    gl.addColorStop(1, artRgba(color, 0));
+    ctx.fillStyle = gl;
+    ctx.beginPath(); ctx.arc(x, y, r*2.4, 0, 2*Math.PI); ctx.fill();
+  }
+  var g1 = ctx.createRadialGradient(x - r*0.34, y - r*0.38, r*0.08, x, y, r);
+  g1.addColorStop(0, '#ffffff');
+  g1.addColorStop(0.22, color);
+  g1.addColorStop(0.75, artShade(color, 0.62));
+  g1.addColorStop(1, artShade(color, 0.32));
+  ctx.fillStyle = g1;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, 2*Math.PI); ctx.fill();
+}
+
 // ==================== 1) PARAMS ====================
 var DEFAULTS = {mode:'cylinder', theta0:10, L:1.0, g:1.0, speed:1.0};
 var RANGE = {theta0:[1,60], L:[0.5,3], g:[0.5,3], speed:[0.1,3]};
@@ -529,49 +693,81 @@ function draw() {
   var cx = W * 0.5, cy = H * 0.5;
   var sc = Math.min(W, H) * 0.35;
   if (P.mode === 'cylinder') {
-    // Draw cylinder cross-section
-    ctx.strokeStyle = 'rgba(120,160,255,.4)';
+    var ccy = cy + Math.min(W, H) * 0.05;
+    var sc2 = Math.min(W, H) * 0.36;
+    // 圆柱截面：暗部渐变 + 高光弧 + 紫描边
+    var cg = ctx.createRadialGradient(cx - sc2*0.35, ccy - sc2*0.35, sc2*0.12, cx, ccy, sc2);
+    cg.addColorStop(0, '#101a38');
+    cg.addColorStop(0.5, '#090f22');
+    cg.addColorStop(1, '#04070f');
+    ctx.fillStyle = cg;
+    ctx.beginPath(); ctx.arc(cx, ccy, sc2, 0, 2*Math.PI); ctx.fill();
     ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(cx, cy, sc, 0, 2*Math.PI); ctx.stroke();
-    // Draw center marker
-    ctx.fillStyle = 'rgba(255,207,107,.6)';
-    ctx.beginPath(); ctx.arc(cx, cy, 3, 0, 2*Math.PI); ctx.fill();
-    // Draw radius line to particle
-    var th = detachAngle() * Math.PI / 180;
-    var px = cx + sc * Math.sin(th);
-    var py = cy - sc * Math.cos(th);
-    ctx.strokeStyle = 'rgba(255,207,107,.4)';
-    ctx.setLineDash([3,3]);
-    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
-    ctx.setLineDash([]);
-    // Draw particle
-    ctx.fillStyle = '#5ea2ff';
-    ctx.beginPath(); ctx.arc(px, py, 6, 0, 2*Math.PI); ctx.fill();
-    // Draw angle arc
-    ctx.strokeStyle = 'rgba(127,227,160,.5)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(cx, cy, sc*0.3, -Math.PI/2, -Math.PI/2 + th); ctx.stroke();
-    ctx.fillStyle = '#7fe3a0'; ctx.font = '10px ui-monospace,monospace';
-    ctx.fillText('theta', cx + sc*0.35, cy - sc*0.15);
-    // Draw path
-    ctx.strokeStyle = 'rgba(94,162,255,.5)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    for (var i = 0; i <= 20; i++) {
-      var t = (i / 20) * th;
-      var x = cx + sc * Math.sin(t);
-      var y = cy - sc * Math.cos(t);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    ctx.strokeStyle = 'rgba(183,155,255,.5)';
+    ctx.beginPath(); ctx.arc(cx, ccy, sc2, 0, 2*Math.PI); ctx.stroke();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(127,224,255,.30)';
+    ctx.beginPath(); ctx.arc(cx, ccy, sc2 - 2.5, Math.PI*0.72, Math.PI*1.6); ctx.stroke();
+    ctx.lineWidth = 1;
+    // 小球位置（接触段沿表面，脱离段解析抛体）
+    var onSurface = cyl.phase === 'contact';
+    var bx, by;
+    if (onSurface){ bx = cx + sc2 * Math.sin(cyl.th); by = ccy - sc2 * Math.cos(cyl.th); }
+    else {
+      bx = cx + sc2 * (cyl.px + cyl.vx * cyl.projT);
+      by = ccy + sc2 * (cyl.py + cyl.vy * cyl.projT + 0.5 * P.g * cyl.projT * cyl.projT);
     }
-    ctx.stroke();
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('detach at ' + detachAngle().toFixed(2) + ' deg', 20, 30);
+    // 轨迹拖尾（青色渐隐）
+    ctx.lineWidth = 2;
+    for (var it = 1; it < cyl.trail.length; it++) {
+      var tB = cyl.trail[it - 1], tA = cyl.trail[it];
+      ctx.globalAlpha = (it / cyl.trail.length) * 0.55 * cyl.alpha;
+      ctx.strokeStyle = ART.cyan;
+      ctx.beginPath();
+      ctx.moveTo(cx + sc2 * tB.x, ccy + sc2 * tB.y);
+      ctx.lineTo(cx + sc2 * tA.x, ccy + sc2 * tA.y);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1;
+    // 脱离点标记（solar 虚线半径 + 圆环）
+    var dx0 = cx + sc2 * Math.sin(THD), dy0 = ccy - sc2 * Math.cos(THD);
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(255,210,122,.45)';
+    ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(dx0, dy0); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = ART.solar; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(dx0, dy0, 5, 0, 2*Math.PI); ctx.stroke();
+    // θ 角弧（自顶部竖直方向量到当前 θ）
+    var thShown = onSurface ? Math.min(cyl.th, THD) : THD;
+    ctx.strokeStyle = 'rgba(127,240,207,.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, ccy, sc2*0.3, -Math.PI/2, -Math.PI/2 + thShown); ctx.stroke();
+    ctx.fillStyle = ART.teal;
+    ctx.font = '10px ui-monospace,monospace';
+    ctx.fillText('θ', cx + sc2*0.32, ccy - sc2*0.18);
+    ctx.lineWidth = 1;
+    // 接触段：中心到小球的半径辅助线
+    if (onSurface) {
+      ctx.setLineDash([3, 4]);
+      ctx.strokeStyle = 'rgba(127,224,255,.35)';
+      ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(bx, by); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // 小球：3D 球体（循环淡入/淡出）
+    ctx.globalAlpha = cyl.alpha;
+    tmSphere(bx, by, 9, ART.cyan, 0.55);
+    ctx.globalAlpha = 1;
+    // 读数
+    ctx.fillStyle = ART.text;
+    ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('cylinder · detach = ' + detachAngle().toFixed(2) + '° (cosθ = 2/3)', 20, 30);
   } else if (P.mode === 'double') {
     var L1 = 1, L2 = 1;
     var cx = W * 0.5, cy = H * 0.32;
     var sc = Math.min(W, H) * 0.15;
     if (dp.trail.length > 1) {
-      ctx.strokeStyle = 'rgba(94,162,255,.35)';
+      ctx.strokeStyle = 'rgba(127,224,255,.35)';
       ctx.lineWidth = 1.4;
       ctx.beginPath();
       for (var i = 0; i < dp.trail.length; i++) {
@@ -585,15 +781,13 @@ function draw() {
     var y1 = cy + (-L1*Math.cos(dp.th1))*sc;
     var x2 = x1 + L2*Math.sin(dp.th2)*sc;
     var y2 = y1 + (-L2*Math.cos(dp.th2))*sc;
-    ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 2;
+    ctx.strokeStyle = ART.cyan; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x1, y1); ctx.stroke();
-    ctx.strokeStyle = '#ffcf6b'; ctx.lineWidth = 2;
+    ctx.strokeStyle = ART.solar; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     ctx.lineWidth = 1;
-    ctx.fillStyle = '#5ea2ff';
-    ctx.beginPath(); ctx.arc(x1, y1, 6, 0, 2*Math.PI); ctx.fill();
-    ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(x2, y2, 6, 0, 2*Math.PI); ctx.fill();
+    tmSphere(x1, y1, 8, ART.cyan, 0.45);
+    tmSphere(x2, y2, 8, ART.violet, 0.45);
     // anchored pivot: support bar + hatching
     ctx.strokeStyle = 'rgba(138,152,192,.9)'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.moveTo(cx - 26, cy); ctx.lineTo(cx + 26, cy); ctx.stroke();
@@ -603,10 +797,10 @@ function draw() {
       ctx.beginPath(); ctx.moveTo(cx + hs, cy); ctx.lineTo(cx + hs + 7, cy - 8); ctx.stroke();
     }
     // pivot bolt
-    ctx.fillStyle = '#ffcf6b';
+    ctx.fillStyle = ART.solar;
     ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2*Math.PI); ctx.fill();
     // readout to the right (avoids title)
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
     ctx.fillText('DOUBLE PENDULUM', W - 210, 30);
     ctx.fillText('theta1 = ' + dp.th1.toFixed(3), W - 210, 50);
     ctx.fillText('theta2 = ' + dp.th2.toFixed(3), W - 210, 68);
@@ -614,23 +808,54 @@ function draw() {
     ctx.fillText('w2 = ' + dp.w2.toFixed(3), W - 210, 104);
     return;
   } else {
-    // Pendulum: draw arc and period
-    var L = P.L;
-    var th0 = P.theta0 * Math.PI / 180;
-    var T = pendulumPeriod(L, P.g, P.theta0);
-    // Draw pendulum
-    var pivotX = cx, pivotY = cy - sc * 0.5;
-    var bobX = pivotX + sc * 0.8 * Math.sin(th0);
-    var bobY = pivotY + sc * 0.8 * Math.cos(th0);
-    ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(pivotX, pivotY); ctx.lineTo(bobX, bobY); ctx.stroke();
-    ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(bobX, bobY, 8, 0, 2*Math.PI); ctx.fill();
-    ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(pivotX, pivotY, 4, 0, 2*Math.PI); ctx.fill();
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('T=' + T.toFixed(4) + ' (theta0=' + P.theta0.toFixed(1) + ' deg)', 20, 30);
-    ctx.fillText('T0=' + (2*Math.PI*Math.sqrt(L/P.g)).toFixed(4), 20, 50);
+    // Pendulum: RK4 实时摆动 + 3D 球体摆锤 + 拖尾 + 周期读数
+    var mWH = Math.min(W, H);
+    var pvX = cx, pvY = cy - mWH * 0.30;
+    var lep = mWH * 0.22 * P.L;
+    var bobX = pvX + lep * Math.sin(pend.th);
+    var bobY = pvY + lep * Math.cos(pend.th);
+    // 拖尾（teal 渐隐）
+    ctx.lineWidth = 1.6;
+    for (var ip = 1; ip < pend.trail.length; ip++) {
+      var pB = pend.trail[ip - 1], pA = pend.trail[ip];
+      ctx.globalAlpha = (ip / pend.trail.length) * 0.45;
+      ctx.strokeStyle = ART.teal;
+      ctx.beginPath();
+      ctx.moveTo(pvX + pB.x * lep, pvY + pB.y * lep);
+      ctx.lineTo(pvX + pA.x * lep, pvY + pA.y * lep);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1;
+    // anchored pivot: support bar + hatching
+    ctx.strokeStyle = 'rgba(138,152,192,.9)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(pvX - 26, pvY); ctx.lineTo(pvX + 26, pvY); ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(138,152,192,.5)';
+    for (var hp = -24; hp <= 24; hp += 8) {
+      ctx.beginPath(); ctx.moveTo(pvX + hp, pvY); ctx.lineTo(pvX + hp + 7, pvY - 8); ctx.stroke();
+    }
+    // 振幅 θ0 参考虚线
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = 'rgba(127,240,207,.35)';
+    ctx.beginPath();
+    ctx.moveTo(pvX, pvY);
+    ctx.lineTo(pvX + lep * Math.sin(Math.PI/180 * P.theta0), pvY + lep * Math.cos(Math.PI/180 * P.theta0));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // 摆线 + 摆锤
+    ctx.strokeStyle = ART.solar; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pvX, pvY); ctx.lineTo(bobX, bobY); ctx.stroke();
+    ctx.lineWidth = 1;
+    tmSphere(bobX, bobY, 10, ART.solar, 0.5);
+    ctx.fillStyle = ART.solar;
+    ctx.beginPath(); ctx.arc(pvX, pvY, 4, 0, 2*Math.PI); ctx.fill();
+    // 周期读数
+    var T = pendulumPeriod(P.L, P.g, P.theta0);
+    ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('T = ' + T.toFixed(4) + '   (θ0 = ' + P.theta0.toFixed(1) + '°)', 20, 30);
+    ctx.fillStyle = 'rgba(169,184,220,.9)';
+    ctx.fillText('T0 = 2π√(L/g) = ' + (2*Math.PI*Math.sqrt(P.L/P.g)).toFixed(4), 20, 50);
   }
 }
 
@@ -646,11 +871,16 @@ function setNotice(msg, bad){
 }
 function updateHUD(){
   if (P.mode === 'cylinder') {
-    hudTheta.textContent = '-';
-    hudDetach.textContent = detachAngle().toFixed(2) + ' deg';
+    if (cyl.phase === 'contact') {
+      hudTheta.textContent = (cyl.th * 180 / Math.PI).toFixed(1) + '°';
+      hudState.textContent = '在轨（θ < 48.19°）';
+    } else {
+      hudTheta.textContent = '48.19°';
+      hudState.textContent = '抛体运动';
+    }
+    hudDetach.textContent = detachAngle().toFixed(2) + '°';
     hudT.textContent = '-';
     hudCorr.textContent = '-';
-    hudState.textContent = '在轨 (theta<' + detachAngle().toFixed(1) + ' deg)';
   } else if (P.mode === 'pendulum') {
     hudTheta.textContent = P.theta0.toFixed(1) + ' deg';
     hudDetach.textContent = '-';
@@ -672,16 +902,16 @@ function updateHUD(){
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
-  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(600); } syncURL(); });
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(600); } else if (P.mode === 'cylinder') { cylReset(); } else { pendReset(); } syncURL(); });
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
-    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); });
+    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); if (P.mode === 'pendulum') pendReset(); syncURL(); });
   }
   bindSlider('param-theta0', 'theta0', 'val-theta0', function(v){ return v.toFixed(1); });
   bindSlider('param-L', 'L', 'val-L', function(v){ return v.toFixed(2); });
   bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
-  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(600); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; syncSliders(); } syncURL(); });
+  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(600); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; syncSliders(); if (P.mode === 'cylinder') cylReset(); else pendReset(); } syncURL(); });
 }
 function syncSliders() {
   $('param-theta0').value = P.theta0; $('val-theta0').textContent = P.theta0.toFixed(1);
@@ -733,6 +963,8 @@ resize();
 bindControls();
 syncSliders();
 if (P.mode === 'double') prewarmDouble(600);
+if (P.mode === 'cylinder') cylReset();
+if (P.mode === 'pendulum') pendReset();
 if (qURL.selftest === '1') {
   var rep = runSelftest();
   window.__selftest = rep;
@@ -746,9 +978,27 @@ if (qURL.selftest === '1') {
   }
   stEl.textContent = txt;
 }
-var running = true;
-function frame() {
-  if (P.mode === 'double') dpStep(0.1 * P.speed);
+var STEP = 1/120;
+var acc = 0, lastFrame = 0;
+function simStep(h){
+  if (P.mode === 'cylinder') cylStep(h);
+  else if (P.mode === 'pendulum') pendStep(h);
+  else dpStep(h);
+}
+function frame(now) {
+  if (lastFrame === 0) lastFrame = now;
+  var dtReal = (now - lastFrame) / 1000;
+  lastFrame = now;
+  if (dtReal < 0) dtReal = 0;
+  if (dtReal > 0.25) dtReal = 0.25;
+  if (!REDUCED) {
+    // 固定步长累积器：物理以 1/120s 步进，P.speed 缩放时间流
+    acc += dtReal * P.speed;
+    var guard = 0;
+    while (acc >= STEP && guard < 360) { simStep(STEP); acc -= STEP; guard++; }
+    if (guard >= 360) acc = 0; // 掉帧保护：丢弃积压，防止螺旋卡死
+  }
+  // prefers-reduced-motion：跳过推进，仅静态示意图
   draw(); updateHUD();
   requestAnimationFrame(frame);
 }

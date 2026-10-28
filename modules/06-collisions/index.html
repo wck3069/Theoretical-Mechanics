@@ -158,7 +158,7 @@ body {
 .panel {
   background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
   border-left: 1px solid rgba(183, 155, 255, .35);
-  backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
@@ -367,6 +367,82 @@ details.mapping {
   }
 }
 </style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
 <!-- TM-THEME-HEAD:END -->
 </head>
 <body>
@@ -505,41 +581,56 @@ function draw() {
   ctx.clearRect(0, 0, W, H);
   var cx = W * 0.5, cy = H * 0.5;
   if (P.mode === 'collision') {
-    var alpha = P.alpha * Math.PI / 180;
-    var e = P.e;
-    var beta = betaDeflection(e, P.alpha) * Math.PI / 180;
     var sc2 = Math.min(W, H) * 0.28;
-    var bx0 = W*0.5, by0 = H*0.55;
-    var p1x = bx0 + col.x1*sc2, p1y = by0 - col.y1*sc2;
-    var p2x = bx0 + col.x2*sc2, p2y = by0 - col.y2*sc2;
-    // guide lines
-    ctx.strokeStyle = 'rgba(120,160,255,.18)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, by0); ctx.lineTo(W, by0); ctx.stroke();
-    // ball 1
-    ctx.fillStyle = '#5ea2ff';
-    ctx.beginPath(); ctx.arc(p1x, p1y, 12, 0, 2*Math.PI); ctx.fill();
-    // ball 2
-    ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(p2x, p2y, 12, 0, 2*Math.PI); ctx.fill();
-    // velocity vectors
-    ctx.strokeStyle = '#7fe3a0'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(p1x, p1y); ctx.lineTo(p1x + col.v1.x*70, p1y - col.v1.y*70); ctx.stroke();
-    if (Math.hypot(col.v2.x, col.v2.y) > 1e-6) {
-      ctx.beginPath(); ctx.moveTo(p2x, p2y); ctx.lineTo(p2x + col.v2.x*70, p2y - col.v2.y*70); ctx.stroke();
-    }
-    ctx.lineWidth = 1;
-    // momentum check (equal masses, m=1)
-    var psumX = col.v1.x + col.v2.x, psumY = col.v1.y + col.v2.y;
-    var p0x = Math.cos(P.alpha*Math.PI/180), p0y = Math.sin(P.alpha*Math.PI/180);
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('阶段：' + ({approach:'接近',separate:'分离'}[col.phase] || col.phase), W - 240, 30);
-    ctx.fillText('碰前动量 = (' + p0x.toFixed(3) + ', ' + p0y.toFixed(3) + ')', W - 240, 50);
-    ctx.fillText('碰后动量 = (' + psumX.toFixed(3) + ', ' + psumY.toFixed(3) + ')', W - 240, 68);
-    ctx.fillStyle = Math.abs(psumX-p0x) < 1e-9 && Math.abs(psumY-p0y) < 1e-9 ? '#7fe3a0' : '#ff7b7b';
-    ctx.fillText('动量守恒：' + ((Math.abs(psumX-p0x)<1e-9 && Math.abs(psumY-p0y)<1e-9) ? '是' : '否'), W - 240, 86);
-    // Labels
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
+    var bx0 = W * 0.5, by0 = H * 0.55;
+    var R = col.R || 0.12, pr = R * sc2 * 1.08;
+    var p1x = bx0 + col.x1 * sc2, p1y = by0 - col.y1 * sc2;
+    var p2x = bx0 + col.x2 * sc2, p2y = by0 - col.y2 * sc2;
 
+    ctx.strokeStyle = 'rgba(146,182,255,.055)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < W; gx += 48) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+    for (var gy = 0; gy < H; gy += 48) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+    drawTrail(ctx, col.trail1, sc2, bx0, by0, '#5ea2ff');
+    drawTrail(ctx, col.trail2, sc2, bx0, by0, '#ffcf6b');
+    drawArrow(ctx, p1x, p1y, col.v1.x * 62, -col.v1.y * 62, '#7fe3a0');
+    if (Math.hypot(col.v2.x, col.v2.y) > 1e-6) {
+      drawArrow(ctx, p2x, p2y, col.v2.x * 62, -col.v2.y * 62, '#7fe3a0');
+    }
+
+    var A = window.TMART;
+    if (A) {
+      A.sphere(ctx, p1x, p1y, pr, '#5ea2ff', {glow: 1, glowR: 3.2, glowAlpha: .5});
+      A.sphere(ctx, p2x, p2y, pr, '#ffcf6b', {glow: 1, glowR: 3.2, glowAlpha: .5});
+    } else {
+      ctx.fillStyle = '#5ea2ff'; ctx.beginPath(); ctx.arc(p1x, p1y, pr, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#ffcf6b'; ctx.beginPath(); ctx.arc(p2x, p2y, pr, 0, Math.PI*2); ctx.fill();
+    }
+    if (col.flash > 0) {
+      var mfx = (p1x + p2x) / 2, mfy = (p1y + p2y) / 2;
+      if (window.TMART) {
+        var gs = window.TMART.glow(pr * 3.2, '#ffffff');
+        ctx.globalAlpha = col.flash * 0.85;
+        ctx.drawImage(gs.c, mfx - gs.size / 2, mfy - gs.size / 2, gs.size, gs.size);
+        ctx.globalAlpha = 1;
+      }
+      ctx.globalAlpha = col.flash;
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(mfx, mfy, pr * 1.35, 0, Math.PI*2); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    var psumX = col.v1.x + col.v2.x, psumY = col.v1.y + col.v2.y;
+    var p0x = 1, p0y = 0;
+    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('阶段：' + ({approach:'接近',contact:'接触',separate:'分离'}[col.phase] || col.phase) + (DEMO === 'contact' ? '（接触瞬间演示）' : ''), W - 250, 30);
+    ctx.fillText('碰前动量 = (' + p0x.toFixed(3) + ', ' + p0y.toFixed(3) + ')', W - 250, 50);
+    ctx.fillText('碰后动量 = (' + psumX.toFixed(3) + ', ' + psumY.toFixed(3) + ')', W - 250, 68);
+    ctx.fillStyle = Math.abs(psumX-p0x) < 1e-9 && Math.abs(psumY-p0y) < 1e-9 ? '#7fe3a0' : '#ff7b7b';
+    ctx.fillText('动量守恒：' + ((Math.abs(psumX-p0x)<1e-9 && Math.abs(psumY-p0y)<1e-9) ? '是' : '否'), W - 250, 86);
+    ctx.fillStyle = '#8a98c0'; ctx.font = '11px ui-monospace,monospace';
+    ctx.fillText('瞄准角 α = ' + P.alpha.toFixed(1) + '°   恢复系数 e = ' + P.e.toFixed(2), W - 250, 104);
   } else {
     // Raindrop: draw v(t) curve
     var g = 1, lam = 0.1, r0 = 1;
@@ -560,36 +651,91 @@ function draw() {
 
 // ==================== 4.5) 动画（动量守恒）====================
 var animT = 0, animRunning = true;
+var DEMO = null;
+try { DEMO = new URLSearchParams(location.search).get('demo'); } catch (e) {}
 var col = {phase:'approach', v1:null, v2:null, x1:0, y1:0, x2:0, y2:0};
+function pushTrail(arr, x, y) { arr.push({x: x, y: y}); if (arr.length > 80) arr.shift(); }
+function drawTrail(ctx, arr, sc, bx, by, color) {
+  if (!arr || arr.length < 2) return;
+  ctx.lineWidth = 2.8; ctx.lineCap = 'round';
+  for (var i = 1; i < arr.length; i++) {
+    ctx.globalAlpha = (i / arr.length) * 0.55;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(bx + arr[i-1].x * sc, by - arr[i-1].y * sc);
+    ctx.lineTo(bx + arr[i].x * sc, by - arr[i].y * sc);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+function drawArrow(ctx, x, y, dx, dy, color) {
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + dx, y + dy); ctx.stroke();
+  var ang = Math.atan2(dy, dx), len = 8;
+  ctx.beginPath();
+  ctx.moveTo(x + dx, y + dy);
+  ctx.lineTo(x + dx - len * Math.cos(ang - 0.42), y + dy - len * Math.sin(ang - 0.42));
+  ctx.lineTo(x + dx - len * Math.cos(ang + 0.42), y + dy - len * Math.sin(ang + 0.42));
+  ctx.closePath(); ctx.fill();
+}
+var BALL_R = 0.12;
 function resetCollision(){
-  var a = P.alpha * Math.PI/180, e = P.e, v0 = 1.0;   // speed 1 (dimensionless)
-  col.v1 = {x: v0*Math.cos(a), y: v0*Math.sin(a)};     // ball1 velocity (normal = x axis)
-  col.v2 = {x: 0, y: 0};
-  col.x1 = -1.2; col.y1 = 0;                            // ball1 starts left
-  col.x2 = 0;    col.y2 = 0;                            // ball2 at origin
+  var a = P.alpha * Math.PI / 180;
+  var b = 2 * BALL_R * Math.sin(a);
+  if (DEMO === 'contact') {
+    col.R = BALL_R;
+    col.v1 = {x: 1, y: 0}; col.v2 = {x: 0, y: 0};
+    col.x1 = -2 * BALL_R * Math.cos(a); col.y1 = -b;
+    col.x2 = 0; col.y2 = 0;
+    col.phase = 'contact'; col.hold = 1e9; col.flash = 1; col.hit = true;
+    col.trail1 = []; col.trail2 = [];
+    animT = 0;
+    return;
+  }
+  col.R = BALL_R;
+  col.v1 = {x: 1, y: 0}; col.v2 = {x: 0, y: 0};
+  col.x1 = -1.6; col.y1 = -b;
+  col.x2 = 0; col.y2 = 0;
   col.phase = 'approach';
+  col.trail1 = []; col.trail2 = [];
+  col.flash = 0; col.hit = false; col.hold = 0;
   animT = 0;
 }
 function stepAnim(){
   if (!animRunning) return;
   var dt = 0.02 * P.speed;
+  if (col.flash > 0) col.flash = Math.max(0, col.flash - dt * 4);
+  if (col.phase === 'contact') {
+    if (col.hold < 1e8) col.hold -= dt;
+    col.flash = 1;
+    if (col.hold <= 0) col.phase = 'separate';
+    animT += dt;
+    return;
+  }
   if (col.phase === 'approach') {
-    col.x1 += col.v1.x*dt; col.y1 += col.v1.y*dt;
-    // contact when centers are 0.24 apart (radius 0.12 each)
-    var dx = col.x2-col.x1, dy = col.y2-col.y1;
-    if (Math.sqrt(dx*dx+dy*dy) <= 0.24 || col.x1 >= col.x2) {
-      // resolve along line of centers (normal = x axis by construction)
-      var e = P.e;
-      var v1n = col.v1.x, v1t = col.v1.y;   // v2n = v2t = 0
-      var v1n2 = (1-e)/2 * v1n, v2n2 = (1+e)/2 * v1n;
-      col.v1 = {x: v1n2, y: v1t};
-      col.v2 = {x: v2n2, y: 0};
-      col.phase = 'separate';
+    col.x1 += col.v1.x * dt; col.y1 += col.v1.y * dt;
+    pushTrail(col.trail1, col.x1, col.y1);
+    var dx = col.x2 - col.x1, dy = col.y2 - col.y1;
+    var d = Math.sqrt(dx * dx + dy * dy);
+    if (d <= 2 * col.R && d > 1e-9) {
+      var nx = dx / d, ny = dy / d;
+      var vn = (col.v1.x - col.v2.x) * nx + (col.v1.y - col.v2.y) * ny;
+      if (vn > 0) {
+        var J = (1 + P.e) * vn * 0.5;
+        col.v1.x -= J * nx; col.v1.y -= J * ny;
+        col.v2.x += J * nx; col.v2.y += J * ny;
+      }
+      var push = (2 * col.R - d) * 0.5 + 0.001;
+      col.x1 -= nx * push; col.x2 += nx * push;
+      col.phase = 'contact'; col.hold = 0.5; col.flash = 1; col.hit = true;
     }
-  } else if (col.phase === 'separate') {
-    col.x1 += col.v1.x*dt; col.y1 += col.v1.y*dt;
-    col.x2 += col.v2.x*dt; col.y2 += col.v2.y*dt;
-    if (col.x1 > 1.9 || col.x2 > 1.9) { resetCollision(); }
+  } else {
+    col.x1 += col.v1.x * dt; col.y1 += col.v1.y * dt;
+    col.x2 += col.v2.x * dt; col.y2 += col.v2.y * dt;
+    pushTrail(col.trail1, col.x1, col.y1);
+    pushTrail(col.trail2, col.x2, col.y2);
+    if (Math.abs(col.x1) > 2.2 || Math.abs(col.x2) > 2.2 ||
+        Math.abs(col.y1) > 1.6 || Math.abs(col.y2) > 1.6) resetCollision();
   }
   animT += dt;
 }

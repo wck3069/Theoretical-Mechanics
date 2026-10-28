@@ -49,7 +49,9 @@ FETCH_RE = re.compile(r"\bfetch\s*\(")
 # 唯一豁免：站内本地 AI 助教的同源端点（相对路径、双引号或单引号均可）。
 # 任何绝对地址都不可能通过 2a/2b，因此这里只需限定路径字面量。
 ALLOWED_FETCH_RE = re.compile(
-    r"""\bfetch\s*\(\s*(['"])/(?:api/(?:ask|health))\1\s*[,)]""")
+    r"""\bfetch\s*\(\s*(?:API_BASE\s*\+\s*)?(['"])/api/(?:ask|health)\1""")
+# 唯一允许的绝对地址：本机环回 AI 服务（file:// 打开页面时使用）。
+LOOPBACK_RE = re.compile(r"""http://(?:127\.0\.0\.1|localhost):8765(?=['"\s]|$)""")
 IMPORT_STMT_RE = re.compile(r"""\bimport\s*[\('"{]""")
 IMPORT_NAME_RE = re.compile(r"\bimport\s+[A-Za-z_$]")
 XHR_RE = re.compile(r"\bXMLHttpRequest\b")
@@ -159,8 +161,9 @@ def check_file(path: Path) -> bool:
            f"{blocks} 个 <script> 块，esprima {esprima.__version__}")
 
     # 2a. http/https 外链
+    masked = LOOPBACK_RE.sub(lambda m: " " * len(m.group(0)), text)
     fails = [f"第 {line_of(text, m.start())} 行发现 {m.group(0)}"
-             for m in SCHEME_RE.finditer(text)]
+             for m in SCHEME_RE.finditer(masked)]
     report("2a", "无 http 或 https 外链", fails, "全文未出现")
 
     # 2b. 协议相对地址

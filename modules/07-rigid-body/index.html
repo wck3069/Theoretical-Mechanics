@@ -159,7 +159,7 @@ body {
 .panel {
   background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
   border-left: 1px solid rgba(183, 155, 255, .35);
-  backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
@@ -368,6 +368,82 @@ details.mapping {
   }
 }
 </style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
 <!-- TM-THEME-HEAD:END -->
 </head>
 <body>
@@ -411,8 +487,8 @@ details.mapping {
       <input id="param-R" type="range" min="0.5" max="3" step="0.1" value="1.0" aria-label="球半径 R">
     </div>
     <div class="group">
-      <div class="row"><label for="param-h">球冠高度 h</label><span class="val" id="val-h">1.00</span></div>
-      <input id="param-h" type="range" min="0.01" max="3" step="0.01" value="1.0" aria-label="球冠高度 h">
+      <div class="row"><label for="param-h">球冠高度 h（0–2R）</label><span class="val" id="val-h">1.00</span></div>
+      <input id="param-h" type="range" min="0.01" max="3" step="0.01" value="1.0" aria-label="球冠高度 h，上限为直径 2R">
     </div>
     <div class="group">
       <div class="row"><label for="param-M">质量 M</label><span class="val" id="val-M">1.00</span></div>
@@ -490,7 +566,7 @@ function prewarmBeetle(n){
 function capCentroid(R, h) {
   // b = R - h (plane distance from center)
   // d = h(4R-h) / [4(2R+b)] = h(4R-h) / [4(3R-h)]
-  h = Math.min(Math.max(h, 0), R);
+  h = Math.min(Math.max(h, 0), 2 * R);
   if (h <= 0) return 0;
   var b = R - h;
   return (R - b) * (3 * R + b) / (4 * (2 * R + b));
@@ -515,96 +591,183 @@ function resize(){
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 window.addEventListener('resize', resize);
+cv.style.cursor = 'grab';
+cv.addEventListener('pointerdown', function (e) {
+  view.dragging = true; view.auto = false; view.lx = e.clientX; view.ly = e.clientY;
+  cv.style.cursor = 'grabbing';
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+});
+cv.addEventListener('pointermove', function (e) {
+  if (!view.dragging) return;
+  view.yaw += (e.clientX - view.lx) * 0.008;
+  view.pitch = Math.max(-1.15, Math.min(1.15, view.pitch + (e.clientY - view.ly) * 0.008));
+  view.lx = e.clientX; view.ly = e.clientY;
+});
+function endDrag() { if (!view.dragging) return; view.dragging = false; view.auto = true; view.resume = performance.now() + 3500; cv.style.cursor = 'grab'; }
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
 
+var TAU = Math.PI * 2;
+var view = {yaw: 0.55, pitch: 0.30, auto: true, dragging: false, lx: 0, ly: 0, resume: 0};
+function proj(x, y, z) {
+  var A = window.TMART;
+  if (A) return A.project(x, y, z, view.yaw, view.pitch);
+  var cy = Math.cos(view.yaw), sy = Math.sin(view.yaw);
+  var cp = Math.cos(view.pitch), sp = Math.sin(view.pitch);
+  var x1 = x * cy - z * sy, z1 = x * sy + z * cy;
+  return {x: x1, y: y * cp - z1 * sp, z: y * sp + z1 * cp};
+}
+function toScreen(p, cx, cy, sc) { return {x: cx + p.x * sc, y: cy - p.y * sc, z: p.z}; }
+function ringPath(ctx, z, rho, cx, cy, sc, n) {
+  n = n || 72; ctx.beginPath();
+  for (var i = 0; i <= n; i++) {
+    var a = i / n * TAU;
+    var p = toScreen(proj(rho * Math.cos(a), rho * Math.sin(a), z), cx, cy, sc);
+    if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+  }
+  ctx.closePath();
+}
+function drawGlassSphere(ctx, cx, cy, sc) {
+  var g = ctx.createRadialGradient(cx - sc * .35, cy - sc * .4, sc * .05, cx, cy, sc * 1.02);
+  g.addColorStop(0, 'rgba(120,170,255,.22)');
+  g.addColorStop(.55, 'rgba(30,50,100,.30)');
+  g.addColorStop(1, 'rgba(6,10,22,.55)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, sc, 0, TAU); ctx.fill();
+  ctx.strokeStyle = 'rgba(146,182,255,.42)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(cx, cy, sc, 0, TAU); ctx.stroke();
+}
+function drawMesh(ctx, cx, cy, sc) {
+  ctx.strokeStyle = 'rgba(146,182,255,.15)'; ctx.lineWidth = 1;
+  for (var i = 1; i < 10; i++) {
+    var phi = -Math.PI / 2 + Math.PI * i / 10;
+    ringPath(ctx, Math.sin(phi), Math.cos(phi), cx, cy, sc, 56); ctx.stroke();
+  }
+  for (var j = 0; j < 12; j++) {
+    var a = j / 12 * TAU; ctx.beginPath();
+    for (var k = 0; k <= 40; k++) {
+      var ph = -Math.PI / 2 + Math.PI * k / 40;
+      var p = toScreen(proj(Math.cos(ph) * Math.cos(a), Math.cos(ph) * Math.sin(a), Math.sin(ph)), cx, cy, sc);
+      if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+  }
+}
+function ball(ctx, x, y, r, color, glow) {
+  var A = window.TMART;
+  if (A) { A.sphere(ctx, x, y, r, color, {glow: glow, glowR: 3, glowAlpha: .8}); return; }
+  var g = ctx.createRadialGradient(x - r * .35, y - r * .4, r * .1, x, y, r);
+  g.addColorStop(0, '#fff'); g.addColorStop(.35, color); g.addColorStop(1, '#0a1020');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+}
+function drawCap(ctx, cx, cy, sc) {
+  var R = P.R, h = Math.min(P.h, 2 * R), zCut = R - h;
+  drawGlassSphere(ctx, cx, cy, sc);
+  drawMesh(ctx, cx, cy, sc);
+  var N = 20;
+  ctx.globalCompositeOperation = 'lighter';
+  for (var i = 0; i < N; i++) {
+    var z = zCut + (R - zCut) * (i + 1) / N;
+    if (z > R) z = R;
+    var rho = Math.sqrt(Math.max(0, R * R - z * z));
+    ringPath(ctx, z / R, rho / R, cx, cy, sc, 64);
+    ctx.fillStyle = 'rgba(127,224,255,' + (0.018 + 0.014 * (i / N)) + ')';
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  var rhoCut = Math.sqrt(Math.max(0, R * R - zCut * zCut));
+  ringPath(ctx, zCut / R, rhoCut / R, cx, cy, sc, 96);
+  ctx.fillStyle = 'rgba(255,210,122,.16)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,210,122,.9)'; ctx.lineWidth = 1.6; ctx.stroke();
+
+  var b = R - h, zc = 3 * (R + b) * (R + b) / (4 * (2 * R + b));
+  var pc = toScreen(proj(0, 0, zc / R), cx, cy, sc);
+  var pp = toScreen(proj(0, 0, zCut / R), cx, cy, sc);
+  ctx.setLineDash([3, 4]); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pp.x, pp.y); ctx.lineTo(pc.x, pc.y); ctx.stroke(); ctx.setLineDash([]);
+  ball(ctx, pc.x, pc.y, 7, '#ff9fc4', true);
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('d = ' + capCentroid(R, h).toFixed(4), pc.x + 12, pc.y + 4);
+  ctx.fillStyle = 'rgba(255,210,122,.9)';
+  ctx.fillText('h = ' + h.toFixed(2) + '   (h ≤ 2R = ' + (2 * R).toFixed(2) + ')', cx - sc, cy + sc + 24);
+}
+function drawBeetle(ctx, cx, cy, sc) {
+  var pts = [], i, a, p;
+  for (i = 0; i <= 160; i++) { a = i / 160 * TAU; p = toScreen(proj(Math.cos(a), Math.sin(a), 0), cx, cy, sc); pts.push({p: p, a: a}); }
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(40,70,140,.35)';
+  ctx.beginPath();
+  for (i = 0; i < pts.length; i++) { if (pts[i].p.z < 0) { if (i === 0) ctx.moveTo(pts[i].p.x, pts[i].p.y); else ctx.lineTo(pts[i].p.x, pts[i].p.y); } }
+  ctx.stroke();
+  ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(127,224,255,.9)';
+  ctx.beginPath();
+  for (i = 0; i < pts.length; i++) { if (pts[i].p.z >= 0) { if (i === 0) ctx.moveTo(pts[i].p.x, pts[i].p.y); else ctx.lineTo(pts[i].p.x, pts[i].p.y); } }
+  ctx.stroke();
+
+  if (beetle.trail.length > 1) {
+    ctx.lineWidth = 2.4;
+    for (i = 1; i < beetle.trail.length; i++) {
+      var ta = beetle.trail[i - 1] / 2, tb = beetle.trail[i] / 2;
+      var p1 = toScreen(proj(Math.cos(ta), Math.sin(ta), 0), cx, cy, sc);
+      var p2 = toScreen(proj(Math.cos(tb), Math.sin(tb), 0), cx, cy, sc);
+      ctx.globalAlpha = (i / beetle.trail.length) * 0.5;
+      ctx.strokeStyle = '#7fe0ff';
+      ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+  var ba = beetle.angle / 2;
+  var bp = toScreen(proj(Math.cos(ba), Math.sin(ba), 0), cx, cy, sc);
+  var tangent = {x: -Math.sin(ba), y: Math.cos(ba)};
+  ball(ctx, bp.x, bp.y, 10, '#7fe0ff', true);
+  var head = {x: bp.x + tangent.x * 10, y: bp.y - tangent.y * 10};
+  ball(ctx, head.x, head.y, 5, '#c9b8ff', false);
+  ctx.strokeStyle = 'rgba(201,184,255,.9)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(head.x + tangent.x * 8 - 3, head.y - tangent.y * 8 - 3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(head.x + tangent.x * 8 + 3, head.y - tangent.y * 8 + 3); ctx.stroke();
+
+  var ra = ringRotation();
+  var rp = toScreen(proj(Math.cos(ra), Math.sin(ra), 0), cx, cy, sc);
+  ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(rp.x, rp.y); ctx.lineTo(cx + (rp.x - cx) * 1.12, cy + (rp.y - cy) * 1.12); ctx.stroke();
+
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('甲虫 θ = ' + (beetle.angle * 180 / Math.PI).toFixed(1) + '°', W - 250, 30);
+  ctx.fillText('圆环 = ' + (ra * 180 / Math.PI).toFixed(1) + '°', W - 250, 50);
+  ctx.fillStyle = '#7fe3a0';
+  ctx.fillText('爬完一圈：环转 180°', W - 250, 70);
+}
 function draw() {
   ctx.clearRect(0, 0, W, H);
   var cx = W * 0.5, cy = H * 0.5;
-  var sc = Math.min(W, H) * 0.35;
+  var sc = Math.min(W, H) * 0.34;
+  if (view.auto && !view.dragging && performance.now() > view.resume) view.yaw += 0.0022;
+
   if (P.mode === 'cap') {
-    // Draw sphere
-    ctx.strokeStyle = 'rgba(120,160,255,.3)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(cx, cy, sc, 0, 2*Math.PI); ctx.stroke();
-    // Draw cut plane
-    var b = P.R - P.h;
-    var planeY = cy - (b / P.R) * sc;
-    ctx.strokeStyle = 'rgba(255,207,107,.5)';
-    ctx.setLineDash([4,4]);
-    ctx.beginPath(); ctx.moveTo(cx - sc, planeY); ctx.lineTo(cx + sc, planeY); ctx.stroke();
-    ctx.setLineDash([]);
-    // Draw cap (shaded) - region of circle above the cutting plane
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, sc, 0, 2*Math.PI);
-    ctx.clip();
-    ctx.fillStyle = 'rgba(94,162,255,.15)';
-    ctx.fillRect(cx - sc, cy - sc, 2*sc, planeY - (cy - sc) + 1);
-    ctx.restore();
-    // Centroid
-    var d = capCentroid(P.R, P.h);
-    var centY = planeY - d / P.R * sc;
-    ctx.fillStyle = '#ff7b7b';
-    ctx.beginPath(); ctx.arc(cx, centY, 5, 0, 2*Math.PI); ctx.fill();
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '11px ui-monospace,monospace';
-    ctx.fillText('d=' + d.toFixed(4), cx + 8, centY);
+    drawCap(ctx, cx, cy, sc);
   } else if (P.mode === 'beetle') {
-    // Ring
-    ctx.strokeStyle = 'rgba(120,160,255,.55)';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(cx, cy, sc, 0, 2*Math.PI); ctx.stroke();
-    // Ring reference mark (shows ring counter-rotation)
-    var ra = ringRotation();
-    ctx.strokeStyle = '#ffcf6b'; ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(cx + Math.cos(ra) * sc, cy - Math.sin(ra) * sc);
-    ctx.lineTo(cx + Math.cos(ra) * (sc + 12), cy - Math.sin(ra) * (sc + 12));
-    ctx.stroke();
-    // Beetle trail (world frame)
-    if (beetle.trail.length > 1) {
-      ctx.strokeStyle = 'rgba(94,162,255,.9)'; ctx.lineWidth = 3;
-      ctx.beginPath();
-      for (var ti = 0; ti < beetle.trail.length; ti++) {
-        var ta = beetle.trail[ti] / 2;
-        var tx = cx + Math.cos(ta) * sc, ty = cy + Math.sin(ta) * sc;
-        if (ti === 0) ctx.moveTo(tx, ty); else ctx.lineTo(tx, ty);
-      }
-      ctx.stroke(); ctx.lineWidth = 1;
-    }
-    // Beetle body
-    var ba = beetle.angle / 2;
-    var bx = cx + Math.cos(ba) * sc, by = cy + Math.sin(ba) * sc;
-    ctx.fillStyle = '#5ea2ff';
-    ctx.beginPath(); ctx.ellipse(bx, by, 7, 5, ba + Math.PI/2, 0, 2*Math.PI); ctx.fill();
-    // Labels
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('beetle = ' + (beetle.angle*180/Math.PI).toFixed(1) + ' deg', W - 230, 30);
-    ctx.fillText('ring   = ' + (ra*180/Math.PI).toFixed(1) + ' deg', W - 230, 50);
-    ctx.fillStyle = '#7fe3a0';
-    ctx.fillText('lap end ring: 180 deg', W - 230, 70);
-    ctx.lineWidth = 1;
+    drawBeetle(ctx, cx, cy, sc);
   } else if (P.mode === 'disk') {
-    ctx.strokeStyle = 'rgba(120,160,255,.4)';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(cx, cy, sc, 0, 2*Math.PI); ctx.stroke();
-    ctx.fillStyle = 'rgba(94,162,255,.15)';
-    ctx.beginPath(); ctx.arc(cx, cy, sc, 0, 2*Math.PI); ctx.fill();
-    ctx.fillStyle = '#dbe4ff'; ctx.font = '11px ui-monospace,monospace';
-    ctx.fillText('L=' + diskL(P.M, P.R, P.omega).toFixed(4), cx - 30, cy);
+    drawGlassSphere(ctx, cx, cy, sc);
+    for (var di = 0; di < 3; di++) { ringPath(ctx, 0, 1, cx, cy, sc, 80); ctx.strokeStyle = 'rgba(127,224,255,' + (0.25 + di * 0.2) + ')'; ctx.lineWidth = 2; ctx.stroke(); }
+    var dp = toScreen(proj(1, 0, 0), cx, cy, sc);
+    ball(ctx, dp.x, dp.y, 9, '#ffd27a', true);
+    ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('L = ' + diskL(P.M, P.R, P.omega).toFixed(4), cx - 40, cy + sc + 24);
   } else {
-    // Shell potential: draw V vs r
     var maxR = 3;
-    ctx.strokeStyle = 'rgba(120,160,255,.3)';
+    ctx.strokeStyle = 'rgba(127,224,255,.55)'; ctx.lineWidth = 1.6;
     ctx.beginPath();
-    for (var i = 0; i <= 100; i++) {
-      var r = (i / 100) * maxR * P.R;
+    for (var i = 0; i <= 120; i++) {
+      var r = (i / 120) * maxR * P.R;
       var V = shellV(r, P.M, P.R);
-      var px = 40 + (r / maxR) * (W - 80);
-      var py = H * 0.8 - V * (H * 0.3);
+      var px = 50 + (r / (maxR * P.R)) * (W - 100);
+      var py = H * 0.78 - V * (H * 0.28);
       if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
     ctx.stroke();
+    ctx.fillStyle = 'rgba(127,224,255,.08)'; ctx.lineTo(W - 50, H * 0.78 - shellV(P.R, P.M, P.R) * (H * 0.28)); ctx.lineTo(50, H * 0.78 - shellV(P.R, P.M, P.R) * (H * 0.28)); ctx.closePath(); ctx.fill();
     ctx.fillStyle = '#8a98c0'; ctx.font = '11px ui-monospace,monospace';
-    ctx.fillText('V(r) shell', 40, 30);
+    ctx.fillText('V(r)  壳内常数 / 壳外 −GM/r', 50, 34);
   }
 }
 
@@ -619,7 +782,7 @@ function setNotice(msg, bad){
   noticeEl.className = bad ? 'notice bad' : 'notice';
 }
 function updateHUD(){
-  hudMode.textContent = P.mode;
+  hudMode.textContent = ({cap:'球冠质心',beetle:'甲虫转环',disk:'圆盘角动量',shell:'球壳势能'})[P.mode] || P.mode;
   if (P.mode === 'cap') {
     hudD.textContent = fmt(capCentroid(P.R, P.h), 4);
     hudAngle.textContent = '-';
@@ -657,14 +820,23 @@ function bindControls() {
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
     sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); });
   }
+  function syncHRange() {
+    var el = $('param-h');
+    el.max = (2 * P.R).toFixed(2);
+    if (P.h > 2 * P.R) { P.h = 2 * P.R; el.value = P.h; $('val-h').textContent = P.h.toFixed(2); }
+  }
   bindSlider('param-R', 'R', 'val-R', function(v){ return v.toFixed(2); });
+  $('param-R').addEventListener('input', syncHRange);
   bindSlider('param-h', 'h', 'val-h', function(v){ return v.toFixed(2); });
+  $('param-h').addEventListener('input', syncHRange);
+  syncHRange();
   bindSlider('param-M', 'M', 'val-M', function(v){ return v.toFixed(2); });
   bindSlider('param-omega', 'omega', 'val-omega', function(v){ return v.toFixed(2); });
   $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.h=DEFAULTS.h; P.M=DEFAULTS.M; P.omega=DEFAULTS.omega; syncSliders(); syncURL(); });
 }
 function syncSliders() {
   $('param-R').value = P.R; $('val-R').textContent = P.R.toFixed(2);
+  $('param-h').max = (2*P.R).toFixed(2);
   $('param-h').value = P.h; $('val-h').textContent = P.h.toFixed(2);
   $('param-M').value = P.M; $('val-M').textContent = P.M.toFixed(2);
   $('param-omega').value = P.omega; $('val-omega').textContent = P.omega.toFixed(2);

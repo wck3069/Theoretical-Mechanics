@@ -17,11 +17,12 @@
   .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
   .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
   .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
-  .hud{position:absolute; left:20px; bottom:16px; font-size:12px; color:var(--muted);
-       display:flex; gap:14px; flex-wrap:wrap; pointer-events:none}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:11.5px; color:var(--muted);
+       display:flex; gap:11px; flex-wrap:wrap; pointer-events:none}
+  .stage .hud{max-width:calc(100% - 200px)}
   .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
   .notice.bad{color:#ffd7d7;border-color:rgba(255,123,123,.5);background:rgba(60,10,16,.6)}
-  .notice{position:absolute; right:16px; bottom:16px; max-width:60%; padding:7px 11px;
+  .notice{position:absolute; right:16px; bottom:58px; max-width:52%; padding:7px 11px;
     font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
     border-radius:8px; background:rgba(40,30,8,.6)}
   .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
@@ -64,6 +65,12 @@
     .app{flex-direction:column}
     .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
     .stage{height:58vh}
+    .stage .hud{left:10px; top:146px; bottom:auto; max-width:calc(100% - 20px);
+      font-size:11px; gap:7px; padding:4px 7px; border-radius:8px;
+      background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.10)}
+    .stage .hud .lg, .stage .hud .hud-extra{display:none}
+    .stage .notice{top:180px; bottom:auto; left:10px; right:auto;
+      max-width:calc(100% - 200px); font-size:11px; padding:5px 8px}
   }
 </style>
 <!-- TM-THEME-HEAD:START -->
@@ -159,7 +166,7 @@ body {
 .panel {
   background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
   border-left: 1px solid rgba(183, 155, 255, .35);
-  backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
@@ -368,6 +375,82 @@ details.mapping {
   }
 }
 </style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
 <!-- TM-THEME-HEAD:END -->
 </head>
 <body>
@@ -377,13 +460,13 @@ details.mapping {
     <div class="brand">
       <h1>虚功原理与静力学</h1>
       <p>梯子临界角、弹簧杆平衡与虚功</p>
-      <p class="intro">一根梯子靠在墙上，摩擦多小它就会滑倒？老一辈物理学家用一行字（δW = 0）代替了十几行受力方程。第一步：把摩擦系数 μ 往小拖，看红色虚线（临界角 θ_min）越来越陡；再把 θ 拖到虚线以下，梯子立刻打滑。</p>
+      <p class="intro">一根梯子靠在墙上，摩擦多小它就会滑倒？老一辈物理学家用一行字（δW = 0）代替了十几行受力方程。第一步：把摩擦系数 μ 往小拖，看红色虚线（临界角 θ_min）越来越陡；再把 θ 拖到虚线以下，梯子带着库仑摩擦真的滑起来——N_w 一路掉到 0，顶部离开墙面。</p>
     </div>
     <div class="hud">
-      <span>摩擦系数 μ <b id="hudMu">-</b></span>
-      <span>临界角 θ_min <b id="hudTheta">-</b></span>
-      <span>墙面支持力 N_w（=0 表示梯子正要离开墙） <b id="hudNw">-</b></span>
-      <span>最大静摩擦 f_crit（=μ·P） <b id="hudF">-</b></span>
+      <span><span class="lg">摩擦系数 </span>μ <b id="hudMu">-</b></span>
+      <span><span class="lg">临界角 </span>θ_min <b id="hudTheta">-</b></span>
+      <span><span class="lg">墙面支持力 </span>N_w<span class="lg">（→0 即离墙）</span> <b id="hudNw">-</b></span>
+      <span class="hud-extra"><span class="lg">最大静摩擦 </span>f_crit<span class="lg">（=μ·P）</span> <b id="hudF">-</b></span>
       <span>状态 <b id="hudState">-</b></span>
     </div>
     <div id="notice" class="notice" hidden></div>
@@ -394,6 +477,7 @@ details.mapping {
       <div><span class="num">梯子：</span> tan θ_min = 1/(2μ)（θ_min＝恰好不打滑的最小墙角；θ 压得更平时就打滑）</div>
       <div><span class="num">虚功原理：</span> δW = 0（"虚"＝想象中符合约束的微小位移；若所有力的总虚功恒为 0，系统就平衡——不必逐个列力方程）</div>
       <div><span class="num">势能：</span> δV = 0（保守系统版本：平衡＝势能驻值）</div>
+      <div><span class="num">打滑：</span> 三个未知量 θ̈、N_w、N_f 由牛顿–欧拉方程 + 库仑摩擦 f = μN_f 解 3×3 线性方程（Cramer），RK4 固定步长 1/120 s 积分。</div>
     </div>
     <div class="group">
       <div class="row"><label for="param-mu">摩擦系数 μ（无量纲）</label><span class="val" id="val-mu">0.50</span></div>
@@ -403,14 +487,19 @@ details.mapping {
     <div class="group">
       <div class="row"><label for="param-theta">梯子与地面夹角 θ (°)</label><span class="val" id="val-theta">45.0</span></div>
       <input id="param-theta" type="range" min="5" max="85" step="1" value="45" aria-label="梯子角度">
-      <div class="hint">拖小角度，盯"墙面支持力 N_w"何时趋近 0；低于红色虚线（θ_min）即倒下。</div>
+      <div class="hint">低于红色虚线（θ_min）即打滑；滑动时 N_w、N_f、f 由方程实时解出，N_w→0 时顶部离墙。</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="param-speed">动画速度（×）</label><span class="val" id="val-speed">1.0</span></div>
+      <input id="param-speed" type="range" min="0.1" max="3" step="0.1" value="1" aria-label="动画速度">
+      <div class="hint">只改变时间流速，不改变物理；内部始终是 1/120 s 固定步长。</div>
     </div>
     <div class="btns">
       <button id="btn-critical">临界角</button>
       <button id="btn-reset">重置</button>
     </div>
-    <div class="tag">本页采用无量纲演示单位：取梯子重 P = 1，故 N_w、f_crit 均为相对 P 的无量纲值；角度单位为度。<br>
-    URL 可复现：<span>?mu=…&theta=…</span><br>
+    <div class="tag">本页采用无量纲演示单位：取梯子重 P = 1，故 N_w、N_f、f 均为相对 P 的无量纲值；角度单位为度。<br>
+    URL 可复现：<span>?mu=…&amp;theta=…&amp;speed=…</span><br>
     自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
     <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
     <a class="doc" href="../04-variational/index.html">← 上一模块：变分原理与等时摆</a>
@@ -427,50 +516,84 @@ details.mapping {
 </div>
 <script>
 'use strict';
-// ==================== 1) PARAMS ====================
+// ==================== 1) 参数 / 状态 ====================
 var DEFAULTS = {mu:0.5, theta:45, speed:1.0};
 var RANGE = {mu:[0.05,2], theta:[5,85], speed:[0.1,3]};
 var P = {mu:DEFAULTS.mu, theta:DEFAULTS.theta, speed:DEFAULTS.speed};
-var lad = {theta: P.theta*Math.PI/180, omega:0, falling:false, sep:false, theta0:P.theta*Math.PI/180, sepTheta:0, base:0, baseSep:0};
-var wallX = 0, ladderLenPx = 0, baseXp = 0, baseYp = 0;
-function initLad(){
-  lad.theta = P.theta*Math.PI/180; lad.omega = 0; lad.falling = false;
-  lad.sep = false; lad.theta0 = lad.theta; lad.base = 0; lad.baseSep = 0;
-  ladderLenPx = Math.min(W, H) * 0.65;
-  baseXp = W * 0.25; baseYp = H * 0.85;
-  wallX = baseXp + ladderLenPx * Math.cos(lad.theta);
+
+var COL = {
+  void:'#03050c', solar:'#ffd27a', cyan:'#7fe0ff', violet:'#b79bff',
+  teal:'#7ff0cf', text:'#e8eeff', dim:'#6d7ca4', bad:'#ff8a8a',
+  mono:'ui-monospace,SFMono-Regular,Menlo,Consolas,monospace'
+};
+
+// 无量纲单位：L=1, m=1, g=1。绕质心 I = mL²/12；
+// 顶端贴墙滑动时广义惯量恰为 mL²/3（用 CM 方程解出的 α 与之一致）。
+var I_CM = 1 / 12, FIXED_DT = 1 / 120;
+
+var lad = {
+  th: 0, om: 0, alpha: 0,
+  mode: 'static',              // static | slide | detached | down
+  target: 0, hold: 0, th0: 0,
+  W: 0, N: 1, F: 0,
+  sepTh: 0, sepBaseU: 0, flashAt: 0, xB: 0, vB: 0,
+  trail: [], tick: 0
+};
+var wallX = 0, ladderLenPx = 0, baseXp = 0, baseYp = 0, groundY = 0;
+
+function initLad(smooth) {
+  lad.target = P.theta * Math.PI / 180;
+  lad.om = 0; lad.alpha = 0; lad.mode = 'static';
+  lad.sepTh = 0; lad.sepBaseU = 0; lad.flashAt = 0;
+  lad.xB = 0; lad.vB = 0;
+  lad.trail.length = 0; lad.tick = 0;
+  if (smooth) {
+    lad.hold = 0;                 // 从当前姿态指数逼近目标角（平滑重新初始化）
+  } else {
+    lad.th = lad.target;
+    lad.hold = 0.35;              // 首帧/URL 载入后停顿 0.35 s 再放手
+  }
+  lad.th0 = lad.th;
+  readStatic();
+  setNotice('', false);
 }
-function stepLad(){
-  if (!lad.falling) {
-    if (P.theta < thetaMin(P.mu) - 0.5) {
-      lad.falling = true; lad.theta0 = lad.theta; lad.sep = false; lad.omega = 0;
+
+function readStatic() {
+  // 静力平衡：N_f = P = 1, f = N_w = P/(2 tanθ)
+  var W = 0.5 / Math.max(1e-6, Math.tan(lad.th));
+  lad.W = W; lad.N = 1; lad.F = W; lad.alpha = 0;
+}
+
+function stepLad(dt) {
+  if (lad.mode === 'static') {
+    var d = lad.target - lad.th;
+    if (Math.abs(d) > 1e-4) {
+      var k = Math.min(1, dt * 11);
+      lad.th += d * k;            // 指数缓动，杜绝瞬移
+      lad.hold = 0;
+      readStatic();
+      return;
+    }
+    lad.th = lad.target;
+    readStatic();
+    if (lad.hold > 0) { lad.hold -= dt; return; }
+    if (lad.th < thetaMin(P.mu) * Math.PI / 180 - 0.0025) {
+      lad.mode = 'slide'; lad.th0 = lad.th; lad.om = 0;
+      lad.trail.length = 0;
+      setNotice('', false);
     }
     return;
   }
-  var dt = 0.02 * P.speed;
-  if (!lad.sep) {
-    // frictionless sliding: thetaDot^2 = 3g/L (sin0 - sin), g=1, L=1
-    var s2 = Math.max(0, 3*(Math.sin(lad.theta0) - Math.sin(lad.theta)));
-    lad.omega = -Math.sqrt(s2);
-    lad.theta += lad.omega * dt;
-    lad.base = wallX - Math.cos(lad.theta);
-    if (Math.sin(lad.theta) <= (2/3)*Math.sin(lad.theta0)) {
-      lad.sep = true; lad.sepTheta = lad.theta; lad.baseSep = lad.base;
-    }
-    if (lad.theta <= 0.03) { lad.theta = 0.03; lad.omega = 0; }
-  } else {
-    // after separation: rotate about base (approximation, labeled in UI)
-    lad.omega += (-1.5 * Math.cos(lad.theta)) * dt;
-    lad.theta += lad.omega * dt;
-    if (lad.theta <= 0.03) { lad.theta = 0.03; lad.omega = 0; }
-  }
+  if (lad.mode === 'slide') { advanceSlide(lad, dt); return; }
+  if (lad.mode === 'detached') { advanceDetached(lad, dt); return; }
 }
 
 // ==================== 2) URL 同步 ====================
-function loadFromURL(){
+function loadFromURL() {
   var q = {};
   var s = window.location.search.replace(/^\?/, '');
-  if (s) { var parts = s.split('&');
+  if (s) {
+    var parts = s.split('&');
     for (var i = 0; i < parts.length; i++) {
       var kv = parts[i].split('=');
       if (kv.length === 2) q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
@@ -481,155 +604,536 @@ function loadFromURL(){
   if (q.speed !== undefined) P.speed = Math.min(Math.max(parseFloat(q.speed), RANGE.speed[0]), RANGE.speed[1]) || DEFAULTS.speed;
   return q;
 }
-function syncURL(){
+function syncURL() {
   var s = '?mu=' + P.mu + '&theta=' + P.theta + '&speed=' + P.speed;
   if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
 }
 
 // ==================== 3) 物理 ====================
-function thetaMin(mu){ return Math.atan(1.0/(2*mu)) * 180/Math.PI; }
-function Nw(thetaDeg, Pw){ var t = thetaDeg*Math.PI/180; return Pw/(2*Math.tan(t)); }
-function fCrit(mu, Pw){ return mu*Pw; }
+function thetaMin(mu) { return Math.atan(1.0 / (2 * mu)) * 180 / Math.PI; }
+function Nw(thetaDeg, Pw) { var t = thetaDeg * Math.PI / 180; return Pw / (2 * Math.tan(t)); }
+function fCrit(mu, Pw) { return mu * Pw; }
+
+function det3(a, b, c, d, e, f, g, h, i) {
+  return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+}
+
+// 3×3 牛顿–欧拉方程（未知量 α=N_w? 见下）：x = [θ̈, N_w, N_f]，库仑摩擦 f = σμN_f
+//   (1/2)(s θ̈ + c ω²) = -N_w + σμN_f
+//   (1/2)(c θ̈ - s ω²) = N_f - 1
+//   (1/12) θ̈          = (1/2)[ s N_w + σμ s N_f - c N_f ]
+// 壁在右侧：N_w 指向 -x；θ 减小时底端左移，摩擦力 +x（σ=+1）。
+function solveContacts(th, om, mu) {
+  var s = Math.sin(th), c = Math.cos(th), w2 = om * om;
+  var sg = om > 1e-9 ? -1 : 1;
+  var a11 = 0.5 * s, a12 = 1, a13 = -sg * mu;
+  var a21 = 0.5 * c, a22 = 0, a23 = -1;
+  var a31 = I_CM, a32 = -0.5 * s, a33 = 0.5 * (c - sg * mu * s);
+  var b1 = -0.5 * c * w2, b2 = 0.5 * s * w2 - 1, b3 = 0;
+  var D = det3(a11, a12, a13, a21, a22, a23, a31, a32, a33);
+  if (Math.abs(D) < 1e-12) {
+    return {alpha: -1.5 * c, W: 0, N: 1, F: 0, sigma: sg};
+  }
+  var alpha = det3(b1, a12, a13, b2, a22, a23, b3, a32, a33) / D;
+  var Wc = det3(a11, b1, a13, a21, b2, a23, a31, b3, a33) / D;
+  var Nc = det3(a11, a12, b1, a21, a22, b2, a31, a32, b3) / D;
+  return {alpha: alpha, W: Wc, N: Nc, F: sg * mu * Nc, sigma: sg};
+}
+
+function derivSlide(th, om, mu) {
+  var r = solveContacts(th, om, mu);
+  return {dth: om, dom: r.alpha, W: r.W, N: r.N, F: r.F, alpha: r.alpha};
+}
+
+function rk4Slide(th, om, dt, mu) {
+  var k1 = derivSlide(th, om, mu);
+  var k2 = derivSlide(th + 0.5 * dt * k1.dth, om + 0.5 * dt * k1.dom, mu);
+  var k3 = derivSlide(th + 0.5 * dt * k2.dth, om + 0.5 * dt * k2.dom, mu);
+  var k4 = derivSlide(th + dt * k3.dth, om + dt * k3.dom, mu);
+  return {
+    th: th + dt / 6 * (k1.dth + 2 * k2.dth + 2 * k3.dth + k4.dth),
+    om: om + dt / 6 * (k1.dom + 2 * k2.dom + 2 * k3.dom + k4.dom),
+    alpha: k1.alpha, W: k4.W, N: k4.N, F: k4.F
+  };
+}
+
+// 离墙后：顶端自由、底端仍在地面上滑动（只有 N_f、f）。
+// 方程（未知量 α、N_f，随后回代出底端加速度 a_B）：
+//   底端坐标为广义坐标 x_B：ẍ_cm = a_B - (1/2)(s θ̈ + c ω²)
+//   (1/2)(c θ̈ - s ω²) = N_f - 1
+//   (1/12) θ̈          = (1/2)(σμ s - c) N_f
+function solveFloor(th, om, vB, mu) {
+  var s = Math.sin(th), c = Math.cos(th), w2 = om * om;
+  var sg = vB < -1e-9 ? 1 : (vB > 1e-9 ? -1 : (om <= 0 ? 1 : -1));
+  var A = I_CM, B = -0.5 * (sg * mu * s - c), C = 0.5 * c, D = -1;
+  var det = A * D - B * C;
+  var b1 = 0, b2 = 0.5 * s * w2 - 1;
+  var alpha = (b1 * D - B * b2) / det;
+  var N = (A * b2 - b1 * C) / det;
+  var aB = 0.5 * (s * alpha + c * w2) + sg * mu * N;
+  return {alpha: alpha, N: N, aB: aB, F: sg * mu * N, sigma: sg};
+}
+
+function derivFloor(th, om, xB, vB, mu) {
+  var r = solveFloor(th, om, vB, mu);
+  return {dth: om, dom: r.alpha, dxB: vB, dvB: r.aB, N: r.N, F: r.F, alpha: r.alpha};
+}
+
+function rk4Floor(th, om, xB, vB, dt, mu) {
+  var k1 = derivFloor(th, om, xB, vB, mu);
+  var k2 = derivFloor(th + 0.5 * dt * k1.dth, om + 0.5 * dt * k1.dom,
+                      xB + 0.5 * dt * k1.dxB, vB + 0.5 * dt * k1.dvB, mu);
+  var k3 = derivFloor(th + 0.5 * dt * k2.dth, om + 0.5 * dt * k2.dom,
+                      xB + 0.5 * dt * k2.dxB, vB + 0.5 * dt * k2.dvB, mu);
+  var k4 = derivFloor(th + dt * k3.dth, om + dt * k3.dom,
+                      xB + dt * k3.dxB, vB + dt * k3.dvB, mu);
+  return {
+    th: th + dt / 6 * (k1.dth + 2 * k2.dth + 2 * k3.dth + k4.dth),
+    om: om + dt / 6 * (k1.dom + 2 * k2.dom + 2 * k3.dom + k4.dom),
+    xB: xB + dt / 6 * (k1.dxB + 2 * k2.dxB + 2 * k3.dxB + k4.dxB),
+    vB: vB + dt / 6 * (k1.dvB + 2 * k2.dvB + 2 * k3.dvB + k4.dvB),
+    alpha: k1.alpha, N: k4.N, F: k4.F
+  };
+}
+
+function advanceSlide(st, dt) {
+  var r = rk4Slide(st.th, st.om, dt, P.mu);
+  if (!isFinite(r.th) || !isFinite(r.om)) { st.mode = 'down'; st.om = 0; return; }
+  st.th = r.th; st.om = r.om; st.alpha = r.alpha;
+  st.W = r.W; st.N = r.N; st.F = r.F;
+  if (st.W < 0) {
+    // 墙已推不动（N_w<0）：脱离墙面，绕底端转动
+    st.mode = 'detached';
+    st.sepTh = st.th; st.sepBaseU = Math.cos(st.th);
+    st.xB = 0; st.vB = Math.sin(st.th) * st.om;   // 底端速度与贴墙约束连续
+    st.flashAt = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+    setNotice('N_w 降到 0：顶部离墙，梯子在地面滑行并绕底端翻转（含轻阻尼）', false);
+    return;
+  }
+  if (st.th <= 0.05) {
+    st.th = 0.05; st.om = 0; st.mode = 'down';
+    setNotice('梯子已落地：拖动 θ 滑块或点“重置”重新抬起', false);
+  }
+}
+
+function advanceDetached(st, dt) {
+  var r = rk4Floor(st.th, st.om, st.xB, st.vB, dt, P.mu);
+  if (!isFinite(r.th) || !isFinite(r.om) || !isFinite(r.xB)) { st.mode = 'down'; st.om = 0; return; }
+  st.th = r.th; st.om = r.om; st.xB = r.xB; st.vB = r.vB;
+  st.om *= (1 - 0.2 * dt);                // 轻阻尼（残余滚阻/空气），纯视觉稳定
+  st.alpha = r.alpha; st.N = r.N; st.F = r.F; st.W = 0;
+  if (st.th <= 0.05) {
+    st.th = 0.05; st.om = 0; st.mode = 'down';
+    setNotice('梯子已落地：拖动 θ 滑块或点“重置”重新抬起', false);
+  }
+}
 
 // ==================== 4) 渲染 ====================
 var cv = document.getElementById('stage-canvas');
 var ctx = cv.getContext('2d');
 var W = 0, H = 0;
-function resize(){
-  var dpr = window.devicePixelRatio || 1;
+
+function layout() {
+  groundY = H * 0.86;
+  baseYp = groundY;
+  ladderLenPx = Math.min(W * 0.52, H * 0.70, Math.max(60, W * 0.60 - 30));
+  wallX = W * 0.60;
+}
+
+function resize() {
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
   var rect = cv.getBoundingClientRect();
   W = Math.max(80, Math.floor(rect.width));
   H = Math.max(80, Math.floor(rect.height));
   cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  layout();
 }
 window.addEventListener('resize', resize);
 
-function draw() {
-  ctx.clearRect(0, 0, W, H);
-  ladderLenPx = Math.min(W, H) * 0.65;
-  baseXp = W * 0.25; baseYp = H * 0.85;
-  var th = lad.theta;
-  var L = ladderLenPx;
-  var bse = baseXp, topX, topY;
-  if (!lad.falling || !lad.sep) {
-    bse = (wallX || (baseXp + L*Math.cos(th))) - L * Math.cos(th);
-    topX = (wallX || (baseXp + L*Math.cos(th)));
-    topY = baseYp - L * Math.sin(th);
-  } else {
-    bse = baseXp + (lad.baseSep - (wallX - L*Math.cos(lad.theta0))) ;
-    topX = bse + L * Math.cos(th);
-    topY = baseYp - L * Math.sin(th);
-  }
-  var tminRad = thetaMin(P.mu) * Math.PI / 180;
-
-  // ground
-  ctx.strokeStyle = 'rgba(120,160,255,.35)'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, baseYp); ctx.lineTo(W, baseYp); ctx.stroke();
-
-  // wall (fixed position from initial angle)
-  var wx = wallX || topX;
-  ctx.strokeStyle = 'rgba(120,160,255,.55)';
-  ctx.beginPath(); ctx.moveTo(wx, 0); ctx.lineTo(wx, baseYp); ctx.stroke();
-
-  // critical-angle ghost ladder
-  ctx.setLineDash([5,5]);
-  ctx.strokeStyle = 'rgba(255,123,123,.45)';
+function rrect(x, y, w, h, r) {
+  r = Math.min(r, w * 0.5, h * 0.5);
   ctx.beginPath();
-  ctx.moveTo(baseXp, baseYp);
-  ctx.lineTo(baseXp + L*Math.cos(tminRad), baseYp - L*Math.sin(tminRad));
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function tag(x, y, text, color, align) {
+  ctx.save();
+  ctx.font = '11px ' + COL.mono;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = align || 'left';
+  var w = ctx.measureText(text).width, pad = 4, h = 15;
+  var bx = align === 'right' ? x - w - pad * 2 : (align === 'center' ? x - w / 2 - pad : x - pad);
+  ctx.fillStyle = 'rgba(3,5,12,.66)';
+  rrect(bx, y - h / 2, w + pad * 2, h, 4);
+  ctx.fill();
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y + 0.5);
+  ctx.restore();
+}
+
+function arrow(x1, y1, x2, y2, color, w) {
+  var dx = x2 - x1, dy = y2 - y1, len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 2.5) return;
+  var ux = dx / len, uy = dy / len;
+  ctx.save();
+  ctx.strokeStyle = color; ctx.fillStyle = color;
+  ctx.lineWidth = w || 2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * 7, y2 - uy * 7); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - ux * 9 - uy * 4.5, y2 - uy * 9 + ux * 4.5);
+  ctx.lineTo(x2 - ux * 9 + uy * 4.5, y2 - uy * 9 - ux * 4.5);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function orb(x, y, r, color, glowA) {
+  if (window.TMART && window.TMART.sphere) {
+    window.TMART.sphere(ctx, x, y, r, color, {glow: true, glowAlpha: glowA == null ? 0.5 : glowA});
+  } else {
+    ctx.save();
+    ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+function modeColor() {
+  if (lad.mode === 'slide') return COL.solar;
+  if (lad.mode === 'detached' || lad.mode === 'down') return COL.bad;
+  return COL.cyan;
+}
+
+function stateText() {
+  if (lad.mode === 'static') {
+    if (Math.abs(lad.target - lad.th) > 2e-3) return '调整中';
+    if (Math.abs(lad.th * 180 / Math.PI - thetaMin(P.mu)) < 0.8) return '临界平衡';
+    return '静止平衡';
+  }
+  if (lad.mode === 'slide') return '打滑（贴墙+地面）';
+  if (lad.mode === 'detached') return '离墙 · 接地滑转';
+  return '已落地';
+}
+
+function drawBackdrop() {
+  // 地面
+  var fg = ctx.createLinearGradient(0, groundY, 0, H);
+  fg.addColorStop(0, 'rgba(127,224,255,.11)');
+  fg.addColorStop(1, 'rgba(3,5,12,0)');
+  ctx.fillStyle = fg;
+  ctx.fillRect(0, groundY, W, H - groundY);
+  ctx.strokeStyle = 'rgba(127,224,255,.38)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(W, groundY); ctx.stroke();
+  ctx.strokeStyle = 'rgba(127,224,255,.07)';
+  for (var x = -20; x < W; x += 26) {
+    ctx.beginPath(); ctx.moveTo(x, groundY); ctx.lineTo(x - 16, groundY + 16); ctx.stroke();
+  }
+  // 墙（右侧实体墙板）
+  var bw = Math.min(150, W - wallX);
+  if (bw > 2) {
+    var wg = ctx.createLinearGradient(wallX, 0, wallX + bw, 0);
+    wg.addColorStop(0, 'rgba(183,155,255,.17)');
+    wg.addColorStop(1, 'rgba(183,155,255,0)');
+    ctx.fillStyle = wg;
+    ctx.fillRect(wallX, 0, bw, groundY);
+    ctx.strokeStyle = 'rgba(183,155,255,.55)';
+    ctx.beginPath(); ctx.moveTo(wallX, 0); ctx.lineTo(wallX, groundY); ctx.stroke();
+    ctx.strokeStyle = 'rgba(183,155,255,.12)';
+    for (var y = 24; y < groundY; y += 28) {
+      ctx.beginPath(); ctx.moveTo(wallX, y); ctx.lineTo(wallX + 26, y); ctx.stroke();
+    }
+  }
+}
+
+function drawCritical(bx, th) {
+  var tmin = thetaMin(P.mu) * Math.PI / 180;
+  var L = ladderLenPx * 0.92;
+  var ex = bx + L * Math.cos(tmin), ey = groundY - L * Math.sin(tmin);
+  ctx.save();
+  ctx.setLineDash([5, 5]);
+  ctx.strokeStyle = 'rgba(255,138,138,.42)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(bx, groundY); ctx.lineTo(ex, ey); ctx.stroke();
+  ctx.setLineDash([]);
+  // 标签放在射线法向 48px 处，避免与木条/临界时的梯子重叠
+  var mx = bx + L * 0.55 * Math.cos(tmin), my = groundY - L * 0.55 * Math.sin(tmin);
+  tag(mx - 48 * Math.sin(tmin), my - 48 * Math.cos(tmin),
+    'θmin ' + thetaMin(P.mu).toFixed(1) + '°', 'rgba(255,166,166,.92)', 'center');
+  ctx.restore();
+}
+
+function drawCone(bx) {
+  var phi = Math.atan(P.mu);
+  var r = Math.max(46, Math.min(112, ladderLenPx * 0.20));
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(bx, groundY);
+  ctx.arc(bx, groundY, r, -Math.PI / 2 - phi, -Math.PI / 2 + phi);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(183,155,255,.09)';
+  ctx.fill();
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = 'rgba(183,155,255,.34)';
+  ctx.lineWidth = 1;
   ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle = 'rgba(255,123,123,.8)'; ctx.font = '11px ui-monospace,monospace';
-  ctx.fillText('临界角 ' + thetaMin(P.mu).toFixed(1) + '°',
-    baseXp + (L*0.55)*Math.cos(tminRad) + 14, baseYp - (L*0.55)*Math.sin(tminRad) + 18);
+  var ea = -Math.PI / 2 + phi;
+  tag(bx + (r + 7) * Math.cos(ea) + 2, groundY + (r + 7) * Math.sin(ea),
+    'φ=' + (phi * 180 / Math.PI).toFixed(0) + '°', 'rgba(183,155,255,.9)', 'left');
+  ctx.restore();
+}
 
-  // ladder
-  ctx.strokeStyle = lad.falling ? '#ff7b7b' : '#5ea2ff'; ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(bse, baseYp); ctx.lineTo(topX, topY); ctx.stroke();
+function drawPlank(bx, th) {
+  var L = ladderLenPx;
+  var t = Math.max(5, Math.min(9, L * 0.016));
+  var hot = (lad.mode === 'slide' || lad.mode === 'detached');
+  ctx.save();
+  ctx.translate(bx, groundY);
+  ctx.rotate(-th);
+  // 主体：有厚度的木条
+  rrect(0, -t, L, 2 * t, Math.min(3.5, t * 0.5));
+  var g = ctx.createLinearGradient(0, -t, 0, t);
+  g.addColorStop(0, '#fff0c8');
+  g.addColorStop(0.16, COL.solar);
+  g.addColorStop(0.55, '#c98f43');
+  g.addColorStop(1, '#5a3a1c');
+  ctx.fillStyle = g;
+  ctx.shadowColor = hot ? 'rgba(255,180,94,.55)' : 'rgba(127,224,255,.25)';
+  ctx.shadowBlur = hot ? 16 : 10;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  // 双色边
+  ctx.lineWidth = 1.1;
+  ctx.strokeStyle = 'rgba(255,246,220,.8)';
+  ctx.beginPath(); ctx.moveTo(2, -t + 0.7); ctx.lineTo(L - 2, -t + 0.7); ctx.stroke();
+  ctx.strokeStyle = 'rgba(56,34,10,.9)';
+  ctx.beginPath(); ctx.moveTo(2, t - 0.7); ctx.lineTo(L - 2, t - 0.7); ctx.stroke();
+  // 外描边
+  ctx.strokeStyle = hot ? 'rgba(255,210,122,.8)' : 'rgba(127,224,255,.55)';
   ctx.lineWidth = 1;
+  rrect(0, -t, L, 2 * t, Math.min(3.5, t * 0.5));
+  ctx.stroke();
+  // 高光
+  ctx.strokeStyle = 'rgba(255,255,255,.22)';
+  ctx.lineWidth = Math.max(1, t * 0.24);
+  ctx.beginPath(); ctx.moveTo(3, -t * 0.42); ctx.lineTo(L - 3, -t * 0.42); ctx.stroke();
+  // 木纹 / 横档
+  ctx.strokeStyle = 'rgba(62,38,12,.30)';
+  ctx.lineWidth = 1;
+  var n = 9, i;
+  for (i = 1; i < n; i++) {
+    var xx = L * i / n;
+    ctx.beginPath(); ctx.moveTo(xx, -t * 0.8); ctx.lineTo(xx, t * 0.8); ctx.stroke();
+  }
+  ctx.restore();
+}
 
-  // weight P at midpoint
-  var mx = (bse + topX)/2, my = (baseYp + topY)/2;
-  ctx.strokeStyle = '#ffcf6b'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(mx, my); ctx.lineTo(mx, my + 45); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(mx, my+45); ctx.lineTo(mx-5, my+37); ctx.moveTo(mx, my+45); ctx.lineTo(mx+5, my+37); ctx.stroke();
-  ctx.fillStyle = '#ffcf6b'; ctx.fillText('P', mx + 6, my + 40);
+function drawTrail() {
+  var n = lad.trail.length, i;
+  for (i = 1; i < n; i++) {
+    var a = i / n;
+    ctx.strokeStyle = 'rgba(183,155,255,' + (a * 0.32).toFixed(3) + ')';
+    ctx.lineWidth = 1 + a * 1.6;
+    ctx.beginPath();
+    ctx.moveTo(lad.trail[i - 1].x, lad.trail[i - 1].y);
+    ctx.lineTo(lad.trail[i].x, lad.trail[i].y);
+    ctx.stroke();
+  }
+}
 
-  // wall normal force Nw (contact lost when falling)
-  var nw = (lad.falling && lad.sep) ? 0 : 1.0 / (2 * Math.max(1e-6, Math.tan(th)));
-  var nwLen = Math.min(90, nw * 50);
-  if (nwLen > 2) {
-    ctx.strokeStyle = '#7fe3a0'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(topX, topY); ctx.lineTo(topX - nwLen, topY); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(topX-nwLen, topY); ctx.lineTo(topX-nwLen+8, topY-5); ctx.moveTo(topX-nwLen, topY); ctx.lineTo(topX-nwLen+8, topY+5); ctx.stroke();
-    ctx.fillStyle = '#7fe3a0';
-    ctx.fillText('N_w=' + nw.toFixed(3), topX - nwLen - 62, topY - 12);
+function drawForces(bx, topX, topY, th) {
+  var L = ladderLenPx;
+  var ppf = L * 0.26;
+  var attached = (lad.mode === 'static' || lad.mode === 'slide');
+  // 重力 P（质心）
+  var cmx = bx + L * 0.5 * Math.cos(th);
+  var cmy = groundY - L * 0.5 * Math.sin(th);
+  arrow(cmx, cmy, cmx, cmy + Math.min(ppf * 0.9, L * 0.22), COL.violet, 2);
+  tag(cmx + 7, cmy + Math.min(ppf * 0.9, L * 0.22) - 6, 'P=1', COL.violet, 'left');
+  // 墙面支持力
+  var Wv = Math.max(0, Math.min(3, lad.W));
+  if (attached && Wv > 0.005) {
+    arrow(topX, topY, topX - Wv * ppf, topY, COL.cyan, 2.2);
+    tag(topX - Wv * ppf * 0.5, topY - 14, 'N_w ' + Wv.toFixed(2), COL.cyan, 'center');
+  } else if (attached) {
+    tag(topX - 8, topY - 14, 'N_w = 0', COL.bad, 'right');
+  }
+  // 地面支持力
+  var Nv = Math.max(0, Math.min(3, lad.N));
+  if (lad.mode !== 'down' && Nv > 0.005) {
+    arrow(bx, groundY - 2, bx, groundY - Nv * ppf, COL.teal, 2.2);
+    tag(bx, groundY - Nv * ppf - 13, 'N_f ' + Nv.toFixed(2), COL.teal, 'center');
+  }
+  // 摩擦力
+  var fShow = 0, fdir = 1;
+  if (lad.mode === 'slide') { fShow = Math.abs(lad.F); fdir = lad.F >= 0 ? 1 : -1; }
+  else if (lad.mode === 'static') { fShow = Math.abs(lad.F); fdir = 1; }
+  if (fShow > 0.005 && lad.mode !== 'down') {
+    var fx2 = bx + fdir * Math.min(fShow, 3) * ppf;
+    arrow(bx, groundY - 4, fx2, groundY - 4, COL.solar, 2.2);
+    tag((bx + fx2) / 2, groundY + 15, 'f ' + fShow.toFixed(2), COL.solar, 'center');
+  }
+}
+
+function drawSeparation() {
+  if (!(lad.sepTh > 0)) return;
+  var sy = groundY - ladderLenPx * Math.sin(lad.sepTh);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(183,155,255,.85)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(wallX, sy, 5, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(wallX - 9, sy); ctx.lineTo(wallX + 9, sy); ctx.stroke();
+  tag(wallX + 12, sy, '离墙 ' + (lad.sepTh * 180 / Math.PI).toFixed(1) + '°', COL.violet, 'left');
+  ctx.restore();
+}
+
+function drawFlash() {
+  if (!lad.flashAt) return;
+  var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  var age = (now - lad.flashAt) / 700;
+  if (age < 0 || age >= 1) return;
+  var sy = groundY - ladderLenPx * Math.sin(lad.sepTh);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(183,155,255,' + ((1 - age) * 0.8).toFixed(3) + ')';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(wallX, sy, 6 + age * 28, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+}
+
+function drawCard() {
+  var bw = Math.min(212, W - wallX - 24);
+  if (bw < 104) bw = Math.max(88, W - wallX - 14);
+  var bh = 92;
+  var x = Math.min(wallX + 14, W - bw - 10);
+  var y = Math.max(84, groundY - ladderLenPx * 0.86);
+  if (y + bh > groundY - 18) y = groundY - 18 - bh;
+  if (x < 0) x = 0;
+  ctx.save();
+  ctx.fillStyle = 'rgba(6,10,22,.68)';
+  rrect(x, y, bw, bh, 10); ctx.fill();
+  ctx.strokeStyle = 'rgba(146,182,255,.20)';
+  ctx.lineWidth = 1; rrect(x, y, bw, bh, 10); ctx.stroke();
+  ctx.fillStyle = modeColor();
+  ctx.fillRect(x, y + 11, 3, bh - 22);
+  var pad = 12;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = '600 ' + (bw < 130 ? 11 : 12.5) + 'px ' + COL.mono;
+  ctx.fillStyle = modeColor();
+  ctx.fillText(stateText(), x + pad, y + 23);
+  ctx.font = '10px ' + COL.mono;
+  ctx.fillStyle = COL.text;
+  ctx.fillText('θ ' + (lad.th * 180 / Math.PI).toFixed(1) + '°   ω ' + lad.om.toFixed(2), x + pad, y + 41);
+  ctx.fillStyle = COL.dim;
+  if (lad.mode === 'detached' || lad.mode === 'down') {
+    ctx.fillText('N_w 0.00   N_f ' + Math.max(0, lad.N).toFixed(2), x + pad, y + 57);
+    ctx.fillText('顶部已离墙', x + pad, y + 73);
   } else {
-    ctx.fillStyle = 'rgba(255,123,123,.8)';
-    ctx.fillText('N_w = 0（离开墙面）', topX + 8, topY - 8);
+    ctx.fillText('N_w ' + Math.max(0, lad.W).toFixed(2) + '   N_f ' + lad.N.toFixed(2), x + pad, y + 57);
+    ctx.fillText('f ' + Math.abs(lad.F).toFixed(2) + '   φ ' + (Math.atan(P.mu) * 180 / Math.PI).toFixed(0) + '°', x + pad, y + 73);
   }
+  ctx.restore();
+}
 
-  // friction f at base
-  var f = lad.falling ? P.mu : Math.min(P.mu, nw);
-  var fLen = Math.min(90, f * 50);
-  if (fLen > 2) {
-    ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(bse, baseYp); ctx.lineTo(bse + fLen, baseYp); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(bse+fLen, baseYp); ctx.lineTo(bse+fLen-8, baseYp-5); ctx.moveTo(bse+fLen, baseYp); ctx.lineTo(bse+fLen-8, baseYp+5); ctx.stroke();
-    ctx.fillStyle = '#e67e22'; ctx.fillText('f', bse + fLen + 6, baseYp - 6);
-  }
+function draw() {
+  layout();
+  ctx.clearRect(0, 0, W, H);
+  var L = ladderLenPx;
+  var th = lad.th;
+  var detached = (lad.mode === 'detached' || (lad.mode === 'down' && lad.sepBaseU > 0));
+  var baseU = detached ? lad.sepBaseU : Math.cos(th);
+  var bx = wallX - L * baseU + (detached ? lad.xB * L : 0);
+  var topX = bx + L * Math.cos(th);
+  var topY = groundY - L * Math.sin(th);
 
-  // separation marker
-  if (lad.sep) {
-    var sy = baseYp - L*Math.sin(lad.sepTheta);
-    ctx.fillStyle = 'rgba(255,123,123,.9)';
-    ctx.beginPath(); ctx.arc(wx, sy, 4, 0, 2*Math.PI); ctx.fill();
-    ctx.fillText('分离于 ' + (lad.sepTheta*180/Math.PI).toFixed(1) + '°', wx + 8, sy - 6);
+  drawBackdrop();
+
+  // 质心轨迹
+  if (lad.mode === 'slide' || lad.mode === 'detached') {
+    lad.tick++;
+    if (lad.tick % 2 === 0) {
+      lad.trail.push({x: bx + L * 0.5 * Math.cos(th), y: groundY - L * 0.5 * Math.sin(th)});
+      if (lad.trail.length > 90) lad.trail.shift();
+    }
   }
-  // state text
-  ctx.font = '12px ui-monospace,monospace';
-  ctx.fillStyle = lad.falling ? '#ff7b7b' : '#8a98c0';
-  ctx.fillText(lad.falling ? (lad.sep ? 'FALLING (separated from wall)' : 'SLIDING on wall+floor') : 'STATIC EQUILIBRIUM', 20, 30);
+  drawTrail();
+  drawCritical(bx, th);
+  drawCone(bx);
+  drawPlank(bx, th);
+
+  // 接触点
+  orb(bx, groundY, 4, COL.violet, 0.55);
+  if (lad.mode !== 'detached' && lad.mode !== 'down') orb(topX, topY, 3.5, COL.cyan, 0.5);
+  else if (lad.sepTh > 0) orb(wallX, groundY - L * Math.sin(lad.sepTh), 2.6, COL.violet, 0.25);
+
+  drawForces(bx, topX, topY, th);
+  drawSeparation();
+  drawFlash();
+  drawCard();
 }
 
 // ==================== 5) HUD ====================
-function $(id){ return document.getElementById(id); }
+function $(id) { return document.getElementById(id); }
 var hudMu = $('hudMu'), hudTheta = $('hudTheta'), hudNw = $('hudNw');
 var hudF = $('hudF'), hudState = $('hudState'), noticeEl = $('notice');
-function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
-function setNotice(msg, bad){
-  if (!msg){ noticeEl.hidden = true; return; }
+
+function fmt(v, d) { return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
+function setNotice(msg, bad) {
+  if (!noticeEl) return;
+  if (!msg) { noticeEl.hidden = true; return; }
   noticeEl.hidden = false; noticeEl.textContent = msg;
   noticeEl.className = bad ? 'notice bad' : 'notice';
 }
-function updateHUD(){
+function updateHUD() {
   hudMu.textContent = fmt(P.mu, 2);
   hudTheta.textContent = fmt(thetaMin(P.mu), 1) + '°';
-  var th = P.theta * Math.PI / 180;
-  hudNw.textContent = (lad.falling && lad.sep) ? '0（离开墙面）' : fmt(Nw(P.theta, 1), 3);
+  var nwTxt;
+  if (lad.mode === 'static') nwTxt = fmt(Nw(lad.th * 180 / Math.PI, 1), 3);
+  else if (lad.mode === 'slide') nwTxt = fmt(lad.W, 3);
+  else nwTxt = '0（离开墙面）';
+  hudNw.textContent = nwTxt;
   hudF.textContent = fmt(fCrit(P.mu, 1), 3);
-  var tmin = thetaMin(P.mu);
-  if (lad.falling) hudState.textContent = '倒下（θ 低于临界角）';
-  else if (Math.abs(P.theta - tmin) < 1) hudState.textContent = '临界';
-  else hudState.textContent = '稳定';
+  hudState.textContent = stateText();
 }
 
 // ==================== 6) 控制 ====================
 function bindControls() {
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
-    sl.value = P[key]; vl.textContent = fmtFn(P[key]);
-    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); if (typeof initLad === 'function') initLad(); });
+    if (!sl) return;
+    sl.value = P[key];
+    vl.textContent = fmtFn(P[key]);
+    sl.addEventListener('input', function () {
+      P[key] = parseFloat(sl.value);
+      vl.textContent = fmtFn(P[key]);
+      syncURL();
+      if (key !== 'speed') initLad(true);   // 平滑重新初始化
+    });
   }
-  bindSlider('param-mu', 'mu', 'val-mu', function(v){ return v.toFixed(2); });
-  bindSlider('param-theta', 'theta', 'val-theta', function(v){ return v.toFixed(1); });
-  $('btn-critical').addEventListener('click', function(){ P.theta = thetaMin(P.mu); $('param-theta').value = P.theta; $('val-theta').textContent = P.theta.toFixed(1); syncURL(); if (typeof initLad === 'function') initLad(); });
-  $('btn-reset').addEventListener('click', function(){ P.mu = DEFAULTS.mu; P.theta = DEFAULTS.theta; syncSliders(); syncURL(); if (typeof initLad === 'function') initLad(); });
+  bindSlider('param-mu', 'mu', 'val-mu', function (v) { return v.toFixed(2); });
+  bindSlider('param-theta', 'theta', 'val-theta', function (v) { return v.toFixed(1); });
+  bindSlider('param-speed', 'speed', 'val-speed', function (v) { return v.toFixed(1); });
+  $('btn-critical').addEventListener('click', function () {
+    P.theta = thetaMin(P.mu);
+    $('param-theta').value = P.theta;
+    $('val-theta').textContent = P.theta.toFixed(1);
+    syncURL(); initLad(true);
+  });
+  $('btn-reset').addEventListener('click', function () {
+    P.mu = DEFAULTS.mu; P.theta = DEFAULTS.theta; P.speed = DEFAULTS.speed;
+    syncSliders(); syncURL(); initLad(true);
+  });
 }
 function syncSliders() {
   $('param-mu').value = P.mu; $('val-mu').textContent = P.mu.toFixed(2);
   $('param-theta').value = P.theta; $('val-theta').textContent = P.theta.toFixed(1);
+  if ($('param-speed')) { $('param-speed').value = P.speed; $('val-speed').textContent = P.speed.toFixed(1); }
 }
 
 // ==================== 7) 自测 ====================
@@ -670,7 +1174,7 @@ function runSelftest() {
 var qURL = loadFromURL();
 resize();
 bindControls();
-initLad();
+initLad(false);
 syncSliders();
 if (qURL.selftest === '1') {
   var rep = runSelftest();
@@ -685,13 +1189,28 @@ if (qURL.selftest === '1') {
   }
   stEl.textContent = txt;
 }
-var running = true;
-function frame() {
-  stepLad();
-  draw(); updateHUD();
+
+var lastT = 0, acc = 0;
+function frame(ts) {
+  if (!lastT) lastT = ts;
+  var dt = (ts - lastT) / 1000;
+  lastT = ts;
+  if (!(dt > 0)) dt = 0;
+  if (dt > 0.05) dt = 0.05;              // 切回标签页不跳跃
+  acc += dt * P.speed;
+  var guard = 0;
+  while (acc >= FIXED_DT && guard < 16) {
+    stepLad(FIXED_DT);
+    acc -= FIXED_DT;
+    guard++;
+  }
+  if (guard >= 16) acc = 0;
+  draw();
+  updateHUD();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+
 // metrics
 var metEl = document.createElement('div');
 metEl.id = 'metrics';
