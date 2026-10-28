@@ -141,3 +141,34 @@ google-chrome --headless=new --screenshot ... "file:///tmp/t2-selftest/index.htm
 - `quick` / `explore` / `librarian` / `general` / `writing` / `deep-low` → `opencode-go/beam-free`
 - 双向兜底：本地/云端任一不可用即切换
 - 运维：`~/bin/ai-health`（本地模型 + 路由自检）
+
+## 2026-10-28 千问 3.8 恢复上线（strata 重装）
+
+### 恢复方式（可复现）
+```bash
+curl -fsSL https://github.com/Niko1221/Strata/releases/latest/download/install.sh -o install.sh && sh install.sh   # 用户级，SHA+签名校验
+strata launch --model iq3_s --family qwen --context 128k --vision gpu --tune skip --access local --port 8080 --no-tui --yes
+```
+- 模型源即 HuggingFace `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF`（2 分片 83.6GB + MTP 5GB + mmproj 0.9GB）
+- 下载支持分块续传（`.part.chunks` 记录），慢速时段可用 `hf-mirror` 加速
+- 安装体积：`~/.local/share/strata` 约 90GB；引擎 `cuda13` 版
+
+### 实测（RTX 5090 D v2 / 24GB，temp 0.2，reasoning_effort=low）
+| 项 | 结果 |
+|---|---|
+| 模型 id | `qwen3.8-flash-next-iq3_s`，n_ctx **131072**，文本+图像 |
+| 短答延迟 | **1.5 s** |
+| 解码 | **20–36 tok/s**（对比 Maya-S 3.6–6、Ollama 32B 55） |
+| 长上下文（18KB 源码定位） | **6.0 s**（Maya 93.6 s） |
+| 功能基准 | 7/8（T3 为判定脚本未处理 `\frac{L}{g}`，答案正确 → 实质 8/8） |
+
+### 路由（已写入，需重启 opencode）
+- `oracle` / `metis` / `deep-high` / `ultrabrain` / `visual-engineering` / `multimodal-looker` → `strata/qwen3.8-flash-next-iq3_s`
+- 兜底：`ollama/qwen3:32b-ctx8k` → `opencode-go/beam-free`
+- `quick` 等快活仍走 `beam-free`
+
+### KVMem（Linux sm120a 诊断包，已验证）
+- `kvmem-v0.16.0-rc1-linux-x86_64-cuda13-sm120a.tar.gz`（440MB，sha 已校验）
+- 解压至 `~/kvmem/`，`sha256sum -c SHA256SUMS` 全 OK，`bin/llama-kvmem-server --help` 正常
+- 是 llama.cpp 系（`llama-kvmem-server` / `start-iq3.sh` / `start-iq4.sh`），自带 CUDA 运行时，无需 toolkit
+- **与 strata 争用同一张 24GB 显卡**：实测需先停 strata 才能跑
