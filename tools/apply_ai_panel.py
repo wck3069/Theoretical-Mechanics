@@ -15,13 +15,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FRAGMENT_PATH = ROOT / "assets" / "tm-ai-panel.html"
+KB_PATH = ROOT / "assets" / "tm-offline-kb.js"
+KB_PLACEHOLDER = "<!-- TM-OFFLINE-KB -->"
 PLACEHOLDER = "<!-- TM-AI-MOUNT -->"
 START = "<!-- TM-AI:START -->"
 END = "<!-- TM-AI:END -->"
 
 
 def read_fragment():
-    return FRAGMENT_PATH.read_text(encoding="utf-8")
+    frag = FRAGMENT_PATH.read_text(encoding="utf-8")
+    if KB_PLACEHOLDER in frag:
+        if KB_PATH.exists():
+            kb = KB_PATH.read_text(encoding="utf-8")
+            frag = frag.replace(KB_PLACEHOLDER,
+                                '<script id="tm-offline-kb">\n' + kb + '\n</script>', 1)
+        else:
+            frag = frag.replace(KB_PLACEHOLDER, '<!-- offline KB missing -->', 1)
+    return frag
 
 
 def find_block(text):

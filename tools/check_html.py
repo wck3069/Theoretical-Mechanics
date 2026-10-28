@@ -51,7 +51,7 @@ FETCH_RE = re.compile(r"\bfetch\s*\(")
 ALLOWED_FETCH_RE = re.compile(
     r"""\bfetch\s*\(\s*(?:API_BASE\s*\+\s*)?(['"])/api/(?:ask|health)\1""")
 # 唯一允许的绝对地址：本机环回 AI 服务（file:// 打开页面时使用）。
-LOOPBACK_RE = re.compile(r"""http://(?:127\.0\.0\.1|localhost):8765(?=['"\s]|$)""")
+LOOPBACK_RE = re.compile(r"""http://(?:127\.0\.0\.1|localhost):8765(?=['"\s/]|$)""")
 IMPORT_STMT_RE = re.compile(r"""\bimport\s*[\('"{]""")
 IMPORT_NAME_RE = re.compile(r"\bimport\s+[A-Za-z_$]")
 XHR_RE = re.compile(r"\bXMLHttpRequest\b")

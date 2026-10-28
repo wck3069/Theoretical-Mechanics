@@ -478,16 +478,17 @@ window.TMART = (function () {
         <option value="pendulum">单摆周期</option>
         <option value="double">双摆混沌</option>
       </select>
+      <div class="hint" id="mode-hint"></div>
     </div>
-    <div class="group">
-      <div class="row"><label for="param-theta0">振幅 θ0 (°)</label><span class="val" id="val-theta0">10.0</span></div>
+    <div class="group" id="group-theta0">
+      <div class="row"><label for="param-theta0">θ0（初始/振幅）</label><span class="val" id="val-theta0">10.0</span></div>
       <input id="param-theta0" type="range" min="1" max="60" step="1" value="10" aria-label="振幅 theta0">
     </div>
-    <div class="group">
+    <div class="group" id="group-L">
       <div class="row"><label for="param-L">摆长 L（本章 L＝长度）</label><span class="val" id="val-L">1.00</span></div>
       <input id="param-L" type="range" min="0.5" max="3" step="0.1" value="1.0" aria-label="摆长 L">
     </div>
-    <div class="group">
+    <div class="group" id="group-g">
       <div class="row"><label for="param-g">重力 g</label><span class="val" id="val-g">1.00</span></div>
       <input id="param-g" type="range" min="0.5" max="3" step="0.1" value="1.0" aria-label="重力 g">
     </div>
@@ -518,7 +519,7 @@ window.TMART = (function () {
 var dp = {th1:1.0, th2:1.0, w1:0, w2:0, trail:[], trailMax:1200, running:true};
 function dpStep(dt) {
   if (!dp.running) return;
-  var g = P.g, L1 = 1, L2 = 1;
+  var g = P.g, L1 = P.L, L2 = P.L;
   function derivs(th1, th2, w1, w2) {
     var c12 = Math.cos(th1-th2), s12 = Math.sin(th1-th2);
     var d = 2 - c12*c12;
@@ -536,10 +537,14 @@ function dpStep(dt) {
   dp.th2 += h/6*(k1.dth2 + 2*k2.dth2 + 2*k3.dth2 + k4.dth2);
   dp.w1 += h/6*(k1.dw1 + 2*k2.dw1 + 2*k3.dw1 + k4.dw1);
   dp.w2 += h/6*(k1.dw2 + 2*k2.dw2 + 2*k3.dw2 + k4.dw2);
-  var x1 = Math.sin(dp.th1), y1 = -Math.cos(dp.th1);
-  var x2 = x1 + Math.sin(dp.th2), y2 = y1 - Math.cos(dp.th2);
+  var x1 = Math.sin(dp.th1), y1 = Math.cos(dp.th1);
+  var x2 = x1 + Math.sin(dp.th2), y2 = y1 + Math.cos(dp.th2);
   dp.trail.push({x1:x1, y1:y1, x2:x2, y2:y2});
   if (dp.trail.length > dp.trailMax) dp.trail.shift();
+}
+function dpReset(){
+  var a = P.theta0 * Math.PI / 180;
+  dp.th1 = a; dp.th2 = a; dp.w1 = 0; dp.w2 = 0; dp.trail = []; dp.running = true;
 }
 
 // ==================== 0b) 圆柱脱离 & 单摆 动画状态 ====================
@@ -550,7 +555,7 @@ try { REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-moti
 
 // —— 圆柱脱离：接触段 RK4 θ''=g·sinθ（R=1），脱离后解析抛体 ——
 var cyl = {phase:'contact', th:1e-3, w:0, projT:0, px:0, py:0, vx:0, vy:0, trail:[], alpha:0, fadeOut:0};
-function cylReset(){ cyl.phase='contact'; cyl.th=1e-3; cyl.w=0; cyl.projT=0; cyl.trail.length=0; cyl.alpha=0; cyl.fadeOut=0; }
+function cylReset(){ cyl.phase='contact'; cyl.th=Math.min(Math.max(P.theta0*Math.PI/180,0.001),THD-0.01); cyl.w=0; cyl.projT=0; cyl.trail.length=0; cyl.alpha=0; cyl.fadeOut=0; }
 function cylContactDerivs(th, w){ return {dth:w, dw:P.g*Math.sin(th)}; }
 function cylStep(h){
   if (cyl.fadeOut > 0){
@@ -763,7 +768,7 @@ function draw() {
     ctx.font = '12px ui-monospace,monospace';
     ctx.fillText('cylinder · detach = ' + detachAngle().toFixed(2) + '° (cosθ = 2/3)', 20, 30);
   } else if (P.mode === 'double') {
-    var L1 = 1, L2 = 1;
+    var L1 = P.L, L2 = P.L;
     var cx = W * 0.5, cy = H * 0.32;
     var sc = Math.min(W, H) * 0.15;
     if (dp.trail.length > 1) {
@@ -778,9 +783,9 @@ function draw() {
       ctx.stroke(); ctx.lineWidth = 1;
     }
     var x1 = cx + L1*Math.sin(dp.th1)*sc;
-    var y1 = cy + (-L1*Math.cos(dp.th1))*sc;
+    var y1 = cy + L1*Math.cos(dp.th1)*sc;
     var x2 = x1 + L2*Math.sin(dp.th2)*sc;
-    var y2 = y1 + (-L2*Math.cos(dp.th2))*sc;
+    var y2 = y1 + L2*Math.cos(dp.th2)*sc;
     ctx.strokeStyle = ART.cyan; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x1, y1); ctx.stroke();
     ctx.strokeStyle = ART.solar; ctx.lineWidth = 2;
@@ -801,11 +806,11 @@ function draw() {
     ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2*Math.PI); ctx.fill();
     // readout to the right (avoids title)
     ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('DOUBLE PENDULUM', W - 210, 30);
-    ctx.fillText('theta1 = ' + dp.th1.toFixed(3), W - 210, 50);
-    ctx.fillText('theta2 = ' + dp.th2.toFixed(3), W - 210, 68);
-    ctx.fillText('w1 = ' + dp.w1.toFixed(3), W - 210, 86);
-    ctx.fillText('w2 = ' + dp.w2.toFixed(3), W - 210, 104);
+    ctx.fillText('双摆', W - 210, 30);
+    ctx.fillText('θ1 = ' + dp.th1.toFixed(3), W - 210, 50);
+    ctx.fillText('θ2 = ' + dp.th2.toFixed(3), W - 210, 68);
+    ctx.fillText('ω1 = ' + dp.w1.toFixed(3), W - 210, 86);
+    ctx.fillText('ω2 = ' + dp.w2.toFixed(3), W - 210, 104);
     return;
   } else {
     // Pendulum: RK4 实时摆动 + 3D 球体摆锤 + 拖尾 + 周期读数
@@ -890,11 +895,11 @@ function updateHUD(){
     hudCorr.textContent = fmt(corr, 6);
     hudState.textContent = '振荡';
   } else {
-    hudTheta.textContent = '-';
+    hudTheta.textContent = P.theta0.toFixed(1) + ' deg';
     hudDetach.textContent = '-';
     hudT.textContent = dp.trail.length > 0 ? (dp.trail.length * 0.02).toFixed(2) : '0.00';
     hudCorr.textContent = '-';
-    hudState.textContent = '混沌 (double pendulum)';
+    hudState.textContent = '混沌（双摆）';
   }
 }
 
@@ -902,7 +907,7 @@ function updateHUD(){
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
-  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(600); } else if (P.mode === 'cylinder') { cylReset(); } else { pendReset(); } syncURL(); });
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; syncModeControls(); if (P.mode === 'double') { dpReset(); prewarmDouble(600); } else if (P.mode === 'cylinder') { cylReset(); } else { pendReset(); } syncURL(); });
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
@@ -911,8 +916,23 @@ function bindControls() {
   bindSlider('param-theta0', 'theta0', 'val-theta0', function(v){ return v.toFixed(1); });
   bindSlider('param-L', 'L', 'val-L', function(v){ return v.toFixed(2); });
   bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
-  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dp.th1=1.0; dp.th2=1.0; dp.w1=0; dp.w2=0; dp.trail=[]; dp.running=true; prewarmDouble(600); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; syncSliders(); if (P.mode === 'cylinder') cylReset(); else pendReset(); } syncURL(); });
+  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(600); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; syncSliders(); if (P.mode === 'cylinder') cylReset(); else pendReset(); } syncModeControls(); syncURL(); });
 }
+function syncModeControls() {
+  var isCyl = P.mode === 'cylinder';
+  var gL = $('group-L');
+  if (gL) gL.style.display = isCyl ? 'none' : 'block';
+  var lbl = document.querySelector('label[for="param-theta0"]');
+  if (lbl) lbl.textContent = isCyl ? '起始角 θ0 (°)' : (P.mode === 'pendulum' ? '振幅 θ0 (°)' : '初始角 θ0 (°)');
+  var th = $('param-theta0');
+  if (th) {
+    th.max = isCyl ? '47' : '60';
+    if (isCyl && P.theta0 > 47) { P.theta0 = 47; th.value = 47; $('val-theta0').textContent = '47.0'; }
+  }
+  var hint = $('mode-hint');
+  if (hint) hint.textContent = isCyl ? '圆柱：θ0 起始角、g 重力；L 不参与。' : (P.mode === 'pendulum' ? '单摆：θ0 振幅、L 摆长、g 重力。' : '双摆：θ0 初始角、L 杆长、g 重力。');
+}
+
 function syncSliders() {
   $('param-theta0').value = P.theta0; $('val-theta0').textContent = P.theta0.toFixed(1);
   $('param-L').value = P.L; $('val-L').textContent = P.L.toFixed(2);
@@ -961,6 +981,7 @@ function runSelftest() {
 var qURL = loadFromURL();
 resize();
 bindControls();
+syncModeControls();
 syncSliders();
 if (P.mode === 'double') prewarmDouble(600);
 if (P.mode === 'cylinder') cylReset();

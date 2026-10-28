@@ -214,9 +214,10 @@
       <textarea id="tmai-input" rows="2" placeholder="输入问题…" aria-label="输入问题"></textarea>
       <button id="tmai-send" type="button" aria-label="发送">发送</button>
     </div>
-    <div class="tmai-footer">本地模型 · 问题不会离开这台机器<br>AI 可能出错，请以讲义推导（note.pdf）为准</div>
+    <div class="tmai-footer">本地模型 · 问题不会离开这台机器<br>AI 可能出错，请以讲义推导（note.pdf）为准<br>离线模式：讲义原文检索 + 常见问题直答</div>
   </div>
 </div>
+<!-- TM-OFFLINE-KB -->
 <script id="tm-ai-js">
 (function () {
   'use strict';
@@ -224,6 +225,7 @@
   var root = document.getElementById('tm-ai-root');
   if (!root) return;
   var API_BASE = (location.protocol === 'file:') ? 'http://127.0.0.1:8765' : '';
+  var KB = window.TM_OFFLINE_KB || null;
   var healthOk = false;
 
   var launcher = document.getElementById('tmai-launcher');
@@ -351,45 +353,131 @@
     return String(str == null ? '' : str).toLowerCase().split(/[^a-z0-9]+/).filter(function (t) { return t.length > 0; });
   }
 
-  function localAnswer(question) {
-    var mods = getModules();
-    if (!mods) {
-      return { answer: '当前为离线检索模式（未连接本地 AI 服务）。讲义正文与 PDF 仍可正常使用；本地版请先运行 bash tools/serve.sh，再关闭并重新打开本面板。', sources: [] };
+  function normText(x) {
+    return String(x == null ? '' : x).toLowerCase()
+      .replace(/[\s，。？！、；：""''（）()\[\]{}《》·—…!?.,;:'"`]/g, '');
+  }
+  var SYN = [
+    ['拉格朗日', 'lagrange euler'], ['欧拉', 'euler'], ['作用量', 'action'],
+    ['费马', 'fermat'], ['斯涅尔', 'snell'], ['折射', 'refraction'],
+    ['最短路径', 'brachistochrone shortest'], ['有效势', 'veff'],
+    ['离心', 'centrifugal'], ['约化', 'reduced'], ['恢复系数', 'restitution'],
+    ['转动惯量', 'moment inertia'], ['角动量', 'angular momentum'],
+    ['洛伦兹力', 'lorentz'], ['单摆', 'pendulum'], ['双摆', 'double pendulum'],
+    ['圆柱', 'cylinder'], ['碰撞', 'collision'], ['变分', 'variational'],
+    ['虚功', 'virtual work'], ['截面', 'cross section'], ['球壳', 'shell'],
+    ['甲虫', 'beetle'], ['平行轴', 'parallel axis'], ['阻尼', 'damping']
+  ];
+  function expandQuery(q) {
+    var out = q;
+    for (var i = 0; i < SYN.length; i++) {
+      if (q.indexOf(SYN[i][0]) !== -1) out += ' ' + SYN[i][1];
     }
-    var qBigrams = cjkBigrams(question);
-    var qTokens = latinTokens(question);
-    var scored = mods.map(function (m) {
-      var corpus = [m.title, m.tags, m.src, m.summary, m.note].join(' ');
-      var cBigrams = cjkBigrams(corpus);
-      var cTokens = latinTokens(corpus);
-      var score = 0;
-      qBigrams.forEach(function (bg) {
-        if (cBigrams.indexOf(bg) !== -1) score += 2;
-      });
-      qTokens.forEach(function (tk) {
-        if (cTokens.indexOf(tk) !== -1) score += 3;
-      });
-      var titleBigrams = cjkBigrams(m.title || '');
-      qBigrams.forEach(function (bg) {
-        if (titleBigrams.indexOf(bg) !== -1) score += 2;
-      });
-      return { m: m, score: score };
+    return out;
+  }
+  function overlapScore(a, b) {
+    var A = cjkBigrams(a), B = cjkBigrams(b);
+    if (!A.length || !B.length) return 0;
+    var hit = 0;
+    for (var i = 0; i < A.length; i++) if (B.indexOf(A[i]) !== -1) hit++;
+    return hit / Math.sqrt(A.length * B.length);
+  }
+  function latinHit(a, b) {
+    var A = latinTokens(a), B = latinTokens(b), n = 0;
+    for (var i = 0; i < A.length; i++) if (B.indexOf(A[i]) !== -1) n++;
+    return n;
+  }
+  function sourceFor(ms, sec) {
+    var m = null, mods = (KB && KB.modules) ? KB.modules : (getModules() || []);
+    for (var i = 0; i < mods.length; i++) {
+      if ((mods[i].m || mods[i].milestone) === ms) { m = mods[i]; break; }
+    }
+    if (!m) return { milestone: ms, title: ms, section: sec || '', href: '', pdf: '' };
+    return {
+      milestone: ms, title: m.title, section: sec || m.title,
+      href: m.href || m.sim || '', pdf: m.pdf || m.note || ''
+    };
+  }
+  function pickSentences(text, q, maxN) {
+    var parts = String(text || '').split(/[。；\n]+/).filter(function (x) {
+      if (x.trim().length <= 6) return false;
+      return (x.match(/\\/g) || []).length <= 4;
     });
-    scored.sort(function (a, b) { return b.score - a.score; });
-    var top = scored.filter(function (x) { return x.score > 0; }).slice(0, 3);
-    if (top.length === 0) top = scored.slice(0, 2);
-    if (top.length > 3) top = top.slice(0, 3);
-    var lines = top.map(function (x, i) {
-      var m = x.m;
-      var desc = m.summary || m.src || '';
-      return (i + 1) + '. ' + m.milestone + ' · ' + m.title + (desc ? '：' + desc : '');
+    var scored = parts.map(function (x, i) {
+      return {s: x.trim(), i: i, sc: overlapScore(q, x) + latinHit(q, x) * 0.2};
     });
-    var answer = '离线检索结果（讲义相关章节）：\n\n' + lines.join('\n');
-    var sources = top.map(function (x) {
-      var m = x.m;
-      return { milestone: m.milestone, title: m.title, section: m.title, href: m.sim, pdf: m.note };
+    scored.sort(function (a, b) { return b.sc - a.sc; });
+    var top = scored.slice(0, maxN || 2);
+    top.sort(function (a, b) { return a.i - b.i; });
+    return top.map(function (x) { return x.s; }).join('。') + '。';
+  }
+
+  function localAnswer(question) {
+    var q = normText(question);
+    if (!KB) {
+      var mods0 = getModules();
+      if (!mods0) {
+        return {answer: '离线模式没有加载到知识库。请通过 http://127.0.0.1:8765 打开，或运行 tools/build_offline_kb.py 重新生成。', sources: [], label: '离线检索'};
+      }
+      var lines0 = mods0.slice(0, 3).map(function (m) {
+        return '**' + m.milestone + ' · ' + m.title + '**\n' + (m.summary || m.src || '');
+      });
+      return {answer: '离线检索（章节级）：\n\n' + lines0.join('\n\n'), sources: mods0.slice(0, 3).map(function (m) {
+        return {milestone: m.milestone, title: m.title, section: m.title, href: m.sim, pdf: m.note};
+      }), label: '离线检索'};
+    }
+
+    var gHit = null;
+    for (var gi = 0; gi < KB.glossary.length; gi++) {
+      if (q.indexOf(normText(KB.glossary[gi].t)) !== -1) { gHit = KB.glossary[gi]; break; }
+    }
+
+    var best = null, bestSc = 0;
+    for (var fi = 0; fi < KB.faq.length; fi++) {
+      var f = KB.faq[fi];
+      var sc = overlapScore(q, normText(f.q)) + latinHit(q, f.q) * 0.15;
+      if (sc > bestSc) { bestSc = sc; best = f; }
+    }
+    if (best && bestSc >= 0.55) {
+      var ans = best.a;
+      if (gHit && normText(ans).indexOf(normText(gHit.t)) === -1) ans = gHit.d + '\n\n' + ans;
+      var metaSec = /部署|离线|单位|学习路径|诺特/.test(best.sec || '');
+      ans += metaSec ? '\n\n（离线直答）' : '\n\n（离线直答 · ' + best.m + ' · 完整推导见 note.pdf）';
+      return {answer: ans, sources: metaSec ? [] : [sourceFor(best.m, best.sec)], label: '离线直答'};
+    }
+
+    var qe = expandQuery(q);
+    var scored = KB.chunks.map(function (c) {
+      var corpus = c.t + ' ' + c.sec;
+      var sc = overlapScore(qe, corpus) * 2 + latinHit(qe, corpus) * 0.5;
+      var bad = (c.t.match(/\\/g) || []).length;
+      sc *= (1 - Math.min(0.6, bad / 30));
+      return {c: c, sc: sc};
     });
-    return { answer: answer, sources: sources };
+    scored.sort(function (a, b) { return b.sc - a.sc; });
+    var top = scored.filter(function (x) { return x.sc > 0.02; }).slice(0, 2);
+    if (top.length) {
+      var lines = [];
+      if (gHit) lines.push(gHit.d);
+      top.forEach(function (x) {
+        lines.push('**' + x.c.m + ' · ' + x.c.sec + '**\n' + pickSentences(x.c.t, q, 2));
+      });
+      lines.push('（离线检索：讲义原文摘录；完整推理请连接本地模型或看 note.pdf）');
+      return {answer: lines.join('\n\n'), sources: top.map(function (x) {
+        return sourceFor(x.c.m, x.c.sec);
+      }), label: '离线检索'};
+    }
+
+    var mods = KB.modules.map(function (m) {
+      return {m: m, sc: overlapScore(q, normText(m.title + ' ' + m.tags.join(' ') + ' ' + m.summary))};
+    }).sort(function (a, b) { return b.sc - a.sc; }).slice(0, 2);
+    var fallback = ['离线模式只做讲义检索，没有理解到这个问题。换个更具体的关键词（如「有效势」「恢复系数」「Lorentz 力」「等时摆」），或连接本地模型获得完整推理。'];
+    if (mods.length && mods[0].sc > 0) {
+      fallback.push('可以先看：' + mods.map(function (x) { return x.m.m + ' ' + x.m.title; }).join('；'));
+    }
+    return {answer: fallback.join('\n\n'), sources: mods.map(function (x) {
+      return sourceFor(x.m.m, x.m.title);
+    }), label: '离线检索'};
   }
 
   function renderSources(container, sources) {
@@ -520,7 +608,7 @@
     }).catch(function () {
       removeTyping();
       var la = localAnswer(text);
-      appendMessage({ role: 'assistant', content: la.answer, sources: la.sources, label: '离线检索' });
+      appendMessage({ role: 'assistant', content: la.answer, sources: la.sources, label: la.label || '离线检索' });
       conversation.push({ role: 'assistant', content: la.answer });
     }).then(function () {
       inFlight = false;
@@ -594,6 +682,7 @@
     close: closePanel,
     toggle: togglePanel
   };
+  window.TM_AI.localAnswer = localAnswer;
 
   document.addEventListener('tm:open-ai', function (e) {
     var opts = e && e.detail ? e.detail : null;

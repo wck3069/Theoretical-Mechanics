@@ -89,3 +89,14 @@ TM_HOST=0.0.0.0 bash tools/serve.sh
 - `TM_RATE_PER_MIN`（默认 20）：每 IP 每分钟请求上限。
 - 公网/跨网段部署见 `deploy/README.md`（Tailscale / Caddy / Nginx / Cloudflare Tunnel）。
 - 不要把 8765 裸端口暴露公网；必须加 TLS 与鉴权。
+
+## 离线知识库（无后端也聪明）
+
+```bash
+python3 tools/build_offline_kb.py     # 生成 assets/tm-offline-kb.js
+python3 tools/apply_ai_panel.py --apply
+```
+
+离线面板不再只列章节：它带 49 条常见问题直答、12 个术语、63 段讲义原文摘录，
+并做同义词扩展（拉格朗日/Euler、费马/Fermat、洛伦兹/Lorentz 等）与 LaTeX 清洗。
+没有 `/api` 时（GitHub Pages 或直接双击 HTML）仍然可用；连接本地服务后自动切换为完整模型。
