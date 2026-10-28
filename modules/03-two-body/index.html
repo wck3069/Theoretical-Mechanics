@@ -454,7 +454,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>两体问题与系外行星</h1>
       <p>恒星摆动、径向速度曲线与多普勒频移</p>
-      <p class="intro">双星不是两颗星各绕「中间」转，而是都绕共同质心转——恒星其实也在「跳舞」。K 和 Δλ 就是天文学家仅凭星光发现不可见伴星的方式。第一步：把 M2 滑块从 0.001 拉大，看恒星画出的小圈和 K 的读数。</p>
+      <p class="intro">双星不是两颗星各绕「中间」转，而是都绕共同质心转——恒星其实也在「跳舞」。默认是质量相近的双星，能清楚看到两颗星都绕质心转；点「木星预设」则回到真实系外行星的微小摆动（看右上放大图）。</p>
     </div>
     <div class="hud">
       <span>时间 t <b id="hudT">0.00</b></span>
@@ -479,6 +479,7 @@ window.TMART = (function () {
     <div class="group">
       <div class="row"><label for="sel-preset">预设系统</label></div>
       <select id="sel-preset" aria-label="预设系统">
+        <option value="binary" selected>等质量双星（看质心）</option>
         <option value="jupiter">太阳-木星</option>
         <option value="earth">太阳-地球</option>
         <option value="custom">自定义</option>
@@ -489,7 +490,7 @@ window.TMART = (function () {
       <input id="param-M1" type="range" min="0.1" max="5" step="0.01" value="1.0" aria-label="恒星质量">
     </div>
     <div class="group">
-      <div class="row"><label for="param-M2">行星质量 M2（单位：太阳质量 M☉；1 Mj ≈ 0.00095 M☉）</label><span class="val" id="val-M2">1.00</span></div>
+      <div class="row"><label for="param-M2">伴星/行星质量 M2（单位：太阳质量 M☉；1 Mj ≈ 0.00095 M☉）</label><span class="val" id="val-M2">1.00</span></div>
       <input id="param-M2" type="range" min="0.001" max="5" step="0.001" value="1.0" aria-label="行星质量">
     </div>
     <div class="group">
@@ -503,6 +504,7 @@ window.TMART = (function () {
     <div class="btns">
       <button id="btn-pause">暂停</button>
       <button id="btn-reset">重置</button>
+      <button id="btn-p-binary">等质量双星</button>
       <button id="btn-p-jupiter">木星预设</button>
       <button id="btn-p-earth">地球预设</button>
     </div>
@@ -528,7 +530,7 @@ window.TMART = (function () {
 // ==================== 1) PARAMS ====================
 // Units: M☉=1, AU=1, year=1 → G=4*pi^2
 var G = 4 * Math.PI * Math.PI;
-var DEFAULTS = {M1:1.0, M2:0.000954, a:5.20, speed:1.0};
+var DEFAULTS = {M1:1.0, M2:0.5, a:5.20, speed:1.0};
 var RANGE = {M1:[0.1,5], M2:[0.001,5], a:[0.01,10], speed:[0.1,3]};
 var P = {M1:DEFAULTS.M1, M2:DEFAULTS.M2, a:DEFAULTS.a, speed:DEFAULTS.speed};
 
@@ -623,9 +625,16 @@ function draw() {
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
-  // COM
-  ctx.fillStyle = 'rgba(255,207,107,.6)';
-  ctx.beginPath(); ctx.arc(cx, cy, 3, 0, 2*Math.PI); ctx.fill();
+  // COM crosshair
+  ctx.strokeStyle = 'rgba(255,210,122,.9)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(cx - 9, cy); ctx.lineTo(cx + 9, cy);
+  ctx.moveTo(cx, cy - 9); ctx.lineTo(cx, cy + 9);
+  ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, 2*Math.PI); ctx.stroke();
+  ctx.fillStyle = '#ffd27a'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillText('质心 COM', cx + 13, cy - 10);
   // star orbit
   if (traj1.length > 1) {
     ctx.strokeStyle = 'rgba(255,207,107,.4)';
@@ -653,15 +662,32 @@ function draw() {
   var r1 = comR1(), r2 = P.a - r1;
   var sx = cx - r1 * Math.cos(phase) * sc, sy = cy - r1 * Math.sin(phase) * sc;
   var px = cx + r2 * Math.cos(phase) * sc, py = cy - r2 * Math.sin(phase) * sc;
+  // barycenter line + r1/r2
+  ctx.setLineDash([3, 5]);
+  ctx.strokeStyle = 'rgba(255,255,255,.22)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(px, py); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '10px ui-monospace,monospace';
+  if (Math.hypot(sx-cx, sy-cy) > 26) {
+    ctx.fillStyle = 'rgba(255,207,107,.9)';
+    ctx.fillText('r1', (sx+cx)/2 + 4, (sy+cy)/2 - 4);
+  }
+  if (Math.hypot(px-cx, py-cy) > 26) {
+    ctx.fillStyle = 'rgba(127,224,255,.9)';
+    ctx.fillText('r2', (px+cx)/2 + 4, (py+cy)/2 - 4);
+  }
   // star
   ctx.fillStyle = '#ffcf6b';
   ctx.shadowColor = 'rgba(255,207,107,.8)'; ctx.shadowBlur = 15;
-  ctx.beginPath(); ctx.arc(sx, sy, 8, 0, 2*Math.PI); ctx.fill();
+  var mTot = P.M1 + P.M2, rs = 6 + 5*(P.M1/mTot);
+  ctx.beginPath(); ctx.arc(sx, sy, rs, 0, 2*Math.PI); ctx.fill();
   ctx.shadowBlur = 0;
   // planet
   ctx.fillStyle = '#5ea2ff';
   ctx.shadowColor = 'rgba(94,162,255,.8)'; ctx.shadowBlur = 8;
-  ctx.beginPath(); ctx.arc(px, py, 4, 0, 2*Math.PI); ctx.fill();
+  var rp = 3 + 6*(P.M2/mTot);
+  ctx.beginPath(); ctx.arc(px, py, rp, 0, 2*Math.PI); ctx.fill();
   ctx.shadowBlur = 0;
   // Star wobble zoom (top-right inset)
   var zw = Math.min(W, H) * 0.25;
@@ -669,7 +695,7 @@ function draw() {
   ctx.strokeStyle = 'rgba(120,160,255,.2)';
   ctx.strokeRect(zx0, zy0, zw, zw);
   ctx.fillStyle = '#8a98c0'; ctx.font = '10px ui-monospace,monospace';
-  ctx.fillText('Star wobble (zoomed)', zx0 + 4, zy0 - 4);
+  ctx.fillText('恒星绕质心（放大）', zx0 + 4, zy0 - 4);
   var zsc = zw * 0.4 / (comR1() * 1.5 + 0.001);
   var zcx = zx0 + zw/2, zcy = zy0 + zw/2;
   // Draw star orbit (zoomed)
@@ -693,8 +719,10 @@ function draw() {
   ctx.shadowColor = 'rgba(255,207,107,.8)'; ctx.shadowBlur = 8;
   ctx.beginPath(); ctx.arc(zsx, zsy, 5, 0, 2*Math.PI); ctx.fill();
   ctx.shadowBlur = 0;
-  // COM marker
-  ctx.fillStyle = 'rgba(255,207,107,.4)';
+  // COM marker (inset)
+  ctx.strokeStyle = 'rgba(255,210,122,.6)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(zcx-6,zcy); ctx.lineTo(zcx+6,zcy); ctx.moveTo(zcx,zcy-6); ctx.lineTo(zcx,zcy+6); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,207,107,.8)';
   ctx.beginPath(); ctx.arc(zcx, zcy, 2, 0, 2*Math.PI); ctx.fill();
 
   // RV curve (bottom-left inset, clear of orbit)
@@ -762,12 +790,16 @@ function bindControls() {
   bindSlider('param-speed', 'speed', 'val-speed', function(v){ return v.toFixed(2); });
   $('btn-pause').addEventListener('click', function(){ simRunning = !simRunning; this.textContent = simRunning ? '暂停' : '继续'; });
   $('btn-reset').addEventListener('click', function(){ t = 0; initSim(); });
+  $('btn-p-binary').addEventListener('click', function(){ applyPreset('binary'); });
   $('btn-p-jupiter').addEventListener('click', function(){ applyPreset('jupiter'); });
   $('btn-p-earth').addEventListener('click', function(){ applyPreset('earth'); });
 }
 function applyPreset(name) {
   var sel = $('sel-preset');
-  if (name === 'jupiter') {
+  if (name === 'binary') {
+    P.M1 = 1.0; P.M2 = 1.0; P.a = 5.20; P.speed = 1.0;
+    sel.value = 'binary';
+  } else if (name === 'jupiter') {
     P.M1 = 1.0; P.M2 = 0.000954; P.a = 5.20; P.speed = 1.0;
     sel.value = 'jupiter';
   } else if (name === 'earth') {
