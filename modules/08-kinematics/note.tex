@@ -114,7 +114,7 @@ Lorentz 力 $\boldsymbol F=-e(\boldsymbol E+\boldsymbol v\times\boldsymbol B)$�
 设 $\boldsymbol E=E\hat y$，$\boldsymbol B=B\hat z$，$\boldsymbol v=(v_0,0,0)$。
 
 运动方程：$m\dot{\boldsymbol v}=-e(\boldsymbol E+\boldsymbol v\times\boldsymbol B)$。
-$x$-$y$ 平面：$m\dot v_x=eB v_y$，$m\dot v_y=-eE-eB v_x$。
+$x$-$y$ 平面：$m\dot v_x=-eB v_y$，$m\dot v_y=-eE+eB v_x$。
 解为回旋运动叠加 $\boldsymbol E\times\boldsymbol B$ 漂移：
 \begin{equation}
   \boldsymbol v_d=\frac{\boldsymbol E\times\boldsymbol B}{B^2}.
@@ -126,11 +126,15 @@ $x$-$y$ 平面：$m\dot v_x=eB v_y$，$m\dot v_y=-eE-eB v_x$。
 
 质点在半径 $r$ 的圆周上运动，加速度与速度夹角 $\alpha$ 保持不变。
 切向加速度 $a_t=\dot v$，法向加速度 $a_n=v^2/r$。
-$\tan\alpha=a_n/a_t=v^2/(r\dot v)$。
-分离变量：$v\,\mathrm dv = (r\tan\alpha)\,\mathrm? $ 
-$\dot v = v^2/(r\tan\alpha)$？不，$a_t = a_n/\tan\alpha = v^2/(r\tan\alpha)$。
-$\mathrm dv/\mathrm dt = v^2/(r\tan\alpha)$ → $\mathrm dv/v^2 = \mathrm dt/(r\tan\alpha)$
-→ $-1/v = t/(r\tan\alpha)+C$。
+$\tan\alpha=a_n/a_t=v^2/(r\dot v)$，故
+\begin{equation}
+  a_t=\frac{a_n}{\tan\alpha}=\frac{v^2}{r\tan\alpha},
+  \qquad
+  \frac{\mathrm dv}{\mathrm dt}=\frac{v^2}{r\tan\alpha}
+  \;\Longrightarrow\;
+  \frac{\mathrm dv}{v^2}=\frac{\mathrm dt}{r\tan\alpha}.
+\end{equation}
+积分得 $-1/v=t/(r\tan\alpha)+C$。
 初值 $v(0)=v_0$：$C=-1/v_0$。
 \begin{equation}
   \boxed{\;v(t)=\frac{v_0}{1-v_0 t/(r\tan\alpha)}\;}
@@ -247,7 +251,13 @@ $\boldsymbol v'=\boldsymbol v-\boldsymbol V$，$\boldsymbol a'=\boldsymbol a$。
 
 \paragraph{渡河最短时间。}
 船相对水速度 $v_2$，水流速度 $v_1$。最短渡河时间 $T=d/v_2$（垂直渡河），
-最小漂移距离 $d\cdot v_1/v_2$。
+设船头与河岸法线夹角为 $\theta$，则渡河时间 $T=d/(v_2\cos\theta)$，
+沿河漂移 $x=(v_1-v_2\sin\theta)T$。对 $\theta$ 求极小，当 $v_1>v_2$ 时
+\begin{equation}
+  x_{\min}=\frac{d}{v_2}\sqrt{v_1^2-v_2^2}.
+\end{equation}
+例如 $v_1=2,\,v_2=1$ 时 $x_{\min}=\sqrt3\,d\approx1.732d$，
+而不是垂直船头时的 $d\,v_1/v_2=2d$。
 
 \section{相空间与非线性振荡}
 \label{sec:phase-space}
@@ -256,7 +266,7 @@ $\boldsymbol v'=\boldsymbol v-\boldsymbol V$，$\boldsymbol a'=\boldsymbol a$。
 大振幅：扭曲的闭合曲线。分界线（separatrix） separates 振荡与旋转。
 
 能量 $E=\frac12 m L^2 \dot\theta^2 - mgL\cos\theta$。
-$E<2mgL$：振荡；$E>2mgL$：旋转；$E=2mgL$：分界线。
+$E<-mgL$ 不允许；$-mgL<E<mgL$：振荡；$E>mgL$：旋转；$E=mgL$：分界线（过最高点 $\theta=\pi$ 的临界轨道）。
 
 \section{讨论}
 \label{sec:discuss}

@@ -168,7 +168,7 @@ B2 反弹高度
 \toprule
 物理量 & 解析值 & 数值值 \\
 \midrule
-$\beta_{\max}$（$e=0.5$） & $\approx 33.7^\circ$ & $33.7^\circ$ \\
+$\beta_{\max}$（$e=0.5$） & $36.9^\circ$ & $36.8699^\circ$ \\
 $v(t)$（雨滴，$t=10$） & 公式值 & 数值积分一致 \\
 $H/h$（碰撞链） & $4.0$ & $4.0$ \\
 \bottomrule
@@ -182,7 +182,16 @@ $H/h$（碰撞链） & $4.0$ & $4.0$ \\
 \label{sub:collision-geometry}
 
 等质量光滑球碰撞：入射球偏转角 $\beta$ 依赖于碰撞参数 $\alpha$ 与恢复系数 $e$。
-$e=1$（完全弹性）时 $\beta=90^\circ-\alpha$；$e=0$（完全非弹性）时两球粘连 $\beta=0$。
+$e=1$（完全弹性）时 $\beta=90^\circ-\alpha$。$e=0$ 时“完全非弹性”只表示法向相对速度为零，
+切向速度仍为 $v\sin\alpha$，因此一般 $\beta\ne0$：
+\begin{equation}
+  \boldsymbol v_1'=\left(\frac{v\cos\alpha}{2},\,v\sin\alpha\right),
+  \qquad
+  \beta=\arctan\!\left(2\tan\alpha\right)-\alpha.
+\end{equation}
+$\alpha=45^\circ$ 时 $\beta=18.435^\circ$；$e=0$ 的最大偏转为
+$\beta_{\max}=19.471^\circ$（$\tan^2\alpha=1/2$），只有 $\alpha=0$ 才是 $\beta=0$。
+若两球真的粘在一起，必须额外加入切向摩擦或粘接，这与“光滑球”假设矛盾。
 中间 $0<e<1$ 时 $\beta$ 有最大值，对应 $\tan^2\alpha=(1-e)/2$。
 
 \subsection{变质量系统的通用公式}
@@ -202,7 +211,7 @@ $v_2'\approx 2v_1$，能量传递效率 $\sim 4m_2/m_1$（小）。多次碰撞�
 
 \begin{enumerate}
   \item \textbf{完全弹性}（$e=1$）：动能守恒，相对速度反向。
-  \item \textbf{完全非弹性}（$e=0$）：碰撞后两物体粘连，动能最大损失。
+  \item \textbf{完全非弹性}（$e=0$）：法向相对速度为零，动能损失最大；光滑球切向速度仍保留，一般不等于“粘在一起”。
   \item \textbf{部分弹性}（$0<e<1$）：一般情况，动能部分损失。
 \end{enumerate}
 
@@ -258,7 +267,7 @@ B2 上升高度 $H=v_2'^2/(2g)=2v_1^2/g=4h$。
 
 \paragraph{恢复系数的影响。}
 $e=1$（完全弹性）时 $\beta_{\max}\to 90^\circ$（$\alpha\to0$）；
-$e=0$（完全非弹性）时两球粘连，$\beta=0$。
+$e=0$（完全非弹性）时两球法向速度相同，但切向速度保留，$\beta$ 一般不为 $0$（只有正碰 $\alpha=0$ 才为 $0$）。
 
 \paragraph{雨滴的终端行为。}
 $v\sim gt/4$ 线性增长，无终端速度（因质量持续增加，重力加速度恒定）。

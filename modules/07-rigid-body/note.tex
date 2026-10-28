@@ -35,7 +35,7 @@
 \toprule
 来源 & 题面简述 & 核心知识点 & 对应小节 \\
 \midrule
-作业-4 Q1 & 球冠质心（平面距球心 $b$） &
+作业-4 Q1 & 球冠质心（球冠高度 $h$） &
   质心积分、几何 & \ref{sub:spherical-cap} \\
 作业-4 Q2 & 甲虫在光滑圆环上爬行，环转角 &
   角动量守恒、约束 & \ref{sub:beetle} \\
@@ -65,7 +65,7 @@
 \subsection{球冠质心（作业-4 Q1）}
 \label{sub:spherical-cap}
 
-球半径 $R$，平面距球心 $b$（$0\le b\le R$），球冠高度 $h=R-b$。
+球半径 $R$，切割平面距球心 $b$（$0\le b\le R$），球冠高度 $h=R-b$。
 球冠体积
 \begin{equation}
   V=\int_{b}^{R}\pi(R^2-z^2)\,\mathrm dz
@@ -74,30 +74,26 @@
 \end{equation}
 质心 $z$ 坐标（从球心）：
 \begin{equation}
-  z_{\rm cm}=\frac{1}{V}\int_b^R z\,\pi(R^2-z^2)\,\mathrm dz
-  =\frac{3(R+b)^2}{4(2R+b)}? 
+  z_{\rm cm}=\frac{1}{V}\int_b^R z\,\pi(R^2-z^2)\,\mathrm dz,
+  \qquad
+  \int_b^R z(R^2-z^2)\,\mathrm dz
+  =\frac{(R^2-b^2)^2}{4},
 \end{equation}
-让我重新计算。$\int_b^R z(R^2-z^2)\,\mathrm dz
-= [R^2 z^2/2 - z^4/4]_b^R
-= R^4/2 - R^4/4 - R^2 b^2/2 + b^4/4
-= R^4/4 - R^2 b^2/2 + b^4/4
-= (R^2-b^2)^2/4$.
-所以 $z_{\rm cm} = \pi (R^2-b^2)^2/4 \,/\, V
-= \pi (R^2-b^2)^2/4 \,/\, \pi(R-b)^2(2R+b)/3
-= 3(R+b)^2/[4(2R+b)]$.
+代入体积得
+\begin{equation}
+  z_{\rm cm}=\frac{3(R+b)^2}{4(2R+b)}.
+\end{equation}
 质心距底面（平面 $z=b$）的距离：
 \begin{equation}
-  d = z_{\rm cm}-b = \frac{3(R+b)^2}{4(2R+b)}-b
-  = \frac{3(R^2+2Rb+b^2)-4b(2R+b)}{4(2R+b)}
-  = \frac{3R^2+6Rb+3b^2-8Rb-4b^2}{4(2R+b)}
-  = \frac{3R^2-2Rb-b^2}{4(2R+b)}
-  = \frac{(R-b)(3R+b)}{4(2R+b)}.
+  d=z_{\rm cm}-b
+  =\frac{3(R+b)^2}{4(2R+b)}-b
+  =\frac{(R-b)(3R+b)}{4(2R+b)}.
 \end{equation}
+用球冠高度 $h=R-b$ 表示，即
 \begin{equation}
-  \boxed{\;d=\frac{(R-b)(3R+b)}{4(2R+b)}\;}
+  \boxed{\;d=\frac{h(4R-h)}{4(3R-h)}\;}
 \end{equation}
-当 $b=0$（半球）：$d=3R/8$（半球质心距底面 $3R/8$，正确）。
-当 $b=R$（无球冠）：$d=0$。
+当 $h=R$（半球）：$d=3R/8$；当 $h=0$（无球冠）：$d=0$。
 
 \subsection{甲虫与圆环（作业-4 Q2）}
 \label{sub:beetle}
@@ -159,7 +155,7 @@ $T=2\pi R/v$。环转角
 \label{sec:result}
 
 \begin{enumerate}
-  \item 球冠质心：$d=(R-b)(3R+b)/[4(2R+b)]$（\eqref{sub:spherical-cap}）。
+  \item 球冠质心：$d=h(4R-h)/[4(3R-h)]$（\eqref{sub:spherical-cap}，$h$ 为球冠高度）。
   \item 甲虫-圆环：环转角 $\pi$（$180^\circ$）（\eqref{sub:beetle}）。
   \item 圆盘角动量：$L=\frac12 MR^2\omega_0$（\eqref{sub:disk}）。
   \item Newton 球壳：$r<a$ 时 $V=-GMm/a$（常数），$r>a$ 时 $V=-GMm/r$
@@ -179,8 +175,8 @@ $T=2\pi R/v$。环转角
 \toprule
 物理量 & 解析值 & 数值值 \\
 \midrule
-球冠质心（$R=1,b=0$） & $3/8=0.375$ & $0.375$ \\
-球冠质心（$R=1,b=0.5$） & $0.5\cdot3.5/(4\cdot2.5)=0.175$ & $0.175$ \\
+球冠质心（$R=1,h=R$，半球） & $3/8=0.375$ & $0.375$ \\
+球冠质心（$R=1,h=0.5$） & $0.5\cdot3.5/(4\cdot2.5)=0.175$ & $0.175$ \\
 甲虫环转角 & $\pi=3.14159$ & $3.14159$ \\
 圆盘 $L$（$M=1,R=1,\omega=1$） & $0.5$ & $0.5$ \\
 球壳 $V$（$r=0.5a$） & $-GMm/a$ & $-GMm/a$ \\

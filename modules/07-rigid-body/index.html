@@ -17,6 +17,7 @@
   .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
   .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
   .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .intro{margin:6px 0 0; font-size:12px; color:var(--muted); line-height:1.6; max-width:90%}
   .hud{position:absolute; left:20px; bottom:16px; font-size:12px; color:var(--muted);
        display:flex; gap:14px; flex-wrap:wrap; pointer-events:none}
   .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
@@ -65,6 +66,309 @@
     .stage{height:58vh}
   }
 </style>
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+<!-- TM-THEME-HEAD:END -->
 </head>
 <body>
 <div class="app">
@@ -73,13 +377,14 @@
     <div class="brand">
       <h1>刚体几何与角动量</h1>
       <p>球冠质心、甲虫转环、圆盘角动量、球壳势能</p>
+      <p class="intro">刚体的怪事：甲虫绕环走一圈，身体只转了 180°；均匀球壳内部的引力恰好为零。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。</p>
     </div>
     <div class="hud">
       <span>模式 <b id="hudMode">-</b></span>
-      <span>d <b id="hudD">-</b></span>
+      <span>质心高度 d <b id="hudD">-</b></span>
       <span>转角 <b id="hudAngle">-</b></span>
-      <span>L <b id="hudL">-</b></span>
-      <span>V <b id="hudV">-</b></span>
+      <span>角动量 L <b id="hudL">-</b></span>
+      <span>势能 V <b id="hudV">-</b></span>
       <span>状态 <b id="hudState">-</b></span>
     </div>
     <div id="notice" class="notice" hidden></div>
@@ -87,10 +392,10 @@
   </div>
   <aside class="panel">
     <div class="eq">
-      <div><span class="num">球冠：</span> d=(R-b)(3R+b)/[4(2R+b)]</div>
-      <div><span class="num">转环：</span> Δθ=π</div>
-      <div><span class="num">圆盘：</span> L=½MR²ω</div>
-      <div><span class="num">球壳：</span> r&lt;R: V=-GMm/R; r&gt;R: V=-GMm/r</div>
+      <div><span class="num">球冠：</span> d=h(4R−h)/[4(3R−h)]（h＝右侧滑块的球冠高度；R−h＝切割平面距球心）</div>
+      <div><span class="num">转环：</span> Δθ=π（甲虫沿闭合环爬一圈，自身朝向转过 π，不转完 360°）</div>
+      <div><span class="num">圆盘：</span> L=½MR²ω（角动量 L）</div>
+      <div><span class="num">球壳：</span> r&lt;R: V=-GMm/R; r&gt;R: V=-GMm/r（壳内 V 为常数：壳内任意点受力为零）</div>
     </div>
     <div class="group">
       <div class="row"><label for="sel-mode">模式</label></div>
@@ -107,7 +412,7 @@
     </div>
     <div class="group">
       <div class="row"><label for="param-h">球冠高度 h</label><span class="val" id="val-h">1.00</span></div>
-      <input id="param-h" type="range" min="0.01" max="6" step="0.01" value="1.0" aria-label="球冠高度 h">
+      <input id="param-h" type="range" min="0.01" max="3" step="0.01" value="1.0" aria-label="球冠高度 h">
     </div>
     <div class="group">
       <div class="row"><label for="param-M">质量 M</label><span class="val" id="val-M">1.00</span></div>
@@ -120,7 +425,8 @@
     <div class="btns">
       <button id="btn-reset">重置</button>
     </div>
-    <div class="tag">URL 可复现：<span>?mode=…&R=…&b=…&M=…&omega=…</span><br>
+    <div class="tag">URL 可复现：<span>?mode=…&R=…&b=…&M=…&omega=…（URL 中 h 即球冠高度）</span><br>
+    本页采用无量纲演示单位（R、M、ω 等均为无量纲，见底部说明）。<br>
     自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
     <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
     <a class="doc" href="../06-collisions/index.html">← 上一模块：碰撞与变质量</a>
@@ -129,8 +435,8 @@
       <summary>作业映射（本模块覆盖：作业-4）</summary>
       <table>
         <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
-        <tr><td>作业-4 Q1</td><td>球冠质心</td><td>模式=球冠质心；滑块 R/b</td></tr>
-        <tr><td>作业-4 Q2</td><td>甲虫转环</td><td>note.tex 推导</td></tr>
+        <tr><td>作业-4 Q1</td><td>球冠质心</td><td>模式=球冠质心；滑块 R 与球冠高度 h</td></tr>
+        <tr><td>作业-4 Q2</td><td>甲虫转环</td><td>阅读推导 note.pdf</td></tr>
         <tr><td>作业-4 Q3</td><td>圆盘角动量</td><td>模式=圆盘；HUD 显示 L</td></tr>
         <tr><td>作业-4 Q4</td><td>球壳势能</td><td>模式=球壳势能；HUD 显示 V</td></tr>
       </table>
@@ -184,15 +490,16 @@ function prewarmBeetle(n){
 function capCentroid(R, h) {
   // b = R - h (plane distance from center)
   // d = h(4R-h) / [4(2R+b)] = h(4R-h) / [4(3R-h)]
-  if (h <= 0 || h > 2*R) return 0;
+  h = Math.min(Math.max(h, 0), R);
+  if (h <= 0) return 0;
   var b = R - h;
   return (R - b) * (3 * R + b) / (4 * (2 * R + b));
 }
 function diskL(M, R, w) { return 0.5 * M * R * R * w; }
-function shellV(r, M, a) {
-  // r in units of a
-  if (r <= a) return -M / a; // G=M=m=1
-  return -M / r;
+function shellV(rho, M, a) {
+  // rho: actual distance; a: shell radius
+  if (rho <= a) return -M / a; // G=M=m=1
+  return -M / rho;
 }
 
 // ==================== 4) 渲染 ====================
@@ -257,14 +564,14 @@ function draw() {
       ctx.strokeStyle = 'rgba(94,162,255,.9)'; ctx.lineWidth = 3;
       ctx.beginPath();
       for (var ti = 0; ti < beetle.trail.length; ti++) {
-        var ta = -beetle.trail[ti];
+        var ta = beetle.trail[ti] / 2;
         var tx = cx + Math.cos(ta) * sc, ty = cy + Math.sin(ta) * sc;
         if (ti === 0) ctx.moveTo(tx, ty); else ctx.lineTo(tx, ty);
       }
       ctx.stroke(); ctx.lineWidth = 1;
     }
     // Beetle body
-    var ba = -beetle.angle;
+    var ba = beetle.angle / 2;
     var bx = cx + Math.cos(ba) * sc, by = cy + Math.sin(ba) * sc;
     ctx.fillStyle = '#5ea2ff';
     ctx.beginPath(); ctx.ellipse(bx, by, 7, 5, ba + Math.PI/2, 0, 2*Math.PI); ctx.fill();
@@ -290,7 +597,7 @@ function draw() {
     ctx.beginPath();
     for (var i = 0; i <= 100; i++) {
       var r = (i / 100) * maxR * P.R;
-      var V = shellV(r/P.R, P.M, P.R);
+      var V = shellV(r, P.M, P.R);
       var px = 40 + (r / maxR) * (W - 80);
       var py = H * 0.8 - V * (H * 0.3);
       if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
@@ -354,7 +661,7 @@ function bindControls() {
   bindSlider('param-h', 'h', 'val-h', function(v){ return v.toFixed(2); });
   bindSlider('param-M', 'M', 'val-M', function(v){ return v.toFixed(2); });
   bindSlider('param-omega', 'omega', 'val-omega', function(v){ return v.toFixed(2); });
-  $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.b=DEFAULTS.b; P.M=DEFAULTS.M; P.omega=DEFAULTS.omega; syncSliders(); syncURL(); });
+  $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.h=DEFAULTS.h; P.M=DEFAULTS.M; P.omega=DEFAULTS.omega; syncSliders(); syncURL(); });
 }
 function syncSliders() {
   $('param-R').value = P.R; $('val-R').textContent = P.R.toFixed(2);
@@ -425,5 +732,195 @@ metEl.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
 function metUpdate(){ metEl.textContent = 'METRICS ' + window.innerWidth + ' ' + window.innerHeight + ' ' + document.documentElement.scrollWidth + ' ' + document.documentElement.scrollHeight; }
 metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendChild(metEl);
 </script>
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
 </body>
 </html>

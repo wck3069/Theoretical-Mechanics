@@ -1,2 +1,14 @@
 作业/
 .venv*/
+.omo/
+tmp/
+dist/
+__pycache__/
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.xdv
+*.synctex.gz

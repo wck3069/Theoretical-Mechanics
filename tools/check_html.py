@@ -14,6 +14,9 @@
   2c. 资源标签（script src / link href / img·iframe·embed·audio·video·
       source·track src / object data）只允许本地相对路径
   2d. 无 fetch( 调用、无 import 语句/动态 import()、无 XMLHttpRequest
+      **唯一例外**：站内本地 AI 助教（P10 起）允许对同源端点
+      fetch('/api/ask') 与 fetch('/api/health')——必须是这两个
+      字面量、同源相对路径；任何其它 fetch 一律 FAIL。
   2e. 无已知 CDN 域名（unpkg、jsdelivr、cdnjs、Google Fonts、esm.sh 等）
 
 退出码：0 全部通过；1 存在 FAIL；2 用法/环境错误。
@@ -43,6 +46,10 @@ ATTR_IN_TAG_RE = re.compile(
 LOCAL_PATH_RE = re.compile(r"^[A-Za-z0-9_.][A-Za-z0-9_./-]*$")
 HAS_SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
 FETCH_RE = re.compile(r"\bfetch\s*\(")
+# 唯一豁免：站内本地 AI 助教的同源端点（相对路径、双引号或单引号均可）。
+# 任何绝对地址都不可能通过 2a/2b，因此这里只需限定路径字面量。
+ALLOWED_FETCH_RE = re.compile(
+    r"""\bfetch\s*\(\s*(['"])/(?:api/(?:ask|health))\1\s*[,)]""")
 IMPORT_STMT_RE = re.compile(r"""\bimport\s*[\('"{]""")
 IMPORT_NAME_RE = re.compile(r"\bimport\s+[A-Za-z_$]")
 XHR_RE = re.compile(r"\bXMLHttpRequest\b")
@@ -170,7 +177,12 @@ def check_file(path: Path) -> bool:
 
     # 2d. fetch / import / XMLHttpRequest
     fails = []
-    for pat, label in ((FETCH_RE, "fetch( 调用"), (IMPORT_STMT_RE, "import 语句"),
+    for m in FETCH_RE.finditer(text):
+        if ALLOWED_FETCH_RE.match(text[m.start():m.start() + 160]):
+            continue
+        fails.append(f"第 {line_of(text, m.start())} 行发现 fetch( 调用"
+                     "（仅允许同源 /api/ask 与 /api/health）")
+    for pat, label in ((IMPORT_STMT_RE, "import 语句"),
                        (IMPORT_NAME_RE, "import 语句"), (XHR_RE, "XMLHttpRequest")):
         for m in pat.finditer(text):
             fails.append(f"第 {line_of(text, m.start())} 行发现 {label}")

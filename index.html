@@ -3,275 +3,1446 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>理论力学 · 交互讲义 — 总目录（开发期）</title>
+<title>理论力学 · 交互讲义 — 星图目录</title>
 <style>
-  :root{
-    --bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
-    --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; min-height:100vh;
-    background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
-    color:var(--text);
-    font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
-  }
-  .wrap{max-width:1180px; margin:0 auto; padding:56px 28px 40px}
+:root{
+--tm-void:#03050c;--tm-deep:#060a17;--tm-horizon:#0b1226;
+--tm-nebula-a:rgba(38,54,120,.55);--tm-nebula-b:rgba(12,70,96,.40);--tm-nebula-c:rgba(84,38,110,.28);
+--tm-panel:rgba(9,14,30,.74);--tm-panel-solid:#080d1c;
+--tm-glass:linear-gradient(160deg,rgba(26,36,66,.55),rgba(6,10,22,.78));
+--tm-line:rgba(146,182,255,.14);--tm-line-2:rgba(176,206,255,.30);
+--tm-glow:0 0 24px rgba(127,224,255,.12);
+--tm-text:#e8eeff;--tm-text-2:#a9b8dc;--tm-muted:#6d7ca4;
+--tm-solar:#ffd27a;--tm-solar-hot:#ffb45e;--tm-cyan:#7fe0ff;--tm-violet:#b79bff;
+--tm-teal:#7ff0cf;--tm-rose:#ff9fc4;--tm-amber:#ffc46b;--tm-coral:#ff9d6b;
+--tm-ice:#9fd8ff;--tm-lav:#c9b8ff;--tm-good:#7fe3a0;--tm-bad:#ff8a8a;
+--tm-font-ui:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+--tm-font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+--tm-radius:16px;--tm-radius-sm:10px;--tm-track:rgba(146,182,255,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--tm-void);color:var(--tm-text);font-family:var(--tm-font-ui)}
+body{position:relative}
+canvas{position:fixed;inset:0;z-index:0;display:block}
+#orbitCanvas{z-index:1}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
 
-  /* ---------- 页眉 ---------- */
-  header.page{margin-bottom:34px}
-  header.page h1{margin:0; font-size:26px; letter-spacing:.5px; font-weight:650}
-  header.page .sub{margin:9px 0 0; font-size:14px; color:var(--muted); line-height:1.7; max-width:640px}
-  header.page .phase{display:inline-block; margin-top:14px; font-size:12px; color:var(--accent2);
-    font-variant-numeric:tabular-nums}
+/* top bar */
+.topbar{position:fixed;top:0;left:0;right:0;height:64px;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(6,10,23,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--tm-line)}
+.monogram{display:flex;align-items:center;gap:12px}
+.monogram svg{width:34px;height:34px}
+.brand-title{font-size:15px;font-weight:650;letter-spacing:.4px}
+.brand-sub{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);letter-spacing:1.2px}
+.top-actions{display:flex;gap:8px}
+.top-actions button{padding:7px 12px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:12px;color:var(--tm-text-2);transition:background .12s}
+.top-actions button:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
 
-  /* ---------- 里程碑筛选 ---------- */
-  .filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px}
-  .filters button{
-    font:inherit; font-size:12.5px; padding:7px 13px; border-radius:999px; cursor:pointer;
-    color:#cfdcff; background:rgba(58,95,191,.14); border:1px solid rgba(94,162,255,.28);
-    transition:.15s; font-variant-numeric:tabular-nums;
-  }
-  .filters button:hover{background:rgba(94,162,255,.24)}
-  .filters button.active{background:rgba(94,162,255,.28); color:#fff}
-  .filters button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+/* hero */
+.hero{position:fixed;top:120px;left:24px;max-width:380px;z-index:40}
+.eyebrow{font-family:var(--tm-font-mono);font-size:11px;letter-spacing:2px;color:var(--tm-solar);margin-bottom:10px}
+.hero h1{font-size:40px;font-weight:700;line-height:1.15;letter-spacing:.5px}
+.grad-text{background:linear-gradient(120deg,var(--tm-solar),var(--tm-cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{margin-top:12px;font-size:13.5px;color:var(--tm-text-2);line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip-stat{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2);font-variant-numeric:tabular-nums}
+.hint{margin-top:12px;font-size:11.5px;color:var(--tm-muted);font-family:var(--tm-font-mono)}
 
-  /* ---------- 模块卡片栅格 ---------- */
-  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px}
-  .card{
-    padding:20px 20px 18px; border-radius:14px;
-    background:var(--panel); border:1px solid var(--line);
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .card .eyebrow{
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px;
-    color:var(--accent); letter-spacing:.4px; font-variant-numeric:tabular-nums;
-  }
-  .card h2{margin:0; font-size:17px; font-weight:650; letter-spacing:.3px}
-  .card .src{margin:0; font-size:12.5px; color:var(--muted); line-height:1.6}
-  .badge{
-    align-self:flex-start; font-size:11.5px; padding:3px 10px; border-radius:999px;
-    font-variant-numeric:tabular-nums;
-  }
-  .badge.ready{background:rgba(255,207,107,.13); color:var(--accent2)}
-  .badge.todo{background:rgba(138,152,192,.12); color:var(--muted)}
-  .card .actions{display:flex; gap:10px; margin-top:auto; padding-top:6px}
-  .card .actions a{
-    font-size:12.5px; text-decoration:none; padding:8px 14px; border-radius:9px;
-  }
-  .card .actions a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-  a.primary{background:linear-gradient(180deg,#3f7bff,#2b5fe0); border:1px solid #4f86ff; color:#fff}
-  a.primary:hover{filter:brightness(1.1)}
-  a.ghost{color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35)}
-  a.ghost:hover{background:rgba(94,162,255,.28)}
-  .card.disabled{opacity:.62}
-  .card.disabled .note{font-size:12px; color:#6d7ba3; margin-top:auto; padding-top:6px}
-  .card[hidden]{display:none}
+/* star label */
+.star-label{position:fixed;left:46%;top:50%;transform:translate(-50%,60px);z-index:20;font-size:11px;color:var(--tm-solar);font-family:var(--tm-font-mono);pointer-events:none;text-shadow:0 0 8px rgba(255,210,122,.4)}
 
-  /* ---------- 页脚 ---------- */
-  footer.page{
-    margin-top:44px; padding-top:18px; border-top:1px solid var(--line);
-    font-size:12px; color:var(--muted); line-height:1.8;
-  }
-  footer.page b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+/* catalog */
+.catalog{position:fixed;top:96px;right:24px;width:330px;bottom:96px;z-index:40;background:var(--tm-panel);backdrop-filter:blur(16px);border:1px solid var(--tm-line);border-radius:var(--tm-radius);display:flex;flex-direction:column;overflow:hidden}
+.cat-header{padding:14px 16px;border-bottom:1px solid var(--tm-line);display:flex;align-items:center;justify-content:space-between}
+.cat-header h2{font-size:13px;letter-spacing:1.5px;color:var(--tm-text-2);font-weight:600}
+.cat-count{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted)}
+.cat-list{flex:1;overflow:auto;padding:8px}
+.cat-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 10px;border-radius:10px;text-align:left;transition:background .12s}
+.cat-row:hover{background:rgba(146,182,255,.08)}
+.cat-row.selected{background:rgba(255,210,122,.10);box-shadow:inset 0 0 0 1px rgba(255,210,122,.25)}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+.cat-ms{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);width:26px;flex-shrink:0}
+.cat-info{flex:1;min-width:0}
+.cat-title{font-size:13px;color:var(--tm-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-tags{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.cat-tag{font-size:11px;padding:2px 6px;border-radius:999px;background:rgba(146,182,255,.10);color:var(--tm-text-2)}
+.cat-chev{color:var(--tm-muted);font-size:16px}
+.cat-empty{padding:24px;text-align:center;color:var(--tm-muted);font-size:13px;display:none}
 
-  @media (max-width:640px){
-    .wrap{padding:36px 18px 32px}
-    header.page h1{font-size:22px}
-    .grid{grid-template-columns:1fr}
-  }
+/* detail panel */
+.detail{display:none;flex-direction:column;height:100%;overflow:auto;padding:16px}
+.detail.active{display:flex}
+.detail-close{align-self:flex-end;background:none;border:none;color:var(--tm-muted);font-size:20px;padding:4px 8px}
+.detail .actions{position:sticky;bottom:0;z-index:2;background:var(--tm-panel-solid);padding:10px 0 6px;border-top:1px solid var(--tm-line)}
+.detail-ms{font-family:var(--tm-font-mono);font-size:12px;color:var(--tm-solar);letter-spacing:1px}
+.badge-sample{display:inline-block;margin-left:8px;font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(127,224,255,.12);color:var(--tm-cyan)}
+.detail h3{margin:10px 0 8px;font-size:18px;font-weight:650}
+.detail .summary{font-size:13.5px;color:var(--tm-text-2);line-height:1.7;margin-bottom:12px}
+.detail .src{font-size:12px;color:var(--tm-muted);margin-bottom:12px}
+.detail .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.detail .tags span{font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(146,182,255,.10);color:var(--tm-text-2)}
+.detail .actions{display:flex;gap:10px;margin-bottom:14px}
+.detail .actions a{padding:8px 14px;border-radius:9px;font-size:12.5px}
+.detail .actions a.primary{background:linear-gradient(180deg,#3f7bff,#2b5fe0);border:1px solid #4f86ff;color:#fff}
+.detail .actions a.ghost{color:#cfdcff;background:rgba(58,95,191,.18);border:1px solid rgba(94,162,255,.35)}
+.detail .orbit-idx{font-size:11.5px;color:var(--tm-muted);margin-bottom:10px;font-family:var(--tm-font-mono)}
+.detail .navchips{display:flex;gap:8px;flex-wrap:wrap}
+.detail .navchip{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2)}
+
+/* command bar */
+.cmdbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:min(980px,calc(100vw-32px));z-index:45;background:var(--tm-panel);backdrop-filter:blur(16px);border:1px solid var(--tm-line);border-radius:14px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cmd-search{flex:1;min-width:160px;padding:8px 12px;border-radius:9px;border:1px solid var(--tm-line);background:rgba(6,10,23,.6);color:var(--tm-text);font-size:13px}
+.cmd-ms{display:flex;gap:6px;flex-wrap:wrap}
+.ms-chip{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2);transition:all .12s}
+.ms-chip[aria-pressed="true"]{background:rgba(255,210,122,.18);color:var(--tm-solar);border-color:rgba(255,210,122,.4)}
+.tag-expander{position:relative}
+.tag-btn{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2)}
+.tag-menu{position:absolute;bottom:calc(100% + 8px);left:0;background:var(--tm-panel-solid);border:1px solid var(--tm-line);border-radius:10px;padding:8px;max-height:220px;overflow:auto;display:none;min-width:200px;z-index:60;flex-wrap:wrap;gap:6px}
+.tag-menu.open{display:flex}
+.tag-menu button{padding:4px 8px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11px;color:var(--tm-text-2)}
+.tag-menu button[aria-pressed="true"]{background:rgba(127,224,255,.18);color:var(--tm-cyan)}
+.motion-controls{display:flex;gap:6px;align-items:center}
+.motion-controls button{padding:6px 8px;border-radius:8px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11px;color:var(--tm-text-2)}
+.motion-controls button[aria-pressed="true"]{background:rgba(255,210,122,.18);color:var(--tm-solar)}
+.live-count{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);white-space:nowrap}
+
+/* tooltip */
+.tooltip{position:fixed;z-index:70;pointer-events:none;padding:8px 10px;border-radius:8px;background:rgba(6,10,23,.92);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text);display:none;max-width:240px}
+.tooltip .t-ms{font-family:var(--tm-font-mono);color:var(--tm-solar);margin-right:6px}
+.tooltip .t-src{color:var(--tm-muted);font-size:10.5px;margin-top:2px}
+
+/* footer note */
+.footnote{position:fixed;bottom:12px;left:16px;z-index:30;font-size:11px;color:var(--tm-muted)}
+
+/* drawers/popovers */
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(3,5,12,.55);display:none}
+.overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,90vw);z-index:90;background:var(--tm-panel-solid);border-left:1px solid var(--tm-line);transform:translateX(100%);transition:transform .2s ease;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer header{padding:16px;border-bottom:1px solid var(--tm-line);display:flex;justify-content:space-between;align-items:center}
+.drawer header h3{font-size:14px;letter-spacing:1.5px;color:var(--tm-text-2)}
+.drawer .body{flex:1;overflow:auto;padding:16px}
+.path-line{position:relative;padding-left:24px;margin-bottom:18px}
+.path-line::before{content:'';position:absolute;left:8px;top:6px;bottom:-12px;width:2px;background:linear-gradient(var(--tm-solar),var(--tm-cyan))}
+.path-line:last-child::before{bottom:6px}
+.path-dot{position:absolute;left:4px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--tm-solar);box-shadow:0 0 10px var(--tm-solar)}
+.path-ms{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-solar)}
+.path-title{font-size:13.5px;color:var(--tm-text);margin:2px 0}
+.path-one{font-size:12px;color:var(--tm-muted);line-height:1.6}
+.path-credit{margin-top:20px;padding-top:12px;border-top:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-muted);line-height:1.7}
+
+.popover{position:fixed;top:80px;right:24px;width:min(360px,90vw);z-index:90;background:var(--tm-panel-solid);border:1px solid var(--tm-line);border-radius:var(--tm-radius);padding:16px;display:none}
+.popover.open{display:block}
+.popover h3{font-size:13px;letter-spacing:1.5px;color:var(--tm-text-2);margin-bottom:10px}
+.popover p{font-size:12.5px;color:var(--tm-text-2);line-height:1.7;margin-bottom:8px}
+.popover .close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--tm-muted);font-size:18px}
+.popover.glossary{width:min(440px,92vw);max-height:72vh;overflow:auto}
+.popover dl{margin:0}
+.popover dl>div{padding:8px 0;border-bottom:1px solid var(--tm-line)}
+.popover dl>div:last-child{border-bottom:none}
+.popover dt{font-size:12.5px;color:var(--tm-solar);font-weight:600;margin-bottom:2px}
+.popover dd{margin:0;font-size:12px;color:var(--tm-text-2);line-height:1.65}
+
+/* responsive */
+@media (max-width:979px){
+  .hero{top:80px;left:16px;max-width:calc(100vw-32px)}
+  .hero h1{font-size:30px}
+  .catalog{top:auto;bottom:0;left:0;right:0;width:100%;height:68vh;z-index:46;border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .25s ease}
+  .catalog.open{transform:translateY(0)}
+  .cmdbar{bottom:0;left:0;right:0;transform:none;width:100%;border-radius:0;border-left:none;border-right:none}
+  .footnote{display:none}
+  .star-label{transform:translate(-50%,50px)}
+  body.cat-open #tmai-launcher{display:none}
+}
+@media (max-width:640px){
+  .hero h1{font-size:26px}
+  .topbar{padding:0 10px}
+  .brand-sub{display:none}
+  .brand-title{font-size:13px;white-space:nowrap}
+  .monogram{gap:8px}
+  .monogram svg{width:28px;height:28px}
+  .top-actions{gap:4px}
+  .top-actions button{padding:6px 8px;font-size:11px}
+  .cmd-ms{max-width:100%;overflow-x:auto;flex-wrap:nowrap}
+  .hud{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.1s !important;animation-duration:.1s !important}
+}
+
+.hud{position:fixed;bottom:132px;left:50%;transform:translateX(-50%);z-index:30;font-size:11px;color:var(--tm-muted);font-family:var(--tm-font-mono);pointer-events:none}
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <header class="page">
-    <h1>理论力学 · 交互讲义</h1>
-    <p class="sub">把 7 次作业和 1 个两体问题专题中的知识点，重构成一套“每章三件套”的交互式讲义：严格推导 note.tex、阅读版 note.pdf、单文件数值实验 index.html。</p>
-    <span class="phase">P0–P8 开发期总目录 · P9 后迁移为根 index.html</span>
-  </header>
-
-  <nav class="filters" id="filters" aria-label="按里程碑筛选"></nav>
-  <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-    <input id="search" type="search" placeholder="搜索模块标题、标签、来源..." aria-label="搜索模块"
-      style="flex:1;min-width:200px;padding:8px 12px;border-radius:9px;border:1px solid rgba(94,162,255,.35);background:#111a33;color:#cfdcff;font:inherit;font-size:13px">
-    <nav class="filters" id="tagFilters" aria-label="按标签筛选" style="margin-bottom:0"></nav>
+<header class="topbar">
+  <div class="monogram">
+    <svg viewBox="0 0 34 34" aria-hidden="true">
+      <defs><radialGradient id="sg" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff7e0"/><stop offset="60%" stop-color="#ffd27a"/><stop offset="100%" stop-color="#ffb45e"/></radialGradient></defs>
+      <circle cx="17" cy="17" r="6" fill="url(#sg)"/>
+      <ellipse cx="17" cy="17" rx="14" ry="5" fill="none" stroke="rgba(127,224,255,.5)" stroke-width="1"/>
+      <ellipse cx="17" cy="17" rx="10" ry="12" fill="none" stroke="rgba(183,155,255,.4)" stroke-width="1" transform="rotate(30 17 17)"/>
+    </svg>
+    <div>
+      <div class="brand-title">理论力学 · 交互讲义</div>
+      <div class="brand-sub">THEORETICAL MECHANICS</div>
+    </div>
   </div>
+  <div class="top-actions">
+    <button type="button" id="btnCatalog" aria-label="打开星表">星表</button>
+    <button type="button" id="btnPath" aria-label="打开学习路径">学习路径</button>
+    <button type="button" id="btnGloss" aria-label="打开术语表">术语</button>
+    <button type="button" id="btnAbout" aria-label="打开关于">关于</button>
+  </div>
+</header>
 
-  <main class="grid" id="grid"></main>
-  <noscript><p style="color:#ffd7d7;font-size:14px">需要启用 JavaScript 才能显示模块目录。</p></noscript>
+<section class="hero">
+  <div class="eyebrow">DEEP-SPACE LECTURE NOTES</div>
+  <h1><span class="grad-text">在轨道上</span><br><span class="grad-text">读理论力学</span></h1>
+  <p class="sub">把 7 次作业和 1 个两体问题专题中的知识点，重构成一套“每章三件套”的交互式讲义：严格推导 note.tex、阅读版 note.pdf、单文件数值实验 index.html。</p>
+  <div class="chips">
+    <span class="chip-stat">9 章</span>
+    <span class="chip-stat">8 次作业</span>
+    <span class="chip-stat">1 个专题</span>
+    <span class="chip-stat">9 章可交互模拟</span>
+  </div>
+  <div class="hint">拖动星图 · 点击行星进入章节 · / 搜索</div>
+</section>
 
-  <section style="margin-top:30px;padding:16px 20px;border:1px solid var(--line);border-radius:12px;background:rgba(10,16,32,.5)">
-    <h2 style="margin:0 0 10px;font-size:16px;color:var(--accent2)">学习路径</h2>
-    <p style="margin:0;font-size:13px;color:var(--muted);line-height:1.8">
-      推荐顺序：M0（比奈方程样板）→ M1（有效势）→ M2（散射）→ M3（两体）→ M4（变分）→ M5（虚功）→ M6（碰撞）→ M7（刚体）→ M8（运动学）。
-      每个模块含讲义 PDF、交互模拟、自测断言，可独立学习。
-    </p>
-  </section>
+<div class="star-label">质心 · 系统核心</div>
 
-  <footer class="page">
-    内容来源：<b>作业/ 目录共 8 份 PDF</b>（7 次作业 + 1 个两体问题专题）<br>
-    统一验收：单文件零依赖 · 内联 JS 过 esprima 语法检查 · ?selftest=1 数值断言 · 守恒量漂移监控
-  </footer>
+<aside class="catalog" id="catalog" aria-label="星表">
+  <div class="cat-header">
+    <h2>星表 STAR CATALOG</h2>
+    <span class="cat-count" id="catalogCount">9</span>
+  </div>
+  <div class="cat-list" id="catalogList"></div>
+  <div class="cat-empty" id="catalogEmpty">没有匹配的章节</div>
+  <div class="detail" id="detailView"></div>
+</aside>
 
+<div class="tooltip" id="tooltip"></div>
+
+<div class="cmdbar" role="toolbar" aria-label="筛选与搜索">
+  <input class="cmd-search" id="search" type="search" placeholder="搜索章节 / 标签 / 作业来源…" aria-label="搜索章节">
+  <div class="cmd-ms" id="msChips"></div>
+  <div class="tag-expander">
+    <button class="tag-btn" id="tagBtn" type="button" aria-haspopup="true" aria-expanded="false">标签</button>
+    <div class="tag-menu" id="tagMenu"></div>
+  </div>
+  <div class="motion-controls">
+    <button type="button" id="pauseBtn" aria-pressed="false" aria-label="暂停动画">⏸</button>
+    <button type="button" id="speedBtn" aria-pressed="false" aria-label="速度">x1</button>
+  </div>
+  <span class="live-count" id="liveCount" aria-live="polite">显示 9 / 9 章</span>
 </div>
 
+<div class="hud">开普勒第二定律 · 掠面速度守恒</div>
+<div class="footnote">零外部依赖 · 单文件 · 9 章全部可离线打开</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <header><h3>学习路径 LEARNING PATH</h3><button type="button" id="drawerClose" aria-label="关闭">×</button></header>
+  <div class="body" id="pathBody"></div>
+</div>
+<div class="popover glossary" id="glossPopover">
+  <button class="close" type="button" id="glossClose" aria-label="关闭">×</button>
+  <h3>术语表 GLOSSARY</h3>
+  <dl>
+    <div><dt>有效势</dt><dd>真实势能与角动量项 L²/2r² 合成的曲线，把二维轨道变成"小球沿曲线滚动"的一维问题。</dd></div>
+    <div><dt>离心势垒</dt><dd>有效势里因角动量在中心附近凸起的部分，像一堵墙，拦着带角动量的粒子掉进中心。</dd></div>
+    <div><dt>掠面速度</dt><dd>行星与中心连线单位时间扫过的面积；中心力场里它不变，这就是开普勒第二定律。</dd></div>
+    <div><dt>伯特兰定理</dt><dd>所有束缚轨道都闭合的中心力势只有两种：牛顿引力（∝1/r²）与弹簧（∝r²）。</dd></div>
+    <div><dt>约化质量</dt><dd>μ=m₁m₂/(m₁+m₂)：把两个天体互绕化成"一个假想粒子绕固定中心转"的换算质量。</dd></div>
+    <div><dt>恢复系数</dt><dd>e＝碰后沿连心线的分离速度与碰前接近速度之比：e=1 完全弹性，e=0 碰后法向速度相同（不是粘住）。</dd></div>
+    <div><dt>虚功</dt><dd>给系统一个符合约束的"想象中的"微小位移时各力做的功；总虚功为零即平衡。</dd></div>
+    <div><dt>广义力</dt><dd>虚功 Q·δq 中与每个广义坐标配对的 Q：它推动这个坐标，但不必是牛顿意义上的力。</dd></div>
+    <div><dt>转动惯量</dt><dd>I=Σmr²：物体"难不难被转起来"的量度，地位相当于平动里的质量。</dd></div>
+    <div><dt>等时摆</dt><dd>周期与摆幅无关的摆：单摆只在小角度近似等时，沿摆线摆动则严格等时。</dd></div>
+    <div><dt>洛伦兹变换</dt><dd>两个相对匀速运动的观测者之间换算时间与坐标的公式（注意与"洛伦兹力"是两回事）。</dd></div>
+    <div><dt>俘获截面</dt><dd>σ=πb_c²：一张"有效靶面积"，入射粒子瞄准进来就必被势场俘获。</dd></div>
+  </dl>
+</div>
+
+<div class="popover" id="aboutPopover">
+  <button class="close" type="button" id="aboutClose" aria-label="关闭">×</button>
+  <h3>关于 ABOUT</h3>
+  <p>每章三件套：note.tex 推导 / note.pdf 阅读版 / index.html 数值实验。</p>
+  <p>9 章覆盖中心力、有效势、散射、两体、变分、虚功、碰撞、刚体、运动学。单文件、零外部依赖、全部可离线打开。</p>
+</div>
+
+<canvas id="starfield"></canvas>
+<canvas id="orbitCanvas"></canvas>
+
 <script>
+window.TM_MODULES = [
+ {slug:'00-binet',milestone:'M0',title:'比奈方程（现有样板）',src:'中心力、比奈方程、圆锥曲线、进动',tags:['中心力','比奈方程','圆锥曲线','进动'],summary:'M0 中心力轨道方程 u\'\'+u=-F(1/u)/(m h^2 u^2)，用于判别圆锥曲线、近日点进动与轨道闭合。',sim:'modules/00-binet/index.html',note:'modules/00-binet/binet.pdf',color:'#ffd27a'},
+ {slug:'01-effective-potential',milestone:'M1',title:'有效势与轨道稳定性',src:'作业-2 Q1–Q7 · 作业-3 Q1 · 作业-5 Q4',tags:['有效势','RK4','Bertrand','进动'],summary:'M1 把角动量并入势能得到 V_eff，用曲线读出转折点、圆轨道稳定性与小振动频率；附伯特兰定理。',sim:'modules/01-effective-potential/index.html',note:'modules/01-effective-potential/note.pdf',color:'#7fe0ff'},
+ {slug:'02-scattering',milestone:'M2',title:'散射与俘获',src:'作业-3 Q2–Q3',tags:['散射','截面','俘获','RK4'],summary:'M2 中心力散射的偏转角、微分截面与俘获条件，卢瑟福散射与势垒穿透的几何。',sim:'modules/02-scattering/index.html',note:'modules/02-scattering/note.pdf',color:'#b79bff'},
+ {slug:'03-two-body',milestone:'M3',title:'两体问题与系外行星',src:'两体专题',tags:['两体','RV','多普勒','系外行星'],summary:'M3 约化质量把两体问题化为单体，开普勒第三定律，以及系外行星视向速度的观测反演。',sim:'modules/03-two-body/index.html',note:'modules/03-two-body/note.pdf',color:'#7ff0cf'},
+ {slug:'04-variational',milestone:'M4',title:'变分原理与等时摆',src:'作业-6',tags:['变分','费马','等时摆','Snell'],summary:'M4 最小作用量与费马原理导出运动方程和折射定律，等时摆的等时性来自周期与振幅无关。',sim:'modules/04-variational/index.html',note:'modules/04-variational/note.pdf',color:'#ff9fc4'},
+ {slug:'05-virtual-work',milestone:'M5',title:'虚功原理与静力学',src:'作业-7',tags:['虚功','静力学','梯子','平衡'],summary:'M5 约束力不做功，虚功原理给出静力平衡与广义力；梯子平衡、分离条件与摩擦角。',sim:'modules/05-virtual-work/index.html',note:'modules/05-virtual-work/note.pdf',color:'#ffc46b'},
+ {slug:'06-collisions',milestone:'M6',title:'碰撞与变质量',src:'作业-5 Q1–Q3',tags:['碰撞','变质量','恢复系数','雨滴'],summary:'M6 动量守恒与恢复系数，一维与二维碰撞，以及雨滴变质量系统的运动方程。',sim:'modules/06-collisions/index.html',note:'modules/06-collisions/note.pdf',color:'#ff9d6b'},
+ {slug:'07-rigid-body',milestone:'M7',title:'刚体几何与角动量',src:'作业-4',tags:['刚体','角动量','球壳','质心'],summary:'M7 转动惯量、平行轴定理与角动量守恒；球壳、滚动物体与质心系的分解。',sim:'modules/07-rigid-body/index.html',note:'modules/07-rigid-body/note.pdf',color:'#c9b8ff'},
+ {slug:'08-kinematics',milestone:'M8',title:'运动学与非线性振动',src:'作业-1',tags:['运动学','振动','Lorentz','脱离'],summary:'M8 自然坐标下的切向/法向加速度、带电粒子在 Lorentz 力下的运动与参考系变换，以及阻尼、受迫与非线性振动。',sim:'modules/08-kinematics/index.html',note:'modules/08-kinematics/note.pdf',color:'#9fd8ff'}
+];
+</script>
+<script>
+(function(){
+ 'use strict';
+ var TM = window.TM_MODULES;
+ var reducedMotion = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+ var state = {selected:null,filterMs:'all',filterTag:'all',q:'',paused:false,speed:1,hovered:null,detailOpen:false,catalogOpen:false};
+
+ function $(id){return document.getElementById(id);}
+ function matches(m){
+   if(state.filterMs!=='all' && m.milestone!==state.filterMs) return false;
+   if(state.filterTag!=='all' && m.tags.indexOf(state.filterTag)===-1) return false;
+   if(state.q){
+     var hay=(m.title+' '+m.src+' '+m.tags.join(' ')+' '+m.slug+' '+m.milestone).toLowerCase();
+     if(hay.indexOf(state.q.toLowerCase())===-1) return false;
+   }
+   return true;
+ }
+
+ // ---------- starfield ----------
+ var starCanvas = $('starfield');
+ var starCtx = starCanvas.getContext('2d');
+ var orbitCanvas = $('orbitCanvas');
+ var orbitCtx = orbitCanvas.getContext('2d');
+ var stars = [], nebulas = [], starCenter = {x:0,y:0};
+ var mouse = {x:0,y:0};
+
+ function resize(){
+   var dpr = window.devicePixelRatio || 1;
+   var w = window.innerWidth, h = window.innerHeight;
+   [starCanvas, orbitCanvas].forEach(function(c){
+     c.width = w*dpr; c.height = h*dpr;
+     c.style.width = w+'px'; c.style.height = h+'px';
+     c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+   });
+   starCenter = {x: w*0.46, y: h*0.5};
+   initStars();
+   initOrbits();
+ }
+ function initStars(){
+   var w=window.innerWidth,h=window.innerHeight;
+   var count = w<980 ? 220 : 420;
+   stars = [];
+   for(var i=0;i<count;i++){
+     stars.push({x:Math.random()*w,y:Math.random()*h,z:Math.floor(Math.random()*3),r:0.4+Math.random()*1.3,phase:Math.random()*Math.PI*2,speed:0.3+Math.random()*1.2,base:0.4+Math.random()*0.6});
+   }
+   var mn = Math.min(w,h);
+   nebulas = [
+     {x:w*0.3,y:h*0.4,r:mn*0.35,color:'rgba(255,210,122,',a:0.06},
+     {x:w*0.7,y:h*0.3,r:mn*0.4,color:'rgba(127,224,255,',a:0.05},
+     {x:w*0.6,y:h*0.7,r:mn*0.3,color:'rgba(183,155,255,',a:0.04},
+     {x:w*0.2,y:h*0.8,r:mn*0.25,color:'rgba(127,240,207,',a:0.03}
+   ];
+ }
+
+ function drawStarfield(t){
+   var ctx = starCtx;
+   var w=window.innerWidth,h=window.innerHeight;
+   ctx.clearRect(0,0,w,h);
+   nebulas.forEach(function(n){
+     var g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
+     g.addColorStop(0,n.color+n.a+')');
+     g.addColorStop(1,n.color+'0)');
+     ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+   });
+   var mx=(mouse.x-w/2)/(w/2||1);
+   var my=(mouse.y-h/2)/(h/2||1);
+   stars.forEach(function(s){
+     var par=(s.z+1)*2.6;
+     var px=s.x+mx*par;
+     var py=s.y+my*par;
+     var tw = reducedMotion?0:Math.sin(t*0.001*s.speed+s.phase);
+     var alpha=s.base+(reducedMotion?0:tw*0.3);
+     alpha=Math.max(0.1,Math.min(1,alpha));
+     ctx.globalAlpha=alpha;
+     ctx.fillStyle='#e8eeff';
+     ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fill();
+   });
+   ctx.globalAlpha=1;
+   var vg=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.3,w/2,h/2,Math.max(w,h)*0.75);
+   vg.addColorStop(0,'rgba(0,0,0,0)');
+   vg.addColorStop(1,'rgba(0,0,0,0.55)');
+   ctx.fillStyle=vg;ctx.fillRect(0,0,w,h);
+ }
+
+ // ---------- orbits ----------
+ var orbits = [];
+ var radiiArr = [5.5,12.5,9,10,8.5,8,7.5,7,6.5];
+ var eccArr = [0.06,0.08,0.10,0.12,0.14,0.16,0.18,0.20,0.22];
+ var baseAArr = [92,128,170,215,265,315,365,405,440];
+ function initOrbits(){
+   var scale = Math.min(window.innerWidth,window.innerHeight)/900;
+   orbits = TM.map(function(m,i){
+     var a = baseAArr[i]*scale;
+     var e = eccArr[i];
+     var period = 18 + i*7;
+     var k = (2*Math.PI*a*a*(1-e*e))/period;
+     return {m:m,idx:i,a:a,e:e,rot:-14*Math.PI/180,theta:Math.random()*Math.PI*2,k:k,r:radiiArr[i],color:m.color,moon:i===3,ring:i===0,comet:i===8,precess:0.00025*(i+1),_pos:null};
+   });
+ }
+ function planetPos(o){
+   var r = o.a*(1-o.e*o.e)/(1+o.e*Math.cos(o.theta));
+   var x = r*Math.cos(o.theta);
+   var y = r*Math.sin(o.theta)*0.58;
+   var cos=Math.cos(o.rot), sin=Math.sin(o.rot);
+   var rx = x*cos - y*sin;
+   var ry = x*sin + y*cos;
+   return {x:starCenter.x+rx,y:starCenter.y+ry,rdist:r};
+ }
+ function updatePlanets(dt){
+   if(state.paused) return;
+   var mul = state.speed;
+   orbits.forEach(function(o){
+     var pos = planetPos(o);
+     var r = pos.rdist;
+     o.theta += (dt*mul*o.k)/(r*r);
+     if(!reducedMotion) o.rot += dt*mul*o.precess;
+   });
+ }
+
+ var shot = null;
+ var nextShot = 0;
+ function handleShot(now){
+   if(reducedMotion) return;
+   if(!shot && now >= nextShot){
+     var w=window.innerWidth,h=window.innerHeight;
+     var sx=Math.random()*w*0.7;
+     var sy=Math.random()*h*0.35;
+     shot={start:now,dur:900,from:{x:sx,y:sy},to:{x:sx+180+Math.random()*220,y:sy+80+Math.random()*120}};
+     nextShot = now + 7000 + Math.random()*6000;
+   }
+   if(shot && now-shot.start >= shot.dur) shot=null;
+ }
+
+ function drawOrbits(t,dt){
+   var ctx = orbitCtx;
+   var w=window.innerWidth,h=window.innerHeight;
+   ctx.clearRect(0,0,w,h);
+   // constellation links
+   var pairs = [[0,1],[1,2],[1,3],[3,8],[4,5],[6,7],[7,8]];
+   ctx.save();
+   ctx.setLineDash([4,6]);
+   ctx.strokeStyle='rgba(146,182,255,0.08)';
+   ctx.lineWidth=1;
+   pairs.forEach(function(p){
+     var a=planetPos(orbits[p[0]]);
+     var bb=planetPos(orbits[p[1]]);
+     ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(bb.x,bb.y);ctx.stroke();
+   });
+   ctx.setLineDash([]);ctx.restore();
+
+   // orbits
+   orbits.forEach(function(o,i){
+     var sel = state.selected && state.selected.milestone===o.m.milestone;
+     var hov = state.hovered===i;
+     var match = matches(o.m);
+     // path
+     var pts=[];
+     for(var k=0;k<=120;k++){
+       var th=(k/120)*Math.PI*2;
+       var r=o.a*(1-o.e*o.e)/(1+o.e*Math.cos(th));
+       var x=r*Math.cos(th);
+       var y=r*Math.sin(th)*0.58;
+       var cos=Math.cos(o.rot),sin=Math.sin(o.rot);
+       var rx=x*cos-y*sin, ry=x*sin+y*cos;
+       pts.push({x:starCenter.x+rx,y:starCenter.y+ry});
+     }
+     ctx.beginPath();
+     ctx.moveTo(pts[0].x,pts[0].y);
+     for(var k=1;k<pts.length;k++) ctx.lineTo(pts[k].x,pts[k].y);
+     ctx.closePath();
+     var alpha=0.10 + i*0.01;
+     if(i>8) alpha=0.18;
+     if(hov||sel) alpha=0.45;
+     if(!match) alpha=alpha*0.4;
+     ctx.strokeStyle='rgba(146,182,255,'+alpha+')';
+     ctx.lineWidth=(hov||sel)?1.6:1;
+     ctx.stroke();
+
+     // planet
+     var pos=planetPos(o);
+     o._pos=pos;
+     var pAlpha = match?1:0.16;
+     ctx.globalAlpha=pAlpha;
+     // glow
+     var g=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,o.r*4);
+     g.addColorStop(0,o.color+'cc');
+     g.addColorStop(1,o.color+'00');
+     ctx.fillStyle=g;
+     ctx.beginPath();ctx.arc(pos.x,pos.y,o.r*4,0,Math.PI*2);ctx.fill();
+     ctx.fillStyle=o.color;
+     ctx.beginPath();ctx.arc(pos.x,pos.y,o.r,0,Math.PI*2);ctx.fill();
+     if(o.ring){ctx.strokeStyle='rgba(255,210,122,0.6)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(pos.x,pos.y,o.r+3,0,Math.PI*2);ctx.stroke();}
+     if(o.moon){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(pos.x+o.r+4,pos.y-2,2,0,Math.PI*2);ctx.fill();}
+     if(o.comet){
+       ctx.globalAlpha=pAlpha*0.4;
+       ctx.strokeStyle=o.color;ctx.lineWidth=2;
+       ctx.beginPath();ctx.moveTo(pos.x,pos.y);
+       ctx.lineTo(pos.x-14,pos.y+7);ctx.stroke();
+       ctx.globalAlpha=pAlpha;
+     }
+     ctx.globalAlpha=1;
+   });
+
+   // star
+   drawStar(t);
+
+   // shooting star
+   if(shot){
+     var p=(t-shot.start)/shot.dur;
+     if(p<1){
+       var x=shot.from.x+(shot.to.x-shot.from.x)*p;
+       var y=shot.from.y+(shot.to.y-shot.from.y)*p;
+       var px2=shot.from.x+(shot.to.x-shot.from.x)*Math.max(0,p-0.18);
+       var py2=shot.from.y+(shot.to.y-shot.from.y)*Math.max(0,p-0.18);
+       ctx.save();
+       ctx.globalAlpha=1-p;
+       ctx.strokeStyle='rgba(255,255,255,0.9)';
+       ctx.lineWidth=2;
+       ctx.beginPath();ctx.moveTo(px2,py2);ctx.lineTo(x,y);ctx.stroke();
+       ctx.restore();
+     }
+   }
+ }
+
+ function drawStar(t){
+   var ctx=orbitCtx;
+   var x=starCenter.x,y=starCenter.y;
+   var pulse = reducedMotion?1:1+0.08*Math.sin(t*0.002);
+   var layers=[{r:60*pulse,color:'rgba(255,210,122,0.06)'},{r:40*pulse,color:'rgba(255,180,94,0.10)'},{r:26*pulse,color:'rgba(255,210,122,0.18)'}];
+   layers.forEach(function(l){
+     var g=ctx.createRadialGradient(x,y,0,x,y,l.r);
+     g.addColorStop(0,l.color);g.addColorStop(1,'rgba(0,0,0,0)');
+     ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,l.r,0,Math.PI*2);ctx.fill();
+   });
+   var cg=ctx.createRadialGradient(x-4,y-4,2,x,y,13);
+   cg.addColorStop(0,'#fff7e0');cg.addColorStop(0.5,'#ffd27a');cg.addColorStop(1,'#ffb45e');
+   ctx.fillStyle=cg;ctx.beginPath();ctx.arc(x,y,13*pulse,0,Math.PI*2);ctx.fill();
+ }
+
+ // ---------- UI ----------
+ function renderMsChips(){
+   var wrap=$('msChips'); wrap.textContent='';
+   var keys=['all'].concat(TM.map(function(m){return m.milestone;}));
+   keys.forEach(function(k){
+     var b=document.createElement('button');
+     b.type='button'; b.className='ms-chip';
+     b.textContent = k==='all'?'全部':k;
+     b.setAttribute('aria-pressed', state.filterMs===k?'true':'false');
+     b.addEventListener('click',function(){
+       state.filterMs=k;
+       document.querySelectorAll('.ms-chip').forEach(function(x){x.setAttribute('aria-pressed', x.textContent===(k==='all'?'全部':k)?'true':'false');});
+       // simpler: re-render
+       renderMsChips();
+       renderCatalog();
+       syncUrl();
+     });
+     wrap.appendChild(b);
+   });
+ }
+
+ function renderTagMenu(){
+   var menu=$('tagMenu');
+   menu.textContent='';
+   var tags=[];
+   var seen={};
+   TM.forEach(function(m){m.tags.forEach(function(t){if(!seen[t]){seen[t]=true;tags.push(t);}});});
+   tags.sort();
+   var allBtn=document.createElement('button');
+   allBtn.type='button'; allBtn.textContent='全部';
+   allBtn.setAttribute('aria-pressed', state.filterTag==='all'?'true':'false');
+   allBtn.addEventListener('click',function(){state.filterTag='all';renderTagMenu();renderCatalog();syncUrl();});
+   menu.appendChild(allBtn);
+   tags.forEach(function(t){
+     var b=document.createElement('button');
+     b.type='button'; b.textContent=t;
+     b.setAttribute('aria-pressed', state.filterTag===t?'true':'false');
+     b.addEventListener('click',function(){state.filterTag=t;renderTagMenu();renderCatalog();syncUrl();});
+     menu.appendChild(b);
+   });
+ }
+
+ function renderCatalog(){
+   var list=$('catalogList');
+   list.textContent='';
+   var empty=$('catalogEmpty');
+   var matching=TM.filter(matches);
+   empty.style.display = matching.length===0?'block':'none';
+   list.style.display = matching.length===0?'none':'block';
+   TM.forEach(function(m,i){
+     if(!matches(m)) return;
+     var row=document.createElement('button');
+     row.type='button';
+     row.className='cat-row'+(state.selected && state.selected.milestone===m.milestone?' selected':'');
+     row.addEventListener('mouseenter',function(){state.hovered=i;showTooltipFor(i);});
+     row.addEventListener('mouseleave',function(){if(state.hovered===i){state.hovered=null;hideTooltip();}});
+     row.addEventListener('click',function(){selectModule(i);});
+     var dot=document.createElement('span');dot.className='cat-dot';dot.style.background=m.color;dot.style.color=m.color;row.appendChild(dot);
+     var ms=document.createElement('span');ms.className='cat-ms';ms.textContent=m.milestone;row.appendChild(ms);
+     var info=document.createElement('div');info.className='cat-info';
+     var t=document.createElement('div');t.className='cat-title';t.textContent=m.title;info.appendChild(t);
+     var tags=document.createElement('div');tags.className='cat-tags';
+     m.tags.slice(0,2).forEach(function(tag){var c=document.createElement('span');c.className='cat-tag';c.textContent=tag;tags.appendChild(c);});
+     info.appendChild(tags);
+     row.appendChild(info);
+     var chev=document.createElement('span');chev.className='cat-chev';chev.textContent='›';row.appendChild(chev);
+     list.appendChild(row);
+   });
+   $('catalogCount').textContent=matching.length;
+   $('liveCount').textContent='显示 '+matching.length+' / 9 章';
+ }
+
+ function selectModule(i){
+   state.selected=TM[i];
+   state.hovered=i;
+   showDetail(TM[i],i);
+   syncUrl();
+ }
+ function showDetail(m,i){
+   var dv=$('detailView');
+   dv.textContent='';
+   dv.classList.add('active');
+   if(window.innerWidth<980){state.catalogOpen=true;var cat=$('catalog');if(cat)cat.classList.add('open');}
+   if(window.innerWidth<980)document.body.classList.add('cat-open');
+   $('catalogList').style.display='none';
+   $('catalogEmpty').style.display='none';
+   // close
+   var close=document.createElement('button');close.type='button';close.className='detail-close';close.textContent='×';close.setAttribute('aria-label','关闭详情');
+   close.addEventListener('click',closeDetail);
+   dv.appendChild(close);
+   var ms=document.createElement('div');ms.className='detail-ms';ms.textContent=m.milestone;
+   var badge=document.createElement('span');badge.className='badge-sample';badge.textContent='样板';ms.appendChild(badge);
+   dv.appendChild(ms);
+   var h3=document.createElement('h3');h3.textContent=m.title;dv.appendChild(h3);
+   var oi=document.createElement('div');oi.className='orbit-idx';oi.textContent='第 '+(i+1)+' 轨道';dv.appendChild(oi);
+   var sum=document.createElement('div');sum.className='summary';sum.textContent=m.summary;dv.appendChild(sum);
+   var src=document.createElement('div');src.className='src';src.textContent='来源：'+m.src;dv.appendChild(src);
+   var tags=document.createElement('div');tags.className='tags';
+   m.tags.forEach(function(t){var s=document.createElement('span');s.textContent=t;tags.appendChild(s);});
+   dv.appendChild(tags);
+   var actions=document.createElement('div');actions.className='actions';
+   var sim=document.createElement('a');sim.className='primary';sim.href=m.sim;sim.textContent='进入模拟';actions.appendChild(sim);
+   var pdf=document.createElement('a');pdf.className='ghost';pdf.href=m.note;pdf.textContent='推导 PDF';actions.appendChild(pdf);
+   dv.appendChild(actions);
+   var nav=document.createElement('div');nav.className='navchips';
+   if(i>0){var prev=document.createElement('button');prev.type='button';prev.className='navchip';prev.textContent='← '+TM[i-1].milestone+' '+TM[i-1].title;prev.addEventListener('click',function(){selectModule(i-1);});nav.appendChild(prev);}
+   if(i<TM.length-1){var next=document.createElement('button');next.type='button';next.className='navchip';next.textContent=TM[i+1].milestone+' '+TM[i+1].title+' →';next.addEventListener('click',function(){selectModule(i+1);});nav.appendChild(next);}
+   dv.appendChild(nav);
+ }
+ function closeDetail(){
+   state.selected=null;
+   var dv=$('detailView');
+   dv.classList.remove('active');
+   dv.textContent='';
+   renderCatalog();
+   syncUrl();
+ }
+
+ function showTooltipFor(i){
+   var o = orbits[i];
+   if(!o || !o._pos) return;
+   var m=TM[i];
+   var tip=$('tooltip');
+   tip.textContent='';
+   var ms=document.createElement('span');ms.className='t-ms';ms.textContent=m.milestone;tip.appendChild(ms);
+   tip.appendChild(document.createTextNode(m.title));
+   var src=document.createElement('div');src.className='t-src';src.textContent=m.src;tip.appendChild(src);
+   tip.style.display='block';
+   var x=o._pos.x+12, y=o._pos.y-10;
+   if(x+250>window.innerWidth) x=o._pos.x-260;
+   if(y+60>window.innerHeight) y=o._pos.y-60;
+   tip.style.left=x+'px';tip.style.top=y+'px';
+ }
+ function hideTooltip(){$('tooltip').style.display='none';}
+
+ // ---------- deep links ----------
+ function parseDeepLinks(){
+   var params=new URLSearchParams(window.location.search);
+   if(params.get('q')){state.q=params.get('q');$('search').value=state.q;}
+   if(params.get('tag')){state.filterTag=params.get('tag');}
+   var m=params.get('m');
+   if(m){
+     for(var i=0;i<TM.length;i++){ if(TM[i].milestone===m){ state.selected=TM[i]; showDetail(TM[i],i); state.hovered=i; break;} }
+   }
+   if(params.get('ask')==='1'){
+     try{
+       if(window.TM_AI && typeof window.TM_AI.open==='function'){
+         window.TM_AI.open({module: (state.selected?state.selected.milestone : (params.get('m')||'M0'))});
+       } else {
+         document.dispatchEvent(new CustomEvent('tm:open-ai',{detail:{module: (state.selected?state.selected.milestone : (params.get('m')||'M0'))}}));
+       }
+     }catch(e){}
+   }
+ }
+ function syncUrl(){
+   try{
+     var params=new URLSearchParams();
+     if(state.selected) params.set('m',state.selected.milestone);
+     if(state.filterTag && state.filterTag!=='all') params.set('tag',state.filterTag);
+     if(state.q) params.set('q',state.q);
+     var qs=params.toString();
+     var url=window.location.pathname+(qs?'?'+qs:'')+window.location.hash;
+     history.replaceState(null,'',url);
+   }catch(e){}
+ }
+
+ // ---------- catalog toggle mobile ----------
+ function toggleCatalog(){
+   if(window.innerWidth<980){
+     state.catalogOpen=!state.catalogOpen;
+     $('catalog').classList.toggle('open',state.catalogOpen);
+     document.body.classList.toggle('cat-open',state.catalogOpen);
+   } else {
+     $('catalog').scrollIntoView({behavior:'smooth'});
+   }
+ }
+
+ // ---------- path drawer ----------
+ function buildPath(){
+   var body=$('pathBody'); body.textContent='';
+   TM.forEach(function(m,i){
+     var line=document.createElement('div');line.className='path-line';
+     var dot=document.createElement('span');dot.className='path-dot';dot.style.background=m.color;line.appendChild(dot);
+     var ms=document.createElement('div');ms.className='path-ms';ms.textContent=m.milestone;line.appendChild(ms);
+     var ti=document.createElement('div');ti.className='path-title';ti.textContent=m.title;line.appendChild(ti);
+     var one=document.createElement('div');one.className='path-one';one.textContent=m.src;line.appendChild(one);
+     body.appendChild(line);
+   });
+   var credit=document.createElement('div');credit.className='path-credit';
+   credit.innerHTML='内容来源：<b>作业/ 目录共 8 份 PDF</b>（7 次作业 + 1 个两体问题专题）<br>统一验收：单文件零依赖 · 内联 JS 过 esprima 语法检查 · ?selftest=1 数值断言 · 守恒量漂移监控';
+   body.appendChild(credit);
+ }
+
+ // ---------- events ----------
+ $('search').addEventListener('input',function(){
+   state.q=this.value.trim();
+   renderCatalog();
+   syncUrl();
+ });
+ $('tagBtn').addEventListener('click',function(){
+   var menu=$('tagMenu');
+   var open=menu.classList.toggle('open');
+   this.setAttribute('aria-expanded',open?'true':'false');
+ });
+ document.addEventListener('click',function(e){
+   if(!e.target.closest('.tag-expander')){$('tagMenu').classList.remove('open');$('tagBtn').setAttribute('aria-expanded','false');}
+ });
+ $('pauseBtn').addEventListener('click',function(){
+   state.paused=!state.paused;
+   this.setAttribute('aria-pressed',state.paused?'true':'false');
+   this.textContent=state.paused?'▶':'⏸';
+ });
+ $('speedBtn').addEventListener('click',function(){
+   if(state.speed===1) state.speed=0.5;
+   else if(state.speed===0.5) state.speed=2;
+   else state.speed=1;
+   this.textContent='x'+state.speed;
+ });
+ $('btnCatalog').addEventListener('click',toggleCatalog);
+ $('btnPath').addEventListener('click',function(){buildPath();$('overlay').classList.add('open');$('drawer').classList.add('open');});
+ $('btnGloss').addEventListener('click',function(){$('aboutPopover').classList.remove('open');$('glossPopover').classList.add('open');});
+ $('glossClose').addEventListener('click',function(){$('glossPopover').classList.remove('open');});
+ $('glossPopover').addEventListener('click',function(e){if(e.target===$('glossPopover'))$('glossPopover').classList.remove('open');});
+ $('btnAbout').addEventListener('click',function(){$('glossPopover').classList.remove('open');$('aboutPopover').classList.add('open');});
+ $('drawerClose').addEventListener('click',function(){$('overlay').classList.remove('open');$('drawer').classList.remove('open');});
+ $('overlay').addEventListener('click',function(){$('overlay').classList.remove('open');$('drawer').classList.remove('open');});
+ $('aboutClose').addEventListener('click',function(){$('aboutPopover').classList.remove('open');});
+ $('aboutPopover').addEventListener('click',function(e){if(e.target===$('aboutPopover'))$('aboutPopover').classList.remove('open');});
+
+ // keyboard
+ document.addEventListener('keydown',function(e){
+   if(e.key==='/' && document.activeElement!==$('search')){e.preventDefault();$('search').focus();return;}
+   if(e.key==='Escape'){
+     if($('detailView').classList.contains('active')) closeDetail();
+     else if($('drawer').classList.contains('open')){$('drawer').classList.remove('open');$('overlay').classList.remove('open');}
+     else if($('glossPopover').classList.contains('open')) $('glossPopover').classList.remove('open');
+     else if($('aboutPopover').classList.contains('open')) $('aboutPopover').classList.remove('open');
+     else if(window.innerWidth<980 && state.catalogOpen){state.catalogOpen=false;$('catalog').classList.remove('open');}
+     return;
+   }
+   if(e.key==='ArrowRight' || e.key==='ArrowLeft'){
+     if($('detailView').classList.contains('active')){
+       var cur=TM.indexOf(state.selected);
+       var ni = e.key==='ArrowRight' ? cur+1 : cur-1;
+       if(ni>=0 && ni<TM.length) selectModule(ni);
+     } else {
+       // cycle hovered
+       var base = state.hovered===null?0:state.hovered;
+       var ni2 = e.key==='ArrowRight' ? (base+1)%TM.length : (base-1+TM.length)%TM.length;
+       state.hovered=ni2;
+       showTooltipFor(ni2);
+     }
+     return;
+   }
+   if(e.key==='Enter'){
+     if(state.hovered!==null && !$('detailView').classList.contains('active')) selectModule(state.hovered);
+   }
+ });
+
+ // mouse
+ window.addEventListener('mousemove',function(e){
+   mouse.x=e.clientX; mouse.y=e.clientY;
+   if(window.innerWidth>=980){
+     var idx=hitPlanet(e.clientX,e.clientY);
+     if(idx!==-1 && matches(TM[idx])){ state.hovered=idx; showTooltipFor(idx);}
+     else if(state.hovered!==null && !e.target.closest('.catalog,.cmdbar,.topbar')){ /* keep */ }
+   }
+ });
+ function hitPlanet(mx,my){
+   for(var i=orbits.length-1;i>=0;i--){
+     var o=orbits[i];
+     if(!o._pos) continue;
+     if(!matches(o.m)) continue;
+     var dx=mx-o._pos.x, dy=my-o._pos.y;
+     if(dx*dx+dy*dy <= (o.r+6)*(o.r+6)) return i;
+   }
+   return -1;
+ }
+ orbitCanvas.addEventListener('click',function(e){
+   var idx=hitPlanet(e.clientX,e.clientY);
+   if(idx!==-1 && matches(TM[idx])) selectModule(idx);
+ });
+
+ // init
+ resize();
+ window.addEventListener('resize',resize);
+ parseDeepLinks();
+ renderMsChips();
+ renderTagMenu();
+ renderCatalog();
+ if(!state.selected) {/* catalog view */}
+
+ // animation loop
+ var last=performance.now();
+ nextShot=last+7000+Math.random()*6000;
+ function frame(now){
+   var dt=Math.min(0.05,(now-last)/1000);
+   last=now;
+   if(!reducedMotion){
+     updatePlanets(dt);
+     handleShot(now);
+   }
+   drawStarfield(now);
+   drawOrbits(now,dt);
+   requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+})();
+</script>
+<!-- TM-AI:START -->
+<style id="tm-ai-style">
+#tm-ai-root{
+  position:fixed; inset:0; z-index:60; pointer-events:none;
+  font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --tmai-void:#03050c; --tmai-panel:rgba(9,14,30,.74); --tmai-line:rgba(146,182,255,.14);
+  --tmai-text:#e8eeff; --tmai-text2:#a9b8dc; --tmai-muted:#6d7ca4;
+  --tmai-solar:#ffd27a; --tmai-cyan:#7fe0ff; --tmai-violet:#b79bff;
+}
+#tm-ai-root *{box-sizing:border-box}
+#tm-ai-root .tmai-launcher{
+  position:fixed; right:18px; bottom:18px; height:54px; min-width:54px; padding:0 10px;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  border-radius:999px; cursor:pointer; pointer-events:auto;
+  color:var(--tmai-text); font-size:13px; font-weight:600; letter-spacing:.3px;
+  background:linear-gradient(160deg,rgba(26,36,66,.72),rgba(6,10,22,.88));
+  border:1px solid rgba(146,182,255,.28);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(255,210,122,.12);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+#tm-ai-root .tmai-launcher:hover{transform:translateY(-2px)}
+#tm-ai-root .tmai-launcher::after{
+  content:''; position:absolute; inset:-5px; border-radius:inherit;
+  border:1px solid rgba(255,210,122,.32);
+  animation:tmai-pulse 2.6s ease-out infinite; pointer-events:none;
+}
+@keyframes tmai-pulse{
+  0%{transform:scale(1); opacity:.7}
+  70%{transform:scale(1.22); opacity:0}
+  100%{transform:scale(1.22); opacity:0}
+}
+#tm-ai-root .tmai-launcher-glyph{font-size:18px; color:var(--tmai-solar); line-height:1}
+#tm-ai-root .tmai-launcher-short{display:none}
+#tm-ai-root .tmai-launcher-full{display:none}
+@media (min-width:561px){
+  #tm-ai-root .tmai-launcher{padding:0 16px; min-width:150px}
+  #tm-ai-root .tmai-launcher-glyph{display:none}
+  #tm-ai-root .tmai-launcher-full{display:inline}
+}
+@media (max-width:979px){
+  #tm-ai-root .tmai-launcher{bottom:190px}
+}
+@media (max-width:560px){
+  #tm-ai-root .tmai-launcher{width:54px; padding:0; min-width:54px}
+  #tm-ai-root .tmai-launcher-full{display:none}
+  #tm-ai-root .tmai-launcher-glyph{display:inline}
+}
+#tm-ai-root .tmai-panel{
+  position:fixed; right:18px; bottom:84px; width:380px;
+  max-height:min(640px,78vh);
+  display:flex; flex-direction:column;
+  background:var(--tmai-panel);
+  border:1px solid var(--tmai-line);
+  border-radius:16px;
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(255,210,122,.06);
+  overflow:hidden; pointer-events:auto;
+  color:var(--tmai-text); font-size:14px;
+}
+#tm-ai-root .tmai-panel[hidden]{display:none !important}
+@media (max-width:560px){
+  #tm-ai-root .tmai-panel{
+    left:10px; right:10px; width:auto; bottom:76px; max-height:76vh;
+  }
+}
+#tm-ai-root .tmai-header{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px; border-bottom:1px solid var(--tmai-line);
+  background:linear-gradient(180deg,rgba(26,36,66,.35),transparent);
+}
+#tm-ai-root .tmai-title{font-size:15px; font-weight:650; color:var(--tmai-text); letter-spacing:.3px}
+#tm-ai-root .tmai-header-left{display:flex; flex-direction:column; gap:4px}
+#tm-ai-root .tmai-header-right{display:flex; align-items:center; gap:8px}
+#tm-ai-root .tmai-status{display:flex; align-items:center; font-size:11.5px; color:var(--tmai-text2)}
+#tm-ai-root .tmai-status-dot{width:8px; height:8px; border-radius:50%; margin-right:6px; background:var(--tmai-muted)}
+#tm-ai-root .tmai-status-dot.tmai-status-checking{background:var(--tmai-muted)}
+#tm-ai-root .tmai-status-dot.tmai-status-online{background:#7fe3a0; box-shadow:0 0 6px #7fe3a0}
+#tm-ai-root .tmai-status-dot.tmai-status-offline{background:#ffc46b}
+#tm-ai-root .tmai-status-dot.tmai-status-error{background:#ff8a8a}
+#tm-ai-root .tmai-seg{display:inline-flex; border:1px solid var(--tmai-line); border-radius:999px; overflow:hidden}
+#tm-ai-root .tmai-seg-btn{
+  background:transparent; border:none; color:var(--tmai-text2); padding:4px 10px;
+  font:inherit; font-size:12px; cursor:pointer; transition:.15s;
+}
+#tm-ai-root .tmai-seg-btn[aria-pressed="true"]{background:rgba(255,210,122,.14); color:var(--tmai-solar)}
+#tm-ai-root .tmai-close{
+  width:28px; height:28px; border-radius:50%; border:1px solid var(--tmai-line);
+  background:rgba(6,10,22,.5); color:var(--tmai-text2); cursor:pointer; font-size:16px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+#tm-ai-root .tmai-context{
+  margin:10px 14px 0; padding:6px 10px; border-radius:999px;
+  background:rgba(255,210,122,.10); border:1px solid rgba(255,210,122,.25);
+  color:var(--tmai-solar); font-size:12px;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+#tm-ai-root .tmai-context[hidden]{display:none !important}
+#tm-ai-root .tmai-context button{background:transparent; border:none; color:var(--tmai-solar); cursor:pointer; font-size:14px}
+#tm-ai-root .tmai-messages{
+  flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px;
+  min-height:120px;
+}
+#tm-ai-root .tmai-messages::-webkit-scrollbar{width:6px}
+#tm-ai-root .tmai-messages::-webkit-scrollbar-thumb{background:rgba(146,182,255,.2); border-radius:3px}
+#tm-ai-root .tmai-msg{display:flex; flex-direction:column; max-width:92%}
+#tm-ai-root .tmai-msg-user{align-self:flex-end; max-width:85%}
+#tm-ai-root .tmai-msg-assistant{align-self:flex-start}
+#tm-ai-root .tmai-msg-content{
+  padding:8px 12px; border-radius:12px; font-size:14px; line-height:1.65;
+  word-break:break-word;
+}
+#tm-ai-root .tmai-msg-user .tmai-msg-content{
+  background:rgba(127,224,255,.12); border:1px solid rgba(127,224,255,.22);
+  border-radius:12px 12px 4px 12px; color:var(--tmai-text);
+}
+#tm-ai-root .tmai-msg-assistant .tmai-msg-content{
+  background:rgba(26,36,66,.5); border:1px solid var(--tmai-line);
+  border-radius:12px 12px 12px 4px; color:var(--tmai-text);
+}
+#tm-ai-root .tmai-msg-content p{margin:0 0 8px}
+#tm-ai-root .tmai-msg-content p:last-child{margin-bottom:0}
+#tm-ai-root .tmai-msg-content ul{margin:4px 0 8px; padding-left:18px}
+#tm-ai-root .tmai-msg-content li{margin:2px 0}
+#tm-ai-root .tmai-msg-content code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px;
+  background:rgba(146,182,255,.10); padding:1px 5px; border-radius:4px; color:var(--tmai-cyan);
+}
+#tm-ai-root .tmai-math{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:var(--tmai-solar)}
+#tm-ai-root .tmai-cite{
+  display:inline-block; padding:0 .4em; margin:0 .15em; border-radius:4px;
+  background:rgba(255,210,122,.12); color:var(--tmai-solar); font-size:11px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+#tm-ai-root .tmai-msg-label{
+  margin-top:4px; font-size:11px; color:var(--tmai-muted); align-self:flex-start;
+}
+#tm-ai-root .tmai-typing{display:inline-flex; gap:4px; padding:2px 0}
+#tm-ai-root .tmai-typing span{
+  width:6px; height:6px; border-radius:50%; background:var(--tmai-text2);
+  animation:tmai-blink 1.2s infinite;
+}
+#tm-ai-root .tmai-typing span:nth-child(2){animation-delay:.2s}
+#tm-ai-root .tmai-typing span:nth-child(3){animation-delay:.4s}
+@keyframes tmai-blink{0%,80%,100%{opacity:.3} 40%{opacity:1}}
+#tm-ai-root .tmai-chips{display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 10px}
+#tm-ai-root .tmai-chips[hidden]{display:none !important}
+#tm-ai-root .tmai-chip{
+  font:inherit; font-size:12px; padding:5px 10px; border-radius:999px; cursor:pointer;
+  background:rgba(58,95,191,.14); border:1px solid rgba(146,182,255,.22); color:#cfdcff;
+  transition:.15s; text-align:left;
+}
+#tm-ai-root .tmai-chip:hover{background:rgba(94,162,255,.24)}
+#tm-ai-root .tmai-composer{
+  display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--tmai-line);
+  align-items:flex-end;
+}
+#tm-ai-root .tmai-composer textarea{
+  flex:1; resize:none; min-height:40px; max-height:120px;
+  background:rgba(6,10,22,.6); border:1px solid var(--tmai-line); border-radius:10px;
+  color:var(--tmai-text); font:inherit; font-size:14px; padding:8px 10px; line-height:1.5;
+}
+#tm-ai-root .tmai-composer textarea:focus-visible{outline:2px solid var(--tmai-cyan); outline-offset:1px}
+#tm-ai-root .tmai-composer button{
+  padding:0 14px; height:40px; border-radius:10px; border:1px solid #4f86ff;
+  background:linear-gradient(180deg,#3f7bff,#2b5fe0); color:#fff; cursor:pointer; font-weight:600;
+}
+#tm-ai-root .tmai-composer button:disabled{opacity:.5; cursor:not-allowed}
+#tm-ai-root .tmai-footer{
+  padding:6px 14px 10px; font-size:11.5px; color:var(--tmai-muted); text-align:center;
+}
+#tm-ai-root .tmai-sources{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+#tm-ai-root .tmai-src{
+  font-size:11px; padding:2px 8px; border-radius:999px; text-decoration:none;
+  border:1px solid rgba(146,182,255,.22); color:var(--tmai-text2);
+}
+#tm-ai-root .tmai-src:hover{color:var(--tmai-text); border-color:rgba(146,182,255,.4)}
+#tm-ai-root .tmai-src-pdf{border-color:rgba(255,210,122,.3); color:var(--tmai-solar)}
+#tm-ai-root .tmai-list{margin:4px 0 8px; padding-left:18px}
+@media (prefers-reduced-motion:reduce){
+  #tm-ai-root .tmai-launcher::after{animation:none}
+  #tm-ai-root .tmai-typing span{animation:none; opacity:.6}
+}
+</style>
+<div id="tm-ai-root">
+  <button id="tmai-launcher" class="tmai-launcher" type="button" aria-expanded="false" aria-label="打开问星助教">
+    <span class="tmai-launcher-glyph" aria-hidden="true">✦</span>
+    <span class="tmai-launcher-short">问星</span>
+    <span class="tmai-launcher-full">✦ 问星 · 本地 AI 助教</span>
+  </button>
+  <div id="tmai-panel" class="tmai-panel" role="dialog" aria-modal="false" aria-labelledby="tmai-title" hidden>
+    <div class="tmai-header">
+      <div class="tmai-header-left">
+        <span class="tmai-title" id="tmai-title">星语 · 讲义助教</span>
+        <div class="tmai-status">
+          <span class="tmai-status-dot" id="tmai-status-dot"></span>
+          <span class="tmai-status-text" id="tmai-status-text">检查中…</span>
+        </div>
+      </div>
+      <div class="tmai-header-right">
+        <div class="tmai-seg" role="group" aria-label="模式">
+          <button type="button" class="tmai-seg-btn" data-mode="quick" aria-pressed="true">快速</button>
+          <button type="button" class="tmai-seg-btn" data-mode="deep" aria-pressed="false">深空</button>
+        </div>
+        <button type="button" class="tmai-close" aria-label="关闭">×</button>
+      </div>
+    </div>
+    <div id="tmai-context" class="tmai-context" hidden>
+      <span id="tmai-context-text"></span>
+      <button type="button" id="tmai-context-close" aria-label="取消章节上下文">×</button>
+    </div>
+    <div id="tmai-messages" class="tmai-messages" aria-live="polite"></div>
+    <div id="tmai-chips" class="tmai-chips"></div>
+    <div class="tmai-composer">
+      <textarea id="tmai-input" rows="2" placeholder="输入问题…" aria-label="输入问题"></textarea>
+      <button id="tmai-send" type="button" aria-label="发送">发送</button>
+    </div>
+    <div class="tmai-footer">本地模型 · 问题不会离开这台机器<br>AI 可能出错，请以讲义推导（note.pdf）为准</div>
+  </div>
+</div>
+<script id="tm-ai-js">
 (function () {
   'use strict';
 
-  var MODULES = [
-    { slug: '00-binet',               milestone: 'M0', title: '比奈方程（现有样板）',   src: '中心力、比奈方程、圆锥曲线、进动',               status: 'ready', sim: 'modules/00-binet/index.html', note: 'modules/00-binet/binet.pdf' },
-    { slug: '01-effective-potential', milestone: 'M1', title: '有效势与轨道稳定性',     src: '作业-2 Q1–Q7 · 作业-3 Q1 · 作业-5 Q4',           status: 'ready', sim: 'modules/01-effective-potential/index.html', note: 'modules/01-effective-potential/note.pdf', tags: '有效势 · RK4 · Bertrand · 进动' },
-    { slug: '02-scattering',          milestone: 'M2', title: '散射与俘获',             src: '作业-3 Q2–Q3',                                     status: 'ready', sim: 'modules/02-scattering/index.html', note: 'modules/02-scattering/note.pdf', tags: '散射 · 截面 · 俘获 · RK4' },
-    { slug: '03-two-body',            milestone: 'M3', title: '两体问题与系外行星',     src: '两体专题',                                         status: 'ready', sim: 'modules/03-two-body/index.html', note: 'modules/03-two-body/note.pdf', tags: '两体 · RV · 多普勒 · 系外行星' },
-    { slug: '04-variational',         milestone: 'M4', title: '变分原理与等时摆',       src: '作业-6',                                           status: 'ready', sim: 'modules/04-variational/index.html', note: 'modules/04-variational/note.pdf', tags: '变分 · 费马 · 等时摆 · Snell' },
-    { slug: '05-virtual-work',        milestone: 'M5', title: '虚功原理与静力学',       src: '作业-7',                                           status: 'ready', sim: 'modules/05-virtual-work/index.html', note: 'modules/05-virtual-work/note.pdf', tags: '虚功 · 静力学 · 梯子 · 平衡' },
-    { slug: '06-collisions',          milestone: 'M6', title: '碰撞与变质量',           src: '作业-5 Q1–Q3',                                     status: 'ready', sim: 'modules/06-collisions/index.html', note: 'modules/06-collisions/note.pdf', tags: '碰撞 · 变质量 · 恢复系数 · 雨滴' },
-    { slug: '07-rigid-body',          milestone: 'M7', title: '刚体几何与角动量',       src: '作业-4',                                           status: 'ready', sim: 'modules/07-rigid-body/index.html', note: 'modules/07-rigid-body/note.pdf', tags: '刚体 · 角动量 · 球壳 · 质心' },
-    { slug: '08-kinematics',          milestone: 'M8', title: '运动学与非线性振动',     src: '作业-1',                                           status: 'ready', sim: 'modules/08-kinematics/index.html', note: 'modules/08-kinematics/note.pdf', tags: '运动学 · 振动 · Lorentz · 脱离' },
-  ];
+  var root = document.getElementById('tm-ai-root');
+  if (!root) return;
 
-  var STATUS_LABEL = { ready: '样板', todo: '未创建' };
+  var launcher = document.getElementById('tmai-launcher');
+  var panel = document.getElementById('tmai-panel');
+  var statusDot = document.getElementById('tmai-status-dot');
+  var statusText = document.getElementById('tmai-status-text');
+  var messagesEl = document.getElementById('tmai-messages');
+  var chipsEl = document.getElementById('tmai-chips');
+  var inputEl = document.getElementById('tmai-input');
+  var sendBtn = document.getElementById('tmai-send');
+  var contextEl = document.getElementById('tmai-context');
+  var contextText = document.getElementById('tmai-context-text');
+  var contextClose = document.getElementById('tmai-context-close');
+  var segBtns = root.querySelectorAll('.tmai-seg-btn');
+  var closeBtn = root.querySelector('.tmai-close');
 
-  var grid = document.getElementById('grid');
-  var filters = document.getElementById('filters');
+  var isOpen = false;
+  var inFlight = false;
+  var mode = 'quick';
+  var healthChecked = false;
+  var statusState = 'checking';
+  var modelName = '';
+  var moduleContext = null;
+  var conversation = [];
+  var typingEl = null;
 
-  /* ---------- 卡片渲染 ---------- */
-  function matchesSearch(m, q) {
-    if (!q) return true;
-    var hay = (m.title + ' ' + m.src + ' ' + (m.tags||'') + ' ' + m.slug + ' ' + m.milestone).toLowerCase();
-    return hay.indexOf(q.toLowerCase()) !== -1;
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
-  function matchesTag(m, tag) {
-    if (!tag || tag === 'all') return true;
-    return (m.tags || '').indexOf(tag) !== -1;
+
+  function formatInline(s) {
+    var out = s;
+    out = out.replace(/\$([^$]+)\$/g, '<span class="tmai-math">$1</span>');
+    out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+    out = out.replace(/\[(M\d+)\]/g, '<span class="tmai-cite">[$1]</span>');
+    return out;
   }
-  function renderCards() {
-    grid.textContent = '';
-    var q = (document.getElementById('search').value || '').trim();
-    var activeTag = (document.querySelector('#tagFilters button.active') || {}).getAttribute('data-tag') || 'all';
-    var activeMs = (document.querySelector('#filters button.active') || {}).getAttribute('data-key') || 'all';
-    MODULES.forEach(function (m) {
-      if (activeMs !== 'all' && m.milestone !== activeMs) return;
-      if (!matchesSearch(m, q)) return;
-      if (!matchesTag(m, activeTag)) return;
-      var card = document.createElement('article');
-      card.className = 'card' + (m.status === 'ready' ? '' : ' disabled');
-      card.setAttribute('data-milestone', m.milestone);
 
-      var eyebrow = document.createElement('div');
-      eyebrow.className = 'eyebrow';
-      eyebrow.textContent = m.slug + ' · ' + m.milestone;
-      card.appendChild(eyebrow);
-
-      var h2 = document.createElement('h2');
-      h2.textContent = m.title;
-      card.appendChild(h2);
-
-      var src = document.createElement('p');
-      src.className = 'src';
-      src.textContent = '来源：' + m.src;
-      card.appendChild(src);
-
-      if (m.tags) {
-        var tg = document.createElement('p');
-        tg.className = 'src';
-        tg.textContent = '标签：' + m.tags;
-        card.appendChild(tg);
-      }
-
-      var badge = document.createElement('span');
-      badge.className = 'badge ' + m.status;
-      badge.textContent = STATUS_LABEL[m.status];
-      card.appendChild(badge);
-
-      if (m.status === 'ready') {
-        var actions = document.createElement('div');
-        actions.className = 'actions';
-
-        var sim = document.createElement('a');
-        sim.className = 'primary';
-        sim.href = m.sim;
-        sim.textContent = '打开模拟';
-        actions.appendChild(sim);
-
-        var note = document.createElement('a');
-        note.className = 'ghost';
-        note.href = m.note;
-        note.textContent = '推导 PDF';
-        actions.appendChild(note);
-
-        card.appendChild(actions);
-      } else {
-        var note2 = document.createElement('div');
-        note2.className = 'note';
-        note2.textContent = '随里程碑 ' + m.milestone + ' 创建（tools/new_module.py）';
-        card.appendChild(note2);
-      }
-
-      grid.appendChild(card);
+  function formatBlock(block) {
+    var lines = block.split('\n');
+    var hasList = lines.some(function (l) {
+      var t = l.trim();
+      return t.indexOf('- ') === 0 || t.indexOf('* ') === 0;
     });
+    var isList = hasList && lines.every(function (l) {
+      var t = l.trim();
+      return t === '' || t.indexOf('- ') === 0 || t.indexOf('* ') === 0;
+    });
+    if (isList) {
+      var items = lines.filter(function (l) { return l.trim() !== ''; }).map(function (l) {
+        var t = l.trim().replace(/^[-*]\s*/, '');
+        return '<li>' + formatInline(t) + '</li>';
+      });
+      return '<ul class="tmai-list">' + items.join('') + '</ul>';
+    }
+    return '<p>' + lines.map(function (l) { return formatInline(l); }).join('<br>') + '</p>';
   }
 
-  /* ---------- 里程碑筛选 ---------- */
-  function renderFilters() {
+  function formatContent(text) {
+    return String(text == null ? '' : text).split(/\n{2,}/).map(formatBlock).join('');
+  }
+
+  function setStatus(state, model) {
+    statusState = state;
+    if (model) modelName = model;
+    if (statusDot) {
+      statusDot.className = 'tmai-status-dot tmai-status-' + state;
+    }
+    if (statusText) {
+      if (state === 'checking') statusText.textContent = '检查中…';
+      else if (state === 'online') statusText.textContent = '本地模型在线 · ' + (modelName || 'model');
+      else if (state === 'offline') statusText.textContent = '离线 · 本地检索模式';
+      else if (state === 'error') statusText.textContent = '连接错误';
+    }
+  }
+
+  function getModules() {
+    if (window.TM_MODULES && Array.isArray(window.TM_MODULES)) return window.TM_MODULES;
+    return null;
+  }
+
+  function findModule(milestone) {
+    var mods = getModules();
+    if (!mods) return null;
+    for (var i = 0; i < mods.length; i++) {
+      if (mods[i].milestone === milestone) return mods[i];
+    }
+    return null;
+  }
+
+  function setContext(moduleId) {
+    moduleContext = moduleId;
+    var title = moduleId;
+    var m = findModule(moduleId);
+    if (m && m.title) title = m.title;
+    if (contextText) contextText.textContent = '当前章节 ' + moduleId + ' · ' + title;
+    if (contextEl) contextEl.hidden = false;
+  }
+
+  function clearContext() {
+    moduleContext = null;
+    if (contextEl) contextEl.hidden = true;
+  }
+
+  function cjkBigrams(str) {
+    var out = [];
+    var s = String(str == null ? '' : str);
+    for (var i = 0; i < s.length - 1; i++) {
+      var a = s.charAt(i);
+      var b = s.charAt(i + 1);
+      if (/[\u4e00-\u9fff]/.test(a) && /[\u4e00-\u9fff]/.test(b)) {
+        out.push(a + b);
+      }
+    }
+    return out;
+  }
+
+  function latinTokens(str) {
+    return String(str == null ? '' : str).toLowerCase().split(/[^a-z0-9]+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function localAnswer(question) {
+    var mods = getModules();
+    if (!mods) {
+      return { answer: '当前为离线检索模式（未连接教室 AI 服务器）。讲义正文与 PDF 仍可正常使用；需要 AI 答疑时请联系老师开启教室服务器。', sources: [] };
+    }
+    var qBigrams = cjkBigrams(question);
+    var qTokens = latinTokens(question);
+    var scored = mods.map(function (m) {
+      var corpus = [m.title, m.tags, m.src, m.summary, m.note].join(' ');
+      var cBigrams = cjkBigrams(corpus);
+      var cTokens = latinTokens(corpus);
+      var score = 0;
+      qBigrams.forEach(function (bg) {
+        if (cBigrams.indexOf(bg) !== -1) score += 2;
+      });
+      qTokens.forEach(function (tk) {
+        if (cTokens.indexOf(tk) !== -1) score += 3;
+      });
+      var titleBigrams = cjkBigrams(m.title || '');
+      qBigrams.forEach(function (bg) {
+        if (titleBigrams.indexOf(bg) !== -1) score += 2;
+      });
+      return { m: m, score: score };
+    });
+    scored.sort(function (a, b) { return b.score - a.score; });
+    var top = scored.filter(function (x) { return x.score > 0; }).slice(0, 3);
+    if (top.length === 0) top = scored.slice(0, 2);
+    if (top.length > 3) top = top.slice(0, 3);
+    var lines = top.map(function (x, i) {
+      var m = x.m;
+      var desc = m.summary || m.src || '';
+      return (i + 1) + '. ' + m.milestone + ' · ' + m.title + (desc ? '：' + desc : '');
+    });
+    var answer = '离线检索结果（讲义相关章节）：\n\n' + lines.join('\n');
+    var sources = top.map(function (x) {
+      var m = x.m;
+      return { milestone: m.milestone, title: m.title, section: m.title, href: m.sim, pdf: m.note };
+    });
+    return { answer: answer, sources: sources };
+  }
+
+  function renderSources(container, sources) {
+    if (!sources || !sources.length) return;
     var seen = {};
-    var keys = ['all'];
-    MODULES.forEach(function (m) {
-      if (!seen[m.milestone]) { seen[m.milestone] = true; keys.push(m.milestone); }
-    });
-    keys.forEach(function (k) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = k === 'all' ? '全部' : k;
-      btn.setAttribute('data-key', k);
-      if (k === 'all') btn.classList.add('active');
-      btn.addEventListener('click', function () { applyFilter(k); });
-      filters.appendChild(btn);
+    var wrap = document.createElement('div');
+    wrap.className = 'tmai-sources';
+    var count = 0;
+    for (var i = 0; i < sources.length && count < 5; i++) {
+      var s = sources[i];
+      var href = s.href || s.sim || '';
+      var key = href;
+      if (key && seen[key]) continue;
+      if (key) seen[key] = true;
+      if (href) {
+        var a = document.createElement('a');
+        a.className = 'tmai-src';
+        a.href = href;
+        a.textContent = (s.milestone ? s.milestone + ' · ' : '') + (s.section || s.title || '');
+        wrap.appendChild(a);
+        count++;
+      }
+      if (s.pdf && count < 5) {
+        var pdfKey = s.pdf;
+        if (!seen[pdfKey]) {
+          seen[pdfKey] = true;
+          var p = document.createElement('a');
+          p.className = 'tmai-src tmai-src-pdf';
+          p.href = s.pdf;
+          p.textContent = 'PDF';
+          wrap.appendChild(p);
+          count++;
+        }
+      }
+    }
+    if (wrap.childNodes.length) container.appendChild(wrap);
+  }
+
+  function appendMessage(msg) {
+    var el = document.createElement('div');
+    el.className = 'tmai-msg tmai-msg-' + (msg.role === 'user' ? 'user' : 'assistant');
+    var content = document.createElement('div');
+    content.className = 'tmai-msg-content';
+    if (msg.typing) {
+      content.innerHTML = '<span class="tmai-typing"><span></span><span></span><span></span></span>';
+    } else {
+      content.innerHTML = formatContent(msg.content);
+    }
+    el.appendChild(content);
+    if (msg.label) {
+      var badge = document.createElement('div');
+      badge.className = 'tmai-msg-label';
+      badge.textContent = msg.label;
+      el.appendChild(badge);
+    }
+    if (msg.sources && msg.sources.length) {
+      renderSources(el, msg.sources);
+    }
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return el;
+  }
+
+  function removeTyping() {
+    if (typingEl && typingEl.parentNode) typingEl.parentNode.removeChild(typingEl);
+    typingEl = null;
+  }
+
+  function openPanel() {
+    if (isOpen) return;
+    isOpen = true;
+    panel.hidden = false;
+    launcher.setAttribute('aria-expanded', 'true');
+    if (!healthChecked) {
+      healthChecked = true;
+      if (location.protocol === 'file:') {
+        setStatus('offline');
+      } else {
+        setStatus('checking');
+        fetch('/api/health').then(function (res) {
+          if (!res.ok) throw new Error('bad');
+          return res.json();
+        }).then(function (data) {
+          if (data && data.ok && data.upstream) {
+            setStatus('online', data.model);
+          } else {
+            setStatus('offline');
+          }
+        }).catch(function () {
+          setStatus('offline');
+        });
+      }
+    }
+    setTimeout(function () { try { inputEl.focus(); } catch (e) {} }, 50);
+  }
+
+  function closePanel() {
+    if (!isOpen) return;
+    isOpen = false;
+    panel.hidden = true;
+    launcher.setAttribute('aria-expanded', 'false');
+  }
+
+  function togglePanel() {
+    if (isOpen) closePanel(); else openPanel();
+  }
+
+  function sendQuestion() {
+    if (inFlight) return;
+    var text = inputEl.value.trim();
+    if (text === '') return;
+    inFlight = true;
+    sendBtn.disabled = true;
+    appendMessage({ role: 'user', content: text });
+    conversation.push({ role: 'user', content: text });
+    inputEl.value = '';
+    typingEl = appendMessage({ role: 'assistant', content: '', typing: true });
+    var history = conversation.slice(-6);
+    fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: text, module: moduleContext, mode: mode, history: history })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('bad');
+      return res.json();
+    }).then(function (data) {
+      removeTyping();
+      var answer = (data && data.answer) ? data.answer : '';
+      var sources = (data && data.sources) ? data.sources : [];
+      appendMessage({ role: 'assistant', content: answer, sources: sources });
+      conversation.push({ role: 'assistant', content: answer });
+    }).catch(function () {
+      removeTyping();
+      var la = localAnswer(text);
+      appendMessage({ role: 'assistant', content: la.answer, sources: la.sources, label: '离线检索' });
+      conversation.push({ role: 'assistant', content: la.answer });
+    }).then(function () {
+      inFlight = false;
+      sendBtn.disabled = false;
     });
   }
 
-  function applyFilter(key) {
-    var btns = filters.querySelectorAll('button');
-    Array.prototype.forEach.call(btns, function (b) {
-      b.classList.toggle('active', b.getAttribute('data-key') === key);
-    });
-    renderCards();
-  }
-
-  // Collect unique tags
-  var allTags = {};
-  MODULES.forEach(function (m) {
-    if (m.tags) m.tags.split('·').forEach(function (t) { var tt = t.trim(); if (tt) allTags[tt] = true; });
+  launcher.addEventListener('click', togglePanel);
+  closeBtn.addEventListener('click', closePanel);
+  sendBtn.addEventListener('click', sendQuestion);
+  inputEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      sendQuestion();
+    }
+    if (e.key === 'Escape') {
+      closePanel();
+    }
   });
-  function renderTagFilters() {
-    var tf = document.getElementById('tagFilters');
-    tf.textContent = '';
-    var btn = document.createElement('button');
-    btn.type = 'button'; btn.textContent = '全部标签'; btn.setAttribute('data-tag', 'all');
-    btn.classList.add('active');
-    btn.addEventListener('click', function () { applyTag('all'); });
-    tf.appendChild(btn);
-    Object.keys(allTags).sort().forEach(function (t) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.textContent = t; b.setAttribute('data-tag', t);
-      b.addEventListener('click', function () { applyTag(t); });
-      tf.appendChild(b);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen) closePanel();
+  });
+  contextClose.addEventListener('click', clearContext);
+  Array.prototype.forEach.call(segBtns, function (b) {
+    b.addEventListener('click', function () {
+      mode = b.getAttribute('data-mode');
+      Array.prototype.forEach.call(segBtns, function (x) {
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
     });
-  }
-  function applyTag(tag) {
-    var btns = document.querySelectorAll('#tagFilters button');
-    Array.prototype.forEach.call(btns, function (b) {
-      b.classList.toggle('active', b.getAttribute('data-tag') === tag);
+  });
+
+  var suggestions = [
+    '什么是有效势？它为什么能判断圆轨道稳定性？',
+    '伯特兰定理说明了什么？',
+    '两体问题怎么化成单体问题？',
+    '碰撞恢复系数在二维碰撞里怎么用？'
+  ];
+  suggestions.forEach(function (q) {
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'tmai-chip';
+    chip.textContent = q;
+    chip.addEventListener('click', function () {
+      inputEl.value = q;
+      sendQuestion();
+      if (chipsEl) chipsEl.hidden = true;
     });
-    renderCards();
-  }
-  document.getElementById('search').addEventListener('input', renderCards);
-  renderFilters();
-  renderTagFilters();
-  renderCards();
+    chipsEl.appendChild(chip);
+  });
+
+  appendMessage({ role: 'assistant', content: '你好，我是星语——理论力学讲义助教。可以问我有效势、轨道稳定性、两体问题、碰撞恢复系数等。' });
+
+  try {
+    var params = new URLSearchParams(location.search);
+    if (params.has('m')) setContext(params.get('m'));
+  } catch (e) {}
+
+  try {
+    var params2 = new URLSearchParams(location.search);
+    if (params2.get('ask') === '1') {
+      setTimeout(openPanel, 300);
+    }
+  } catch (e2) {}
+
+  window.TM_AI = {
+    open: function (opts) {
+      if (opts && opts.module) setContext(opts.module);
+      openPanel();
+    },
+    close: closePanel,
+    toggle: togglePanel
+  };
+
+  document.addEventListener('tm:open-ai', function (e) {
+    var opts = e && e.detail ? e.detail : null;
+    if (opts && opts.module) setContext(opts.module);
+    openPanel();
+  });
 })();
 </script>
+filePath: /home/wck/Theoretical-Mechanics/assets/tm-ai-panel.html
+<!-- TM-AI:END -->
 </body>
 </html>

@@ -49,9 +49,8 @@ $b<b_c=(4\alpha/E)^{1/4}$ 时粒子越过势垒而螺旋坠入力心（俘获）
   $\mathrm{d}\sigma/\mathrm{d}\Omega$；(c) 求总散射截面 $\sigma$ &
   比奈方程、散射角、截面定义 & \ref{sub:scattering} \\
 作业-3 Q3 & 在势场 $V=-\alpha/r^4$ 中运动，质量为 $m$，能量为 $E$；
-  存在临界碰撞参数 $b_c$，当 $b<b_c$ 时粒子无法越过有效势垒而``螺旋坠入''力心；
-  推导 $b_c$ 的表达式，以及计算对应的总俘获截面 $\sigma$ &
-  有效势垒、俘获条件、截面 & \ref{sub:capture} \\
+  存在临界碰撞参数 $b_c$，当 $b<b_c$ 时粒子不受势垒阻挡而越过有效势垒而``螺旋坠入''力心；
+  推导 $b_c$ 的表达式，以及计算对应的总俘获截面 $\sigma$ &  有效势垒、俘获条件、截面 & \ref{sub:capture} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -295,11 +294,10 @@ RK4 轨道积分、二分法求转折点与势垒，仅依赖 numpy。
 \toprule
 物理量（参数） & 解析值 & 数值值 & 相对误差 \\
 \midrule
-$\Theta$（$V=k/r^2$，$k=1,E=1,b=1$） & $\pi/2$ & $1.57080$ & $<10^{-12}$ \\
-$\mathrm d\sigma/\mathrm d\Omega$（$V=k/r^2$，$\Theta=\pi/2$） & $k/(\pi^2 E)$ & $0.10132$ & $<10^{-10}$ \\
+$\Theta$（$V=k/r^2$，$k=1,E=1,b=1$） & $\pi(1-1/\sqrt2)$ & $0.920151\ \mathrm{rad}\ (52.72^\circ)$ & $<10^{-12}$ \\
+$\mathrm d\sigma/\mathrm d\Omega$（$V=k/r^2$，$\Theta=\pi/2$） & $8k/(9\pi E)$ & $0.282942$ & $<10^{-10}$ \\
 $b_c$（$V=-\alpha/r^4$，$\alpha=1,E=1$） & $4^{1/4}=1.41421$ & $1.41421$ & $<10^{-12}$ \\
-$\sigma$（俘获，$\alpha=1,E=1$） & $2\pi=6.28319$ & $6.28319$ & $<10^{-12}$ \\
-\bottomrule
+$\sigma$（俘获，$\alpha=1,E=1$） & $2\pi=6.28319$ & $6.28319$ & $<10^{-12}$ \\\bottomrule
 \end{tabular}
 \caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
 \label{tab:numeric}
@@ -325,8 +323,8 @@ $b_c$ 给出俘获的``靶面积''半径。这种势在原子/分子碰撞中出
 \paragraph{散射角与碰撞参数的关系。}
 \eqref{eq:theta-k} 给出 $\Theta$ 随 $b$ 单调递减：$b=0$ 时 $\Theta=\pi$
 （正碰回弹），$b\to\infty$ 时 $\Theta\to0$（掠射）。微分散射截面
-\eqref{eq:diffcross-k} 在 $\Theta\to0$ 处发散（前向峰），
-在 $\Theta=\pi$ 处有限，反映了排斥势的短程``硬核''特性。
+\eqref{eq:diffcross-k} 在 $\Theta\to0$ 处按 $1/\Theta^3$ 发散（前向峰，源于长程势），
+在 $\Theta=\pi$ 处有限（背散射有限）。
 
 \paragraph{与 Rutherford 散射的比较。}
 Coulomb 势 $V=\alpha/r$ 的散射角为 $\Theta=2\arctan(\alpha/(2Eb))$，

@@ -97,9 +97,17 @@ $\sum \boldsymbol F_i^{\mathrm{(a)}}\cdot\delta\boldsymbol r_i=0$
 \subsection{直角摆（作业-7 Q2）}
 \label{sub:right-angle}
 
-两棒（长 $2a$、$2b$）固连成直角，组成摆。设摆角为 $\phi$。
-势能 $V(\phi)=-(2a\cdot a/2+2b\cdot b/2)\cos\phi$（质心位置）。
-平衡 $\mathrm dV/\mathrm d\phi=0$：$\sin\phi=0$，即 $\phi=0$ 或 $\pi$。
+两棒（长 $2a$、$2b$）固连成直角，组成摆。设棒 1 与竖直方向夹角为 $\phi$，则棒 2 为 $\phi+90^\circ$。
+两棒质心到悬点的竖直距离分别为 $a\cos\phi$ 与 $-b\sin\phi$（以向下为正），故
+\begin{equation}
+  V(\phi)=-2\rho g\left(a^2\cos\phi-b^2\sin\phi\right),
+\end{equation}
+其中 $2\rho a$、$2\rho b$ 为两棒质量。平衡 $\mathrm dV/\mathrm d\phi=0$ 给出
+\begin{equation}
+  \tan\phi=-\frac{b^2}{a^2},
+  \qquad \phi=-\arctan\!\left(\frac{b^2}{a^2}\right).
+\end{equation}
+$a=b$ 时 $\phi=-45^\circ$（不是 $0$ 或 $\pi$）。
 
 \subsection{梯子临界角（作业-7 Q4）}
 \label{sub:ladder}
@@ -127,20 +135,19 @@ $\theta_{\min}=\arctan(1/(2\mu))$。$\mu$ 增大时 $\theta_{\min}$ 减小
 杆 AB 长 $l$，重量 $P$，铰链 A，弹簧连接 B 与 C（C 在 A 上方 $h$ 处）。
 设杆与水平线夹角 $\theta$（$\theta>0$ 表示 B 在 A 上方）。
 
-势能：
+势能（$\theta>0$ 表示 B 在 A 上方，故重力势为正）：
 \begin{equation}
-  V(\theta)=-\frac{Pl}{2}\sin\theta+\frac12 k\left(\sqrt{h^2+l^2-2hl\sin\theta}-l_0\right)^2.
+  V(\theta)=+\frac{Pl}{2}\sin\theta+\frac12 k\left(L-l_0\right)^2,
+  \qquad L=\sqrt{h^2+l^2-2hl\sin\theta}.
 \end{equation}
 平衡：$\mathrm dV/\mathrm d\theta=0$：
 \begin{equation}
-  -\frac{Pl}{2}\cos\theta
-  + k\left(\sqrt{h^2+l^2-2hl\sin\theta}-l_0\right)
-  \cdot\frac{-hl\cos\theta}{\sqrt{h^2+l^2-2hl\sin\theta}}=0.
+  \frac{Pl}{2}\cos\theta
+  + k\left(L-l_0\right)\frac{-hl\cos\theta}{L}=0.
 \end{equation}
-非竖直平衡（$\cos\theta\ne0$）存在条件：
+非竖直平衡（$\cos\theta\ne0$）条件：
 \begin{equation}
-  \frac{Pl}{2}=k\,l_0\,\frac{hl}{\sqrt{h^2+l^2-2hl\sin\theta}}
-  \quad\text{（近似，$l_0\approx$ 当前长度时）}.
+  \frac{P}{2}=k\left(L-l_0\right)\frac{h}{L}.
 \end{equation}
 竖直平衡（$\theta=\pi/2$）始终存在。
 
@@ -148,13 +155,22 @@ $\theta_{\min}=\arctan(1/(2\mu))$。$\mu$ 增大时 $\theta_{\min}$ 减小
 \label{sub:cylinders}
 
 半径 $R$ 的光滑圆槽，两圆柱半径 $r$，重量 $P_1$、$P_2$。
-设两柱中心与槽心的夹角为 $2\phi$。势能
+两柱相切且都与槽相切时，几何关系固定：
 \begin{equation}
-  V=-P_1(R-r)\cos\phi-P_2(R-r)\cos\phi
-  =-(P_1+P_2)(R-r)\cos\phi.
+  \sin\phi=\frac{r}{R-r},
 \end{equation}
-平衡 $\mathrm dV/\mathrm d\phi=0$：$\sin\phi=0$，即 $\phi=0$（两柱在底部）
-或 $\phi=\pi$（顶部，不稳定）。$\phi=0$ 为稳定平衡。
+其中 $\phi$ 为每柱中心与槽底方向的夹角。两柱作为整体还可绕槽心转动角度 $\alpha$，
+势能 $V=-(P_1+P_2)(R-r)\cos\phi\cos\alpha$ 在 $\alpha=0$ 取极小，
+故平衡时两柱关于槽底对称；$\phi$ 由几何决定，不能由 $\mathrm dV/\mathrm d\phi=0$ 定出
+（$\phi=0$ 意味着两柱中心重合，几何上不可能）。
+
+对等重 $P_1=P_2=P$ 的情形，单柱径向平衡给出
+\begin{equation}
+  N=P\cos\phi+F\sin\phi,\qquad F=P\tan\phi
+  \;\Longrightarrow\;
+  N=\frac{P}{\cos\phi}.
+\end{equation}
+$P_1\ne P_2$ 时接触力不再水平，需联立两柱的径向与切向平衡消去 $F$ 后求 $N_1,N_2$。
 
 % ============================================================
 \section{解析结果}
@@ -218,7 +234,7 @@ $\lambda_k$ 为约束力（Lagrange 乘子）。这等价于虚功原理。
 \begin{equation}
   \frac{\partial^2 V}{\partial q_i\partial q_j}\bigg|_{\rm eq} \succ 0.
 \end{equation}
-梯子临界状态对应 Hessian 奇异（$\det=0$）。
+注意：梯子靠摩擦维持平衡，临界状态是摩擦饱和 $f=\mu N$，不是势能 Hessian 奇异；势能 $V=P(l/2)\sin\theta$ 在该处并没有极小。
 
 \section{虚功原理的应用实例}
 \label{sec:examples}

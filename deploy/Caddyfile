@@ -1,0 +1,33 @@
+# Caddy v2：HTTPS + Basic Auth + 反代
+# 用法：
+#   caddy hash-password --plaintext '密码'
+#   TM_DOMAIN=... TM_USER=... TM_HASH=... caddy run --config deploy/Caddyfile
+{
+  email {$TM_EMAIL:admin@example.com}
+}
+
+{$TM_DOMAIN} {
+  encode zstd gzip
+
+  basic_auth {
+    {$TM_USER} {$TM_HASH}
+  }
+
+  reverse_proxy 127.0.0.1:8765 {
+    header_up X-Forwarded-For {remote_host}
+    transport http {
+      read_timeout 300s
+      write_timeout 300s
+    }
+  }
+
+  request_body {
+    max_size 1MB
+  }
+
+  header {
+    X-Content-Type-Options nosniff
+    Referrer-Policy no-referrer
+    -Server
+  }
+}
