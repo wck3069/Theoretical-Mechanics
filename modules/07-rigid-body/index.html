@@ -453,7 +453,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>刚体几何与角动量</h1>
       <p>球冠质心、甲虫转环、球壳势能</p>
-      <p class="intro">刚体的怪事：甲虫绕环走一圈，身体只转了 180°；均匀球壳内部的引力恰好为零。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。球壳模式可直接拖动左侧质点。</p>
+      <p class="intro">刚体的怪事：甲虫绕自由圆环走一圈，环会反转；反转角随甲虫质量 m 改变（默认 m=1 时 120°）。均匀球壳内部的引力恰好为零。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。球壳模式可直接拖动左侧质点。</p>
     </div>
     <div class="hud">
       <span>模式 <b id="hudMode">-</b></span>
@@ -468,7 +468,7 @@ window.TMART = (function () {
   <aside class="panel">
     <div class="eq">
       <div><span class="num">球冠：</span> d=h(4R−h)/[4(3R−h)]（h＝右侧滑块的球冠高度；R−h＝切割平面距球心）</div>
-      <div><span class="num">转环：</span> Δθ=π（甲虫沿闭合环爬一圈，自身朝向转过 π，不转完 360°）</div>
+      <div><span class="num">转环：</span> Δθ_ring=−2πm/(M+2m)（自由环，M=1；默认 m=1 时环反转 120°、甲虫实验室方位转 240°）</div>
       <div><span class="num">球壳：</span> r&lt;R: V=-GMm/R; r&gt;R: V=-GMm/r（壳内 V 为常数：壳内任意点受力为零）</div>
     </div>
     <div class="group">
@@ -479,9 +479,13 @@ window.TMART = (function () {
         <option value="shell">球壳势能</option>
       </select>
     </div>
-    <div class="group">
+    <div class="group" id="group-R">
       <div class="row"><label for="param-R">球半径 R</label><span class="val" id="val-R">1.00</span></div>
       <input id="param-R" type="range" min="0.5" max="3" step="0.1" value="1.0" aria-label="球半径 R">
+    </div>
+    <div class="group" id="group-beetleM" style="display:none">
+      <div class="row"><label for="param-beetleM">甲虫质量 m（环质量 M=1）</label><span class="val" id="val-beetleM">1.00</span></div>
+      <input id="param-beetleM" type="range" min="0.1" max="5" step="0.1" value="1.0" aria-label="甲虫质量 m">
     </div>
     <div class="group" id="group-h">
       <div class="row"><label for="param-h">球冠高度 h（0–2R）</label><span class="val" id="val-h">1.00</span></div>
@@ -494,7 +498,7 @@ window.TMART = (function () {
     <div class="btns">
       <button id="btn-reset">重置</button>
     </div>
-    <div class="tag">URL 可复现：<span>?mode=…&R=…&h=…&M=…</span><br>
+    <div class="tag">URL 可复现：<span>?mode=…&R=…&h=…&M=…&beetleM=…</span><br>
     本页采用无量纲演示单位（R、M、ω 等均为无量纲，见底部说明）。<br>
     自测：<span>index.html?selftest=1</span>（4 项硬断言，全 PASS 才通过）</div>
     <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
@@ -514,9 +518,9 @@ window.TMART = (function () {
 <script>
 'use strict';
 // ==================== 1) PARAMS ====================
-var DEFAULTS = {mode:'cap', R:1.0, h:1.0, M:1.0};
-var RANGE = {R:[0.5,3], h:[0.01,6], M:[0.1,5]};
-var P = {mode:DEFAULTS.mode, R:DEFAULTS.R, h:DEFAULTS.h, M:DEFAULTS.M};
+var DEFAULTS = {mode:'cap', R:1.0, h:1.0, M:1.0, beetleM:1.0};
+var RANGE = {R:[0.5,3], h:[0.01,6], M:[0.1,5], beetleM:[0.1,5]};
+var P = {mode:DEFAULTS.mode, R:DEFAULTS.R, h:DEFAULTS.h, M:DEFAULTS.M, beetleM:DEFAULTS.beetleM};
 
 // ==================== 2) URL 同步 ====================
 function loadFromURL(){
@@ -532,10 +536,11 @@ function loadFromURL(){
   if (q.R !== undefined) P.R = Math.min(Math.max(parseFloat(q.R), RANGE.R[0]), RANGE.R[1]) || DEFAULTS.R;
   if (q.h !== undefined) P.h = Math.min(Math.max(parseFloat(q.h), RANGE.h[0]), RANGE.h[1]) || DEFAULTS.h;
   if (q.M !== undefined) P.M = Math.min(Math.max(parseFloat(q.M), RANGE.M[0]), RANGE.M[1]) || DEFAULTS.M;
+  if (q.beetleM !== undefined) P.beetleM = Math.min(Math.max(parseFloat(q.beetleM), RANGE.beetleM[0]), RANGE.beetleM[1]) || DEFAULTS.beetleM;
   return q;
 }
 function syncURL(){
-  var s = '?mode=' + P.mode + '&R=' + P.R + '&h=' + P.h + '&M=' + P.M;
+  var s = '?mode=' + P.mode + '&R=' + P.R + '&h=' + P.h + '&M=' + P.M + '&beetleM=' + P.beetleM;
   if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
 }
 
@@ -548,7 +553,8 @@ function beetleStep(){
   if (beetle.trail.length > 400) beetle.trail.shift();
   if (beetle.angle >= 2*Math.PI) { beetle.angle = 2*Math.PI; beetle.running = false; beetle.done = true; }
 }
-function ringRotation(){ return -beetle.angle/2; }
+function beetleLabAngle(){ return (1 + P.beetleM) / (1 + 2 * P.beetleM) * beetle.angle; }
+function ringRotation(){ return -P.beetleM / (1 + 2 * P.beetleM) * beetle.angle; }
 function prewarmBeetle(n){
   for (var i=0;i<(n||130);i++){ beetle.angle += 0.02; beetle.trail.push(beetle.angle); }
 }  // angular momentum conservation: ring turns -pi per lap
@@ -705,50 +711,77 @@ function drawCap(ctx, cx, cy, sc) {
   ctx.fillText('h = ' + h.toFixed(2) + '   (h ≤ 2R = ' + (2 * R).toFixed(2) + ')', cx - sc, cy + sc + 24);
 }
 function drawBeetle(ctx, cx, cy, sc) {
-  var R = Math.min(W, H) * 0.14 * P.R;
-  var ba = beetle.angle / 2;          // 甲虫相对环心角
-  var ra = ringRotation();            // 环的参考标记角
-  var comX = cx, comY = cy;           // 系统质心固定
+  var M = 1, m = P.beetleM;
+  var R = Math.min(W, H) * 0.14;       // 环半径固定，不再由 R 滑块改变
+  var ba = beetleLabAngle();           // 甲虫相对质心的实验室方位角
+  var ra = ringRotation();             // 环的自转角
+  var comX = cx, comY = cy;            // 系统质心固定
+  var aC = R * m / (M + m);            // 环心到质心
+  var aB = R * M / (M + m);            // 甲虫到质心
   var nx = Math.cos(ba), ny = Math.sin(ba);
-  // 等质量环+甲虫：系统质心在中心，环心偏移 R/2，甲虫在质心另一侧 R/2
-  var ringX = comX - (R/2) * nx, ringY = comY - (R/2) * ny;
-  var beetleX = ringX + R * nx, beetleY = ringY + R * ny;
+  var ringX = comX - aC * nx, ringY = comY - aC * ny;
+  var beetleX = comX + aB * nx, beetleY = comY + aB * ny;
   var refX = ringX + Math.cos(ra) * R, refY = ringY + Math.sin(ra) * R;
 
-  // 环本体（环心随甲虫绕质心偏移）
+  // 环本体
   ctx.strokeStyle = 'rgba(127,224,255,.9)'; ctx.lineWidth = 5;
   ctx.beginPath(); ctx.arc(ringX, ringY, R, 0, 2*Math.PI); ctx.stroke();
 
-  // 甲虫路径：绕固定质心，半径 R/2
+  // 甲虫路径：半径 aB；相对角 a 对应实验室角 a*(M+m)/(M+2m)
   if (beetle.trail.length > 1) {
-    ctx.lineWidth = 2.4;
+    ctx.lineWidth = 2.2;
+    ctx.setLineDash([6, 5]);
     for (var i = 1; i < beetle.trail.length; i++) {
-      var ta = beetle.trail[i - 1] / 2, tb = beetle.trail[i] / 2;
-      var x1 = comX + Math.cos(ta) * R/2, y1 = comY + Math.sin(ta) * R/2;
-      var x2 = comX + Math.cos(tb) * R/2, y2 = comY + Math.sin(tb) * R/2;
-      ctx.globalAlpha = (i / beetle.trail.length) * 0.55;
-      ctx.strokeStyle = '#7fe0ff';
+      var ta = beetle.trail[i - 1] * (M+m) / (M+2*m);
+      var tb = beetle.trail[i] * (M+m) / (M+2*m);
+      var x1 = comX + Math.cos(ta) * aB, y1 = comY + Math.sin(ta) * aB;
+      var x2 = comX + Math.cos(tb) * aB, y2 = comY + Math.sin(tb) * aB;
+      ctx.strokeStyle = 'rgba(127,224,255,.62)';
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     }
-    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
   }
 
   // 环参考点路径：环心绕质心 + 环自转
   if (beetle.trail.length > 1) {
-    ctx.strokeStyle = 'rgba(255,210,122,.38)'; ctx.lineWidth = 1.4;
+    ctx.strokeStyle = 'rgba(255,210,122,.42)'; ctx.lineWidth = 1.3;
+    ctx.setLineDash([4, 4]);
     ctx.beginPath();
     for (var j = 0; j < beetle.trail.length; j++) {
-      var aa = beetle.trail[j], bb = aa / 2, rr = -aa / 2;
-      var cxi = comX - (R/2) * Math.cos(bb), cyi = comY - (R/2) * Math.sin(bb);
+      var aa = beetle.trail[j];
+      var bb = aa * (M+m) / (M+2*m);
+      var rr = -aa * m / (M+2*m);
+      var cxi = comX - aC * Math.cos(bb), cyi = comY - aC * Math.sin(bb);
       var pxi = cxi + Math.cos(rr) * R, pyi = cyi + Math.sin(rr) * R;
       if (j === 0) ctx.moveTo(pxi, pyi); else ctx.lineTo(pxi, pyi);
     }
     ctx.stroke();
+    ctx.setLineDash([]);
   }
 
   // 环参考标记
   ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(refX, refY); ctx.lineTo(refX + Math.cos(ra) * 16, refY + Math.sin(ra) * 16); ctx.stroke();
+
+  // 角度弧：ψ（实验室方位，绕质心）与 θ（相对环）
+  if (beetle.angle > 0.02) {
+    var arcR = Math.min(aB * 0.65, 52);
+    ctx.strokeStyle = 'rgba(127,224,255,.45)'; ctx.lineWidth = 1.3;
+    ctx.setLineDash([3,4]);
+    ctx.beginPath(); ctx.moveTo(comX, comY); ctx.lineTo(comX + arcR, comY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(comX, comY, arcR, 0, ba, false); ctx.stroke();
+    var mid = ba / 2;
+    ctx.fillStyle = '#7fe0ff'; ctx.font = '10px ui-monospace,monospace';
+    ctx.fillText('ψ', comX + Math.cos(mid) * (arcR + 12) - 4, comY + Math.sin(mid) * (arcR + 12) + 4);
+
+    var arcR2 = Math.min(R * 0.42, 60);
+    ctx.strokeStyle = 'rgba(255,210,122,.50)'; ctx.lineWidth = 1.3;
+    ctx.beginPath(); ctx.arc(ringX, ringY, arcR2, ra, ba, false); ctx.stroke();
+    var mid2 = (ra + ba) / 2;
+    ctx.fillStyle = '#ffd27a';
+    ctx.fillText('θ', ringX + Math.cos(mid2) * (arcR2 + 12) - 4, ringY + Math.sin(mid2) * (arcR2 + 12) + 4);
+  }
 
   // 甲虫（在环上）
   var tangent = {x:-ny, y:nx};
@@ -773,16 +806,21 @@ function drawBeetle(ctx, cx, cy, sc) {
   ctx.fillStyle = 'rgba(127,224,255,.75)';
   ctx.beginPath(); ctx.arc(ringX, ringY, 3, 0, 2*Math.PI); ctx.fill();
 
+  var ringEnd = Math.abs(-2 * Math.PI * m / (M + 2*m)) * 180 / Math.PI;
+  var thDeg = beetle.angle * 180 / Math.PI;
+  var psiDeg = beetleLabAngle() * 180 / Math.PI;
+  var phiDeg = ra * 180 / Math.PI;
   ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
-  ctx.fillText('甲虫 θ = ' + (beetle.angle * 180 / Math.PI).toFixed(1) + '°', W - 250, 30);
-  ctx.fillText('圆环 = ' + (ra * 180 / Math.PI).toFixed(1) + '°', W - 250, 50);
+  ctx.fillText('甲虫相对环 θ = ' + thDeg.toFixed(1) + '°', W - 270, 30);
+  ctx.fillText('甲虫实验室方位 ψ = ' + psiDeg.toFixed(1) + '°', W - 270, 50);
+  ctx.fillText('圆环自转 φ = ' + phiDeg.toFixed(1) + '°', W - 270, 70);
   ctx.fillStyle = '#7fe3a0';
-  ctx.fillText('爬完一圈：环转 180°；系统质心不动', W - 250, 70);
+  ctx.fillText('爬完一圈：环反转 ' + ringEnd.toFixed(0) + '°；系统质心不动', W - 270, 90);
   ctx.font = '11px ui-monospace,monospace';
-  ctx.fillStyle = '#7fe0ff'; ctx.fillText('● 甲虫路线（绕质心）', W - 250, 92);
-  ctx.fillStyle = '#ffd27a'; ctx.fillText('● 圆环参考点路线', W - 250, 110);
-  ctx.fillStyle = '#ff9fc4'; ctx.fillText('✚ 系统质心（固定）', W - 250, 128);
-  ctx.fillStyle = '#6d7ca4'; ctx.fillText('圆环半径 R = ' + P.R.toFixed(2), W - 250, 146);
+  ctx.fillStyle = '#7fe0ff'; ctx.fillText('● 甲虫路线（绕质心，不淡化）', W - 270, 112);
+  ctx.fillStyle = '#ffd27a'; ctx.fillText('● 圆环参考点路线', W - 270, 130);
+  ctx.fillStyle = '#ff9fc4'; ctx.fillText('✚ 系统质心（固定）', W - 270, 148);
+  ctx.fillStyle = '#6d7ca4'; ctx.fillText('甲虫 m = ' + m.toFixed(2) + '  环 M = 1  环半径固定', W - 270, 166);
 }
 
 function drawShell(ctx) {
@@ -898,7 +936,7 @@ function updateHUD(){
     hudD.textContent = '-';
     hudAngle.textContent = (ringRotation()*180/Math.PI).toFixed(1) + ' deg';
     hudV.textContent = '-';
-    hudState.textContent = beetle.done ? '环转 180 deg' : '爬行中';
+    hudState.textContent = beetle.done ? ('环反转 ' + Math.abs(ringRotation()*180/Math.PI).toFixed(0) + ' deg') : '爬行中';
   } else {
     hudD.textContent = '-';
     hudAngle.textContent = '-';
@@ -929,15 +967,21 @@ function bindControls() {
   $('param-h').addEventListener('input', syncHRange);
   syncHRange();
   bindSlider('param-M', 'M', 'val-M', function(v){ return v.toFixed(2); });
-  $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.h=DEFAULTS.h; P.M=DEFAULTS.M; shellPoint.q=0.5; shellPoint.angle=0.6; syncSliders(); syncURL(); updateHUD(); });
+  bindSlider('param-beetleM', 'beetleM', 'val-beetleM', function(v){ return v.toFixed(2); });
+  $('param-beetleM').addEventListener('input', function(){ beetle.angle=0; beetle.trail=[]; beetle.running=true; beetle.done=false; });
+  $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.h=DEFAULTS.h; P.M=DEFAULTS.M; P.beetleM=DEFAULTS.beetleM; shellPoint.q=0.5; shellPoint.angle=0.6; beetle.angle=0; beetle.running=true; beetle.done=false; beetle.trail=[]; syncSliders(); syncURL(); updateHUD(); });
 }
 function syncBeetleControls() {
   var gh = document.getElementById('group-h');
   if (gh) gh.style.display = P.mode === 'cap' ? 'block' : 'none';
   var gm = document.getElementById('group-M');
   if (gm) gm.style.display = P.mode === 'shell' ? 'block' : 'none';
+  var gR = document.getElementById('group-R');
+  if (gR) gR.style.display = P.mode === 'beetle' ? 'none' : 'block';
+  var gbm = document.getElementById('group-beetleM');
+  if (gbm) gbm.style.display = P.mode === 'beetle' ? 'block' : 'none';
   var lbl = document.querySelector('label[for="param-R"]');
-  if (lbl) lbl.textContent = P.mode === 'beetle' ? '圆环半径 R' : '球半径 R';
+  if (lbl) lbl.textContent = '球半径 R';
 }
 
 function syncSliders() {
@@ -945,6 +989,7 @@ function syncSliders() {
   $('param-h').max = (2*P.R).toFixed(2);
   $('param-h').value = P.h; $('val-h').textContent = P.h.toFixed(2);
   $('param-M').value = P.M; $('val-M').textContent = P.M.toFixed(2);
+  $('param-beetleM').value = P.beetleM; $('val-beetleM').textContent = P.beetleM.toFixed(2);
 }
 
 // ==================== 7) 自测 ====================

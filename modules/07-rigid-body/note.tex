@@ -98,30 +98,47 @@
 \subsection{甲虫与圆环（作业-4 Q2）}
 \label{sub:beetle}
 
-圆环质量 $m$，半径 $R$，甲虫质量 $m$。系统初始静止。
-甲虫在环上逆时针爬行，速度 $u$（相对环）。设环角速度 $\Omega$（顺时针为正，
-即甲虫相对环运动方向为正时环旋转为负）。
-
-角动量守恒（无外力矩）：
+圆环质量 $M$，半径 $R$，甲虫质量 $m$。圆环放在光滑水平面上，系统初始静止。
+设甲虫相对圆环的方位角为 $\theta$，圆环自转角为 $\phi$，甲虫相对环心的实验室方位角为
 \begin{equation}
-  0 = mR(u-\Omega R?) + I_{\rm ring}\Omega.
+  \psi=\phi+\theta.
 \end{equation}
-设甲虫相对环的速度为 $v$（切向，逆时针为正），环角速度为 $\omega$（逆时针为正）。
-甲虫惯性系速度 $=v+\omega R$（切向）。甲虫角动量 $=mR(v+\omega R)$。
-环角动量 $=mR^2\omega$（薄环转动惯量 $mR^2$）。
+水平方向无外力，系统质心固定。取质心为原点，环心与甲虫到质心的距离分别为
 \begin{equation}
-  mR(v+\omega R)+mR^2\omega=0
-  \quad\Longrightarrow\quad
-  v+2\omega R=0
-  \quad\Longrightarrow\quad
-  \omega=-\frac{v}{2R}.
+  a_C=\frac{mR}{M+m},\qquad a_B=\frac{MR}{M+m},
 \end{equation}
-环以角速度 $v/(2R)$ 顺时针旋转。甲虫相对环走一圈（$2\pi R$）耗时
-$T=2\pi R/v$。环转角
+且
 \begin{equation}
-  \boxed{\;\Delta\theta=|\omega|T=\frac{v}{2R}\cdot\frac{2\pi R}{v}=\pi\;}
+  \mathbf r_C=-a_C(\cos\psi,\sin\psi),\qquad
+  \mathbf r_B=+a_B(\cos\psi,\sin\psi).
 \end{equation}
-即环转 $180^\circ$（$\pi$ 弧度）。
+关于质心的总角动量守恒。薄环绕自身中心的转动惯量为 $MR^2$；环心平移和甲虫绕质心转动分别为
+$M a_C^2\dot\psi$、$m a_B^2\dot\psi$：
+\begin{equation}
+  L=MR^2\dot\phi+\left(Ma_C^2+ma_B^2\right)\dot\psi=0.
+\end{equation}
+其中
+\begin{equation}
+  Ma_C^2+ma_B^2
+  =M\frac{m^2R^2}{(M+m)^2}+m\frac{M^2R^2}{(M+m)^2}
+  =\frac{MmR^2}{M+m}.
+\end{equation}
+因此
+\begin{equation}
+  \dot\phi=-\frac{m}{M+m}\dot\psi.
+\end{equation}
+代入 $\psi=\phi+\theta$：
+\begin{equation}
+  \dot\phi=-\frac{m}{M+2m}\dot\theta,\qquad
+  \dot\psi=\frac{M+m}{M+2m}\dot\theta.
+\end{equation}
+甲虫相对环爬完一圈 $\theta=2\pi$ 时，
+\begin{equation}
+  \boxed{\;\Delta\phi=-\frac{2\pi m}{M+2m},\qquad
+  \Delta\psi=\frac{2\pi(M+m)}{M+2m}\;}
+\end{equation}
+即环反转 $2\pi m/(M+2m)$，甲虫在实验室系中转过 $2\pi(M+m)/(M+2m)$；质心始终固定，环心绕质心平移。
+当 $M=m$ 时恢复 $120^\circ/240^\circ$。若把环心固定（外部约束），才会得到环转 $180^\circ$，但那时质心并不固定。
 
 \subsection{薄圆盘角动量（作业-4 Q3）}
 \label{sub:disk}
@@ -156,7 +173,7 @@ $T=2\pi R/v$。环转角
 
 \begin{enumerate}
   \item 球冠质心：$d=h(4R-h)/[4(3R-h)]$（\eqref{sub:spherical-cap}，$h$ 为球冠高度）。
-  \item 甲虫-圆环：环转角 $\pi$（$180^\circ$）（\eqref{sub:beetle}）。
+  \item 甲虫-圆环（自由环）：环反转 $2\pi m/(M+2m)$，甲虫实验室方位转过 $2\pi(M+m)/(M+2m)$；$M=m$ 时为 $120^\circ/240^\circ$，质心固定（\eqref{sub:beetle}）。
   \item 圆盘角动量：$L=\frac12 MR^2\omega_0$（\eqref{sub:disk}）。
   \item Newton 球壳：$r<a$ 时 $V=-GMm/a$（常数），$r>a$ 时 $V=-GMm/r$
         （\eqref{sub:shell}）。
@@ -177,7 +194,7 @@ $T=2\pi R/v$。环转角
 \midrule
 球冠质心（$R=1,h=R$，半球） & $3/8=0.375$ & $0.375$ \\
 球冠质心（$R=1,h=0.5$） & $0.5\cdot3.5/(4\cdot2.5)=0.175$ & $0.175$ \\
-甲虫环转角 & $\pi=3.14159$ & $3.14159$ \\
+甲虫环反转角（M=m=1） & $2\pi/3=2.09440$ & $2.09440$ \\
 圆盘 $L$（$M=1,R=1,\omega=1$） & $0.5$ & $0.5$ \\
 球壳 $V$（$r=0.5a$） & $-GMm/a$ & $-GMm/a$ \\
 球壳 $V$（$r=2a$） & $-GMm/(2a)$ & $-GMm/(2a)$ \\
