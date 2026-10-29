@@ -741,6 +741,32 @@ function recompute(){
   for (var i = 0; i < eqs.length; i++) if (eqs[i].stable) { freq = omegaRatio(eqs[i].r); break; }
 }
 function initState(){
+  // E 与 r0 同时给定；若 r0 在当前 E 下不可达（E < V_eff(r0)），
+  // 把初始半径吸附到最近的转折点，保证实际能量确实等于 E。
+  var roots = turningPoints();
+  if (P.E < Veff(P.r0) - 1e-9){
+    if (roots.length){
+      var best = roots[0], bd = Math.abs(roots[0] - P.r0);
+      for (var ri = 1; ri < roots.length; ri++){
+        var d = Math.abs(roots[ri] - P.r0);
+        if (d < bd){ bd = d; best = roots[ri]; }
+      }
+      P.r0 = Math.min(Math.max(best, RANGE.r0[0]), RANGE.r0[1]);
+    } else {
+      // E 位于势阱底部附近，曲线与 E 相切：用稳定平衡点作初始半径
+      var eqNow = equilibria(), eqR = null, eqV = Infinity;
+      for (var ei = 0; ei < eqNow.length; ei++){
+        if (!eqNow[ei].stable) continue;
+        var vv = Veff(eqNow[ei].r);
+        if (vv < eqV){ eqV = vv; eqR = eqNow[ei].r; }
+      }
+      if (eqR !== null){
+        if (P.E < eqV - 1e-6) P.E = eqV + 1e-4;
+        P.r0 = Math.min(Math.max(eqR, RANGE.r0[0]), RANGE.r0[1]);
+      }
+    }
+    if (typeof refreshUI === 'function') refreshUI();
+  }
   sim.r = P.r0; sim.th = 0; sim.t = 0;
   var kin = 2 * (P.E - Veff(sim.r));
   sim.vr = kin > 0 ? Math.sqrt(kin) : 0;
@@ -914,7 +940,23 @@ var SL = [
   ['param-L', 'val-L', 'L', 2], ['param-E', 'val-E', 'E', 2], ['param-r0', 'val-r0', 'r0', 2],
   ['param-k', 'val-k', 'k', 2], ['param-gam', 'val-gam', 'gam', 4], ['param-speed', 'val-speed', 'speed', 1]
 ];
+function eMin(){
+  var mn = Infinity;
+  for (var i = 0; i <= 2000; i++){
+    var r = R_MIN + (R_SCAN - R_MIN) * i / 2000;
+    var v = Veff(r);
+    if (isFinite(v) && v < mn) mn = v;
+  }
+  return isFinite(mn) ? mn : RANGE.E[0];
+}
 function refreshUI(){
+  var em = $('param-E');
+  if (em){
+    var emin = eMin() + 1e-4;
+    em.min = emin.toFixed(4);
+    if (P.E < emin) P.E = emin;
+    if (P.E > RANGE.E[1]) P.E = RANGE.E[1];
+  }
   for (var i = 0; i < SL.length; i++){
     var s = $(SL[i][0]); s.value = P[SL[i][2]];
     var t = Number(P[SL[i][2]]).toFixed(SL[i][3]);
@@ -924,7 +966,7 @@ function refreshUI(){
   $('sel-pot').value = P.pot;
   $('param-k').disabled = P.pot !== 'pow';
 }
-function onParamChange(){ syncURL(); initState(); }
+function onParamChange(){ refreshUI(); initState(); syncURL(); }
 function applyPreset(nm){
   var pr = PRESETS[nm];
   P.pot = pr.pot; P.L = pr.L; P.E = pr.E; P.r0 = pr.r0;
