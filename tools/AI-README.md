@@ -132,3 +132,5 @@ python3 tools/apply_ai_panel.py --apply
 离线面板不再只列章节：它带 49 条常见问题直答、12 个术语、63 段讲义原文摘录，
 并做同义词扩展（拉格朗日/Euler、费马/Fermat、洛伦兹/Lorentz 等）与 LaTeX 清洗。
 没有 `/api` 时（GitHub Pages 或直接双击 HTML）仍然可用；连接本地服务后自动切换为完整模型。
+
+公网完整 AI 见 `deploy/cloudflare/README.md`；必须用 `TM_STATIC_ROOT=dist` 只暴露站点，key 留在服务端。

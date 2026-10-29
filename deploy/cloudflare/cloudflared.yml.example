@@ -1,0 +1,8 @@
+# ~/.cloudflared/config.yml
+tunnel: <TUNNEL-UUID>
+credentials-file: /home/<user>/.cloudflared/<TUNNEL-UUID>.json
+
+ingress:
+  - hostname: mechanics.example.com
+    service: http://127.0.0.1:8765
+  - service: http_status:404

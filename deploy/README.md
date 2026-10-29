@@ -99,3 +99,10 @@ Cloudflare Zero Trust → Access 里加邮箱/组织策略。详见 `deploy/clou
 - 地址：<https://wck3069.github.io/Theoretical-Mechanics/>
 - 更新：`bash tools/publish_pages.sh`（自动导出 dist、重建 gh-pages、推送）
 - 静态托管没有 `/api`，AI 面板会自动降级为离线检索
+
+## 公网完整 AI（key 不暴露）
+
+- **推荐**：Cloudflare Tunnel + Access + `TM_STATIC_ROOT=dist`，见 `deploy/cloudflare/README.md`。
+- **备选**：公网服务器 + Caddy Basic Auth（`deploy/Caddyfile`）；应用同样以 `TM_STATIC_ROOT=dist` 启动。
+- **不要**把 `TM_AI_KEY` 写进 `index.html`、Pages、Worker 的前端代码；key 只留在服务端环境变量。
+- 静态 Pages 仍保持离线检索；它没有 `/api`，也不应该持有 key。

@@ -19,6 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 KB_PATH = ROOT / "data" / "knowledge.json"
+STATIC_ROOT = Path(os.environ.get("TM_STATIC_ROOT", str(ROOT))).resolve()
 
 AI_BASE = os.environ.get("TM_AI_BASE", "https://xplt.sdu.edu.cn:4000/v1").rstrip("/")
 AI_MODEL = os.environ.get("TM_AI_MODEL", "SDU-AI/DeepSeek-V4-Flash")
@@ -375,8 +376,8 @@ class Handler(BaseHTTPRequestHandler):
         rel = urllib.parse.unquote(url_path).lstrip("/")
         if rel == "":
             rel = "index.html"
-        root = ROOT.resolve()
-        target = (ROOT / rel).resolve()
+        root = STATIC_ROOT
+        target = (root / rel).resolve()
         try:
             target.relative_to(root)
         except ValueError:
@@ -681,7 +682,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
-    global AI_BASE, AI_MODEL, AI_KEY, AI_TIMEOUT, DEEP_MAX_CHARS, MAX_BODY, EFFORT_FAST, EFFORT_DEEP
+    global AI_BASE, AI_MODEL, AI_KEY, AI_TIMEOUT, DEEP_MAX_CHARS, MAX_BODY, EFFORT_FAST, EFFORT_DEEP, STATIC_ROOT
     ap = argparse.ArgumentParser()
     ap.add_argument("--host", default=DEFAULT_HOST,
                     help="bind address; use 0.0.0.0 to allow LAN access")
@@ -695,6 +696,7 @@ def main() -> int:
     AI_KEY = os.environ.get("TM_AI_KEY", AI_KEY)
     EFFORT_FAST = os.environ.get("TM_AI_EFFORT_FAST", EFFORT_FAST)
     EFFORT_DEEP = os.environ.get("TM_AI_EFFORT_DEEP", EFFORT_DEEP)
+    STATIC_ROOT = Path(os.environ.get("TM_STATIC_ROOT", str(STATIC_ROOT))).resolve()
     AI_TIMEOUT = int(os.environ.get("TM_AI_TIMEOUT", str(AI_TIMEOUT)))
     DEEP_MAX_CHARS = int(os.environ.get("TM_DEEP_MAX_CHARS", str(DEEP_MAX_CHARS)))
     MAX_BODY = int(os.environ.get("TM_MAX_BODY", str(MAX_BODY)))
