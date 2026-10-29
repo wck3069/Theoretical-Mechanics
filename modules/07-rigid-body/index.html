@@ -453,7 +453,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>刚体几何与角动量</h1>
       <p>球冠质心、甲虫转环、球壳势能</p>
-      <p class="intro">刚体的怪事：甲虫绕自由圆环走一圈，环会反转；反转角随甲虫质量 m 改变（默认 m=1 时 120°）。均匀球壳内部的引力恰好为零。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。球壳模式可直接拖动左侧质点。</p>
+      <p class="intro">刚体的怪事：甲虫绕自由圆环走一圈，环会反转；反转角随甲虫质量 m 改变（默认 m=1 时 120°）。均匀球壳内部的引力恰好为零，可与均匀实心球对比。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。球壳模式可直接拖动左侧质点。</p>
     </div>
     <div class="hud">
       <span>模式 <b id="hudMode">-</b></span>
@@ -469,7 +469,8 @@ window.TMART = (function () {
     <div class="eq">
       <div><span class="num">球冠：</span> d=h(4R−h)/[4(3R−h)]（h＝右侧滑块的球冠高度；R−h＝切割平面距球心）</div>
       <div><span class="num">转环：</span> Δθ_ring=−2πm/(M+2m)（自由环，M=1；默认 m=1 时环反转 120°、甲虫实验室方位转 240°）</div>
-      <div><span class="num">球壳：</span> r&lt;R: V=-GMm/R; r&gt;R: V=-GMm/r（壳内 V 为常数：壳内任意点受力为零）</div>
+      <div><span class="num">球壳：</span> r&lt;R: V=-GMm/R; r&gt;R: V=-GMm/r（取 V(∞)=0；壳内 V 为常数：壳内任意点受力为零）</div>
+      <div><span class="num">实心球：</span> r&lt;R: V=-GMm(3−r²/R²)/(2R); r&gt;R: V=-GMm/r（同一 V(∞)=0 约定）</div>
     </div>
     <div class="group">
       <div class="row"><label for="sel-mode">模式</label></div>
@@ -500,7 +501,7 @@ window.TMART = (function () {
     </div>
     <div class="tag">URL 可复现：<span>?mode=…&R=…&h=…&M=…&beetleM=…</span><br>
     本页采用无量纲演示单位（R、M、ω 等均为无量纲，见底部说明）。<br>
-    自测：<span>index.html?selftest=1</span>（4 项硬断言，全 PASS 才通过）</div>
+    自测：<span>index.html?selftest=1</span>（6 项硬断言，全 PASS 才通过）</div>
     <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
     <a class="doc" href="../06-collisions/index.html">← 上一模块：碰撞与变质量</a>
     <a class="doc" href="../08-kinematics/index.html">下一模块：运动学与非线性振动 →</a>
@@ -571,6 +572,11 @@ function capCentroid(R, h) {
 function shellV(rho, M, a) {
   // rho: actual distance; a: shell radius
   if (rho <= a) return -M / a; // G=M=m=1
+  return -M / rho;
+}
+function solidV(rho, M, a) {
+  // 均匀实心球：内部 V=-GM(3-r²/a²)/(2a)，外部同球壳
+  if (rho <= a) return -M * (3 - (rho*rho)/(a*a)) / (2*a);
   return -M / rho;
 }
 
@@ -763,26 +769,6 @@ function drawBeetle(ctx, cx, cy, sc) {
   ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(refX, refY); ctx.lineTo(refX + Math.cos(ra) * 16, refY + Math.sin(ra) * 16); ctx.stroke();
 
-  // 角度弧：ψ（实验室方位，绕质心）与 θ（相对环）
-  if (beetle.angle > 0.02) {
-    var arcR = Math.min(aB * 0.65, 52);
-    ctx.strokeStyle = 'rgba(127,224,255,.45)'; ctx.lineWidth = 1.3;
-    ctx.setLineDash([3,4]);
-    ctx.beginPath(); ctx.moveTo(comX, comY); ctx.lineTo(comX + arcR, comY); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.beginPath(); ctx.arc(comX, comY, arcR, 0, ba, false); ctx.stroke();
-    var mid = ba / 2;
-    ctx.fillStyle = '#7fe0ff'; ctx.font = '10px ui-monospace,monospace';
-    ctx.fillText('ψ', comX + Math.cos(mid) * (arcR + 12) - 4, comY + Math.sin(mid) * (arcR + 12) + 4);
-
-    var arcR2 = Math.min(R * 0.42, 60);
-    ctx.strokeStyle = 'rgba(255,210,122,.50)'; ctx.lineWidth = 1.3;
-    ctx.beginPath(); ctx.arc(ringX, ringY, arcR2, ra, ba, false); ctx.stroke();
-    var mid2 = (ra + ba) / 2;
-    ctx.fillStyle = '#ffd27a';
-    ctx.fillText('θ', ringX + Math.cos(mid2) * (arcR2 + 12) - 4, ringY + Math.sin(mid2) * (arcR2 + 12) + 4);
-  }
-
   // 甲虫（在环上）
   var tangent = {x:-ny, y:nx};
   ball(ctx, beetleX, beetleY, 10, '#7fe0ff', true);
@@ -852,19 +838,29 @@ function drawShell(ctx) {
   ctx.fillStyle = '#6d7ca4'; ctx.font = '10px ui-monospace,monospace';
   ctx.fillText('q = r/R = ' + q.toFixed(2), cx - sc, cy + sc + 18);
 
-  // 右侧势能曲线
+  // 右侧势能曲线：球壳 vs 实心球
   var x0 = W*0.52, x1 = W*0.94, yTop = H*0.20, yBot = H*0.78;
-  var maxQ = 3, V0 = -P.M / P.R;
+  var maxQ = 3;
+  var Vsh = -P.M / P.R;
+  var Vsolid0 = -1.5 * P.M / P.R;
+  var Vmin = Math.min(Vsh, Vsolid0);
   var qOf = function(qq){ return x0 + (qq/maxQ) * (x1-x0); };
-  var yOf = function(VV){ return yBot - (VV - V0) / (0 - V0) * (yBot-yTop); };
+  var yOf = function(VV){ return yBot - (VV - Vmin) / (0 - Vmin) * (yBot-yTop); };
 
   ctx.strokeStyle = 'rgba(146,182,255,.20)'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(x0, yTop); ctx.lineTo(x0, yBot); ctx.lineTo(x1, yBot); ctx.stroke();
+
+  // 无穷远处势能为 0 的参考线
+  ctx.setLineDash([2,4]); ctx.strokeStyle = 'rgba(200,215,245,.28)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, yOf(0)); ctx.lineTo(x1, yOf(0)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#8a98c0'; ctx.font = '9px ui-monospace,monospace';
+  ctx.fillText('V=0（r→∞）', x0 + 8, yTop - 4);
 
   // 壳内区域
   ctx.fillStyle = 'rgba(127,224,255,.06)';
   ctx.fillRect(x0, yTop, qOf(1)-x0, yBot-yTop);
 
+  // 球壳
   ctx.beginPath();
   for (var i = 0; i <= 180; i++) {
     var qq = (i/180) * maxQ;
@@ -874,29 +870,56 @@ function drawShell(ctx) {
   }
   ctx.strokeStyle = '#7fe0ff'; ctx.lineWidth = 2; ctx.stroke();
 
+  // 实心球（虚线对比）
+  ctx.beginPath();
+  for (var j = 0; j <= 180; j++) {
+    var qj = (j/180) * maxQ;
+    var Vj = solidV(qj*P.R, P.M, P.R);
+    var xj = qOf(qj), yj = yOf(Vj);
+    if (j === 0) ctx.moveTo(xj, yj); else ctx.lineTo(xj, yj);
+  }
+  ctx.setLineDash([5,4]); ctx.strokeStyle = '#ffcf6b'; ctx.lineWidth = 1.6; ctx.stroke(); ctx.setLineDash([]);
+
   // r=R 参考线
   ctx.setLineDash([4,5]); ctx.strokeStyle = 'rgba(255,210,122,.65)'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(qOf(1), yTop); ctx.lineTo(qOf(1), yBot); ctx.stroke(); ctx.setLineDash([]);
 
-  // 质点当前位置
+  // 质点当前位置：球壳与实心球各一个标记
   var mx = qOf(q), my = yOf(V);
+  var mySolid = yOf(solidV(q*P.R, P.M, P.R));
   ctx.setLineDash([3,3]); ctx.strokeStyle = 'rgba(255,159,196,.45)';
   ctx.beginPath(); ctx.moveTo(mx, yTop); ctx.lineTo(mx, yBot); ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle = '#ff9fc4'; ctx.beginPath(); ctx.arc(mx, my, 5, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle = '#ffcf6b'; ctx.beginPath(); ctx.arc(mx, mySolid, 3.5, 0, 2*Math.PI); ctx.fill();
+  var ly1 = Math.min(my, mySolid) - 12;
+  var ly2 = Math.max(my, mySolid) + 18;
   ctx.fillStyle = '#ff9fc4'; ctx.font = '10px ui-monospace,monospace';
-  ctx.fillText('q=' + q.toFixed(2) + ', V=' + V.toFixed(3), Math.min(mx+8, x1-120), Math.max(my-10, yTop+12));
+  ctx.fillText('q=' + q.toFixed(2) + ', V_shell=' + V.toFixed(3), Math.min(mx+8, x1-150), Math.max(ly1, yTop+110));
+  ctx.fillStyle = '#ffcf6b';
+  ctx.fillText('V_solid=' + solidV(q*P.R, P.M, P.R).toFixed(3), Math.min(mx+8, x1-120), Math.min(ly2, yBot-4));
 
+  // 坐标轴与刻度：r，刻度 0/R/2R/3R
+  ctx.strokeStyle = 'rgba(146,182,255,.45)'; ctx.lineWidth = 1;
+  for (var tk = 0; tk <= 3; tk++) {
+    var tx = qOf(tk);
+    ctx.beginPath(); ctx.moveTo(tx, yBot); ctx.lineTo(tx, yBot + 5); ctx.stroke();
+  }
   ctx.fillStyle = '#e8eeff'; ctx.font = '11px ui-monospace,monospace';
   ctx.fillText('V(r)', x0 - 10, yTop - 10);
-  ctx.fillText('r/R', x1 - 18, yBot + 16);
+  ctx.fillText('r', x1 - 2, yBot + 32);
+  ctx.textAlign = 'center';
+  ctx.fillText('0', qOf(0), yBot + 17);
+  ctx.fillText('R', qOf(1), yBot + 17);
+  ctx.fillText('2R', qOf(2), yBot + 17);
+  ctx.fillText('3R', qOf(3), yBot + 17);
+  ctx.textAlign = 'left';
   ctx.fillText('r=R', qOf(1) + 5, yTop + 14);
   ctx.fillStyle = '#7fe0ff';
-  ctx.fillText('壳内 V=-GM/R（常数，g=0）', x0 + 10, yOf(V0) - 10);
-  ctx.fillStyle = '#ffd27a';
-  ctx.fillText('壳外 V=-GM/r', qOf(1) + 12, yTop + 34);
-  ctx.fillStyle = '#6d7ca4';
-  ctx.fillText('0', x0 - 4, yBot + 16);
-  ctx.textAlign = 'right'; ctx.fillText('3R', x1 - 2, yBot + 16); ctx.textAlign = 'left';
+  ctx.fillText('● 球壳', x0 + 10, yTop + 58);
+  ctx.fillStyle = '#ffcf6b';
+  ctx.fillText('● 实心球（虚线）', x0 + 10, yTop + 74);
+  ctx.fillStyle = '#8a98c0';
+  ctx.fillText('壳外均为 −GM/r → 0（r→∞）', x0 + 10, yTop + 90);
 }
 
 function draw() {
@@ -1011,11 +1034,17 @@ function runSelftest() {
     // ST5 shell outside
     var Voutside = shellV(2.0, 1.0, 1.0);
     T('ST5 shell outside V=-1/(2a)', Math.abs(Voutside - (-0.5)) < 1e-9, 'V=' + Voutside.toFixed(6));
+    // ST6 solid center V=-3/(2a)
+    var Vsolid0 = solidV(0, 1.0, 1.0);
+    T('ST6 solid center V=-3/(2a)', Math.abs(Vsolid0 - (-1.5)) < 1e-9, 'V=' + Vsolid0.toFixed(6));
+    // ST7 solid/shell continuity at r=a
+    var jump = Math.abs(solidV(1.0, 1.0, 1.0) - shellV(1.0, 1.0, 1.0));
+    T('ST7 solid/shell continuity', jump < 1e-12, 'jump=' + jump.toExponential(1));
   } catch(e) {
     T('ST-EXC', false, String(e));
   }
   restore();
-  return {passed: passN, failed: 4 - passN, details: details};
+  return {passed: passN, failed: 6 - passN, details: details};
 }
 
 // ==================== 8) 启动 ====================
@@ -1031,7 +1060,7 @@ if (qURL.selftest === '1') {
   var stEl = $('selftestPanel');
   stEl.hidden = false;
   stEl.className = rep.failed ? 'selftest fail' : 'selftest';
-  var txt = 'SELFTEST ' + rep.passed + '/4 PASS';
+  var txt = 'SELFTEST ' + rep.passed + '/6 PASS';
   for (var iB = 0; iB < rep.details.length; iB++) {
     var dB = rep.details[iB];
     txt += '\n[' + (dB.pass ? 'PASS' : 'FAIL') + '] ' + dB.name + ' : ' + dB.msg;

@@ -21,7 +21,9 @@
 
 圆盘角动量：L=½MR²ω。
 
-Newton 球壳：r<R 时 V=-GMm/R（常数），r>R 时 V=-GMm/r。
+取无穷远处势能为 0。Newton 球壳：r<R 时 V=-GMm/R（常数），r>R 时 V=-GMm/r。
+
+实心球对比：r<R 时 V=-GMm(3-r²/R²)/(2R)，r>R 时 V=-GMm/r；两者在 r=R 处连续，壳外相同。
 
 ## 参数说明
 
@@ -42,7 +44,7 @@ Newton 球壳：r<R 时 V=-GMm/R（常数），r>R 时 V=-GMm/r。
 ## 验收
 
 - `check_html.py`：6/6 通过。
-- 无头自测：`?selftest=1` 为 5/5 PASS。
+- 无头自测：`?selftest=1` 为 6/6 PASS。
 
 ## 已知限制
 
