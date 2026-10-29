@@ -1005,10 +1005,8 @@ window.TM_MODULES = [
  function frame(now){
    var dt=Math.min(0.05,(now-last)/1000);
    last=now;
-   if(!reducedMotion){
-     updatePlanets(dt);
-     handleShot(now);
-   }
+   if(!state.paused) updatePlanets(dt);
+   if(!reducedMotion) handleShot(now);
    drawStarfield(now);
    drawOrbits(now,dt);
    requestAnimationFrame(frame);

@@ -629,16 +629,34 @@ function initTraj() {
   traj.push({x: sim.x, y: sim.y});
 }
 
+function captureSim() {
+  sim.x = 0; sim.y = 0; sim.vx = 0; sim.vy = 0;
+  sim.captured = true; sim.done = true; sim.running = false;
+  traj.push({x: 0, y: 0});
+  if (traj.length > trailMax) traj.shift();
+}
 function stepTraj() {
   if (!sim.running || sim.done) return;
   var dt = 0.02 * P.speed;
-  var steps = 4;
+  var r0 = Math.sqrt(sim.x*sim.x + sim.y*sim.y);
+  var bc = bcFormula(P.k, P.E);
+  var willCap = (P.mode === 'capture' && P.b < bc - 1e-9);
+  var steps = r0 < 0.8 ? 64 : (r0 < 2.5 ? 20 : 4);
   var h = dt / steps;
   for (var i = 0; i < steps; i++) {
     var s = rk4Step(sim.x, sim.y, sim.vx, sim.vy, h);
     sim.x = s.x; sim.y = s.y; sim.vx = s.vx; sim.vy = s.vy;
     var r = Math.sqrt(sim.x*sim.x + sim.y*sim.y);
-    if (r < 0.05) { sim.done = true; sim.captured = (P.mode === 'capture'); sim.running = false; break; }
+    var vr = (sim.x*sim.vx + sim.y*sim.vy) / (r || 1);
+    // 解析俘获域内的数值兜底：接近中心，或已经转向外逃，立即吸附
+    if (willCap && (r < 0.18 || (r < 0.6 && vr > 0))) { captureSim(); break; }
+    if (r < 0.05) {
+      if (P.mode === 'capture') captureSim();
+      else { sim.done = true; sim.running = false; }
+      break;
+    }
+    var sp = Math.sqrt(sim.vx*sim.vx + sim.vy*sim.vy);
+    if (P.mode === 'capture' && sp > 80) { captureSim(); break; }
     if (sim.x > 15) { sim.done = true; sim.running = false; break; }
     traj.push({x: sim.x, y: sim.y});
     if (traj.length > trailMax) traj.shift();
@@ -672,6 +690,14 @@ function draw() {
       if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
     ctx.stroke(); ctx.lineWidth = 1;
+  }
+  if (sim.captured) {
+    var pulse = 1 + 0.15 * Math.sin(performance.now() * 0.006);
+    ctx.strokeStyle = 'rgba(255,123,123,.85)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, 12*pulse, 0, 2*Math.PI); ctx.stroke();
+    ctx.fillStyle = '#ff9d9d'; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('已俘获（b<b_c）', cx + 16, cy - 14);
+    ctx.lineWidth = 1;
   }
   // Draw particle
   if (traj.length > 0) {
@@ -710,7 +736,7 @@ function updateHUD(){
     hudTheta.textContent = (theta/Math.PI*180).toFixed(1) + '°';
     hudBc.textContent = '-';
     hudSigma.textContent = '无有限截面（k/r² 是长程力：再远的粒子也会被偏转）';
-    if (sim.captured) hudState.textContent = '被捕获 (r→0)';
+    if (sim.captured) hudState.textContent = '已俘获（b<b_c，r→0）';
     else hudState.textContent = sim.done ? '已出射' : '积分中';
   } else {
     var bc = bcFormula(P.k, P.E);

@@ -191,3 +191,28 @@ python3 tools/layout_qa.py
 
 ## 离线 AI
 - 49 条常见问题直答 + 63 段讲义原文 + 12 术语；同义词扩展与 LaTeX 清洗；`file://` 下自动连本机 `127.0.0.1:8765`。
+
+---
+
+# 第五轮：reduced-motion 修复 + M2 俘获判定
+
+## 首页：轨道运动不再被 prefers-reduced-motion 一刀切
+- 原代码：`if(!reducedMotion){ updatePlanets(dt); handleShot(now); }`，Windows 关闭“动画效果”时整页只剩静态星图。
+- 现改为：
+  ```js
+  if(!state.paused) updatePlanets(dt);   // 轨道是内容，始终推进
+  if(!reducedMotion) handleShot(now);    // 只把流星等装饰留给系统设置
+  ```
+- `updatePlanets` 内部仍有 `if(state.paused) return;`，并单独用 `reducedMotion` 关闭轨道进动；暂停按钮仍生效。
+- 验证：`--force-prefers-reduced-motion` 下 `matchMedia` 为 true，1.2s 与 3.5s 截图**不同** → 行星确实在动。
+
+## M2：吸引势下的俘获判定
+- 现象：`-α/r⁴` 吸引势下，b<b_c 的粒子在中心附近被 1/r⁶ 力加速，数值上可能一步跳过中心后被甩出。
+- 修复：
+  - 解析判定 `willCap = (mode==='capture' && b < b_c)`；
+  - 近中心自适应子步进（r<0.8 用 64 子步，r<2.5 用 20 子步）；
+  - 俘获吸附：`r<0.18` 或 `(r<0.6 且径向速度向外)` 或速度 >80 → `captureSim()`，位置钳到中心、速度清零、停止积分；
+  - 画布显示红色俘获环与“已俘获（b<b_c）”，HUD 同步。
+- 确定性验证（直接调用 800 次 `stepTraj()`）：
+  - b=0.5、b=1.2（< b_c=1.414）→ `captured=true, x=0, y=0`；
+  - b=1.6（> b_c）→ `captured=false`，正常出射。
