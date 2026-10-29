@@ -453,7 +453,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>刚体几何与角动量</h1>
       <p>球冠质心、甲虫转环、球壳势能</p>
-      <p class="intro">刚体的怪事：甲虫绕环走一圈，身体只转了 180°；均匀球壳内部的引力恰好为零。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。</p>
+      <p class="intro">刚体的怪事：甲虫绕环走一圈，身体只转了 180°；均匀球壳内部的引力恰好为零。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。球壳模式可直接拖动左侧质点。</p>
     </div>
     <div class="hud">
       <span>模式 <b id="hudMode">-</b></span>
@@ -581,19 +581,43 @@ function resize(){
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 window.addEventListener('resize', resize);
+var shellPoint = {q:0.5, angle:0.6};
+var shellDragging = false;
+function shellGeom(){
+  return {cx: W*0.20, cy: H*0.52, sc: Math.min(W*0.085, H*0.18)};
+}
+function shellPick(e){
+  var rect=cv.getBoundingClientRect();
+  var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  var g=shellGeom();
+  var dx=mx-g.cx, dy=my-g.cy;
+  shellPoint.q=Math.max(0, Math.min(3, Math.sqrt(dx*dx+dy*dy)/g.sc));
+  shellPoint.angle=Math.atan2(dy,dx);
+  updateHUD();
+}
 cv.style.cursor = 'grab';
 cv.addEventListener('pointerdown', function (e) {
+  var rect=cv.getBoundingClientRect();
+  var mx=e.clientX-rect.left;
+  if (P.mode === 'shell' && mx < W*0.50) {
+    shellDragging = true;
+    shellPick(e);
+    cv.style.cursor = 'grabbing';
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    return;
+  }
   view.dragging = true; view.auto = false; view.lx = e.clientX; view.ly = e.clientY;
   cv.style.cursor = 'grabbing';
   try { cv.setPointerCapture(e.pointerId); } catch (err) {}
 });
 cv.addEventListener('pointermove', function (e) {
+  if (shellDragging) { shellPick(e); return; }
   if (!view.dragging) return;
   view.yaw += (e.clientX - view.lx) * 0.008;
   view.pitch = Math.max(-1.15, Math.min(1.15, view.pitch + (e.clientY - view.ly) * 0.008));
   view.lx = e.clientX; view.ly = e.clientY;
 });
-function endDrag() { if (!view.dragging) return; view.dragging = false; view.auto = true; view.resume = performance.now() + 3500; cv.style.cursor = 'grab'; }
+function endDrag() { if (shellDragging) { shellDragging = false; cv.style.cursor = 'grab'; return; } if (!view.dragging) return; view.dragging = false; view.auto = true; view.resume = performance.now() + 3500; cv.style.cursor = 'grab'; }
 cv.addEventListener('pointerup', endDrag);
 cv.addEventListener('pointercancel', endDrag);
 
@@ -682,26 +706,26 @@ function drawCap(ctx, cx, cy, sc) {
 }
 function drawBeetle(ctx, cx, cy, sc) {
   var R = Math.min(W, H) * 0.14 * P.R;
-  var ba = beetle.angle / 2;
-  var ra = ringRotation();
+  var ba = beetle.angle / 2;          // 甲虫相对环心角
+  var ra = ringRotation();            // 环的参考标记角
+  var comX = cx, comY = cy;           // 系统质心固定
+  var nx = Math.cos(ba), ny = Math.sin(ba);
+  // 等质量环+甲虫：系统质心在中心，环心偏移 R/2，甲虫在质心另一侧 R/2
+  var ringX = comX - (R/2) * nx, ringY = comY - (R/2) * ny;
+  var beetleX = ringX + R * nx, beetleY = ringY + R * ny;
+  var refX = ringX + Math.cos(ra) * R, refY = ringY + Math.sin(ra) * R;
 
+  // 环本体（环心随甲虫绕质心偏移）
   ctx.strokeStyle = 'rgba(127,224,255,.9)'; ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2*Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ringX, ringY, R, 0, 2*Math.PI); ctx.stroke();
 
-  ctx.save();
-  ctx.setLineDash([3, 5]); ctx.lineWidth = 1.2;
-  ctx.strokeStyle = 'rgba(127,224,255,.35)';
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI); ctx.stroke();
-  ctx.strokeStyle = 'rgba(255,210,122,.35)';
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, -Math.PI, true); ctx.stroke();
-  ctx.restore();
-
+  // 甲虫路径：绕固定质心，半径 R/2
   if (beetle.trail.length > 1) {
     ctx.lineWidth = 2.4;
     for (var i = 1; i < beetle.trail.length; i++) {
       var ta = beetle.trail[i - 1] / 2, tb = beetle.trail[i] / 2;
-      var x1 = cx + Math.cos(ta) * R, y1 = cy + Math.sin(ta) * R;
-      var x2 = cx + Math.cos(tb) * R, y2 = cy + Math.sin(tb) * R;
+      var x1 = comX + Math.cos(ta) * R/2, y1 = comY + Math.sin(ta) * R/2;
+      var x2 = comX + Math.cos(tb) * R/2, y2 = comY + Math.sin(tb) * R/2;
       ctx.globalAlpha = (i / beetle.trail.length) * 0.55;
       ctx.strokeStyle = '#7fe0ff';
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
@@ -709,20 +733,33 @@ function drawBeetle(ctx, cx, cy, sc) {
     ctx.globalAlpha = 1;
   }
 
-  var rx = cx + Math.cos(ra) * R, ry = cy + Math.sin(ra) * R;
-  ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(cx + Math.cos(ra) * (R + 14), cy + Math.sin(ra) * (R + 14)); ctx.stroke();
+  // 环参考点路径：环心绕质心 + 环自转
+  if (beetle.trail.length > 1) {
+    ctx.strokeStyle = 'rgba(255,210,122,.38)'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (var j = 0; j < beetle.trail.length; j++) {
+      var aa = beetle.trail[j], bb = aa / 2, rr = -aa / 2;
+      var cxi = comX - (R/2) * Math.cos(bb), cyi = comY - (R/2) * Math.sin(bb);
+      var pxi = cxi + Math.cos(rr) * R, pyi = cyi + Math.sin(rr) * R;
+      if (j === 0) ctx.moveTo(pxi, pyi); else ctx.lineTo(pxi, pyi);
+    }
+    ctx.stroke();
+  }
 
-  var bx = cx + Math.cos(ba) * R, by = cy + Math.sin(ba) * R;
-  var tangent = {x: -Math.sin(ba), y: Math.cos(ba)};
-  ball(ctx, bx, by, 10, '#7fe0ff', true);
-  var head = {x: bx + tangent.x * 10, y: by + tangent.y * 10};
+  // 环参考标记
+  ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(refX, refY); ctx.lineTo(refX + Math.cos(ra) * 16, refY + Math.sin(ra) * 16); ctx.stroke();
+
+  // 甲虫（在环上）
+  var tangent = {x:-ny, y:nx};
+  ball(ctx, beetleX, beetleY, 10, '#7fe0ff', true);
+  var head = {x:beetleX + tangent.x * 10, y:beetleY + tangent.y * 10};
   ball(ctx, head.x, head.y, 5, '#c9b8ff', false);
   ctx.strokeStyle = 'rgba(201,184,255,.9)'; ctx.lineWidth = 1.2;
   ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(head.x + tangent.x * 8 - 3, head.y + tangent.y * 8 - 3); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(head.x + tangent.x * 8 + 3, head.y + tangent.y * 8 + 3); ctx.stroke();
 
-  var comX = cx + Math.cos(ba) * R / 2, comY = cy + Math.sin(ba) * R / 2;
+  // 系统质心固定
   ctx.strokeStyle = '#ff9fc4'; ctx.lineWidth = 1.2;
   ctx.beginPath();
   ctx.moveTo(comX - 7, comY); ctx.lineTo(comX + 7, comY);
@@ -730,18 +767,98 @@ function drawBeetle(ctx, cx, cy, sc) {
   ctx.stroke();
   ball(ctx, comX, comY, 6, '#ff9fc4', true);
   ctx.fillStyle = '#ff9fc4'; ctx.font = '11px ui-monospace,monospace';
-  ctx.fillText('质心', comX + 9, comY - 8);
+  ctx.fillText('系统质心（固定）', comX + 9, comY + 18);
+
+  // 环心小标记
+  ctx.fillStyle = 'rgba(127,224,255,.75)';
+  ctx.beginPath(); ctx.arc(ringX, ringY, 3, 0, 2*Math.PI); ctx.fill();
 
   ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
   ctx.fillText('甲虫 θ = ' + (beetle.angle * 180 / Math.PI).toFixed(1) + '°', W - 250, 30);
   ctx.fillText('圆环 = ' + (ra * 180 / Math.PI).toFixed(1) + '°', W - 250, 50);
   ctx.fillStyle = '#7fe3a0';
-  ctx.fillText('爬完一圈：环转 180°', W - 250, 70);
+  ctx.fillText('爬完一圈：环转 180°；系统质心不动', W - 250, 70);
   ctx.font = '11px ui-monospace,monospace';
-  ctx.fillStyle = '#7fe0ff'; ctx.fillText('● 甲虫路线', W - 250, 92);
+  ctx.fillStyle = '#7fe0ff'; ctx.fillText('● 甲虫路线（绕质心）', W - 250, 92);
   ctx.fillStyle = '#ffd27a'; ctx.fillText('● 圆环参考点路线', W - 250, 110);
-  ctx.fillStyle = '#ff9fc4'; ctx.fillText('✚ 质心', W - 250, 128);
+  ctx.fillStyle = '#ff9fc4'; ctx.fillText('✚ 系统质心（固定）', W - 250, 128);
   ctx.fillStyle = '#6d7ca4'; ctx.fillText('圆环半径 R = ' + P.R.toFixed(2), W - 250, 146);
+}
+
+function drawShell(ctx) {
+  var g = shellGeom();
+  var cx = g.cx, cy = g.cy, sc = g.sc;
+  var q = shellPoint.q, ang = shellPoint.angle;
+  var px = cx + Math.cos(ang) * q * sc;
+  var py = cy + Math.sin(ang) * q * sc;
+  var r = q * P.R;
+  var V = shellV(r, P.M, P.R);
+
+  // 三维球壳建模：玻璃球 + 经纬网格
+  drawGlassSphere(ctx, cx, cy, sc);
+  drawMesh(ctx, cx, cy, sc);
+
+  // 质点到球心的半径线 + 球壳表面标记
+  ctx.setLineDash([3, 4]); ctx.strokeStyle = 'rgba(255,210,122,.55)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke(); ctx.setLineDash([]);
+  var sx = cx + Math.cos(ang) * sc, sy = cy + Math.sin(ang) * sc;
+  ctx.fillStyle = 'rgba(255,210,122,.85)';
+  ctx.beginPath(); ctx.arc(sx, sy, 2.6, 0, 2*Math.PI); ctx.fill();
+
+  // 质点
+  ball(ctx, px, py, 8, '#ff9fc4', true);
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('球壳', cx - sc, cy - sc - 14);
+  ctx.fillStyle = '#ff9fc4'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillText('拖动质点', px + 12, py - 8);
+  ctx.fillStyle = '#6d7ca4'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('q = r/R = ' + q.toFixed(2), cx - sc, cy + sc + 18);
+
+  // 右侧势能曲线
+  var x0 = W*0.52, x1 = W*0.94, yTop = H*0.20, yBot = H*0.78;
+  var maxQ = 3, V0 = -P.M / P.R;
+  var qOf = function(qq){ return x0 + (qq/maxQ) * (x1-x0); };
+  var yOf = function(VV){ return yBot - (VV - V0) / (0 - V0) * (yBot-yTop); };
+
+  ctx.strokeStyle = 'rgba(146,182,255,.20)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, yTop); ctx.lineTo(x0, yBot); ctx.lineTo(x1, yBot); ctx.stroke();
+
+  // 壳内区域
+  ctx.fillStyle = 'rgba(127,224,255,.06)';
+  ctx.fillRect(x0, yTop, qOf(1)-x0, yBot-yTop);
+
+  ctx.beginPath();
+  for (var i = 0; i <= 180; i++) {
+    var qq = (i/180) * maxQ;
+    var VV = shellV(qq*P.R, P.M, P.R);
+    var xx = qOf(qq), yy = yOf(VV);
+    if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+  }
+  ctx.strokeStyle = '#7fe0ff'; ctx.lineWidth = 2; ctx.stroke();
+
+  // r=R 参考线
+  ctx.setLineDash([4,5]); ctx.strokeStyle = 'rgba(255,210,122,.65)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(qOf(1), yTop); ctx.lineTo(qOf(1), yBot); ctx.stroke(); ctx.setLineDash([]);
+
+  // 质点当前位置
+  var mx = qOf(q), my = yOf(V);
+  ctx.setLineDash([3,3]); ctx.strokeStyle = 'rgba(255,159,196,.45)';
+  ctx.beginPath(); ctx.moveTo(mx, yTop); ctx.lineTo(mx, yBot); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#ff9fc4'; ctx.beginPath(); ctx.arc(mx, my, 5, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle = '#ff9fc4'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('q=' + q.toFixed(2) + ', V=' + V.toFixed(3), Math.min(mx+8, x1-120), Math.max(my-10, yTop+12));
+
+  ctx.fillStyle = '#e8eeff'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillText('V(r)', x0 - 10, yTop - 10);
+  ctx.fillText('r/R', x1 - 18, yBot + 16);
+  ctx.fillText('r=R', qOf(1) + 5, yTop + 14);
+  ctx.fillStyle = '#7fe0ff';
+  ctx.fillText('壳内 V=-GM/R（常数，g=0）', x0 + 10, yOf(V0) - 10);
+  ctx.fillStyle = '#ffd27a';
+  ctx.fillText('壳外 V=-GM/r', qOf(1) + 12, yTop + 34);
+  ctx.fillStyle = '#6d7ca4';
+  ctx.fillText('0', x0 - 4, yBot + 16);
+  ctx.textAlign = 'right'; ctx.fillText('3R', x1 - 2, yBot + 16); ctx.textAlign = 'left';
 }
 
 function draw() {
@@ -755,47 +872,7 @@ function draw() {
   } else if (P.mode === 'beetle') {
     drawBeetle(ctx, cx, cy, sc);
   } else {
-    var maxR = 3 * P.R;
-    var V0 = -P.M / P.R;
-    var x0 = 56, x1 = W - 34;
-    var yTop = H * 0.22, yBot = H * 0.78;
-    var xOf = function (r) { return x0 + (r / maxR) * (x1 - x0); };
-    var yOf = function (V) { return yBot - (V - V0) / (0 - V0) * (yBot - yTop); };
-
-    ctx.strokeStyle = 'rgba(146,182,255,.20)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(x0, yTop); ctx.lineTo(x0, yBot); ctx.lineTo(x1, yBot); ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(x0, yBot);
-    for (var i = 0; i <= 160; i++) {
-      var r = (i / 160) * maxR;
-      ctx.lineTo(xOf(r), yOf(shellV(r, P.M, P.R)));
-    }
-    ctx.lineTo(x1, yBot); ctx.closePath();
-    ctx.fillStyle = 'rgba(127,224,255,.07)'; ctx.fill();
-
-    ctx.beginPath();
-    for (var i = 0; i <= 160; i++) {
-      var r = (i / 160) * maxR;
-      var px = xOf(r), py = yOf(shellV(r, P.M, P.R));
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
-    ctx.strokeStyle = '#7fe0ff'; ctx.lineWidth = 2; ctx.stroke();
-
-    ctx.setLineDash([4, 5]); ctx.strokeStyle = 'rgba(255,210,122,.65)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(xOf(P.R), yTop); ctx.lineTo(xOf(P.R), yBot); ctx.stroke();
-    ctx.setLineDash([]);
-
-    ctx.fillStyle = '#e8eeff'; ctx.font = '11px ui-monospace,monospace';
-    ctx.fillText('V(r)', x0 - 10, yTop - 10);
-    ctx.fillText('r', x1 - 8, yBot + 16);
-    ctx.fillText('r=R', xOf(P.R) + 5, yTop + 14);
-    ctx.fillStyle = '#7fe0ff';
-    ctx.fillText('壳内 V=−GM/R（常数，g=0）', x0 + 10, yOf(V0) - 10);
-    ctx.fillStyle = '#ffd27a';
-    ctx.fillText('壳外 V=−GM/r', xOf(P.R) + 12, yTop + 34);
-    ctx.fillStyle = '#6d7ca4';
-    ctx.fillText('r=0', x0 - 4, yBot + 16);
+    drawShell(ctx);
   }
 }
 
@@ -825,8 +902,9 @@ function updateHUD(){
   } else {
     hudD.textContent = '-';
     hudAngle.textContent = '-';
-    hudV.textContent = fmt(shellV(0.5, P.M, P.R), 4);
-    hudState.textContent = '壳内';
+    var rq = shellPoint.q * P.R;
+    hudV.textContent = fmt(shellV(rq, P.M, P.R), 4);
+    hudState.textContent = (shellPoint.q < 1 ? '壳内（g=0）' : '壳外') + ' · r/R=' + shellPoint.q.toFixed(2);
   }
 }
 
@@ -851,7 +929,7 @@ function bindControls() {
   $('param-h').addEventListener('input', syncHRange);
   syncHRange();
   bindSlider('param-M', 'M', 'val-M', function(v){ return v.toFixed(2); });
-  $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.h=DEFAULTS.h; P.M=DEFAULTS.M; syncSliders(); syncURL(); });
+  $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.h=DEFAULTS.h; P.M=DEFAULTS.M; shellPoint.q=0.5; shellPoint.angle=0.6; syncSliders(); syncURL(); updateHUD(); });
 }
 function syncBeetleControls() {
   var gh = document.getElementById('group-h');
