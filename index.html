@@ -1356,6 +1356,9 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
         var a = parseArg();
         return '<span class="tex-sqrt-wrap">√<span class="tex-sqrt">' + a + '</span></span>';
       }
+      if (cmd === 'sin' || cmd === 'cos' || cmd === 'tan' || cmd === 'cot' || cmd === 'sec' || cmd === 'csc' || cmd === 'arcsin' || cmd === 'arccos' || cmd === 'arctan' || cmd === 'ln' || cmd === 'log' || cmd === 'exp' || cmd === 'max' || cmd === 'min' || cmd === 'lim' || cmd === 'det') {
+        return '<span class="tex-text">' + cmd + '</span> ';
+      }
       if (cmd === 'text' || cmd === 'mathrm' || cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm' || cmd === 'mathit' || cmd === 'mathsf' || cmd === 'operatorname' || cmd === 'mathbb' || cmd === 'mathcal' || cmd === 'mathfrak') {
         var a = parseArg();
         var cls = (cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm') ? 'tex-b' : (cmd === 'mathit' ? 'tex-i' : 'tex-text');
@@ -1568,6 +1571,13 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
     var GREET = {你好:1, 您好:1, 哈喽:1, 嗨:1, hi:1, hello:1, hey:1, 在吗:1, 在不在:1, 老师好:1, 同学好:1};
     if (GREET[q]) {
       return {answer: '你好同学，有什么问题？', sources: [], label: '问候'};
+    }
+    var VAGUE = {方程:1, 公式:1, 定理:1, 物理:1, 力学:1, 理论力学:1, 怎么做:1, 怎么学:1, 是什么:1, 为什么:1, 讲讲:1, 介绍一下:1, 总结:1, 重点:1};
+    if (VAGUE[q] && KB) {
+      var menu = '你问得有点宽，想具体看哪一章？\n' + KB.modules.map(function (m) { return m.m + ' ' + m.title; }).join(' · ') + '\n可以直接问“M4 的拉格朗日方程是什么”。';
+      return {answer: menu, sources: KB.modules.map(function (m) {
+        return {milestone: m.m, title: m.title, section: m.title, href: m.href, pdf: m.pdf};
+      }), label: '章节索引'};
     }
     if (!KB) {
       var mods0 = getModules();

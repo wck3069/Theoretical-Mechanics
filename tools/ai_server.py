@@ -90,6 +90,7 @@ SYSTEM_PROMPT = (
     "8) 公式只用简单 LaTeX：$...$、\\frac{}{}、\\sqrt{}、_{} ^{}、希腊字母；不要用 \\begin{aligned}、\\begin{cases}、\\left、\\right、\\mathbb、\\mathcal、\\tag。\n"
     "9) 若历史中已出现过“同学请认真学习”或“你的胆子真是肥嘟嘟的”，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
     "10) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
+    "11) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；用一句话列出 9 章并问用户想看哪一章。若已指定章节，直接答该章。\n"
     "示例：\n"
     "用户：请详细推导有效势稳定性的完整过程\n"
     "助手：直觉：稳定由 V_eff''(r0)>0 决定。详见 [M1] 的 note.pdf。\n"
@@ -111,8 +112,34 @@ REVIEW_PROMPT = (
     "6) 公式只用简单 LaTeX（$...$、\\frac、\\sqrt、上下标、希腊字母）；不要用 aligned/cases/left/right。\n"
     "7) 若历史中已有无关问题提醒，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
     "8) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
+    "9) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；列出 9 章并问用户想看哪一章；已指定章节则直接答该章。\n"
     "只输出最终中文回答。"
 )
+
+VAGUE_RE = re.compile(
+    r"^\s*(方程|公式|定理|物理|力学|理论力学|怎么做|怎么学|是什么|为什么|讲讲|介绍一下|总结|重点)[\s!！。,.，?？~～]*$",
+    re.IGNORECASE,
+)
+
+
+MODULE_EQUATIONS = {
+    "M0": "$u''+u=C+\\lambda u^2+\\mu u^3$（$u=1/r$）",
+    "M1": "$V_{\\mathrm{eff}}=V(r)+L^2/(2mr^2)$，圆轨道 $V_{\\mathrm{eff}}'(r_0)=0$",
+    "M2": "散射角 $\\Theta(b)$，俘获截面 $\\sigma=\\pi b_c^2$",
+    "M3": "$P^2=4\\pi^2a^3/[G(M_1+M_2)]$，$K=\\frac{M_2}{M_1+M_2}\\frac{2\\pi a}{P\\sqrt{1-e^2}}\\sin i$",
+    "M4": "$\\frac{d}{dt}\\frac{\\partial L}{\\partial \\dot q}-\\frac{\\partial L}{\\partial q}=0$",
+    "M5": "$\\delta W=0$，$\\tan\\theta_{min}=1/(2\\mu)$",
+    "M6": "$e=\\frac{v_2'-v_1'}{v_1-v_2}$，$\\beta=\\arctan(2\\tan\\alpha)-\\alpha$",
+    "M7": "$I=\\sum mr^2$，$L=I\\omega$",
+    "M8": "$a_t=\\dot v$，$a_n=v^2/r$；$\\ddot\\theta=-(g/L)\\sin\\theta$",
+}
+
+
+def chapter_menu() -> str:
+    parts = ["%s %s" % (m.get("milestone"), m.get("title")) for m in MODULES]
+    return ("你问得有点宽，想具体看哪一章？\n" + " · ".join(parts)
+            + "\n可以直接问“M4 的拉格朗日方程是什么”。")
+
 
 GREETING_RE = re.compile(
     r"^\s*(你好|您好|哈喽|嗨|hi|hello|hey|在吗|在不在|老师好|同学好)[\s!！。,.，?？~～]*$",
@@ -700,6 +727,24 @@ class Handler(BaseHTTPRequestHandler):
         if GREETING_RE.match(question):
             self._send_json(200, {
                 "answer": "你好同学，有什么问题？", "sources": [], "mode": mode,
+                "model": "rule", "pipeline": "rule", "reviewed": True,
+                "draft_ms": 0, "ms": 0, "upstream": True,
+            })
+            return 200
+
+        if VAGUE_RE.match(question):
+            if module:
+                ms = module.get("milestone")
+                answer = "你在 %s · %s。主要方程：%s。详见 %s 的 note.pdf。" % (
+                    ms, module.get("title"), MODULE_EQUATIONS.get(ms, ""), ms)
+                menu_sources = [module_source(ms)]
+                menu_sources = [x for x in menu_sources if x]
+            else:
+                answer = chapter_menu()
+                menu_sources = [module_source(m.get("milestone")) for m in MODULES[:5]]
+                menu_sources = [x for x in menu_sources if x]
+            self._send_json(200, {
+                "answer": answer, "sources": menu_sources, "mode": mode,
                 "model": "rule", "pipeline": "rule", "reviewed": True,
                 "draft_ms": 0, "ms": 0, "upstream": True,
             })

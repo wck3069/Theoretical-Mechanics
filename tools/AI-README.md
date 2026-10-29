@@ -191,3 +191,8 @@ Windows 部署见 `deploy/windows.md`（`tools/serve.ps1`）。
 ## 离线 KB 清洗
 
 `tools/build_offline_kb.py` 会把 `.tex` 文段清洗成可读文本（去 label/ref/begin/end/item，解包 boldsymbol/vec/dot/text，符号表，裸 sub:/sec:），离线检索不再显示原始 LaTeX。
+
+## 泛词问题
+
+- 首页问“方程/公式/定理/物理/力学/总结…”：返回 9 章索引，请用户选章。
+- 在某章页面问这些词：直接给该章主要方程 + `note.pdf`，0ms，不猜章节。
