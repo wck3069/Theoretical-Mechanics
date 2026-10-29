@@ -275,3 +275,13 @@ python3 tools/layout_qa.py
 - `formatInline` 先做 HTML 转义，再解析公式；避免模型输出 HTML 注入。
 - 服务端 system/review prompt 限制为简单 LaTeX（禁用 aligned/cases/left/right/mathbb/tag），减少渲染器覆盖不到的情况。
 - 视觉模型确认：7 组公式全部正确排版，无 `\frac`/`\sqrt`/`\omega` 原文残留。
+
+---
+
+# 第九轮：连续无关问题的升级回复
+
+- 服务端从 `history` 统计之前的无关问题提醒（“同学请认真学习”/“你的胆子真是肥嘟嘟的”）。
+- 第一次非物理：`同学请认真学习。`
+- 再次非物理：`你的胆子真是肥嘟嘟的，快回去学习。`
+- 物理问题不受影响；升级回复不带来源卡片；面板自动携带最近 6 条 history。
+- 实测：first→同学请认真学习；second（带 history）→你的胆子真是肥嘟嘟的，快回去学习；随后物理问题→正常 M1 短答。
