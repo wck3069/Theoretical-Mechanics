@@ -590,7 +590,7 @@ function initSim() {
   var nPts = 200;
   for (var i = 0; i <= nPts; i++) {
     var th = 2 * Math.PI * i / nPts;
-    traj1.push({x: -r1 * Math.cos(th), y: r1 * Math.sin(th)});
+    traj1.push({x: -r1 * Math.cos(th), y: -r1 * Math.sin(th)});
     traj2.push({x: r2 * Math.cos(th), y: r2 * Math.sin(th)});
   }
 }
@@ -603,7 +603,7 @@ function stepSim() {
   var phase = w * t;
   var r1 = comR1();
   var r2 = P.a - r1;
-  var sx = -r1 * Math.cos(phase), sy = r1 * Math.sin(phase);
+  var sx = -r1 * Math.cos(phase), sy = -r1 * Math.sin(phase);
   var px = r2 * Math.cos(phase), py = r2 * Math.sin(phase);
   // radial velocity of star (edge-on): v_r = v1 * sin(phase) (if viewing along y-axis? use x-component)
   var rv = v1() * Math.sin(phase);
@@ -660,7 +660,7 @@ function draw() {
   // current positions
   var phase = omega() * t;
   var r1 = comR1(), r2 = P.a - r1;
-  var sx = cx - r1 * Math.cos(phase) * sc, sy = cy - r1 * Math.sin(phase) * sc;
+  var sx = cx - r1 * Math.cos(phase) * sc, sy = cy + r1 * Math.sin(phase) * sc;
   var px = cx + r2 * Math.cos(phase) * sc, py = cy - r2 * Math.sin(phase) * sc;
   // barycenter line + r1/r2
   ctx.setLineDash([3, 5]);
@@ -714,7 +714,7 @@ function draw() {
   var phase = omega() * t;
   var r1 = comR1();
   var zsx = zcx - r1 * Math.cos(phase) * zsc;
-  var zsy = zcy - r1 * Math.sin(phase) * zsc;
+  var zsy = zcy + r1 * Math.sin(phase) * zsc;
   ctx.fillStyle = '#ffcf6b';
   ctx.shadowColor = 'rgba(255,207,107,.8)'; ctx.shadowBlur = 8;
   ctx.beginPath(); ctx.arc(zsx, zsy, 5, 0, 2*Math.PI); ctx.fill();
