@@ -185,7 +185,7 @@
   <button id="tmai-launcher" class="tmai-launcher" type="button" aria-expanded="false" aria-label="打开问星助教">
     <span class="tmai-launcher-glyph" aria-hidden="true">✦</span>
     <span class="tmai-launcher-short">问星</span>
-    <span class="tmai-launcher-full">✦ 问星 · 本地 AI 助教</span>
+    <span class="tmai-launcher-full">✦ 问星 · AI 助教</span>
   </button>
   <div id="tmai-panel" class="tmai-panel" role="dialog" aria-modal="false" aria-labelledby="tmai-title" hidden>
     <div class="tmai-header">
@@ -214,7 +214,7 @@
       <textarea id="tmai-input" rows="2" placeholder="输入问题…" aria-label="输入问题"></textarea>
       <button id="tmai-send" type="button" aria-label="发送">发送</button>
     </div>
-    <div class="tmai-footer">本地模型 · 问题不会离开这台机器<br>AI 可能出错，请以讲义推导（note.pdf）为准<br>离线模式：讲义原文检索 + 常见问题直答</div>
+    <div class="tmai-footer">校内 AI · 问题仅发送到学校模型服务<br>AI 可能出错，请以讲义推导（note.pdf）为准<br>离线模式：讲义原文检索 + 常见问题直答</div>
   </div>
 </div>
 <!-- TM-OFFLINE-KB -->
@@ -302,7 +302,7 @@
     }
     if (statusText) {
       if (state === 'checking') statusText.textContent = '检查中…';
-      else if (state === 'online') statusText.textContent = '本地模型在线 · ' + (modelName || 'model');
+      else if (state === 'online') statusText.textContent = 'AI 助教在线 · ' + (modelName || 'model');
       else if (state === 'offline') statusText.textContent = '离线 · 本地检索模式';
       else if (state === 'error') statusText.textContent = '连接错误';
     }
@@ -462,7 +462,7 @@
       top.forEach(function (x) {
         lines.push('**' + x.c.m + ' · ' + x.c.sec + '**\n' + pickSentences(x.c.t, q, 2));
       });
-      lines.push('（离线检索：讲义原文摘录；完整推理请连接本地模型或看 note.pdf）');
+      lines.push('（离线检索：讲义原文摘录；完整推理请连接 AI 服务或看 note.pdf）');
       return {answer: lines.join('\n\n'), sources: top.map(function (x) {
         return sourceFor(x.c.m, x.c.sec);
       }), label: '离线检索'};
@@ -471,7 +471,7 @@
     var mods = KB.modules.map(function (m) {
       return {m: m, sc: overlapScore(q, normText(m.title + ' ' + m.tags.join(' ') + ' ' + m.summary))};
     }).sort(function (a, b) { return b.sc - a.sc; }).slice(0, 2);
-    var fallback = ['离线模式只做讲义检索，没有理解到这个问题。换个更具体的关键词（如「有效势」「恢复系数」「Lorentz 力」「等时摆」），或连接本地模型获得完整推理。'];
+    var fallback = ['离线模式只做讲义检索，没有理解到这个问题。换个更具体的关键词（如「有效势」「恢复系数」「Lorentz 力」「等时摆」），或连接 AI 服务获得完整推理。'];
     if (mods.length && mods[0].sc > 0) {
       fallback.push('可以先看：' + mods.map(function (x) { return x.m.m + ' ' + x.m.title; }).join('；'));
     }

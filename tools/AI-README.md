@@ -1,4 +1,4 @@
-# 理论力学交互讲义 · 本地 AI 助手
+# 理论力学交互讲义 · AI 助教
 
 ## 启动
 
@@ -8,11 +8,40 @@ bash tools/serve.sh
 
 默认监听 `http://127.0.0.1:8765/`，同时提供静态站点与 `/api/ask`。
 
-## Strata 模式（默认）
+## SDU 校内 API（默认）
 
-Strata 在 `http://127.0.0.1:8080/v1` 提供 `qwen3.8-flash-next-iq3_s`，默认即可：
+服务端默认使用学校 OpenAI 兼容网关：
 
 ```bash
+TM_AI_BASE=https://xplt.sdu.edu.cn:4000/v1
+TM_AI_MODEL=SDU-AI/DeepSeek-V4-Flash
+TM_AI_EFFORT_FAST=minimal     # 快速：最低档
+TM_AI_EFFORT_DEEP=medium      # 深空：中等档
+```
+
+`TM_AI_KEY` 只放在本机 `~/.config/tm-ai.env`（chmod 600），由 `tools/serve.sh` 自动 source；
+**不要写进前端、`index.html` 或提交到仓库**。`tools/ai.env.example` 是占位模板。
+
+助教行为（system prompt 强制）：
+- 只答本站 9 章覆盖的物理问题；
+- 每次最多 3 句、120 字，不展开推导；
+- 要详细推导时只给一句直觉 + “详见 [M#] 的 note.pdf”；
+- 物理但不在本站范围 → “网站未收录这个问题。”；
+- 非物理问题 → “同学请认真学习。”。
+
+## 可选：本地 Strata / KVMem
+
+```bash
+# Strata
+TM_AI_BASE=http://127.0.0.1:8080/v1 \
+TM_AI_MODEL=qwen3.8-flash-next-iq3_s \
+TM_AI_KEY=strata-local \
+python3 tools/ai_server.py
+
+# KVMem 长上下文
+TM_AI_BASE=http://127.0.0.1:18200/v1 \
+TM_AI_MODEL=<kvmem-model> \
+TM_AI_TIMEOUT=300 \
 python3 tools/ai_server.py
 ```
 
@@ -41,9 +70,12 @@ python3 tools/ai_server.py
 
 模型不可达时 `/api/ask` 返回 HTTP 503 JSON：`{error:"upstream_offline", detail, fallback:"local-retrieval"}`，前端可退回到本地检索。
 
-## 隐私
+## 隐私与 key
 
-仅本地运行，请求仅发往 `127.0.0.1`，不上传任何数据。
+- 默认把问题发送到学校网关 `xplt.sdu.edu.cn:4000`；不再声称“只在 127.0.0.1”。
+- `TM_AI_KEY` 仅存在于服务端环境变量/`~/.config/tm-ai.env`；前端只调用同源 `/api/ask`，看不到 key。
+- **GitHub Pages 是纯静态站点，没有 key，也不会直接调用学校 API**；线上 AI 面板自动降级为离线检索。
+  若要在公网使用完整 AI，必须部署一个持有 key 的反向代理/Worker，并加鉴权与限流；不要把 key 放进公开前端。
 
 ## 学生怎么访问（三种方式）
 
@@ -57,7 +89,7 @@ bash tools/export_static.sh
 学生直接打开网址即可：9 章讲义、交互模拟、PDF、星图导航全部可用。
 此模式下方 AI 面板自动降级为**离线本地检索**（在 9 章元数据里按关键词找相关章节与 PDF），不需要任何服务器。
 
-### 方式二：教室局域网（要完整体验本地 AI）
+### 方式二：教室局域网（要完整体验校内 AI）
 
 老师在教室或实验室的一台机器上运行：
 

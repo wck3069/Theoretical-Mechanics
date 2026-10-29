@@ -12,3 +12,5 @@ __pycache__/
 *.fdb_latexmk
 *.xdv
 *.synctex.gz
+tools/ai.env
+.tm-ai.env
