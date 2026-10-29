@@ -335,9 +335,9 @@
         var a = parseArg();
         return '<span class="tex-sqrt-wrap">√<span class="tex-sqrt">' + a + '</span></span>';
       }
-      if (cmd === 'text' || cmd === 'mathrm' || cmd === 'mathbf' || cmd === 'mathit' || cmd === 'mathsf' || cmd === 'operatorname' || cmd === 'mathbb' || cmd === 'mathcal' || cmd === 'mathfrak') {
+      if (cmd === 'text' || cmd === 'mathrm' || cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm' || cmd === 'mathit' || cmd === 'mathsf' || cmd === 'operatorname' || cmd === 'mathbb' || cmd === 'mathcal' || cmd === 'mathfrak') {
         var a = parseArg();
-        var cls = cmd === 'mathbf' ? 'tex-b' : (cmd === 'mathit' ? 'tex-i' : 'tex-text');
+        var cls = (cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm') ? 'tex-b' : (cmd === 'mathit' ? 'tex-i' : 'tex-text');
         return '<span class="' + cls + '">' + a + '</span>';
       }
       if (cmd === 'vec' || cmd === 'dot' || cmd === 'ddot' || cmd === 'hat' || cmd === 'bar' || cmd === 'overline' || cmd === 'underline') {

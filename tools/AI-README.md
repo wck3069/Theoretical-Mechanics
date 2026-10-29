@@ -187,3 +187,7 @@ Windows 部署见 `deploy/windows.md`（`tools/serve.ps1`）。
 ```
 
 不调用模型、不计入无关问题；离线模式同样生效。
+
+## 离线 KB 清洗
+
+`tools/build_offline_kb.py` 会把 `.tex` 文段清洗成可读文本（去 label/ref/begin/end/item，解包 boldsymbol/vec/dot/text，符号表，裸 sub:/sec:），离线检索不再显示原始 LaTeX。

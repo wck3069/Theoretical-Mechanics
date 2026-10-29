@@ -131,28 +131,67 @@ GLOSSARY = [
     ("俘获截面", "σ=πb_c²：一张“有效靶面积”，入射粒子瞄准进来就必被势场俘获。", "M2"),
 ]
 
+TEX_SYMBOLS = {
+    "\\times": "×", "\\cdot": "·", "\\pm": "±", "\\mp": "∓",
+    "\\perp": "⊥", "\\parallel": "∥", "\\langle": "⟨", "\\rangle": "⟩",
+    "\\leq": "≤", "\\le": "≤", "\\geq": "≥", "\\ge": "≥",
+    "\\neq": "≠", "\\ne": "≠", "\\approx": "≈", "\\equiv": "≡",
+    "\\propto": "∝", "\\sim": "∼", "\\simeq": "≃", "\\cong": "≅",
+    "\\to": "→", "\\rightarrow": "→", "\\leftarrow": "←", "\\Rightarrow": "⇒",
+    "\\leftrightarrow": "↔", "\\mapsto": "↦", "\\infty": "∞",
+    "\\partial": "∂", "\\nabla": "∇", "\\int": "∫", "\\oint": "∮",
+    "\\sum": "∑", "\\prod": "∏", "\\angle": "∠", "\\in": "∈",
+    "\\notin": "∉", "\\subset": "⊂", "\\supset": "⊃", "\\cup": "∪",
+    "\\cap": "∩", "\\emptyset": "∅", "\\forall": "∀", "\\exists": "∃",
+    "\\ldots": "…", "\\cdots": "⋯", "\\ddots": "⋱", "\\circ": "∘",
+    "\\degree": "°", "\\prime": "′", "\\hbar": "ℏ", "\\ell": "ℓ",
+    "\\Re": "ℜ", "\\Im": "ℑ", "\\aleph": "ℵ", "\\therefore": "∴", "\\because": "∵",
+    "\\alpha": "α", "\\beta": "β", "\\gamma": "γ", "\\delta": "δ",
+    "\\epsilon": "ε", "\\varepsilon": "ϵ", "\\zeta": "ζ", "\\eta": "η",
+    "\\theta": "θ", "\\vartheta": "ϑ", "\\iota": "ι", "\\kappa": "κ",
+    "\\lambda": "λ", "\\mu": "μ", "\\nu": "ν", "\\xi": "ξ",
+    "\\pi": "π", "\\varpi": "ϖ", "\\rho": "ρ", "\\varrho": "ϱ",
+    "\\sigma": "σ", "\\varsigma": "ς", "\\tau": "τ", "\\upsilon": "υ",
+    "\\phi": "φ", "\\varphi": "ϕ", "\\chi": "χ", "\\psi": "ψ", "\\omega": "ω",
+    "\\Gamma": "Γ", "\\Delta": "Δ", "\\Theta": "Θ", "\\Lambda": "Λ",
+    "\\Xi": "Ξ", "\\Pi": "Π", "\\Sigma": "Σ", "\\Upsilon": "Υ",
+    "\\Phi": "Φ", "\\Psi": "Ψ", "\\Omega": "Ω",
+}
+
+ARG_COMMANDS = (
+    "boldsymbol|bm|mathbf|mathrm|text|textrm|textbf|emph|vec|hat|dot|ddot|"
+    "bar|overline|underline|mathcal|mathbb|mathfrak|operatorname|boxed"
+)
+
+
 def clean(text: str) -> str:
     text = text.replace("\\(", "$").replace("\\)", "$")
     text = text.replace("\\[", "$$").replace("\\]", "$$")
-    text = text.replace("\\dfrac", "\\frac")
+    text = re.sub(r"\\(?:label|ref|eqref|cite|autoref)\{[^}]*\}", "", text)
+    text = re.sub(r"\b(?:sub|sec|eq|fig|tab):[A-Za-z0-9_-]+", "", text)
+    text = re.sub(r"\\(?:begin|end)\{[^}]*\}", "", text)
+    text = re.sub(r"\\(?:section|subsection|subsubsection|paragraph|chapter)\*?\{([^{}]*)\}", r"\1", text)
+    text = text.replace("\\item", "• ")
+    text = text.replace("\\dfrac", "\\frac").replace("\\tfrac", "\\frac")
     text = re.sub(r"\\frac\{([^{}]*)\}\{([^{}]*)\}", r"(\1)/(\2)", text)
     text = re.sub(r"\\sqrt\{([^{}]*)\}", r"√(\1)", text)
-    text = re.sub(r"\\(?:mathrm|text|mathbf|vec|hat|bar|boxed)\{([^{}]*)\}", r"\1", text)
-    text = text.replace("\\left", "").replace("\\right", "")
-    text = re.sub(r"\\mathrm\s*([A-Za-z]+)", r"\1", text)
-    text = text.replace("\\propto", "∝")
-    for a, b in (("\\cdot", "·"), ("\\equiv", "≡"), ("\\approx", "≈"),
-                 ("\\rightarrow", "→"), ("\\times", "×"), ("\\pm", "±"),
-                 ("\\,", " "), ("\\;", " "), ("\\!", ""), ("\\quad", " ")):
+    text = re.sub(r"\\(" + ARG_COMMANDS + r")\{([^{}]*)\}", r"\2", text)
+    text = re.sub(r"\\(" + ARG_COMMANDS + r")\s+", "", text)
+    for a, b in TEX_SYMBOLS.items():
         text = text.replace(a, b)
-    text = re.sub(r"\\(?:label|eqref|ref)\{[^}]*\}", "", text)
-    text = re.sub(r"eq:[A-Za-z0-9_-]+", "", text)
-    text = text.replace("~", " ")
-    text = re.sub(r"\\[a-zA-Z]+\{([^{}]*)\}", r"\1", text)
+    for a, b in (("\\,", " "), ("\\;", " "), ("\\!", ""), ("\\ ", " "),
+                 ("\\quad", " "), ("\\qquad", " "), ("\\\\", " ")):
+        text = text.replace(a, b)
+    text = text.replace("\\left", "").replace("\\right", "")
+    for x in ("\\big", "\\Big", "\\bigg", "\\Bigg"):
+        text = text.replace(x, "")
+    text = text.replace("\\{", "{").replace("\\}", "}").replace("\\%", "%")
+    text = text.replace("\\_", "_").replace("\\&", "&").replace("\\#", "#")
+    text = re.sub(r"\\[a-zA-Z]+\*?", "", text)
+    text = text.replace("{", "").replace("}", "").replace("&", " ").replace("~", " ")
     text = text.replace("\\", "")
     text = re.sub(r"\s+", " ", text)
     return text.strip()
-
 
 def key_score(chunk: dict) -> float:
     t = chunk.get("text", "")
@@ -183,7 +222,8 @@ for m in KB["modules"]:
         if not text or text in seen:
             continue
         seen.add(text)
-        chunks.append({"m": m["milestone"], "sec": c.get("section", ""), "t": text})
+        sec = clean(c.get("section", "")) or c.get("section", "")
+        chunks.append({"m": m["milestone"], "sec": sec, "t": text})
 
 faq = [{"q": q, "a": a, "m": ms, "sec": sec} for q, a, ms, sec in FAQ]
 gloss = [{"t": t, "d": d, "m": ms} for t, d, ms in GLOSSARY]
