@@ -52,7 +52,33 @@ sudo cloudflared service install
 sudo systemctl enable --now cloudflared
 ```
 
-## 3. 加 Cloudflare Access（鉴权）
+
+## Basic Auth（已内置，最省事）
+
+服务端已支持 Basic Auth；在 `~/.config/tm-ai.env` 设置：
+
+```bash
+TM_AUTH_USER=理论力学
+TM_AUTH_USER_ALT=lilun
+TM_AUTH_PASS=<你自己的密码>
+```
+
+重启 `bash tools/serve.sh` 后：
+
+- 浏览器打开站点会弹用户名/密码；输入后同源 `/api/ask` 自动带凭据。
+- 未登录或密码错误返回 401；正确返回 200。
+- 必须走 HTTPS（Cloudflare Tunnel 默认就是 HTTPS）；不要用明文 HTTP 公网。
+- 用 `file://` 直接打开时浏览器不会带 Basic Auth，请用 `http(s)://` 地址。
+- Cloudflare Access 可选：叠加邮箱/SSO 作为第二层；只用 Basic Auth 也够一个班使用。
+
+验证：
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' https://mechanics.example.com/          # 401
+curl -s -u '理论力学:<密码>' -o /dev/null -w '%{http_code}\n' https://mechanics.example.com/  # 200
+```
+
+## 3. 加 Cloudflare Access（可选，第二层）
 
 Cloudflare Zero Trust → **Access → Applications → Add an application → Self-hosted**：
 

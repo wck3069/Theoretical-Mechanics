@@ -134,3 +134,14 @@ python3 tools/apply_ai_panel.py --apply
 没有 `/api` 时（GitHub Pages 或直接双击 HTML）仍然可用；连接本地服务后自动切换为完整模型。
 
 公网完整 AI 见 `deploy/cloudflare/README.md`；必须用 `TM_STATIC_ROOT=dist` 只暴露站点，key 留在服务端。
+
+## Basic Auth（公网/学生访问）
+
+```bash
+TM_AUTH_USER=理论力学
+TM_AUTH_USER_ALT=lilun
+TM_AUTH_PASS=<密码>
+```
+
+`tools/serve.sh` 会从 `~/.config/tm-ai.env` 读取。启动后浏览器弹登录框；未登录 401。
+公网必须走 HTTPS；`file://` 打开不会带 Basic Auth，请用 `http(s)://` 地址。

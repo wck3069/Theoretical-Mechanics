@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import hmac
 import json
 import os
 import re
@@ -34,6 +36,9 @@ EFFORT_FAST = os.environ.get("TM_AI_EFFORT_FAST", "minimal")
 EFFORT_DEEP = os.environ.get("TM_AI_EFFORT_DEEP", "medium")
 _UPSTREAM = {"t": 0.0, "ok": False}
 _UPSTREAM_LOCK = threading.Lock()
+AUTH_USER = os.environ.get("TM_AUTH_USER", "")
+AUTH_USER_ALT = os.environ.get("TM_AUTH_USER_ALT", "")
+AUTH_PASS = os.environ.get("TM_AUTH_PASS", "")
 RATE_PER_MIN = int(os.environ.get("TM_RATE_PER_MIN", "20"))
 MAX_CONCURRENT = int(os.environ.get("TM_MAX_CONCURRENT", "2"))
 _SEM = threading.BoundedSemaphore(MAX_CONCURRENT)
@@ -336,6 +341,7 @@ def run_check() -> int:
     print(f"model    : {AI_MODEL}")
     print(f"mode_hint: {mode_hint()}")
     print(f"effort   : fast={EFFORT_FAST} deep={EFFORT_DEEP}")
+    print(f"auth     : {'on' if AUTH_USER else 'off'}")
     print(f"kb       : {'OK' if kb_ok else 'FAIL'} (chunks={KB.get('chunk_count')})")
     print(f"upstream : {'OK' if upstream else 'DOWN'}")
     return 0 if (kb_ok and upstream) else 1
@@ -409,6 +415,35 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
         return 200
 
+    def _authorized(self) -> bool:
+        if not AUTH_USER:
+            return True
+        header = self.headers.get("Authorization", "")
+        if not header.startswith("Basic "):
+            return False
+        try:
+            raw = base64.b64decode(header[6:].strip()).decode("utf-8")
+        except Exception:
+            try:
+                raw = base64.b64decode(header[6:].strip()).decode("latin-1")
+            except Exception:
+                return False
+        user, sep, password = raw.partition(":")
+        if not sep:
+            return False
+        users = [AUTH_USER]
+        if AUTH_USER_ALT:
+            users.append(AUTH_USER_ALT)
+        user_ok = any(hmac.compare_digest(user.encode("utf-8"), u.encode("utf-8")) for u in users)
+        return user_ok and hmac.compare_digest(password.encode("utf-8"), AUTH_PASS.encode("utf-8"))
+
+    def _unauthorized(self) -> None:
+        self.send_response(401)
+        self.send_header("WWW-Authenticate", 'Basic realm="Theoretical Mechanics", charset="UTF-8"')
+        self.send_header("Content-Length", "0")
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+
     def do_OPTIONS(self):
         start = time.perf_counter()
         status = 204
@@ -421,6 +456,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         start = time.perf_counter()
+        if not self._authorized():
+            self._unauthorized()
+            self._log("GET", self.path, 401, start)
+            return
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         status = 200
@@ -463,6 +502,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         start = time.perf_counter()
+        if not self._authorized():
+            self._unauthorized()
+            self._log("POST", self.path, 401, start)
+            return
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         status = 200
@@ -682,7 +725,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
-    global AI_BASE, AI_MODEL, AI_KEY, AI_TIMEOUT, DEEP_MAX_CHARS, MAX_BODY, EFFORT_FAST, EFFORT_DEEP, STATIC_ROOT
+    global AI_BASE, AI_MODEL, AI_KEY, AI_TIMEOUT, DEEP_MAX_CHARS, MAX_BODY, EFFORT_FAST, EFFORT_DEEP, STATIC_ROOT, AUTH_USER, AUTH_USER_ALT, AUTH_PASS
     ap = argparse.ArgumentParser()
     ap.add_argument("--host", default=DEFAULT_HOST,
                     help="bind address; use 0.0.0.0 to allow LAN access")
@@ -697,6 +740,9 @@ def main() -> int:
     EFFORT_FAST = os.environ.get("TM_AI_EFFORT_FAST", EFFORT_FAST)
     EFFORT_DEEP = os.environ.get("TM_AI_EFFORT_DEEP", EFFORT_DEEP)
     STATIC_ROOT = Path(os.environ.get("TM_STATIC_ROOT", str(STATIC_ROOT))).resolve()
+    AUTH_USER = os.environ.get("TM_AUTH_USER", AUTH_USER)
+    AUTH_USER_ALT = os.environ.get("TM_AUTH_USER_ALT", AUTH_USER_ALT)
+    AUTH_PASS = os.environ.get("TM_AUTH_PASS", AUTH_PASS)
     AI_TIMEOUT = int(os.environ.get("TM_AI_TIMEOUT", str(AI_TIMEOUT)))
     DEEP_MAX_CHARS = int(os.environ.get("TM_DEEP_MAX_CHARS", str(DEEP_MAX_CHARS)))
     MAX_BODY = int(os.environ.get("TM_MAX_BODY", str(MAX_BODY)))
