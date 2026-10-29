@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动学与非线性振动 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .intro{margin:6px 0 0; font-size:12px; color:var(--muted); line-height:1.6; max-width:90%}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:12px; color:var(--muted);
+       display:flex; gap:14px; flex-wrap:wrap; pointer-events:none}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice.bad{color:#ffd7d7;border-color:rgba(255,123,123,.5);background:rgba(60,10,16,.6)}
+  .notice{position:absolute; right:16px; bottom:16px; max-width:60%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent); border:2px solid #0a1020; cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35); transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{white-space:pre-wrap;position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  span.doc{cursor:default;color:var(--muted);pointer-events:none}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:46vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:54vh}
+  }
+</style>
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="stage-canvas"></canvas>
+    <div class="brand">
+      <h1>运动学与非线性振动</h1>
+      <p>圆柱脱离、单摆周期修正、双摆混沌、Lorentz 力与参考系变换</p>
+      <p class="intro">质点模式保持二维圆截面；实心/空心球为三维圆柱，球在圆柱长度中间纯滚动。滚动把部分重力势能变成转动动能，脱离角不再是 48.19°：实心球从顶端释放约 54.0°，空心球约 56.9°，质点仍 48.19°。改 r 看球心轨迹，改球型看临界角。</p>
+    </div>
+    <div class="hud">
+      <span>θ0 <b id="hudTheta">-</b></span>
+      <span>θ1 <b id="hudTh1">-</b></span>
+      <span>θ2 <b id="hudTh2">-</b></span>
+      <span>脱离角 <b id="hudDetach">-</b></span>
+      <span>球半径 <b id="hudBallR">-</b></span>
+      <span>球型 <b id="hudBallType">-</b></span>
+      <span>周期 T <b id="hudT">-</b></span>
+      <span>周期修正项（一级近似） <b id="hudCorr">-</b></span>
+      <span>状态 <b id="hudState">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="eq">
+      <div><span class="num">滚动脱离：</span> cosθ* = 2cosθ0 / (2 + I/mr²)</div>
+      <div><span class="num">实心球：</span> I=2/5mr² → θ0=0 时 53.97°（质点 48.19°）</div>
+      <div><span class="num">单摆：</span> T≈2π√(L/g)(1+θ0²/16)</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sel-mode">模式</label></div>
+      <select id="sel-mode" aria-label="模式">
+        <option value="cylinder">圆柱脱离</option>
+        <option value="pendulum">单摆周期</option>
+        <option value="double">双摆混沌</option>
+      </select>
+      <div class="hint" id="mode-hint"></div>
+    </div>
+    <div class="group" id="group-theta0">
+      <div class="row"><label for="param-theta0">θ0（初始/振幅）</label><span class="val" id="val-theta0">10.0</span></div>
+      <input id="param-theta0" type="range" min="1" max="60" step="1" value="10" aria-label="振幅 theta0">
+    </div>
+    <div class="group" id="group-th1" style="display:none">
+      <div class="row"><label for="param-th1">初始角 θ1 (°)</label><span class="val" id="val-th1">60.0</span></div>
+      <input id="param-th1" type="range" min="1" max="120" step="1" value="60" aria-label="双摆初始角 theta1">
+    </div>
+    <div class="group" id="group-th2" style="display:none">
+      <div class="row"><label for="param-th2">初始角 θ2 (°)</label><span class="val" id="val-th2">30.0</span></div>
+      <input id="param-th2" type="range" min="1" max="120" step="1" value="30" aria-label="双摆初始角 theta2">
+    </div>
+    <div class="group" id="group-L">
+      <div class="row"><label for="param-L">摆长 L（本章 L＝长度）</label><span class="val" id="val-L">1.00</span></div>
+      <input id="param-L" type="range" min="0.5" max="3" step="0.1" value="1.0" aria-label="摆长 L">
+    </div>
+    <div class="group" id="group-ballR">
+      <div class="row"><label for="param-ballR">小球半径 r（R 的倍数）</label><span class="val" id="val-ballR">0.15</span></div>
+      <input id="param-ballR" type="range" min="0.05" max="0.4" step="0.01" value="0.15" aria-label="小球半径">
+    </div>
+    <div class="group" id="group-ballType">
+      <div class="row"><label for="sel-ballType">球体类型</label></div>
+      <select id="sel-ballType" aria-label="球体类型">
+        <option value="solid">实心球 I=2/5mr²</option>
+        <option value="hollow">空心球 I=2/3mr²</option>
+        <option value="point">质点 I=0</option>
+      </select>
+      <div class="hint" id="ball-hint">质点模式保持二维；实心/空心球在三维圆柱中间滚动。</div>
+    </div>
+    <div class="group" id="group-g">
+      <div class="row"><label for="param-g">重力 g</label><span class="val" id="val-g">1.00</span></div>
+      <input id="param-g" type="range" min="0.5" max="3" step="0.1" value="1.0" aria-label="重力 g">
+    </div>
+    <div class="btns">
+      <button id="btn-reset">重置</button>
+    </div>
+    <div class="tag">URL 可复现：<span>?mode=…&theta0=…&th1=…&th2=…&L=…&g=…&ballR=…&ballType=…</span><br>
+    本页采用无量纲演示单位（L、g 等均为无量纲，见底部说明）。<br>
+    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf；质点推导，滚动球见公式）</a>
+    <a class="doc" href="../07-rigid-body/index.html">← 上一模块：刚体几何与角动量</a>
+    <a class="doc" href="../../index.html">返回总目录 →</a>
+    <details class="mapping">
+      <summary>作业映射（本模块覆盖：作业-1）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-1 Q5</td><td>单摆周期修正</td><td>模式=单摆；HUD 显示 T</td></tr>
+        <tr><td>作业-1 Q6</td><td>圆柱脱离</td><td>模式=圆柱脱离；HUD 显示脱离角</td></tr>
+        <tr><td>作业-1 Q7</td><td>双摆混沌</td><td>模式=双摆混沌；两条几乎相同的初值轨迹分道扬镳</td></tr>
+        <tr><td>作业-1 Q4</td><td>Lorentz 力与参考系变换</td><td>阅读推导 note.pdf</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+// ==================== 0) DOUBLE PENDULUM ====================
+var dp = {th1:1.0, th2:1.0, w1:0, w2:0, trail:[], trailMax:1200, running:true};
+function dpStep(dt) {
+  if (!dp.running) return;
+  var g = P.g, L1 = P.L, L2 = P.L;
+  function derivs(th1, th2, w1, w2) {
+    var c12 = Math.cos(th1-th2), s12 = Math.sin(th1-th2);
+    var d = 2 - c12*c12;
+    // 等质量等长双摆（theta 为相对竖直的绝对角），拉格朗日推导并以能量守恒校验
+    var a1 = (-g*(2*Math.sin(th1) - Math.sin(th2)*c12) - L1*s12*(w1*w1*c12 + w2*w2)) / (L1*d);
+    var a2 = (2*g*(c12*Math.sin(th1) - Math.sin(th2)) + L2*s12*(2*w1*w1 + w2*w2*c12)) / (L2*d);
+    return {dth1: w1, dth2: w2, dw1: a1, dw2: a2};
+  }
+  var h = dt;
+  var k1 = derivs(dp.th1, dp.th2, dp.w1, dp.w2);
+  var k2 = derivs(dp.th1 + 0.5*h*k1.dth1, dp.th2 + 0.5*h*k1.dth2, dp.w1 + 0.5*h*k1.dw1, dp.w2 + 0.5*h*k1.dw2);
+  var k3 = derivs(dp.th1 + 0.5*h*k2.dth1, dp.th2 + 0.5*h*k2.dth2, dp.w1 + 0.5*h*k2.dw1, dp.w2 + 0.5*h*k2.dw2);
+  var k4 = derivs(dp.th1 + h*k3.dth1, dp.th2 + h*k3.dth2, dp.w1 + h*k3.dw1, dp.w2 + h*k3.dw2);
+  dp.th1 += h/6*(k1.dth1 + 2*k2.dth1 + 2*k3.dth1 + k4.dth1);
+  dp.th2 += h/6*(k1.dth2 + 2*k2.dth2 + 2*k3.dth2 + k4.dth2);
+  dp.w1 += h/6*(k1.dw1 + 2*k2.dw1 + 2*k3.dw1 + k4.dw1);
+  dp.w2 += h/6*(k1.dw2 + 2*k2.dw2 + 2*k3.dw2 + k4.dw2);
+  var x1 = Math.sin(dp.th1), y1 = Math.cos(dp.th1);
+  var x2 = x1 + Math.sin(dp.th2), y2 = y1 + Math.cos(dp.th2);
+  dp.trail.push({x1:x1, y1:y1, x2:x2, y2:y2});
+  if (dp.trail.length > dp.trailMax) dp.trail.shift();
+}
+function dpReset(){
+  dp.th1 = P.th1 * Math.PI / 180;
+  dp.th2 = P.th2 * Math.PI / 180;
+  dp.w1 = 0; dp.w2 = 0; dp.trail = []; dp.running = true;
+}
+
+// ==================== 0b) 圆柱脱离 & 单摆 动画状态 ====================
+// 脱离角由球体转动惯量与起始角决定；见 detachAngleRad()
+var ART = {void:'#03050c', solar:'#ffd27a', cyan:'#7fe0ff', violet:'#b79bff', teal:'#7ff0cf', text:'#e8eeff'};
+var REDUCED = false;
+try { REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (eRM) { REDUCED = false; }
+
+// —— 圆柱脱离：接触段 RK4 θ''=g·sinθ（R=1），脱离后解析抛体 ——
+var cyl = {phase:'contact', th:1e-3, w:0, spin:0, projT:0, px:0, py:0, vx:0, vy:0, trail:[], alpha:0, fadeOut:0};
+function ballInertia(){ return P.ballType === 'solid' ? 2/5 : (P.ballType === 'hollow' ? 2/3 : 0); }
+function alphaRoll(){ return 1 + ballInertia(); }
+function ballRho(){ return 1 + (P.ballType === 'point' ? 0 : P.ballR); }
+function detachAngleRad(){
+  var c = 2 * Math.cos(P.theta0 * Math.PI / 180) / (alphaRoll() + 2);
+  return Math.acos(Math.max(-1, Math.min(1, c)));
+}
+function cylReset(){
+  var thd = detachAngleRad();
+  cyl.phase='contact';
+  cyl.th=Math.min(Math.max(P.theta0*Math.PI/180,0.001), thd-0.01);
+  cyl.w=0; cyl.spin=0; cyl.projT=0; cyl.trail.length=0; cyl.alpha=0; cyl.fadeOut=0;
+}
+function cylContactDerivs(th, w){ return {dth:w, dw:P.g*Math.sin(th)/(alphaRoll()*ballRho())}; }
+function cylStep(h){
+  if (cyl.fadeOut > 0){
+    cyl.fadeOut -= h;
+    cyl.alpha = Math.max(0, cyl.fadeOut / 0.45);
+    if (cyl.fadeOut <= 0) cylReset();
+    return;
+  }
+  if (cyl.alpha < 1) cyl.alpha = Math.min(1, cyl.alpha + h/0.35);
+  var thd = detachAngleRad();
+  var rho = ballRho();
+  if (cyl.phase === 'contact'){
+    var thPrev = cyl.th;
+    var k1 = cylContactDerivs(cyl.th, cyl.w);
+    var k2 = cylContactDerivs(cyl.th + 0.5*h*k1.dth, cyl.w + 0.5*h*k1.dw);
+    var k3 = cylContactDerivs(cyl.th + 0.5*h*k2.dth, cyl.w + 0.5*h*k2.dw);
+    var k4 = cylContactDerivs(cyl.th + h*k3.dth, cyl.w + h*k3.dw);
+    cyl.th += h/6*(k1.dth + 2*k2.dth + 2*k3.dth + k4.dth);
+    cyl.w  += h/6*(k1.dw + 2*k2.dw + 2*k3.dw + k4.dw);
+    if (P.ballType !== 'point') cyl.spin += (rho / Math.max(P.ballR, 0.05)) * (cyl.th - thPrev);
+    if (cyl.th >= thd){
+      cyl.th = thd;
+      var w2 = 2 * P.g * (Math.cos(P.theta0*Math.PI/180) - Math.cos(thd)) / (alphaRoll() * rho);
+      if (!(w2 > 0)) w2 = 0;
+      var v = rho * Math.sqrt(w2);
+      cyl.px = rho * Math.sin(thd); cyl.py = -rho * Math.cos(thd);
+      cyl.vx = v * Math.cos(thd); cyl.vy = v * Math.sin(thd);
+      cyl.projT = 0;
+      cyl.phase = 'proj';
+    }
+  } else {
+    cyl.projT += h;
+  }
+  var x, y;
+  if (cyl.phase === 'contact'){ x = rho * Math.sin(cyl.th); y = -rho * Math.cos(cyl.th); }
+  else {
+    x = cyl.px + cyl.vx * cyl.projT;
+    y = cyl.py + cyl.vy * cyl.projT + 0.5 * P.g * cyl.projT * cyl.projT;
+    if (y > 1.85 && cyl.fadeOut <= 0) cyl.fadeOut = 0.45; // 落出视野后淡出重置
+  }
+  cyl.trail.push({x:x, y:y});
+  if (cyl.trail.length > 90) cyl.trail.shift();
+}
+
+// —— 单摆：RK4 θ''=-(g/L)sinθ，从 θ0 静止释放 ——
+var pend = {th:0, w:0, trail:[]};
+function pendReset(){ pend.th = Math.PI/180 * P.theta0; pend.w = 0; pend.trail.length = 0; }
+function pendDerivs(th, w){ return {dth:w, dw:-(P.g/P.L)*Math.sin(th)}; }
+function pendStep(h){
+  var k1 = pendDerivs(pend.th, pend.w);
+  var k2 = pendDerivs(pend.th + 0.5*h*k1.dth, pend.w + 0.5*h*k1.dw);
+  var k3 = pendDerivs(pend.th + 0.5*h*k2.dth, pend.w + 0.5*h*k2.dw);
+  var k4 = pendDerivs(pend.th + h*k3.dth, pend.w + h*k3.dw);
+  pend.th += h/6*(k1.dth + 2*k2.dth + 2*k3.dth + k4.dth);
+  pend.w  += h/6*(k1.dw + 2*k2.dw + 2*k3.dw + k4.dw);
+  pend.trail.push({x:Math.sin(pend.th), y:Math.cos(pend.th)});
+  if (pend.trail.length > 260) pend.trail.shift();
+}
+
+// —— 3D 球体视觉：优先 TMART.sphere，否则本地径向渐变 + 高光 + 辉光 ——
+function artHex(hex){ var h = hex.replace('#',''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+function artRgba(hex, a){ var c = artHex(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+function artShade(hex, f){ var c = artHex(hex); return 'rgb(' + Math.round(Math.min(255, c[0]*f)) + ',' + Math.round(Math.min(255, c[1]*f)) + ',' + Math.round(Math.min(255, c[2]*f)) + ')'; }
+function tmSphere(x, y, r, color, glow, alpha){
+  if (glow === undefined) glow = 0.5;
+  if (alpha === undefined) alpha = 1;
+  if (window.TMART && typeof window.TMART.sphere === 'function'){
+    if (alpha >= 0.999){
+      window.TMART.sphere(ctx, x, y, r, color, {glow: glow});
+      return;
+    }
+    // 透明 3D 球：先在离屏画布画好球体精灵，再按 alpha 合成
+    var pad = Math.max(8, Math.ceil(r * (glow > 0 ? 3.2 : 0.7)));
+    var size = Math.ceil((r + pad) * 2);
+    var tmp = document.createElement('canvas');
+    tmp.width = size; tmp.height = size;
+    var tctx = tmp.getContext('2d');
+    window.TMART.sphere(tctx, size/2, size/2, r, color, {glow: glow});
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    ctx.drawImage(tmp, x - size/2, y - size/2);
+    ctx.restore();
+    return;
+  }
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  if (glow > 0){
+    var gl = ctx.createRadialGradient(x, y, r*0.75, x, y, r*2.4);
+    gl.addColorStop(0, artRgba(color, 0.30*glow));
+    gl.addColorStop(1, artRgba(color, 0));
+    ctx.fillStyle = gl;
+    ctx.beginPath(); ctx.arc(x, y, r*2.4, 0, 2*Math.PI); ctx.fill();
+  }
+  var g1 = ctx.createRadialGradient(x - r*0.34, y - r*0.38, r*0.08, x, y, r);
+  g1.addColorStop(0, '#ffffff');
+  g1.addColorStop(0.22, color);
+  g1.addColorStop(0.75, artShade(color, 0.62));
+  g1.addColorStop(1, artShade(color, 0.32));
+  ctx.fillStyle = g1;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, 2*Math.PI); ctx.fill();
+  ctx.restore();
+}
+
+// ==================== 1) PARAMS ====================
+var DEFAULTS = {mode:'cylinder', theta0:10, th1:60, th2:30, L:1.0, g:1.0, speed:1.0, ballR:0.15, ballType:'solid'};
+var RANGE = {theta0:[1,60], th1:[1,120], th2:[1,120], L:[0.5,3], g:[0.5,3], speed:[0.1,3], ballR:[0.05,0.4]};
+var P = {mode:DEFAULTS.mode, theta0:DEFAULTS.theta0, th1:DEFAULTS.th1, th2:DEFAULTS.th2, L:DEFAULTS.L, g:DEFAULTS.g, speed:DEFAULTS.speed, ballR:DEFAULTS.ballR, ballType:DEFAULTS.ballType};
+
+// ==================== 2) URL 同步 ====================
+function loadFromURL(){
+  var q = {};
+  var s = window.location.search.replace(/^\?/, '');
+  if (s) { var parts = s.split('&');
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split('=');
+      if (kv.length === 2) q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+    }
+  }
+  if (q.mode) P.mode = q.mode;
+  if (q.theta0 !== undefined) P.theta0 = Math.min(Math.max(parseFloat(q.theta0), RANGE.theta0[0]), RANGE.theta0[1]) || DEFAULTS.theta0;
+  if (q.th1 !== undefined) P.th1 = Math.min(Math.max(parseFloat(q.th1), RANGE.th1[0]), RANGE.th1[1]) || DEFAULTS.th1;
+  if (q.th2 !== undefined) P.th2 = Math.min(Math.max(parseFloat(q.th2), RANGE.th2[0]), RANGE.th2[1]) || DEFAULTS.th2;
+  if (q.L !== undefined) P.L = Math.min(Math.max(parseFloat(q.L), RANGE.L[0]), RANGE.L[1]) || DEFAULTS.L;
+  if (q.g !== undefined) P.g = Math.min(Math.max(parseFloat(q.g), RANGE.g[0]), RANGE.g[1]) || DEFAULTS.g;
+  if (q.speed !== undefined) P.speed = Math.min(Math.max(parseFloat(q.speed), RANGE.speed[0]), RANGE.speed[1]) || DEFAULTS.speed;
+  if (q.ballR !== undefined) P.ballR = Math.min(Math.max(parseFloat(q.ballR), RANGE.ballR[0]), RANGE.ballR[1]) || DEFAULTS.ballR;
+  if (q.ballType !== undefined && /^(solid|hollow|point)$/.test(q.ballType)) P.ballType = q.ballType;
+  return q;
+}
+function syncURL(){
+  var s = '?mode=' + P.mode + '&theta0=' + P.theta0 + '&th1=' + P.th1 + '&th2=' + P.th2 + '&L=' + P.L + '&g=' + P.g + '&speed=' + P.speed + '&ballR=' + P.ballR + '&ballType=' + P.ballType;
+  if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
+}
+
+function prewarmDouble(n){
+  for (var i=0;i<(n||320);i++) dpStep(0.02);
+}
+function dpEnergy(th1, w1, th2, w2){
+  var g = P.g, L = 1, m = 1, d = th1 - th2;
+  var T = 0.5*m*L*L*(2*w1*w1 + w2*w2 + 2*w1*w2*Math.cos(d));
+  var V = -m*g*L*(2*Math.cos(th1) + Math.cos(th2));
+  return T + V;
+}
+
+// ==================== 3) 物理 ====================
+function detachAngle() { return detachAngleRad() * 180 / Math.PI; }
+function pendulumPeriod(L, g, theta0) {
+  var th = theta0 * Math.PI / 180;
+  return 2 * Math.PI * Math.sqrt(L / g) * (1 + th*th/16);
+}
+
+// ==================== 4) 渲染 ====================
+var cv = document.getElementById('stage-canvas');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0;
+function resize(){
+  var dpr = window.devicePixelRatio || 1;
+  var rect = cv.getBoundingClientRect();
+  W = Math.max(80, Math.floor(rect.width));
+  H = Math.max(80, Math.floor(rect.height));
+  cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+function drawHollowSphere(x, y, r) {
+  // 三维球体精灵 + 透明度，再补一圈玻璃外壳边缘
+  tmSphere(x, y, r, ART.cyan, 0, 0.30);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(190,240,255,.85)';
+  ctx.lineWidth = Math.max(1.2, r * 0.07);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,.55)';
+  ctx.lineWidth = 1.1;
+  ctx.beginPath(); ctx.arc(x - r * 0.26, y - r * 0.28, r * 0.40, -2.7, -1.1); ctx.stroke();
+  ctx.restore();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  var cx = W * 0.5, cy = H * 0.5;
+  var sc = Math.min(W, H) * 0.35;
+  if (P.mode === 'cylinder') {
+    var isPoint = P.ballType === 'point';
+    var thd = detachAngleRad();
+    var onSurface = cyl.phase === 'contact';
+    var thShown = onSurface ? Math.min(cyl.th, thd) : thd;
+    var bx, by;
+    var R, ccy, rho;
+
+    if (isPoint) {
+      // 二维质点：保持圆截面，不做 3D
+      R = Math.min(W, H) * 0.34;
+      ccy = cy + Math.min(W, H) * 0.04;
+      rho = 1;
+      var cg2 = ctx.createRadialGradient(cx - R*0.35, ccy - R*0.35, R*0.12, cx, ccy, R);
+      cg2.addColorStop(0, '#101a38'); cg2.addColorStop(0.5, '#090f22'); cg2.addColorStop(1, '#04070f');
+      ctx.fillStyle = cg2;
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(183,155,255,.5)';
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(127,224,255,.30)';
+      ctx.beginPath(); ctx.arc(cx, ccy, R - 2.5, Math.PI*0.72, Math.PI*1.6); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      if (onSurface) {
+        bx = cx + R * Math.sin(cyl.th);
+        by = ccy - R * Math.cos(cyl.th);
+      } else {
+        bx = cx + R * (cyl.px + cyl.vx * cyl.projT);
+        by = ccy + R * (cyl.py + cyl.vy * cyl.projT + 0.5 * P.g * cyl.projT * cyl.projT);
+      }
+
+      ctx.lineWidth = 2;
+      for (var it2 = 1; it2 < cyl.trail.length; it2++) {
+        var tB2 = cyl.trail[it2 - 1], tA2 = cyl.trail[it2];
+        ctx.globalAlpha = (it2 / cyl.trail.length) * 0.55 * cyl.alpha;
+        ctx.strokeStyle = ART.cyan;
+        ctx.beginPath();
+        ctx.moveTo(cx + R*tB2.x, ccy + R*tB2.y);
+        ctx.lineTo(cx + R*tA2.x, ccy + R*tA2.y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1; ctx.lineWidth = 1;
+
+      var dxp = cx + R*Math.sin(thd), dyp = ccy - R*Math.cos(thd);
+      ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(255,210,122,.45)';
+      ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(dxp, dyp); ctx.stroke();
+      ctx.setLineDash([]); ctx.strokeStyle = ART.solar; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(dxp, dyp, 5, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      ctx.strokeStyle = 'rgba(127,240,207,.6)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx, ccy, R*0.3, -Math.PI/2, -Math.PI/2 + thShown); ctx.stroke();
+      ctx.fillStyle = ART.teal; ctx.font = '10px ui-monospace,monospace';
+      ctx.fillText('θ', cx + R*0.32, ccy - R*0.18);
+      ctx.lineWidth = 1;
+
+      if (onSurface) {
+        ctx.setLineDash([3,4]); ctx.strokeStyle = 'rgba(127,224,255,.35)';
+        ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(bx, by); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // 二维质点（无黑点）
+      ctx.globalAlpha = cyl.alpha;
+      var pg = ctx.createRadialGradient(bx - 1.5, by - 1.5, 0, bx, by, 6);
+      pg.addColorStop(0, '#effdff'); pg.addColorStop(0.45, ART.cyan); pg.addColorStop(1, 'rgba(127,224,255,0)');
+      ctx.fillStyle = pg;
+      ctx.beginPath(); ctx.arc(bx, by, 6, 0, 2*Math.PI); ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
+      ctx.fillText('2D point mass · detach=' + detachAngle().toFixed(2) + '°', 20, 30);
+    } else {
+      // 三维圆柱：球在圆柱长度中间
+      R = Math.min(W, H) * 0.33;
+      ccy = cy + Math.min(W, H) * 0.055;
+      rho = ballRho();
+      var rPx = Math.max(4, R * P.ballR);
+      var dx = R * 0.38, dy = -R * 0.22;
+      var axisX = cx + dx * 0.5, axisY = ccy + dy * 0.5;
+      var backX = cx + dx, backY = ccy + dy;
+
+      // 后盖
+      var bg3 = ctx.createRadialGradient(backX - R*0.30, backY - R*0.30, R*0.08, backX, backY, R);
+      bg3.addColorStop(0, '#0b1227'); bg3.addColorStop(1, '#03060d');
+      ctx.fillStyle = bg3;
+      ctx.beginPath(); ctx.arc(backX, backY, R*0.98, 0, 2*Math.PI); ctx.fill();
+      ctx.strokeStyle = 'rgba(96,116,180,.35)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(backX, backY, R*0.98, 0, 2*Math.PI); ctx.stroke();
+
+      // 柱身：半透明，便于看见中间的小球
+      ctx.globalAlpha = 0.62;
+      var bodyGrad3 = ctx.createLinearGradient(cx, ccy - R, cx + dx, ccy + R);
+      bodyGrad3.addColorStop(0, '#0a1024'); bodyGrad3.addColorStop(0.55, '#070c1c'); bodyGrad3.addColorStop(1, '#03060e');
+      ctx.fillStyle = bodyGrad3;
+      ctx.beginPath();
+      ctx.moveTo(cx, ccy - R);
+      ctx.lineTo(backX, backY - R*0.98);
+      ctx.arc(backX, backY, R*0.98, -Math.PI/2, Math.PI/2);
+      ctx.lineTo(cx, ccy + R);
+      ctx.arc(cx, ccy, R, Math.PI/2, -Math.PI/2, true);
+      ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1;
+
+      for (var ring3 = 1; ring3 <= 3; ring3++) {
+        var tr3 = ring3 / 4;
+        ctx.strokeStyle = 'rgba(127,224,255,' + (0.10 - tr3*0.02).toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.arc(cx + dx*tr3, ccy + dy*tr3, R*(0.98 + 0.006*ring3), 0, 2*Math.PI);
+        ctx.stroke();
+      }
+
+      // 前盖半透明，避免挡住圆柱中间的小球
+      var fg3 = ctx.createRadialGradient(cx - R*0.35, ccy - R*0.35, R*0.08, cx, ccy, R);
+      fg3.addColorStop(0, '#122044'); fg3.addColorStop(0.55, '#090f22'); fg3.addColorStop(1, '#04070f');
+      ctx.globalAlpha = 0.20; ctx.fillStyle = fg3;
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = 'rgba(183,155,255,.5)'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 2.4; ctx.strokeStyle = 'rgba(127,224,255,.25)';
+      ctx.beginPath(); ctx.arc(cx, ccy, R - 2.2, Math.PI*0.72, Math.PI*1.55); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      // 球心在圆柱长度中间截面
+      if (onSurface) {
+        bx = axisX + R * rho * Math.sin(cyl.th);
+        by = axisY - R * rho * Math.cos(cyl.th);
+      } else {
+        bx = axisX + R * (cyl.px + cyl.vx * cyl.projT);
+        by = axisY + R * (cyl.py + cyl.vy * cyl.projT + 0.5 * P.g * cyl.projT * cyl.projT);
+      }
+
+      // 球心轨迹
+      ctx.lineWidth = 2;
+      for (var it3 = 1; it3 < cyl.trail.length; it3++) {
+        var tB3 = cyl.trail[it3 - 1], tA3 = cyl.trail[it3];
+        ctx.globalAlpha = (it3 / cyl.trail.length) * 0.55 * cyl.alpha;
+        ctx.strokeStyle = ART.cyan;
+        ctx.beginPath();
+        ctx.moveTo(axisX + R*tB3.x, axisY + R*tB3.y);
+        ctx.lineTo(axisX + R*tA3.x, axisY + R*tA3.y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1; ctx.lineWidth = 1;
+
+      // 脱离点
+      var dx3 = axisX + R*rho*Math.sin(thd), dy3 = axisY - R*rho*Math.cos(thd);
+      ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(255,210,122,.45)';
+      ctx.beginPath(); ctx.moveTo(axisX, axisY); ctx.lineTo(dx3, dy3); ctx.stroke();
+      ctx.setLineDash([]); ctx.strokeStyle = ART.solar; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(dx3, dy3, 5, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      // θ 角弧
+      ctx.strokeStyle = 'rgba(127,240,207,.6)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(axisX, axisY, R*0.34, -Math.PI/2, -Math.PI/2 + thShown); ctx.stroke();
+      ctx.fillStyle = ART.teal; ctx.font = '10px ui-monospace,monospace';
+      ctx.fillText('θ', axisX + R*0.36, axisY - R*0.18);
+      ctx.lineWidth = 1;
+
+      // 接触点
+      if (onSurface) {
+        var cpx3 = axisX + R*Math.sin(cyl.th), cpy3 = axisY - R*Math.cos(cyl.th);
+        ctx.setLineDash([3,4]); ctx.strokeStyle = 'rgba(127,224,255,.35)';
+        ctx.beginPath(); ctx.moveTo(axisX, axisY); ctx.lineTo(bx, by); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(127,224,255,.8)';
+        ctx.beginPath(); ctx.arc(cpx3, cpy3, 2.4, 0, 2*Math.PI); ctx.fill();
+      }
+
+      // 三维球：无黑点；空心球透明
+      ctx.globalAlpha = cyl.alpha;
+      if (P.ballType === 'hollow') {
+        drawHollowSphere(bx, by, rPx);
+      } else {
+        tmSphere(bx, by, rPx, ART.cyan, 0.55);
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
+      var typeName3 = P.ballType === 'solid' ? 'solid' : 'hollow';
+      ctx.fillText('3D cylinder · ball at mid-length · ' + typeName3 + ' r=' + P.ballR.toFixed(2) + 'R · detach=' + detachAngle().toFixed(2) + '°', 20, 30);
+    }
+  } else if (P.mode === 'double') {
+    var L1 = P.L, L2 = P.L;
+    var cx = W * 0.5, cy = H * 0.32;
+    var sc = Math.min(W, H) * 0.15;
+    if (dp.trail.length > 1) {
+      ctx.strokeStyle = 'rgba(127,224,255,.35)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      for (var i = 0; i < dp.trail.length; i++) {
+        var px = cx + P.L * dp.trail[i].x2 * sc;
+        var py = cy + P.L * dp.trail[i].y2 * sc;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke(); ctx.lineWidth = 1;
+    }
+    var x1 = cx + L1*Math.sin(dp.th1)*sc;
+    var y1 = cy + L1*Math.cos(dp.th1)*sc;
+    var x2 = x1 + L2*Math.sin(dp.th2)*sc;
+    var y2 = y1 + L2*Math.cos(dp.th2)*sc;
+    ctx.strokeStyle = ART.cyan; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.strokeStyle = ART.solar; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.lineWidth = 1;
+    tmSphere(x1, y1, 8, ART.cyan, 0.45);
+    tmSphere(x2, y2, 8, ART.violet, 0.45);
+    // anchored pivot: support bar + hatching
+    ctx.strokeStyle = 'rgba(138,152,192,.9)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx - 26, cy); ctx.lineTo(cx + 26, cy); ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(138,152,192,.5)';
+    for (var hs = -24; hs <= 24; hs += 8) {
+      ctx.beginPath(); ctx.moveTo(cx + hs, cy); ctx.lineTo(cx + hs + 7, cy - 8); ctx.stroke();
+    }
+    // pivot bolt
+    ctx.fillStyle = ART.solar;
+    ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2*Math.PI); ctx.fill();
+    // readout to the right (avoids title)
+    ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('双摆', W - 210, 30);
+    ctx.fillText('θ1 = ' + dp.th1.toFixed(3), W - 210, 50);
+    ctx.fillText('θ2 = ' + dp.th2.toFixed(3), W - 210, 68);
+    ctx.fillText('ω1 = ' + dp.w1.toFixed(3), W - 210, 86);
+    ctx.fillText('ω2 = ' + dp.w2.toFixed(3), W - 210, 104);
+    return;
+  } else {
+    // Pendulum: RK4 实时摆动 + 3D 球体摆锤 + 拖尾 + 周期读数
+    var mWH = Math.min(W, H);
+    var pvX = cx, pvY = cy - mWH * 0.30;
+    var lep = mWH * 0.22 * P.L;
+    var bobX = pvX + lep * Math.sin(pend.th);
+    var bobY = pvY + lep * Math.cos(pend.th);
+    // 拖尾（teal 渐隐）
+    ctx.lineWidth = 1.6;
+    for (var ip = 1; ip < pend.trail.length; ip++) {
+      var pB = pend.trail[ip - 1], pA = pend.trail[ip];
+      ctx.globalAlpha = (ip / pend.trail.length) * 0.45;
+      ctx.strokeStyle = ART.teal;
+      ctx.beginPath();
+      ctx.moveTo(pvX + pB.x * lep, pvY + pB.y * lep);
+      ctx.lineTo(pvX + pA.x * lep, pvY + pA.y * lep);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1;
+    // anchored pivot: support bar + hatching
+    ctx.strokeStyle = 'rgba(138,152,192,.9)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(pvX - 26, pvY); ctx.lineTo(pvX + 26, pvY); ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(138,152,192,.5)';
+    for (var hp = -24; hp <= 24; hp += 8) {
+      ctx.beginPath(); ctx.moveTo(pvX + hp, pvY); ctx.lineTo(pvX + hp + 7, pvY - 8); ctx.stroke();
+    }
+    // 振幅 θ0 参考虚线
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = 'rgba(127,240,207,.35)';
+    ctx.beginPath();
+    ctx.moveTo(pvX, pvY);
+    ctx.lineTo(pvX + lep * Math.sin(Math.PI/180 * P.theta0), pvY + lep * Math.cos(Math.PI/180 * P.theta0));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // 摆线 + 摆锤
+    ctx.strokeStyle = ART.solar; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pvX, pvY); ctx.lineTo(bobX, bobY); ctx.stroke();
+    ctx.lineWidth = 1;
+    tmSphere(bobX, bobY, 10, ART.solar, 0.5);
+    ctx.fillStyle = ART.solar;
+    ctx.beginPath(); ctx.arc(pvX, pvY, 4, 0, 2*Math.PI); ctx.fill();
+    // 周期读数
+    var T = pendulumPeriod(P.L, P.g, P.theta0);
+    ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
+    ctx.fillText('T = ' + T.toFixed(4) + '   (θ0 = ' + P.theta0.toFixed(1) + '°)', 20, 30);
+    ctx.fillStyle = 'rgba(169,184,220,.9)';
+    ctx.fillText('T0 = 2π√(L/g) = ' + (2*Math.PI*Math.sqrt(P.L/P.g)).toFixed(4), 20, 50);
+  }
+}
+
+// ==================== 5) HUD ====================
+function $(id){ return document.getElementById(id); }
+var hudTheta = $('hudTheta'), hudTh1 = $('hudTh1'), hudTh2 = $('hudTh2'), hudDetach = $('hudDetach'), hudBallR = $('hudBallR'), hudBallType = $('hudBallType');
+var hudT = $('hudT'), hudCorr = $('hudCorr'), hudState = $('hudState'), noticeEl = $('notice');
+function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
+function setNotice(msg, bad){
+  if (!msg){ noticeEl.hidden = true; return; }
+  noticeEl.hidden = false; noticeEl.textContent = msg;
+  noticeEl.className = bad ? 'notice bad' : 'notice';
+}
+function updateHUD(){
+  if (P.mode === 'cylinder') {
+    var isPointCyl = P.ballType === 'point';
+    if (cyl.phase === 'contact') {
+      hudTheta.textContent = (cyl.th * 180 / Math.PI).toFixed(1) + '°';
+      hudState.textContent = isPointCyl
+        ? '二维质点（θ < ' + detachAngle().toFixed(1) + '°）'
+        : '三维纯滚动（θ < ' + detachAngle().toFixed(1) + '°）';
+    } else {
+      hudTheta.textContent = detachAngle().toFixed(1) + '°';
+      hudState.textContent = isPointCyl ? '抛体运动（二维）' : '抛体运动（脱离后自转）';
+    }
+    hudDetach.textContent = detachAngle().toFixed(2) + '°';
+    hudBallR.textContent = P.ballType === 'point' ? '质点' : P.ballR.toFixed(2) + ' R';
+    hudBallType.textContent = P.ballType === 'solid' ? '实心 2/5' : (P.ballType === 'hollow' ? '空心 2/3' : '质点 0');
+    hudT.textContent = '-';
+    hudCorr.textContent = '-';
+  } else if (P.mode === 'pendulum') {
+    hudTheta.textContent = P.theta0.toFixed(1) + ' deg';
+    hudDetach.textContent = '-';
+    hudBallR.textContent = '-';
+    hudBallType.textContent = '-';
+    var T = pendulumPeriod(P.L, P.g, P.theta0);
+    hudT.textContent = fmt(T, 4);
+    var corr = (P.theta0 * Math.PI / 180) * (P.theta0 * Math.PI / 180) / 16;
+    hudCorr.textContent = fmt(corr, 6);
+    hudState.textContent = '振荡';
+  } else {
+    hudTheta.textContent = '-';
+    hudTh1.textContent = (dp.th1 * 180 / Math.PI).toFixed(1) + '°';
+    hudTh2.textContent = (dp.th2 * 180 / Math.PI).toFixed(1) + '°';
+    hudDetach.textContent = '-';
+    hudBallR.textContent = '-';
+    hudBallType.textContent = '-';
+    hudT.textContent = dp.trail.length > 0 ? (dp.trail.length * 0.02).toFixed(2) : '0.00';
+    hudCorr.textContent = '-';
+    hudState.textContent = '混沌（双摆）';
+  }
+}
+
+// ==================== 6) 控制 ====================
+function bindControls() {
+  var modeSel = $('sel-mode');
+  modeSel.value = P.mode;
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; syncModeControls(); if (P.mode === 'double') { P.th1 = DEFAULTS.th1; P.th2 = DEFAULTS.th2; syncSliders(); dpReset(); } else if (P.mode === 'cylinder') { cylReset(); } else { pendReset(); } syncURL(); });
+  function bindSlider(id, key, valId, fmtFn) {
+    var sl = $(id), vl = $(valId);
+    sl.value = P[key]; vl.textContent = fmtFn(P[key]);
+    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); if (P.mode === 'pendulum') pendReset(); syncURL(); });
+  }
+  bindSlider('param-theta0', 'theta0', 'val-theta0', function(v){ return v.toFixed(1); });
+  $('param-theta0').addEventListener('input', function(){ if (P.mode === 'cylinder') { cylReset(); updateHUD(); } });
+  bindSlider('param-ballR', 'ballR', 'val-ballR', function(v){ return v.toFixed(2); });
+  $('param-ballR').addEventListener('input', function(){ if (P.mode === 'cylinder') { cylReset(); updateHUD(); } });
+  var selBall = $('sel-ballType');
+  selBall.value = P.ballType;
+  selBall.addEventListener('change', function(){ P.ballType = selBall.value; if (P.mode === 'cylinder') cylReset(); syncModeControls(); syncURL(); updateHUD(); });
+  bindSlider('param-th1', 'th1', 'val-th1', function(v){ return v.toFixed(1); });
+  $('param-th1').addEventListener('input', function(){ if (P.mode === 'double') dpReset(); });
+  bindSlider('param-th2', 'th2', 'val-th2', function(v){ return v.toFixed(1); });
+  $('param-th2').addEventListener('input', function(){ if (P.mode === 'double') dpReset(); });
+  bindSlider('param-L', 'L', 'val-L', function(v){ return v.toFixed(2); });
+  $('param-L').addEventListener('input', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(400); } });
+  bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
+  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dpReset(); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; P.ballR = DEFAULTS.ballR; P.ballType = DEFAULTS.ballType; syncSliders(); if (P.mode === 'cylinder') cylReset(); else pendReset(); } syncModeControls(); syncURL(); updateHUD(); });
+}
+function syncModeControls() {
+  var isCyl = P.mode === 'cylinder';
+  var isDbl = P.mode === 'double';
+  var gL = $('group-L');
+  if (gL) gL.style.display = isCyl ? 'none' : 'block';
+  var g0 = $('group-theta0');
+  if (g0) g0.style.display = isDbl ? 'none' : 'block';
+  var g1 = $('group-th1');
+  if (g1) g1.style.display = isDbl ? 'block' : 'none';
+  var g2 = $('group-th2');
+  if (g2) g2.style.display = isDbl ? 'block' : 'none';
+  var gbr = $('group-ballR');
+  if (gbr) gbr.style.display = (isCyl && P.ballType !== 'point') ? 'block' : 'none';
+  var gbt = $('group-ballType');
+  if (gbt) gbt.style.display = isCyl ? 'block' : 'none';
+  var lbl = document.querySelector('label[for="param-theta0"]');
+  if (lbl) lbl.textContent = isCyl ? '起始角 θ0 (°)' : (P.mode === 'pendulum' ? '振幅 θ0 (°)' : '初始角 θ0 (°)');
+  var th = $('param-theta0');
+  if (th) {
+    th.max = isCyl ? '47' : '60';
+    if (isCyl && P.theta0 > 47) { P.theta0 = 47; th.value = 47; $('val-theta0').textContent = '47.0'; }
+  }
+  var hint = $('mode-hint');
+  if (hint) hint.textContent = isCyl ? '圆柱：θ0 起始角、球型（I）、r（质点隐藏）、g；L 不参与。' : (P.mode === 'pendulum' ? '单摆：θ0 振幅、L 摆长、g 重力。' : '双摆：θ1/θ2 两个初始角、L 杆长、g 重力。');
+  var bh = $('ball-hint');
+  if (bh) bh.textContent = (isCyl && P.ballType === 'point') ? '质点保持二维圆截面，球半径参数隐藏。' : '均匀球 I∝mr²，临界角与 r 无关；r 改变球心轨迹与滚动。';
+}
+
+function syncSliders() {
+  $('param-theta0').value = P.theta0; $('val-theta0').textContent = P.theta0.toFixed(1);
+  $('param-ballR').value = P.ballR; $('val-ballR').textContent = P.ballR.toFixed(2);
+  $('sel-ballType').value = P.ballType;
+  $('param-L').value = P.L; $('val-L').textContent = P.L.toFixed(2);
+  $('param-th1').value = P.th1; $('val-th1').textContent = P.th1.toFixed(1);
+  $('param-th2').value = P.th2; $('val-th2').textContent = P.th2.toFixed(1);
+  $('param-g').value = P.g; $('val-g').textContent = P.g.toFixed(2);
+}
+
+// ==================== 7) 自测 ====================
+function runSelftest() {
+  var saved = {theta0:P.theta0, L:P.L, g:P.g, ballR:P.ballR, ballType:P.ballType};
+  var details = [], passN = 0;
+  function T(name, ok, msg){ details.push({name:name, pass:!!ok, msg:msg}); if(ok) passN++; }
+  function restore(){ P.theta0=saved.theta0; P.L=saved.L; P.g=saved.g; P.ballR=saved.ballR; P.ballType=saved.ballType; }
+  try {
+    // ST1 solid sphere rolling detach (from top, I=2/5)
+    P.theta0 = 0; P.ballType = 'solid'; P.ballR = 0.15;
+    var da = detachAngle();
+    T('ST1 solid-sphere detach angle', Math.abs(da - 53.9681) < 0.01, 'detach=' + da.toFixed(4) + ' ref=53.9681');
+    // ST2 cos detach = 10/17
+    T('ST2 cos detach=10/17', Math.abs(Math.cos(detachAngle()*Math.PI/180) - 10/17) < 1e-9, 'cos=' + Math.cos(detachAngle()*Math.PI/180).toFixed(6));
+    P.theta0 = 10;
+    // ST3 pendulum correction
+    var corr = (10 * Math.PI / 180) * (10 * Math.PI / 180) / 16;
+    T('ST3 pendulum correction', Math.abs(corr - 0.001904) < 1e-5, 'corr=' + corr.toFixed(6) + ' ref=0.001904');
+    // ST4 pendulum period
+    P.L = 1.0; P.g = 1.0; P.theta0 = 10;
+    var Tp = pendulumPeriod(P.L, P.g, P.theta0);
+    var Tref = 2 * Math.PI * Math.sqrt(1.0/1.0) * (1 + (10*Math.PI/180)*(10*Math.PI/180)/16);
+    T('ST4 pendulum period', Math.abs(Tp - Tref) < 1e-9, 'T=' + Tp.toFixed(6) + ' ref=' + Tref.toFixed(6));
+    // ST5 double pendulum energy conservation (physical, not just finiteness)
+    dp.th1=1.0; dp.th2=0.7; dp.w1=0; dp.w2=0; dp.trail=[];
+    var e0 = dpEnergy(dp.th1, dp.w1, dp.th2, dp.w2), emax = 0;
+    for (var k5=0;k5<200;k5++){
+      dpStep(0.002);
+      var e = dpEnergy(dp.th1, dp.w1, dp.th2, dp.w2);
+      if (!isFinite(e)) { emax = 1e9; break; }
+      if (Math.abs(e-e0) > emax) emax = Math.abs(e-e0);
+    }
+    T('ST5 double pendulum energy drift', emax < 1e-6,
+      'drift=' + emax.toExponential(1) + ' (200 steps @2ms)');
+  } catch(e) {
+    T('ST-EXC', false, String(e));
+  }
+  restore();
+  return {passed: passN, failed: 5 - passN, details: details};
+}
+
+// ==================== 8) 启动 ====================
+var qURL = loadFromURL();
+resize();
+bindControls();
+syncModeControls();
+syncSliders();
+if (P.mode === 'double') { dpReset(); }
+if (P.mode === 'cylinder') cylReset();
+if (P.mode === 'pendulum') pendReset();
+if (qURL.selftest === '1') {
+  var rep = runSelftest();
+  window.__selftest = rep;
+  var stEl = $('selftestPanel');
+  stEl.hidden = false;
+  stEl.className = rep.failed ? 'selftest fail' : 'selftest';
+  var txt = 'SELFTEST ' + rep.passed + '/5 PASS';
+  for (var iB = 0; iB < rep.details.length; iB++) {
+    var dB = rep.details[iB];
+    txt += '\n[' + (dB.pass ? 'PASS' : 'FAIL') + '] ' + dB.name + ' : ' + dB.msg;
+  }
+  stEl.textContent = txt;
+}
+var STEP = 1/120;
+var acc = 0, lastFrame = 0;
+function simStep(h){
+  if (P.mode === 'cylinder') cylStep(h);
+  else if (P.mode === 'pendulum') pendStep(h);
+  else dpStep(h);
+}
+function frame(now) {
+  if (lastFrame === 0) lastFrame = now;
+  var dtReal = (now - lastFrame) / 1000;
+  lastFrame = now;
+  if (dtReal < 0) dtReal = 0;
+  if (dtReal > 0.25) dtReal = 0.25;
+  if (!REDUCED) {
+    // 固定步长累积器：物理以 1/120s 步进，P.speed 缩放时间流
+    acc += dtReal * P.speed;
+    var guard = 0;
+    while (acc >= STEP && guard < 360) { simStep(STEP); acc -= STEP; guard++; }
+    if (guard >= 360) acc = 0; // 掉帧保护：丢弃积压，防止螺旋卡死
+  }
+  // prefers-reduced-motion：跳过推进，仅静态示意图
+  draw(); updateHUD();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+// metrics
+var metEl = document.createElement('div');
+metEl.id = 'metrics';
+metEl.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+function metUpdate(){ metEl.textContent = 'METRICS ' + window.innerWidth + ' ' + window.innerHeight + ' ' + document.documentElement.scrollWidth + ' ' + document.documentElement.scrollHeight; }
+metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendChild(metEl);
+</script>
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics', '09-hydrogen'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+</body>
+</html>

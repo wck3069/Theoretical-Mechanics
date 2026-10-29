@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>理论力学 · 交互讲义 — 星图目录</title>
+<style>
+:root{
+--tm-void:#03050c;--tm-deep:#060a17;--tm-horizon:#0b1226;
+--tm-nebula-a:rgba(38,54,120,.55);--tm-nebula-b:rgba(12,70,96,.40);--tm-nebula-c:rgba(84,38,110,.28);
+--tm-panel:rgba(9,14,30,.74);--tm-panel-solid:#080d1c;
+--tm-glass:linear-gradient(160deg,rgba(26,36,66,.55),rgba(6,10,22,.78));
+--tm-line:rgba(146,182,255,.14);--tm-line-2:rgba(176,206,255,.30);
+--tm-glow:0 0 24px rgba(127,224,255,.12);
+--tm-text:#e8eeff;--tm-text-2:#a9b8dc;--tm-muted:#6d7ca4;
+--tm-solar:#ffd27a;--tm-solar-hot:#ffb45e;--tm-cyan:#7fe0ff;--tm-violet:#b79bff;
+--tm-teal:#7ff0cf;--tm-rose:#ff9fc4;--tm-amber:#ffc46b;--tm-coral:#ff9d6b;
+--tm-ice:#9fd8ff;--tm-lav:#c9b8ff;--tm-good:#7fe3a0;--tm-bad:#ff8a8a;
+--tm-font-ui:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+--tm-font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+--tm-radius:16px;--tm-radius-sm:10px;--tm-track:rgba(146,182,255,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--tm-void);color:var(--tm-text);font-family:var(--tm-font-ui)}
+body{position:relative}
+canvas{position:fixed;inset:0;z-index:0;display:block}
+#orbitCanvas{z-index:1}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
+
+/* top bar */
+.topbar{position:fixed;top:0;left:0;right:0;height:64px;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(6,10,23,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--tm-line)}
+.monogram{display:flex;align-items:center;gap:12px}
+.monogram svg{width:34px;height:34px}
+.brand-title{font-size:15px;font-weight:650;letter-spacing:.4px}
+.brand-sub{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);letter-spacing:1.2px}
+.top-actions{display:flex;gap:8px}
+.top-actions button{padding:7px 12px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:12px;color:var(--tm-text-2);transition:background .12s}
+.top-actions button:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
+.top-actions a{padding:7px 12px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:12px;color:var(--tm-text-2);text-decoration:none;transition:background .12s}
+.top-actions a:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
+
+/* hero */
+.hero{position:fixed;top:120px;left:24px;max-width:380px;z-index:40}
+.eyebrow{font-family:var(--tm-font-mono);font-size:11px;letter-spacing:2px;color:var(--tm-solar);margin-bottom:10px}
+.hero h1{font-size:40px;font-weight:700;line-height:1.15;letter-spacing:.5px}
+.grad-text{background:linear-gradient(120deg,var(--tm-solar),var(--tm-cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{margin-top:12px;font-size:13.5px;color:var(--tm-text-2);line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip-stat{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2);font-variant-numeric:tabular-nums}
+.hint{margin-top:12px;font-size:11.5px;color:var(--tm-muted);font-family:var(--tm-font-mono)}
+
+/* star label */
+.star-label{position:fixed;left:46%;top:50%;transform:translate(-50%,60px);z-index:20;font-size:11px;color:var(--tm-solar);font-family:var(--tm-font-mono);pointer-events:none;text-shadow:0 0 8px rgba(255,210,122,.4)}
+
+/* catalog */
+.catalog{position:fixed;top:96px;right:24px;width:330px;bottom:96px;z-index:40;background:var(--tm-panel);backdrop-filter:blur(11px);border:1px solid var(--tm-line);border-radius:var(--tm-radius);display:flex;flex-direction:column;overflow:hidden}
+.cat-header{padding:14px 16px;border-bottom:1px solid var(--tm-line);display:flex;align-items:center;justify-content:space-between}
+.cat-header h2{font-size:13px;letter-spacing:1.5px;color:var(--tm-text-2);font-weight:600}
+.cat-count{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted)}
+.cat-list{flex:1;overflow:auto;padding:8px}
+.cat-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 10px;border-radius:10px;text-align:left;transition:background .12s}
+.cat-row:hover{background:rgba(146,182,255,.08)}
+.cat-row.selected{background:rgba(255,210,122,.10);box-shadow:inset 0 0 0 1px rgba(255,210,122,.25)}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+.cat-ms{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);width:26px;flex-shrink:0}
+.cat-info{flex:1;min-width:0}
+.cat-title{font-size:13px;color:var(--tm-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-tags{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.cat-tag{font-size:11px;padding:2px 6px;border-radius:999px;background:rgba(146,182,255,.10);color:var(--tm-text-2)}
+.cat-chev{color:var(--tm-muted);font-size:16px}
+.cat-empty{padding:24px;text-align:center;color:var(--tm-muted);font-size:13px;display:none}
+
+/* detail panel */
+.detail{display:none;flex-direction:column;height:100%;overflow:auto;padding:16px}
+.detail.active{display:flex}
+.detail-close{align-self:flex-end;background:none;border:none;color:var(--tm-muted);font-size:20px;padding:4px 8px}
+.detail .actions{position:sticky;bottom:0;z-index:2;background:var(--tm-panel-solid);padding:10px 0 6px;border-top:1px solid var(--tm-line)}
+.detail-ms{font-family:var(--tm-font-mono);font-size:12px;color:var(--tm-solar);letter-spacing:1px}
+.badge-sample{display:inline-block;margin-left:8px;font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(127,224,255,.12);color:var(--tm-cyan)}
+.detail h3{margin:10px 0 8px;font-size:18px;font-weight:650}
+.detail .summary{font-size:13.5px;color:var(--tm-text-2);line-height:1.7;margin-bottom:12px}
+.detail .src{font-size:12px;color:var(--tm-muted);margin-bottom:12px}
+.detail .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.detail .tags span{font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(146,182,255,.10);color:var(--tm-text-2)}
+.detail .actions{display:flex;gap:10px;margin-bottom:14px}
+.detail .actions a{padding:8px 14px;border-radius:9px;font-size:12.5px}
+.detail .actions a.primary{background:linear-gradient(180deg,#3f7bff,#2b5fe0);border:1px solid #4f86ff;color:#fff}
+.detail .actions a.ghost{color:#cfdcff;background:rgba(58,95,191,.18);border:1px solid rgba(94,162,255,.35)}
+.detail .orbit-idx{font-size:11.5px;color:var(--tm-muted);margin-bottom:10px;font-family:var(--tm-font-mono)}
+.detail .navchips{display:flex;gap:8px;flex-wrap:wrap}
+.detail .navchip{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2)}
+
+/* command bar */
+.cmdbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:min(980px,calc(100vw-32px));z-index:45;background:var(--tm-panel);backdrop-filter:blur(11px);border:1px solid var(--tm-line);border-radius:14px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cmd-search{flex:1;min-width:160px;padding:8px 12px;border-radius:9px;border:1px solid var(--tm-line);background:rgba(6,10,23,.6);color:var(--tm-text);font-size:13px}
+.cmd-ms{display:flex;gap:6px;flex-wrap:wrap}
+.ms-chip{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2);transition:all .12s}
+.ms-chip[aria-pressed="true"]{background:rgba(255,210,122,.18);color:var(--tm-solar);border-color:rgba(255,210,122,.4)}
+.tag-expander{position:relative}
+.tag-btn{padding:6px 10px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text-2)}
+.tag-menu{position:absolute;bottom:calc(100% + 8px);left:0;background:var(--tm-panel-solid);border:1px solid var(--tm-line);border-radius:10px;padding:8px;max-height:220px;overflow:auto;display:none;min-width:200px;z-index:60;flex-wrap:wrap;gap:6px}
+.tag-menu.open{display:flex}
+.tag-menu button{padding:4px 8px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11px;color:var(--tm-text-2)}
+.tag-menu button[aria-pressed="true"]{background:rgba(127,224,255,.18);color:var(--tm-cyan)}
+.motion-controls{display:flex;gap:6px;align-items:center}
+.motion-controls button{padding:6px 8px;border-radius:8px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:11px;color:var(--tm-text-2)}
+.motion-controls button[aria-pressed="true"]{background:rgba(255,210,122,.18);color:var(--tm-solar)}
+.live-count{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);white-space:nowrap}
+
+/* tooltip */
+.tooltip{position:fixed;z-index:70;pointer-events:none;padding:8px 10px;border-radius:8px;background:rgba(6,10,23,.92);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text);display:none;max-width:240px}
+.tooltip .t-ms{font-family:var(--tm-font-mono);color:var(--tm-solar);margin-right:6px}
+.tooltip .t-src{color:var(--tm-muted);font-size:10.5px;margin-top:2px}
+
+/* footer note */
+.footnote{position:fixed;bottom:12px;left:16px;z-index:30;font-size:11px;color:var(--tm-muted)}
+
+/* drawers/popovers */
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(3,5,12,.55);display:none}
+.overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,90vw);z-index:90;background:var(--tm-panel-solid);border-left:1px solid var(--tm-line);transform:translateX(100%);transition:transform .2s ease;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer header{padding:16px;border-bottom:1px solid var(--tm-line);display:flex;justify-content:space-between;align-items:center}
+.drawer header h3{font-size:14px;letter-spacing:1.5px;color:var(--tm-text-2)}
+.drawer .body{flex:1;overflow:auto;padding:16px}
+.path-line{position:relative;padding-left:24px;margin-bottom:18px}
+.path-line::before{content:'';position:absolute;left:8px;top:6px;bottom:-12px;width:2px;background:linear-gradient(var(--tm-solar),var(--tm-cyan))}
+.path-line:last-child::before{bottom:6px}
+.path-dot{position:absolute;left:4px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--tm-solar);box-shadow:0 0 10px var(--tm-solar)}
+.path-ms{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-solar)}
+.path-title{font-size:13.5px;color:var(--tm-text);margin:2px 0}
+.path-one{font-size:12px;color:var(--tm-muted);line-height:1.6}
+.path-credit{margin-top:20px;padding-top:12px;border-top:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-muted);line-height:1.7}
+
+.popover{position:fixed;top:80px;right:24px;width:min(360px,90vw);z-index:90;background:var(--tm-panel-solid);border:1px solid var(--tm-line);border-radius:var(--tm-radius);padding:16px;display:none}
+.popover.open{display:block}
+.popover h3{font-size:13px;letter-spacing:1.5px;color:var(--tm-text-2);margin-bottom:10px}
+.popover p{font-size:12.5px;color:var(--tm-text-2);line-height:1.7;margin-bottom:8px}
+.popover .close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--tm-muted);font-size:18px}
+.popover.glossary{width:min(440px,92vw);max-height:72vh;overflow:auto}
+.popover dl{margin:0}
+.popover dl>div{padding:8px 0;border-bottom:1px solid var(--tm-line)}
+.popover dl>div:last-child{border-bottom:none}
+.popover dt{font-size:12.5px;color:var(--tm-solar);font-weight:600;margin-bottom:2px}
+.popover dd{margin:0;font-size:12px;color:var(--tm-text-2);line-height:1.65}
+
+/* responsive */
+@media (max-width:979px){
+  .hero{top:80px;left:16px;max-width:calc(100vw-32px)}
+  .hero h1{font-size:30px}
+  .catalog{top:auto;bottom:0;left:0;right:0;width:100%;height:68vh;z-index:46;border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .25s ease}
+  .catalog.open{transform:translateY(0)}
+  .cmdbar{bottom:0;left:0;right:0;transform:none;width:100%;border-radius:0;border-left:none;border-right:none}
+  .footnote{display:none}
+  .star-label{transform:translate(-50%,50px)}
+  body.cat-open #tmai-launcher{display:none}
+}
+@media (max-width:640px){
+  .hero h1{font-size:26px}
+  .topbar{padding:0 10px}
+  .brand-sub{display:none}
+  .brand-title{font-size:13px;white-space:nowrap}
+  .monogram{gap:8px}
+  .monogram svg{width:28px;height:28px}
+  .top-actions{gap:4px}
+  .top-actions button,.top-actions a{padding:6px 8px;font-size:11px}
+  .cmd-ms{max-width:100%;overflow-x:auto;flex-wrap:nowrap}
+  .hud{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.1s !important;animation-duration:.1s !important}
+}
+
+.hud{position:fixed;bottom:132px;left:50%;transform:translateX(-50%);z-index:30;font-size:11px;color:var(--tm-muted);font-family:var(--tm-font-mono);pointer-events:none}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="monogram">
+    <svg viewBox="0 0 34 34" aria-hidden="true">
+      <defs><radialGradient id="sg" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff7e0"/><stop offset="60%" stop-color="#ffd27a"/><stop offset="100%" stop-color="#ffb45e"/></radialGradient></defs>
+      <circle cx="17" cy="17" r="6" fill="url(#sg)"/>
+      <ellipse cx="17" cy="17" rx="14" ry="5" fill="none" stroke="rgba(127,224,255,.5)" stroke-width="1"/>
+      <ellipse cx="17" cy="17" rx="10" ry="12" fill="none" stroke="rgba(183,155,255,.4)" stroke-width="1" transform="rotate(30 17 17)"/>
+    </svg>
+    <div>
+      <div class="brand-title">理论力学 · 交互讲义</div>
+      <div class="brand-sub">THEORETICAL MECHANICS</div>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button type="button" id="btnCatalog" aria-label="打开星表">星表</button>
+    <button type="button" id="btnPath" aria-label="打开学习路径">学习路径</button>
+    <a class="top-link" href="modules/09-hydrogen/index.html">氢原子</a>
+    <button type="button" id="btnGloss" aria-label="打开术语表">术语</button>
+    <button type="button" id="btnAbout" aria-label="打开关于">关于</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">DEEP-SPACE LECTURE NOTES</div>
+  <h1><span class="grad-text">在轨道上</span><br><span class="grad-text">读理论力学</span></h1>
+  <p class="sub">把 7 次作业和 1 个两体问题专题中的知识点，重构成一套“每章三件套”的交互式讲义：严格推导 note.tex、阅读版 note.pdf、单文件数值实验 index.html。</p>
+  <div class="chips">
+    <span class="chip-stat">9 章</span>
+    <span class="chip-stat">8 次作业</span>
+    <span class="chip-stat">1 个专题</span>
+    <span class="chip-stat">9 章可交互模拟</span>
+  </div>
+  <div class="hint">拖动星图 · 点击行星进入章节 · / 搜索</div>
+</section>
+
+<div class="star-label">质心 · 系统核心</div>
+
+<aside class="catalog" id="catalog" aria-label="星表">
+  <div class="cat-header">
+    <h2>星表 STAR CATALOG</h2>
+    <span class="cat-count" id="catalogCount">9</span>
+  </div>
+  <div class="cat-list" id="catalogList"></div>
+  <div class="cat-empty" id="catalogEmpty">没有匹配的章节</div>
+  <div class="detail" id="detailView"></div>
+</aside>
+
+<div class="tooltip" id="tooltip"></div>
+
+<div class="cmdbar" role="toolbar" aria-label="筛选与搜索">
+  <input class="cmd-search" id="search" type="search" placeholder="搜索章节 / 标签 / 作业来源…" aria-label="搜索章节">
+  <div class="cmd-ms" id="msChips"></div>
+  <div class="tag-expander">
+    <button class="tag-btn" id="tagBtn" type="button" aria-haspopup="true" aria-expanded="false">标签</button>
+    <div class="tag-menu" id="tagMenu"></div>
+  </div>
+  <div class="motion-controls">
+    <button type="button" id="pauseBtn" aria-pressed="false" aria-label="暂停动画">⏸</button>
+    <button type="button" id="speedBtn" aria-pressed="false" aria-label="速度">x1</button>
+  </div>
+  <span class="live-count" id="liveCount" aria-live="polite">显示 9 / 9 章</span>
+</div>
+
+<div class="hud">开普勒第二定律 · 掠面速度守恒</div>
+<div class="footnote">零外部依赖 · 单文件 · 9 章全部可离线打开</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <header><h3>学习路径 LEARNING PATH</h3><button type="button" id="drawerClose" aria-label="关闭">×</button></header>
+  <div class="body" id="pathBody"></div>
+</div>
+<div class="popover glossary" id="glossPopover">
+  <button class="close" type="button" id="glossClose" aria-label="关闭">×</button>
+  <h3>术语表 GLOSSARY</h3>
+  <dl>
+    <div><dt>有效势</dt><dd>真实势能与角动量项 L²/2r² 合成的曲线，把二维轨道变成"小球沿曲线滚动"的一维问题。</dd></div>
+    <div><dt>离心势垒</dt><dd>有效势里因角动量在中心附近凸起的部分，像一堵墙，拦着带角动量的粒子掉进中心。</dd></div>
+    <div><dt>掠面速度</dt><dd>行星与中心连线单位时间扫过的面积；中心力场里它不变，这就是开普勒第二定律。</dd></div>
+    <div><dt>伯特兰定理</dt><dd>所有束缚轨道都闭合的中心力势只有两种：牛顿引力（∝1/r²）与弹簧（∝r²）。</dd></div>
+    <div><dt>约化质量</dt><dd>μ=m₁m₂/(m₁+m₂)：把两个天体互绕化成"一个假想粒子绕固定中心转"的换算质量。</dd></div>
+    <div><dt>恢复系数</dt><dd>e＝碰后沿连心线的分离速度与碰前接近速度之比：e=1 完全弹性，e=0 碰后法向速度相同（不是粘住）。</dd></div>
+    <div><dt>虚功</dt><dd>给系统一个符合约束的"想象中的"微小位移时各力做的功；总虚功为零即平衡。</dd></div>
+    <div><dt>广义力</dt><dd>虚功 Q·δq 中与每个广义坐标配对的 Q：它推动这个坐标，但不必是牛顿意义上的力。</dd></div>
+    <div><dt>转动惯量</dt><dd>I=Σmr²：物体"难不难被转起来"的量度，地位相当于平动里的质量。</dd></div>
+    <div><dt>等时摆</dt><dd>周期与摆幅无关的摆：单摆只在小角度近似等时，沿摆线摆动则严格等时。</dd></div>
+    <div><dt>洛伦兹变换</dt><dd>两个相对匀速运动的观测者之间换算时间与坐标的公式（注意与"洛伦兹力"是两回事）。</dd></div>
+    <div><dt>俘获截面</dt><dd>σ=πb_c²：一张"有效靶面积"，入射粒子瞄准进来就必被势场俘获。</dd></div>
+  </dl>
+</div>
+
+<div class="popover" id="aboutPopover">
+  <button class="close" type="button" id="aboutClose" aria-label="关闭">×</button>
+  <h3>关于 ABOUT</h3>
+  <p>每章三件套：note.tex 推导 / note.pdf 阅读版 / index.html 数值实验。</p>
+  <p>9 章覆盖中心力、有效势、散射、两体、变分、虚功、碰撞、刚体、运动学。单文件、零外部依赖、全部可离线打开。</p>
+</div>
+
+<canvas id="starfield"></canvas>
+<canvas id="orbitCanvas"></canvas>
+
+<script>
+window.TM_MODULES = [
+ {slug:'00-binet',milestone:'M0',title:'比奈方程（现有样板）',src:'中心力、比奈方程、圆锥曲线、进动',tags:['中心力','比奈方程','圆锥曲线','进动'],summary:'M0 中心力轨道方程 u\'\'+u=-F(1/u)/(m h^2 u^2)，用于判别圆锥曲线、近日点进动与轨道闭合。',sim:'modules/00-binet/index.html',note:'modules/00-binet/binet.pdf',color:'#ffd27a'},
+ {slug:'01-effective-potential',milestone:'M1',title:'有效势与轨道稳定性',src:'作业-2 Q1–Q7 · 作业-3 Q1 · 作业-5 Q4',tags:['有效势','RK4','Bertrand','进动'],summary:'M1 把角动量并入势能得到 V_eff，用曲线读出转折点、圆轨道稳定性与小振动频率；附伯特兰定理。',sim:'modules/01-effective-potential/index.html',note:'modules/01-effective-potential/note.pdf',color:'#7fe0ff'},
+ {slug:'02-scattering',milestone:'M2',title:'散射与俘获',src:'作业-3 Q2–Q3',tags:['散射','截面','俘获','RK4'],summary:'M2 中心力散射的偏转角、微分截面与俘获条件，卢瑟福散射与势垒穿透的几何。',sim:'modules/02-scattering/index.html',note:'modules/02-scattering/note.pdf',color:'#b79bff'},
+ {slug:'03-two-body',milestone:'M3',title:'两体问题与系外行星',src:'两体专题',tags:['两体','RV','多普勒','系外行星'],summary:'M3 约化质量把两体问题化为单体，开普勒第三定律，以及系外行星视向速度的观测反演。',sim:'modules/03-two-body/index.html',note:'modules/03-two-body/note.pdf',color:'#7ff0cf'},
+ {slug:'04-variational',milestone:'M4',title:'变分原理与等时摆',src:'作业-6',tags:['变分','费马','等时摆','Snell'],summary:'M4 最小作用量与费马原理导出运动方程和折射定律，等时摆的等时性来自周期与振幅无关。',sim:'modules/04-variational/index.html',note:'modules/04-variational/note.pdf',color:'#ff9fc4'},
+ {slug:'05-virtual-work',milestone:'M5',title:'虚功原理与静力学',src:'作业-7',tags:['虚功','静力学','梯子','平衡'],summary:'M5 约束力不做功，虚功原理给出静力平衡与广义力；梯子平衡、分离条件与摩擦角。',sim:'modules/05-virtual-work/index.html',note:'modules/05-virtual-work/note.pdf',color:'#ffc46b'},
+ {slug:'06-collisions',milestone:'M6',title:'碰撞与变质量',src:'作业-5 Q1–Q3',tags:['碰撞','变质量','恢复系数','雨滴'],summary:'M6 动量守恒与恢复系数，一维与二维碰撞，以及雨滴变质量系统的运动方程。',sim:'modules/06-collisions/index.html',note:'modules/06-collisions/note.pdf',color:'#ff9d6b'},
+ {slug:'07-rigid-body',milestone:'M7',title:'刚体几何与角动量',src:'作业-4',tags:['刚体','角动量','球壳','质心'],summary:'M7 转动惯量、平行轴定理与角动量守恒；球壳、滚动物体与质心系的分解。',sim:'modules/07-rigid-body/index.html',note:'modules/07-rigid-body/note.pdf',color:'#c9b8ff'},
+ {slug:'08-kinematics',milestone:'M8',title:'运动学与非线性振动',src:'作业-1',tags:['运动学','振动','Lorentz','脱离'],summary:'M8 自然坐标下的切向/法向加速度、带电粒子在 Lorentz 力下的运动与参考系变换，以及阻尼、受迫与非线性振动。',sim:'modules/08-kinematics/index.html',note:'modules/08-kinematics/note.pdf',color:'#9fd8ff'}
+];
+</script>
+<script>
+(function(){
+ 'use strict';
+ var TM = window.TM_MODULES;
+ var reducedMotion = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+ var state = {selected:null,filterMs:'all',filterTag:'all',q:'',paused:false,speed:1,hovered:null,detailOpen:false,catalogOpen:false};
+
+ function $(id){return document.getElementById(id);}
+ function matches(m){
+   if(state.filterMs!=='all' && m.milestone!==state.filterMs) return false;
+   if(state.filterTag!=='all' && m.tags.indexOf(state.filterTag)===-1) return false;
+   if(state.q){
+     var hay=(m.title+' '+m.src+' '+m.tags.join(' ')+' '+m.slug+' '+m.milestone).toLowerCase();
+     if(hay.indexOf(state.q.toLowerCase())===-1) return false;
+   }
+   return true;
+ }
+
+ // ---------- starfield ----------
+ var starCanvas = $('starfield');
+ var starCtx = starCanvas.getContext('2d');
+ var orbitCanvas = $('orbitCanvas');
+ var orbitCtx = orbitCanvas.getContext('2d');
+ var stars = [], nebulas = [], starCenter = {x:0,y:0};
+ var mouse = {x:0,y:0};
+ var TAU = Math.PI*2;
+ var introStart = performance.now();
+ var sprites = {};
+ var dust = [], bursts = [];
+ function hexA(hex,a){ var n=parseInt(hex.slice(1),16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+ function shade(hex,f){ var n=parseInt(hex.slice(1),16); return 'rgb('+Math.round(((n>>16)&255)*f)+','+Math.round(((n>>8)&255)*f)+','+Math.round((n&255)*f)+')'; }
+ function sphereSprite(r,color){
+   var k='s'+r+color; if(sprites[k]) return sprites[k];
+   var pad=Math.max(3,r*0.5), size=(r+pad)*2, c=document.createElement('canvas');
+   c.width=Math.ceil(size*2); c.height=Math.ceil(size*2);
+   var g=c.getContext('2d'); g.scale(2,2);
+   var cx=size/2, cy=size/2;
+   var rg=g.createRadialGradient(cx-r*.38,cy-r*.42,r*.08,cx,cy,r*1.02);
+   rg.addColorStop(0,'#ffffff'); rg.addColorStop(.14,shade(color,1.7));
+   rg.addColorStop(.45,color); rg.addColorStop(.78,shade(color,.55));
+   rg.addColorStop(1,shade(color,.16));
+   g.fillStyle=rg; g.beginPath(); g.arc(cx,cy,r,0,TAU); g.fill();
+   g.fillStyle='rgba(255,255,255,.55)';
+   g.beginPath(); g.arc(cx-r*.34,cy-r*.4,r*.24,0,TAU); g.fill();
+   g.strokeStyle='rgba(255,255,255,.22)'; g.lineWidth=Math.max(.8,r*.07);
+   g.beginPath(); g.arc(cx,cy,r*.94,0.2,1.1); g.stroke();
+   sprites[k]={c:c,size:size}; return sprites[k];
+ }
+ function glowSprite(r,color){
+   r=Math.max(4,Math.round(r)); var k='g'+r+color; if(sprites[k]) return sprites[k];
+   var size=r*2, c=document.createElement('canvas'); c.width=size; c.height=size;
+   var g=c.getContext('2d'); var rg=g.createRadialGradient(r,r,0,r,r,r);
+   rg.addColorStop(0,hexA(color,.75)); rg.addColorStop(.3,hexA(color,.30)); rg.addColorStop(1,hexA(color,0));
+   g.fillStyle=rg; g.fillRect(0,0,size,size); sprites[k]={c:c,size:size}; return sprites[k];
+ }
+ function glowAt(ctx,x,y,r,color,a){ var s=glowSprite(r,color); ctx.globalAlpha=a; ctx.drawImage(s.c,x-s.size/2,y-s.size/2,s.size,s.size); ctx.globalAlpha=1; }
+ var shadeCache={};
+ function shadeOverlay(r){
+   r=Math.max(2,Math.round(r)); var k='sh'+r; if(shadeCache[k]) return shadeCache[k];
+   var size=r*2, c=document.createElement('canvas'); c.width=size*2; c.height=size*2;
+   var g=c.getContext('2d'); g.scale(2,2);
+   g.beginPath(); g.arc(r,r,r,0,TAU); g.clip();
+   var lg=g.createLinearGradient(0,0,size,size);
+   lg.addColorStop(0,'rgba(255,255,255,.18)');
+   lg.addColorStop(.42,'rgba(255,255,255,0)');
+   lg.addColorStop(1,'rgba(0,0,0,.55)');
+   g.fillStyle=lg; g.fillRect(0,0,size,size);
+   shadeCache[k]={c:c,size:size}; return shadeCache[k];
+ }
+ function sphereAt(ctx,x,y,r,color){
+   var s=sphereSprite(Math.max(1,Math.round(r)),color);
+   ctx.drawImage(s.c,x-s.size/2,y-s.size/2,s.size,s.size);
+   var sh=shadeOverlay(r);
+   ctx.drawImage(sh.c,x-r,y-r,r*2,r*2);
+   ctx.strokeStyle=hexA(color,.5); ctx.lineWidth=Math.max(.8,r*.06);
+   if(r>1){ ctx.beginPath(); ctx.arc(x,y,Math.max(0.3,r-.6),Math.PI*1.02,Math.PI*1.82); ctx.stroke(); }
+ }
+ var bgCanvas=document.createElement('canvas'), bgCtx=bgCanvas.getContext('2d');
+ function buildBg(){
+   var w=window.innerWidth,h=window.innerHeight,dpr=Math.min(window.devicePixelRatio||1,2);
+   bgCanvas.width=Math.ceil(w*dpr); bgCanvas.height=Math.ceil(h*dpr);
+   var g=bgCtx; g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,w,h);
+   g.fillStyle='#03050c'; g.fillRect(0,0,w,h);
+   nebulas.forEach(function(n){ var rg=g.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r); rg.addColorStop(0,n.color+n.a+')'); rg.addColorStop(1,n.color+'0)'); g.fillStyle=rg; g.fillRect(0,0,w,h); });
+   stars.forEach(function(st){ g.globalAlpha=st.base; g.fillStyle='#e8eeff'; g.beginPath(); g.arc(st.x,st.y,st.r,0,TAU); g.fill(); });
+   g.globalAlpha=1;
+   var vg=g.createRadialGradient(w/2,h/2,Math.min(w,h)*.3,w/2,h/2,Math.max(w,h)*.75);
+   vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.55)'); g.fillStyle=vg; g.fillRect(0,0,w,h);
+ }
+
+ function resize(){
+   var dpr = window.devicePixelRatio || 1;
+   var w = window.innerWidth, h = window.innerHeight;
+   [starCanvas, orbitCanvas].forEach(function(c){
+     c.width = w*dpr; c.height = h*dpr;
+     c.style.width = w+'px'; c.style.height = h+'px';
+     c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+   });
+   starCenter = {x: w*0.46, y: h*0.5};
+   initStars();
+   initOrbits();
+   initDust();
+ }
+ function initStars(){
+   var w=window.innerWidth,h=window.innerHeight;
+   var count = w<980 ? 220 : 420;
+   stars = [];
+   for(var i=0;i<count;i++){
+     stars.push({x:Math.random()*w,y:Math.random()*h,z:Math.floor(Math.random()*3),r:0.4+Math.random()*1.3,phase:Math.random()*Math.PI*2,speed:0.3+Math.random()*1.2,base:0.4+Math.random()*0.6});
+   }
+   var mn = Math.min(w,h);
+   nebulas = [
+     {x:w*0.3,y:h*0.4,r:mn*0.35,color:'rgba(255,210,122,',a:0.06},
+     {x:w*0.7,y:h*0.3,r:mn*0.4,color:'rgba(127,224,255,',a:0.05},
+     {x:w*0.6,y:h*0.7,r:mn*0.3,color:'rgba(183,155,255,',a:0.04},
+     {x:w*0.2,y:h*0.8,r:mn*0.25,color:'rgba(127,240,207,',a:0.03}
+   ];
+   buildBg();
+ }
+
+ function drawStarfield(t){
+   var ctx = starCtx;
+   var w=window.innerWidth,h=window.innerHeight;
+   var mx=(mouse.x-w/2)/(w/2||1);
+   var my=(mouse.y-h/2)/(h/2||1);
+   ctx.clearRect(0,0,w,h);
+   ctx.fillStyle='#03050c'; ctx.fillRect(0,0,w,h);
+   ctx.drawImage(bgCanvas, mx*5-8, my*4-8, w+16, h+16);
+   if(!reducedMotion){
+     for(var i=0;i<stars.length;i+=4){
+       var st=stars[i];
+       var tw=Math.sin(t*0.001*st.speed+st.phase);
+       var a=Math.max(0.08,Math.min(1,st.base+tw*0.35));
+       ctx.globalAlpha=a; ctx.fillStyle='#e8eeff';
+       ctx.beginPath(); ctx.arc(st.x+mx*5,st.y+my*4,st.r,0,TAU); ctx.fill();
+     }
+     ctx.globalAlpha=1;
+     for(var j=0;j<stars.length;j+=37){
+       var c=stars[j]; glowAt(ctx,c.x+mx*5,c.y+my*4,c.r*5,'#7fe0ff',0.10);
+     }
+   }
+ }
+
+ // ---------- orbits ----------
+ var orbits = [];
+ var radiiArr = [8,18,13,15,12,11,10,9,9];
+ var eccArr = [0.06,0.08,0.10,0.12,0.14,0.16,0.18,0.20,0.22];
+ var baseAArr = [92,128,170,215,265,315,365,405,440];
+ function initOrbits(){
+   var scale = Math.min(window.innerWidth,window.innerHeight)/900;
+   var sizeScale = window.innerWidth<980?0.72:1;
+   orbits = TM.map(function(m,i){
+     var a = baseAArr[i]*scale;
+     var e = eccArr[i];
+     var period = 18 + i*7;
+     var k = (2*Math.PI*a*a*(1-e*e))/period;
+     return {m:m,idx:i,a:a,e:e,rot:-14*Math.PI/180,theta:Math.random()*Math.PI*2,k:k,r:radiiArr[i]*sizeScale,color:m.color,moon:i===3,ring:i===0,comet:i===8,precess:0.00025*(i+1),_pos:null,scale:1,sv:0,trail:[],tex:(i===1?'gas':(i===4||i===6?'rock':(i===7?'ice':'fine')))};
+   });
+ }
+ function planetPos(o){
+   var r = o.a*(1-o.e*o.e)/(1+o.e*Math.cos(o.theta));
+   var x = r*Math.cos(o.theta);
+   var y = r*Math.sin(o.theta)*0.58;
+   var cos=Math.cos(o.rot), sin=Math.sin(o.rot);
+   var rx = x*cos - y*sin;
+   var ry = x*sin + y*cos;
+   return {x:starCenter.x+rx,y:starCenter.y+ry,rdist:r};
+ }
+ function updatePlanets(dt){
+   if(state.paused) return;
+   var mul = state.speed;
+   orbits.forEach(function(o){
+     var pos = planetPos(o);
+     var r = pos.rdist;
+     o.theta += (dt*mul*o.k)/(r*r);
+     if(!reducedMotion) o.rot += dt*mul*o.precess;
+     if(!o.trail) o.trail=[];
+     o.trail.push({x:pos.x,y:pos.y}); if(o.trail.length>42) o.trail.shift();
+   });
+ }
+
+ var shot = null;
+ var nextShot = 0;
+ function handleShot(now){
+   if(reducedMotion) return;
+   if(!shot && now >= nextShot){
+     var w=window.innerWidth,h=window.innerHeight;
+     var sx=Math.random()*w*0.7;
+     var sy=Math.random()*h*0.35;
+     shot={start:now,dur:900,from:{x:sx,y:sy},to:{x:sx+180+Math.random()*220,y:sy+80+Math.random()*120}};
+     nextShot = now + 7000 + Math.random()*6000;
+   }
+   if(shot && now-shot.start >= shot.dur) shot=null;
+ }
+
+ function initDust(){
+   var w=window.innerWidth,h=window.innerHeight;
+   var n=w<980?55:85;
+   var cols=['#7fe0ff','#ffd27a','#b79bff','#7ff0cf'];
+   dust=[];
+   for(var i=0;i<n;i++){
+     dust.push({a:Math.random()*TAU,r:0.22+Math.random()*0.78,sp:(0.02+Math.random()*0.07)*(Math.random()<0.5?-1:1),size:0.5+Math.random()*1.1,color:cols[i%4],al:0.08+Math.random()*0.16});
+   }
+ }
+ function burstAt(x,y,color,n){
+   for(var i=0;i<n;i++){
+     var a=Math.random()*TAU, v=40+Math.random()*130;
+     bursts.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:0.5+Math.random()*0.7,max:1.2,color:color,size:0.9+Math.random()*1.8});
+   }
+ }
+ function drawDust(t,dt){
+   var ctx=orbitCtx, mn=Math.min(window.innerWidth,window.innerHeight);
+   ctx.globalCompositeOperation='lighter';
+   for(var i=0;i<dust.length;i++){
+     var d=dust[i];
+     if(!state.paused && !reducedMotion) d.a += d.sp*dt;
+     var rr=d.r*mn*0.48;
+     var x=starCenter.x+Math.cos(d.a)*rr;
+     var y=starCenter.y+Math.sin(d.a)*rr*0.62;
+     if(d.px){ ctx.strokeStyle=hexA(d.color,d.al*0.55); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(d.px,d.py); ctx.lineTo(x,y); ctx.stroke(); }
+     d.px=x; d.py=y;
+     glowAt(ctx,x,y,d.size*5,d.color,d.al*0.7);
+   }
+   ctx.globalCompositeOperation='source-over';
+ }
+ function drawBursts(dt){
+   if(!bursts.length) return;
+   var ctx=orbitCtx; ctx.globalCompositeOperation='lighter';
+   for(var i=bursts.length-1;i>=0;i--){
+     var p=bursts[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vx*=0.96; p.vy*=0.96; p.life-=dt;
+     if(p.life<=0){ bursts.splice(i,1); continue; }
+     glowAt(ctx,p.x,p.y,p.size*4,p.color,Math.max(0,p.life/p.max)*0.8);
+   }
+   ctx.globalCompositeOperation='source-over';
+ }
+ function drawRing(ctx,x,y,r,color,alpha,tilt,front){
+   ctx.save(); ctx.translate(x,y); ctx.rotate(tilt); ctx.scale(1,0.38);
+   ctx.strokeStyle=hexA(color,alpha); ctx.lineWidth=1.8;
+   var a0=front?0:Math.PI, a1=front?Math.PI:TAU;
+   ctx.beginPath(); ctx.arc(0,0,r*2.35,a0,a1); ctx.stroke();
+   ctx.strokeStyle=hexA(color,alpha*0.55); ctx.lineWidth=1.0;
+   ctx.beginPath(); ctx.arc(0,0,r*2.65,a0,a1); ctx.stroke();
+   ctx.strokeStyle=hexA(color,alpha*0.25); ctx.lineWidth=0.7;
+   ctx.beginPath(); ctx.arc(0,0,r*2.5,a0,a1); ctx.stroke();
+   ctx.restore();
+   var n=front?12:10;
+   ctx.globalCompositeOperation='lighter';
+   for(var i=0;i<n;i++){
+     var a=(i/n)*TAU, rr=r*(2.05+0.27*(i%2));
+     var c=Math.cos(tilt), s2=Math.sin(tilt);
+     var ex=x+(Math.cos(a)*rr)*c-(Math.sin(a)*rr*0.38)*s2;
+     var ey=y+(Math.cos(a)*rr)*s2+(Math.sin(a)*rr*0.38)*c;
+     var isFront=Math.sin(a)>0;
+     if(isFront!==front) continue;
+     glowAt(ctx,ex,ey,5,color,alpha*0.5);
+   }
+   ctx.globalCompositeOperation='source-over';
+ }
+ function drawPlanetTexture(ctx,x,y,r,color,kind,alpha){
+   ctx.save(); ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.clip();
+   if(kind==='gas'){
+     ctx.translate(x,y); ctx.rotate(-0.28);
+     for(var i=0;i<4;i++){ ctx.fillStyle=hexA(color,0.20*alpha); ctx.fillRect(-r*1.4,-r*0.6+i*r*0.3,r*2.8,r*0.12); }
+     ctx.fillStyle=hexA('#ff9fc4',0.26*alpha); ctx.beginPath(); ctx.ellipse(r*0.12,-r*0.12,r*0.3,r*0.17,0.2,0,TAU); ctx.fill();
+   } else if(kind==='rock'){
+     for(var j=0;j<5;j++){
+       ctx.fillStyle='rgba(0,0,0,'+(0.22*alpha)+')';
+       ctx.beginPath(); ctx.arc(x-r*0.45+j*r*0.38,y-r*0.35+(j%2)*r*0.55,r*(0.08+0.035*j),0,TAU); ctx.fill();
+       ctx.strokeStyle='rgba(255,255,255,'+(0.16*alpha)+')'; ctx.lineWidth=1; ctx.stroke();
+     }
+   } else if(kind==='ice'){
+     ctx.translate(x,y); ctx.rotate(0.2);
+     for(var k=0;k<2;k++){ ctx.fillStyle='rgba(255,255,255,'+(0.13*alpha)+')'; ctx.fillRect(-r*1.4,-r*0.3+k*r*0.5,r*2.8,r*0.12); }
+     ctx.fillStyle='rgba(255,255,255,'+(0.16*alpha)+')'; ctx.beginPath(); ctx.ellipse(x,y-r*0.55,r*0.62,r*0.22,0,0,TAU); ctx.fill();
+   }
+   ctx.restore();
+ }
+ function drawSparkles(ctx,x,y,r,color,phase,alpha){
+   ctx.globalCompositeOperation='lighter';
+   for(var i=0;i<7;i++){
+     var a=phase+i/7*TAU, rr=r*(1.55+0.12*Math.sin(phase*3+i));
+     glowAt(ctx,x+Math.cos(a)*rr,y+Math.sin(a)*rr*0.8,5,color,0.20*alpha);
+   }
+   ctx.globalCompositeOperation='source-over';
+ }
+ function drawOrbits(t,dt){
+   var ctx = orbitCtx;
+   var w=window.innerWidth,h=window.innerHeight;
+   ctx.clearRect(0,0,w,h);
+   drawDust(t,dt);
+   drawBursts(dt);
+   // constellation links
+   var pairs = [[0,1],[1,2],[1,3],[3,8],[4,5],[6,7],[7,8]];
+   ctx.save();
+   ctx.setLineDash([4,6]);
+   ctx.strokeStyle='rgba(146,182,255,0.08)';
+   ctx.lineWidth=1;
+   pairs.forEach(function(p){
+     var a=planetPos(orbits[p[0]]);
+     var bb=planetPos(orbits[p[1]]);
+     ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(bb.x,bb.y);ctx.stroke();
+   });
+   ctx.setLineDash([]);ctx.restore();
+
+   // orbits
+   orbits.forEach(function(o,i){
+     var sel = state.selected && state.selected.milestone===o.m.milestone;
+     var hov = state.hovered===i;
+     var match = matches(o.m);
+     // path
+     var pts=[];
+     for(var k=0;k<=120;k++){
+       var th=(k/120)*Math.PI*2;
+       var r=o.a*(1-o.e*o.e)/(1+o.e*Math.cos(th));
+       var x=r*Math.cos(th);
+       var y=r*Math.sin(th)*0.58;
+       var cos=Math.cos(o.rot),sin=Math.sin(o.rot);
+       var rx=x*cos-y*sin, ry=x*sin+y*cos;
+       pts.push({x:starCenter.x+rx,y:starCenter.y+ry});
+     }
+     ctx.beginPath();
+     ctx.moveTo(pts[0].x,pts[0].y);
+     for(var k=1;k<pts.length;k++) ctx.lineTo(pts[k].x,pts[k].y);
+     ctx.closePath();
+     var introA=reducedMotion?1:Math.min(1,(performance.now()-introStart)/1600);
+     var ieA=1-Math.pow(1-Math.max(0,Math.min(1,(introA-i*0.055)/0.75)),3);
+     var alpha=(0.10 + i*0.01)*ieA;
+     if(i>8) alpha=0.18*ieA;
+     if(hov||sel) alpha=0.45*ieA;
+     if(!match) alpha=alpha*0.4;
+     ctx.strokeStyle='rgba(146,182,255,'+alpha+')';
+     ctx.lineWidth=(hov||sel)?1.6:1;
+     ctx.stroke();
+
+     // planet
+     var pos=planetPos(o);
+     o._pos=pos;
+     var intro=reducedMotion?1:Math.min(1,(performance.now()-introStart)/1600);
+     var ie=1-Math.pow(1-Math.max(0,Math.min(1,(intro-i*0.055)/0.75)),3);
+     var pAlpha=(match?1:0.16)*ie;
+     var tgt=sel?1.8:(hov?1.35:1);
+     if(!o.trail) o.trail=[];
+     if(o.trail.length>1 && pAlpha>0.2){
+       ctx.lineWidth=1.8; ctx.lineCap='round';
+       for(var ti=1;ti<o.trail.length;ti++){
+         ctx.globalAlpha=(ti/o.trail.length)*0.32*pAlpha;
+         ctx.strokeStyle=o.color;
+         ctx.beginPath(); ctx.moveTo(o.trail[ti-1].x,o.trail[ti-1].y); ctx.lineTo(o.trail[ti].x,o.trail[ti].y); ctx.stroke();
+       }
+       ctx.globalAlpha=1;
+     }
+     var ks=120, cs=18;
+     o.sv += (-ks*(o.scale-tgt)-cs*o.sv)*dt; o.scale += o.sv*dt;
+     var ps=o.scale*ie;
+
+     if(o.ring) drawRing(ctx,pos.x,pos.y,o.r*ps,o.color,0.42*pAlpha,o.rot,false);
+     glowAt(ctx,pos.x,pos.y,o.r*7*ps,o.color,0.32*pAlpha);
+     sphereAt(ctx,pos.x,pos.y,o.r*ps,o.color);
+     drawPlanetTexture(ctx,pos.x,pos.y,o.r*ps,o.color,o.tex,pAlpha);
+     ctx.strokeStyle=hexA(o.color,0.16*pAlpha); ctx.lineWidth=1;
+     ctx.beginPath(); ctx.arc(pos.x,pos.y,o.r*ps+2,0,TAU); ctx.stroke();
+     if(o.ring) drawRing(ctx,pos.x,pos.y,o.r*ps,o.color,0.55*pAlpha,o.rot,true);
+     if(o.moon){
+       ctx.strokeStyle=hexA('#dbe4ff',0.12*pAlpha); ctx.lineWidth=1;
+       ctx.beginPath(); ctx.ellipse(pos.x,pos.y,o.r*2.4,o.r*1.1,-0.4,0,TAU); ctx.stroke();
+       var ma=performance.now()*0.0006, mx=pos.x+Math.cos(ma)*o.r*2.4, my=pos.y+Math.sin(ma)*o.r*1.1;
+       sphereAt(ctx,mx,my,2.4*ps,'#dbe4ff');
+     }
+     if(o.comet && o.trail.length>3){
+       for(var ci=2;ci<=10;ci++){
+         var tp=o.trail[o.trail.length-ci]; if(!tp) continue;
+         glowAt(ctx,tp.x,tp.y,4+ci*0.7,o.color,0.09*(1-ci/11)*pAlpha);
+       }
+     }
+     if(hov||sel) drawSparkles(ctx,pos.x,pos.y,o.r*ps,o.color,performance.now()*0.002+o.idx,pAlpha);
+     if(sel){
+       ctx.globalAlpha=pAlpha*0.8; ctx.strokeStyle='rgba(255,210,122,.9)'; ctx.lineWidth=1.2;
+       ctx.beginPath(); ctx.arc(pos.x,pos.y,(o.r+13)*ps,0,TAU); ctx.stroke();
+       ctx.globalAlpha=1;
+     }
+   });
+
+   // star
+   drawStar(t);
+
+   // shooting star
+   if(shot){
+     var p=(t-shot.start)/shot.dur;
+     if(p<1){
+       var x=shot.from.x+(shot.to.x-shot.from.x)*p;
+       var y=shot.from.y+(shot.to.y-shot.from.y)*p;
+       var px2=shot.from.x+(shot.to.x-shot.from.x)*Math.max(0,p-0.18);
+       var py2=shot.from.y+(shot.to.y-shot.from.y)*Math.max(0,p-0.18);
+       ctx.save();
+       ctx.globalAlpha=1-p;
+       ctx.strokeStyle='rgba(255,255,255,0.9)';
+       ctx.lineWidth=2;
+       ctx.beginPath();ctx.moveTo(px2,py2);ctx.lineTo(x,y);ctx.stroke();
+       ctx.restore();
+     }
+   }
+ }
+
+ function drawStar(t){
+   var ctx=orbitCtx;
+   var x=starCenter.x,y=starCenter.y;
+   var pulse = reducedMotion?1:1+0.08*Math.sin(t*0.002);
+   glowAt(ctx,x,y,78*pulse,'#ffd27a',0.30);
+   glowAt(ctx,x,y,44*pulse,'#ffb45e',0.45);
+   sphereAt(ctx,x,y,13*pulse,'#ffd27a');
+   ctx.strokeStyle='rgba(255,245,220,.28)'; ctx.lineWidth=1;
+   ctx.beginPath();
+   ctx.moveTo(x-34*pulse,y); ctx.lineTo(x+34*pulse,y);
+   ctx.moveTo(x,y-34*pulse); ctx.lineTo(x,y+34*pulse);
+   ctx.stroke();
+   sphereAt(ctx,x,y,4*pulse,'#fff7e0');
+   for(var si=0;si<12;si++){ var a=t*0.0005+si/12*TAU; var rr=26+Math.sin(t*0.0012+si)*7; glowAt(ctx,x+Math.cos(a)*rr,y+Math.sin(a)*rr,5,'#ffe7b0',0.20); }
+ }
+
+ // ---------- UI ----------
+ function renderMsChips(){
+   var wrap=$('msChips'); wrap.textContent='';
+   var keys=['all'].concat(TM.map(function(m){return m.milestone;}));
+   keys.forEach(function(k){
+     var b=document.createElement('button');
+     b.type='button'; b.className='ms-chip';
+     b.textContent = k==='all'?'全部':k;
+     b.setAttribute('aria-pressed', state.filterMs===k?'true':'false');
+     b.addEventListener('click',function(){
+       state.filterMs=k;
+       document.querySelectorAll('.ms-chip').forEach(function(x){x.setAttribute('aria-pressed', x.textContent===(k==='all'?'全部':k)?'true':'false');});
+       // simpler: re-render
+       renderMsChips();
+       renderCatalog();
+       syncUrl();
+     });
+     wrap.appendChild(b);
+   });
+ }
+
+ function renderTagMenu(){
+   var menu=$('tagMenu');
+   menu.textContent='';
+   var tags=[];
+   var seen={};
+   TM.forEach(function(m){m.tags.forEach(function(t){if(!seen[t]){seen[t]=true;tags.push(t);}});});
+   tags.sort();
+   var allBtn=document.createElement('button');
+   allBtn.type='button'; allBtn.textContent='全部';
+   allBtn.setAttribute('aria-pressed', state.filterTag==='all'?'true':'false');
+   allBtn.addEventListener('click',function(){state.filterTag='all';renderTagMenu();renderCatalog();syncUrl();});
+   menu.appendChild(allBtn);
+   tags.forEach(function(t){
+     var b=document.createElement('button');
+     b.type='button'; b.textContent=t;
+     b.setAttribute('aria-pressed', state.filterTag===t?'true':'false');
+     b.addEventListener('click',function(){state.filterTag=t;renderTagMenu();renderCatalog();syncUrl();});
+     menu.appendChild(b);
+   });
+ }
+
+ function renderCatalog(){
+   var list=$('catalogList');
+   list.textContent='';
+   var empty=$('catalogEmpty');
+   var matching=TM.filter(matches);
+   empty.style.display = matching.length===0?'block':'none';
+   list.style.display = matching.length===0?'none':'block';
+   TM.forEach(function(m,i){
+     if(!matches(m)) return;
+     var row=document.createElement('button');
+     row.type='button';
+     row.className='cat-row'+(state.selected && state.selected.milestone===m.milestone?' selected':'');
+     row.addEventListener('mouseenter',function(){state.hovered=i;showTooltipFor(i);});
+     row.addEventListener('mouseleave',function(){if(state.hovered===i){state.hovered=null;hideTooltip();}});
+     row.addEventListener('click',function(){selectModule(i);});
+     var dot=document.createElement('span');dot.className='cat-dot';dot.style.background=m.color;dot.style.color=m.color;row.appendChild(dot);
+     var ms=document.createElement('span');ms.className='cat-ms';ms.textContent=m.milestone;row.appendChild(ms);
+     var info=document.createElement('div');info.className='cat-info';
+     var t=document.createElement('div');t.className='cat-title';t.textContent=m.title;info.appendChild(t);
+     var tags=document.createElement('div');tags.className='cat-tags';
+     m.tags.slice(0,2).forEach(function(tag){var c=document.createElement('span');c.className='cat-tag';c.textContent=tag;tags.appendChild(c);});
+     info.appendChild(tags);
+     row.appendChild(info);
+     var chev=document.createElement('span');chev.className='cat-chev';chev.textContent='›';row.appendChild(chev);
+     list.appendChild(row);
+   });
+   $('catalogCount').textContent=matching.length;
+   $('liveCount').textContent='显示 '+matching.length+' / 9 章';
+ }
+
+ function selectModule(i){
+   state.selected=TM[i];
+   state.hovered=i;
+   if(orbits[i]){ var bp=orbits[i]._pos||planetPos(orbits[i]); burstAt(bp.x,bp.y,TM[i].color,22); }
+   showDetail(TM[i],i);
+   syncUrl();
+ }
+ function showDetail(m,i){
+   var dv=$('detailView');
+   dv.textContent='';
+   dv.classList.add('active');
+   if(window.innerWidth<980){state.catalogOpen=true;var cat=$('catalog');if(cat)cat.classList.add('open');}
+   if(window.innerWidth<980)document.body.classList.add('cat-open');
+   $('catalogList').style.display='none';
+   $('catalogEmpty').style.display='none';
+   // close
+   var close=document.createElement('button');close.type='button';close.className='detail-close';close.textContent='×';close.setAttribute('aria-label','关闭详情');
+   close.addEventListener('click',closeDetail);
+   dv.appendChild(close);
+   var ms=document.createElement('div');ms.className='detail-ms';ms.textContent=m.milestone;
+   var badge=document.createElement('span');badge.className='badge-sample';badge.textContent='样板';ms.appendChild(badge);
+   dv.appendChild(ms);
+   var h3=document.createElement('h3');h3.textContent=m.title;dv.appendChild(h3);
+   var oi=document.createElement('div');oi.className='orbit-idx';oi.textContent='第 '+(i+1)+' 轨道';dv.appendChild(oi);
+   var sum=document.createElement('div');sum.className='summary';sum.textContent=m.summary;dv.appendChild(sum);
+   var src=document.createElement('div');src.className='src';src.textContent='来源：'+m.src;dv.appendChild(src);
+   var tags=document.createElement('div');tags.className='tags';
+   m.tags.forEach(function(t){var s=document.createElement('span');s.textContent=t;tags.appendChild(s);});
+   dv.appendChild(tags);
+   var actions=document.createElement('div');actions.className='actions';
+   var sim=document.createElement('a');sim.className='primary';sim.href=m.sim;sim.textContent='进入模拟';actions.appendChild(sim);
+   var pdf=document.createElement('a');pdf.className='ghost';pdf.href=m.note;pdf.textContent='推导 PDF';actions.appendChild(pdf);
+   dv.appendChild(actions);
+   var nav=document.createElement('div');nav.className='navchips';
+   if(i>0){var prev=document.createElement('button');prev.type='button';prev.className='navchip';prev.textContent='← '+TM[i-1].milestone+' '+TM[i-1].title;prev.addEventListener('click',function(){selectModule(i-1);});nav.appendChild(prev);}
+   if(i<TM.length-1){var next=document.createElement('button');next.type='button';next.className='navchip';next.textContent=TM[i+1].milestone+' '+TM[i+1].title+' →';next.addEventListener('click',function(){selectModule(i+1);});nav.appendChild(next);}
+   dv.appendChild(nav);
+ }
+ function closeDetail(){
+   state.selected=null;
+   var dv=$('detailView');
+   dv.classList.remove('active');
+   dv.textContent='';
+   renderCatalog();
+   syncUrl();
+ }
+
+ function showTooltipFor(i){
+   var o = orbits[i];
+   if(!o || !o._pos) return;
+   var m=TM[i];
+   var tip=$('tooltip');
+   tip.textContent='';
+   var ms=document.createElement('span');ms.className='t-ms';ms.textContent=m.milestone;tip.appendChild(ms);
+   tip.appendChild(document.createTextNode(m.title));
+   var src=document.createElement('div');src.className='t-src';src.textContent=m.src;tip.appendChild(src);
+   tip.style.display='block';
+   var x=o._pos.x+12, y=o._pos.y-10;
+   if(x+250>window.innerWidth) x=o._pos.x-260;
+   if(y+60>window.innerHeight) y=o._pos.y-60;
+   tip.style.left=x+'px';tip.style.top=y+'px';
+ }
+ function hideTooltip(){$('tooltip').style.display='none';}
+
+ // ---------- deep links ----------
+ function parseDeepLinks(){
+   var params=new URLSearchParams(window.location.search);
+   if(params.get('q')){state.q=params.get('q');$('search').value=state.q;}
+   if(params.get('tag')){state.filterTag=params.get('tag');}
+   var m=params.get('m');
+   if(m){
+     for(var i=0;i<TM.length;i++){ if(TM[i].milestone===m){ state.selected=TM[i]; showDetail(TM[i],i); state.hovered=i; break;} }
+   }
+   if(params.get('ask')==='1'){
+     try{
+       if(window.TM_AI && typeof window.TM_AI.open==='function'){
+         window.TM_AI.open({module: (state.selected?state.selected.milestone : (params.get('m')||'M0'))});
+       } else {
+         document.dispatchEvent(new CustomEvent('tm:open-ai',{detail:{module: (state.selected?state.selected.milestone : (params.get('m')||'M0'))}}));
+       }
+     }catch(e){}
+   }
+ }
+ function syncUrl(){
+   try{
+     var params=new URLSearchParams();
+     if(state.selected) params.set('m',state.selected.milestone);
+     if(state.filterTag && state.filterTag!=='all') params.set('tag',state.filterTag);
+     if(state.q) params.set('q',state.q);
+     var qs=params.toString();
+     var url=window.location.pathname+(qs?'?'+qs:'')+window.location.hash;
+     history.replaceState(null,'',url);
+   }catch(e){}
+ }
+
+ // ---------- catalog toggle mobile ----------
+ function toggleCatalog(){
+   if(window.innerWidth<980){
+     state.catalogOpen=!state.catalogOpen;
+     $('catalog').classList.toggle('open',state.catalogOpen);
+     document.body.classList.toggle('cat-open',state.catalogOpen);
+   } else {
+     $('catalog').scrollIntoView({behavior:'smooth'});
+   }
+ }
+
+ // ---------- path drawer ----------
+ function buildPath(){
+   var body=$('pathBody'); body.textContent='';
+   TM.forEach(function(m,i){
+     var line=document.createElement('div');line.className='path-line';
+     var dot=document.createElement('span');dot.className='path-dot';dot.style.background=m.color;line.appendChild(dot);
+     var ms=document.createElement('div');ms.className='path-ms';ms.textContent=m.milestone;line.appendChild(ms);
+     var ti=document.createElement('div');ti.className='path-title';ti.textContent=m.title;line.appendChild(ti);
+     var one=document.createElement('div');one.className='path-one';one.textContent=m.src;line.appendChild(one);
+     body.appendChild(line);
+   });
+   var credit=document.createElement('div');credit.className='path-credit';
+   credit.innerHTML='内容来源：<b>作业/ 目录共 8 份 PDF</b>（7 次作业 + 1 个两体问题专题）<br>统一验收：单文件零依赖 · 内联 JS 过 esprima 语法检查 · ?selftest=1 数值断言 · 守恒量漂移监控';
+   body.appendChild(credit);
+ }
+
+ // ---------- events ----------
+ $('search').addEventListener('input',function(){
+   state.q=this.value.trim();
+   renderCatalog();
+   syncUrl();
+ });
+ $('tagBtn').addEventListener('click',function(){
+   var menu=$('tagMenu');
+   var open=menu.classList.toggle('open');
+   this.setAttribute('aria-expanded',open?'true':'false');
+ });
+ document.addEventListener('click',function(e){
+   if(!e.target.closest('.tag-expander')){$('tagMenu').classList.remove('open');$('tagBtn').setAttribute('aria-expanded','false');}
+ });
+ $('pauseBtn').addEventListener('click',function(){
+   state.paused=!state.paused;
+   this.setAttribute('aria-pressed',state.paused?'true':'false');
+   this.textContent=state.paused?'▶':'⏸';
+ });
+ $('speedBtn').addEventListener('click',function(){
+   if(state.speed===1) state.speed=0.5;
+   else if(state.speed===0.5) state.speed=2;
+   else state.speed=1;
+   this.textContent='x'+state.speed;
+ });
+ $('btnCatalog').addEventListener('click',toggleCatalog);
+ $('btnPath').addEventListener('click',function(){buildPath();$('overlay').classList.add('open');$('drawer').classList.add('open');});
+ $('btnGloss').addEventListener('click',function(){$('aboutPopover').classList.remove('open');$('glossPopover').classList.add('open');});
+ $('glossClose').addEventListener('click',function(){$('glossPopover').classList.remove('open');});
+ $('glossPopover').addEventListener('click',function(e){if(e.target===$('glossPopover'))$('glossPopover').classList.remove('open');});
+ $('btnAbout').addEventListener('click',function(){$('glossPopover').classList.remove('open');$('aboutPopover').classList.add('open');});
+ $('drawerClose').addEventListener('click',function(){$('overlay').classList.remove('open');$('drawer').classList.remove('open');});
+ $('overlay').addEventListener('click',function(){$('overlay').classList.remove('open');$('drawer').classList.remove('open');});
+ $('aboutClose').addEventListener('click',function(){$('aboutPopover').classList.remove('open');});
+ $('aboutPopover').addEventListener('click',function(e){if(e.target===$('aboutPopover'))$('aboutPopover').classList.remove('open');});
+
+ // keyboard
+ document.addEventListener('keydown',function(e){
+   if(e.key==='/' && document.activeElement!==$('search')){e.preventDefault();$('search').focus();return;}
+   if(e.key==='Escape'){
+     if($('detailView').classList.contains('active')) closeDetail();
+     else if($('drawer').classList.contains('open')){$('drawer').classList.remove('open');$('overlay').classList.remove('open');}
+     else if($('glossPopover').classList.contains('open')) $('glossPopover').classList.remove('open');
+     else if($('aboutPopover').classList.contains('open')) $('aboutPopover').classList.remove('open');
+     else if(window.innerWidth<980 && state.catalogOpen){state.catalogOpen=false;$('catalog').classList.remove('open');}
+     return;
+   }
+   if(e.key==='ArrowRight' || e.key==='ArrowLeft'){
+     if($('detailView').classList.contains('active')){
+       var cur=TM.indexOf(state.selected);
+       var ni = e.key==='ArrowRight' ? cur+1 : cur-1;
+       if(ni>=0 && ni<TM.length) selectModule(ni);
+     } else {
+       // cycle hovered
+       var base = state.hovered===null?0:state.hovered;
+       var ni2 = e.key==='ArrowRight' ? (base+1)%TM.length : (base-1+TM.length)%TM.length;
+       state.hovered=ni2;
+       showTooltipFor(ni2);
+     }
+     return;
+   }
+   if(e.key==='Enter'){
+     if(state.hovered!==null && !$('detailView').classList.contains('active')) selectModule(state.hovered);
+   }
+ });
+
+ // mouse
+ window.addEventListener('mousemove',function(e){
+   mouse.x=e.clientX; mouse.y=e.clientY;
+   if(window.innerWidth>=980){
+     var idx=hitPlanet(e.clientX,e.clientY);
+     if(idx!==-1 && matches(TM[idx])){ state.hovered=idx; showTooltipFor(idx);}
+     else if(state.hovered!==null && !e.target.closest('.catalog,.cmdbar,.topbar')){ /* keep */ }
+   }
+ });
+ function hitPlanet(mx,my){
+   for(var i=orbits.length-1;i>=0;i--){
+     var o=orbits[i];
+     if(!o._pos) continue;
+     if(!matches(o.m)) continue;
+     var dx=mx-o._pos.x, dy=my-o._pos.y;
+     if(dx*dx+dy*dy <= (o.r+6)*(o.r+6)) return i;
+   }
+   return -1;
+ }
+ orbitCanvas.addEventListener('click',function(e){
+   var idx=hitPlanet(e.clientX,e.clientY);
+   if(idx!==-1 && matches(TM[idx])) selectModule(idx);
+ });
+
+ // init
+ resize();
+ window.addEventListener('resize',resize);
+ parseDeepLinks();
+ renderMsChips();
+ renderTagMenu();
+ renderCatalog();
+ if(!state.selected) {/* catalog view */}
+
+ // animation loop
+ var last=performance.now();
+ nextShot=last+7000+Math.random()*6000;
+ function frame(now){
+   var dt=Math.min(0.05,(now-last)/1000);
+   last=now;
+   if(!state.paused) updatePlanets(dt);
+   if(!reducedMotion) handleShot(now);
+   drawStarfield(now);
+   drawOrbits(now,dt);
+   requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+})();
+</script>
+<!-- TM-AI:START -->
+<style id="tm-ai-style">
+#tm-ai-root{
+  position:fixed; inset:0; z-index:60; pointer-events:none;
+  font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --tmai-void:#03050c; --tmai-panel:rgba(9,14,30,.74); --tmai-line:rgba(146,182,255,.14);
+  --tmai-text:#e8eeff; --tmai-text2:#a9b8dc; --tmai-muted:#6d7ca4;
+  --tmai-solar:#ffd27a; --tmai-cyan:#7fe0ff; --tmai-violet:#b79bff;
+}
+#tm-ai-root *{box-sizing:border-box}
+#tm-ai-root .tmai-launcher{
+  position:fixed; right:18px; bottom:18px; height:54px; min-width:54px; padding:0 10px;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  border-radius:999px; cursor:pointer; pointer-events:auto;
+  color:var(--tmai-text); font-size:13px; font-weight:600; letter-spacing:.3px;
+  background:linear-gradient(160deg,rgba(26,36,66,.72),rgba(6,10,22,.88));
+  border:1px solid rgba(146,182,255,.28);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(255,210,122,.12);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+#tm-ai-root .tmai-launcher:hover{transform:translateY(-2px)}
+#tm-ai-root .tmai-launcher::after{
+  content:''; position:absolute; inset:-5px; border-radius:inherit;
+  border:1px solid rgba(255,210,122,.32);
+  animation:tmai-pulse 2.6s ease-out infinite; pointer-events:none;
+}
+@keyframes tmai-pulse{
+  0%{transform:scale(1); opacity:.7}
+  70%{transform:scale(1.22); opacity:0}
+  100%{transform:scale(1.22); opacity:0}
+}
+#tm-ai-root .tmai-launcher-glyph{font-size:18px; color:var(--tmai-solar); line-height:1}
+#tm-ai-root .tmai-launcher-short{display:none}
+#tm-ai-root .tmai-launcher-full{display:none}
+@media (min-width:561px){
+  #tm-ai-root .tmai-launcher{padding:0 16px; min-width:150px}
+  #tm-ai-root .tmai-launcher-glyph{display:none}
+  #tm-ai-root .tmai-launcher-full{display:inline}
+}
+@media (max-width:979px){
+  #tm-ai-root .tmai-launcher{bottom:190px}
+}
+@media (max-width:560px){
+  #tm-ai-root .tmai-launcher{width:54px; padding:0; min-width:54px}
+  #tm-ai-root .tmai-launcher-full{display:none}
+  #tm-ai-root .tmai-launcher-glyph{display:inline}
+}
+#tm-ai-root .tmai-panel{
+  position:fixed; right:18px; bottom:84px; width:380px;
+  max-height:min(640px,78vh);
+  display:flex; flex-direction:column;
+  background:var(--tmai-panel);
+  border:1px solid var(--tmai-line);
+  border-radius:16px;
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(255,210,122,.06);
+  overflow:hidden; pointer-events:auto;
+  color:var(--tmai-text); font-size:14px;
+}
+#tm-ai-root .tmai-panel[hidden]{display:none !important}
+@media (max-width:560px){
+  #tm-ai-root .tmai-panel{
+    left:10px; right:10px; width:auto; bottom:76px; max-height:76vh;
+  }
+}
+#tm-ai-root .tmai-header{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px; border-bottom:1px solid var(--tmai-line);
+  background:linear-gradient(180deg,rgba(26,36,66,.35),transparent);
+}
+#tm-ai-root .tmai-title{font-size:15px; font-weight:650; color:var(--tmai-text); letter-spacing:.3px}
+#tm-ai-root .tmai-header-left{display:flex; flex-direction:column; gap:4px}
+#tm-ai-root .tmai-header-right{display:flex; align-items:center; gap:8px}
+#tm-ai-root .tmai-status{display:flex; align-items:center; font-size:11.5px; color:var(--tmai-text2)}
+#tm-ai-root .tmai-status-dot{width:8px; height:8px; border-radius:50%; margin-right:6px; background:var(--tmai-muted)}
+#tm-ai-root .tmai-status-dot.tmai-status-checking{background:var(--tmai-muted)}
+#tm-ai-root .tmai-status-dot.tmai-status-online{background:#7fe3a0; box-shadow:0 0 6px #7fe3a0}
+#tm-ai-root .tmai-status-dot.tmai-status-offline{background:#ffc46b}
+#tm-ai-root .tmai-status-dot.tmai-status-error{background:#ff8a8a}
+#tm-ai-root .tmai-seg{display:inline-flex; border:1px solid var(--tmai-line); border-radius:999px; overflow:hidden}
+#tm-ai-root .tmai-seg-btn{
+  background:transparent; border:none; color:var(--tmai-text2); padding:4px 10px;
+  font:inherit; font-size:12px; cursor:pointer; transition:.15s;
+}
+#tm-ai-root .tmai-seg-btn[aria-pressed="true"]{background:rgba(255,210,122,.14); color:var(--tmai-solar)}
+#tm-ai-root .tmai-close{
+  width:28px; height:28px; border-radius:50%; border:1px solid var(--tmai-line);
+  background:rgba(6,10,22,.5); color:var(--tmai-text2); cursor:pointer; font-size:16px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+#tm-ai-root .tmai-context{
+  margin:10px 14px 0; padding:6px 10px; border-radius:999px;
+  background:rgba(255,210,122,.10); border:1px solid rgba(255,210,122,.25);
+  color:var(--tmai-solar); font-size:12px;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+#tm-ai-root .tmai-context[hidden]{display:none !important}
+#tm-ai-root .tmai-context button{background:transparent; border:none; color:var(--tmai-solar); cursor:pointer; font-size:14px}
+#tm-ai-root .tmai-messages{
+  flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px;
+  min-height:120px;
+}
+#tm-ai-root .tmai-messages::-webkit-scrollbar{width:6px}
+#tm-ai-root .tmai-messages::-webkit-scrollbar-thumb{background:rgba(146,182,255,.2); border-radius:3px}
+#tm-ai-root .tmai-msg{display:flex; flex-direction:column; max-width:92%}
+#tm-ai-root .tmai-msg-user{align-self:flex-end; max-width:85%}
+#tm-ai-root .tmai-msg-assistant{align-self:flex-start}
+#tm-ai-root .tmai-msg-content{
+  padding:8px 12px; border-radius:12px; font-size:14px; line-height:1.65;
+  word-break:break-word;
+}
+#tm-ai-root .tmai-msg-user .tmai-msg-content{
+  background:rgba(127,224,255,.12); border:1px solid rgba(127,224,255,.22);
+  border-radius:12px 12px 4px 12px; color:var(--tmai-text);
+}
+#tm-ai-root .tmai-msg-assistant .tmai-msg-content{
+  background:rgba(26,36,66,.5); border:1px solid var(--tmai-line);
+  border-radius:12px 12px 12px 4px; color:var(--tmai-text);
+}
+#tm-ai-root .tmai-msg-content p{margin:0 0 8px}
+#tm-ai-root .tmai-msg-content p:last-child{margin-bottom:0}
+#tm-ai-root .tmai-msg-content ul{margin:4px 0 8px; padding-left:18px}
+#tm-ai-root .tmai-msg-content li{margin:2px 0}
+#tm-ai-root .tmai-msg-content code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px;
+  background:rgba(146,182,255,.10); padding:1px 5px; border-radius:4px; color:var(--tmai-cyan);
+}
+#tm-ai-root .tmai-math{font-family:"STIX Two Math","Cambria Math","Latin Modern Math",Cambria,Georgia,serif; color:var(--tmai-text); font-size:1.02em; line-height:1.55; white-space:normal}
+#tm-ai-root .tmai-mathblock{display:block; margin:8px 0; padding:8px 10px; border-left:2px solid var(--tmai-line); background:rgba(146,182,255,.06); text-align:center; overflow-x:auto; color:var(--tmai-text); font-family:"STIX Two Math","Cambria Math","Latin Modern Math",Cambria,Georgia,serif}
+#tm-ai-root .tex-frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .18em; line-height:1.1}
+#tm-ai-root .tex-num{border-bottom:1px solid currentColor; padding:0 .18em}
+#tm-ai-root .tex-den{padding:0 .18em}
+#tm-ai-root .tex-sqrt-wrap{white-space:nowrap}
+#tm-ai-root .tex-sqrt{border-top:1px solid currentColor; padding:0 .1em; margin-left:1px}
+#tm-ai-root .tex-text{font-family:inherit; font-style:normal; white-space:pre}
+#tm-ai-root .tex-b{font-weight:700}
+#tm-ai-root .tex-i{font-style:italic}
+#tm-ai-root .tex-vec,#tm-ai-root .tex-dot,#tm-ai-root .tex-ddot,#tm-ai-root .tex-hat,#tm-ai-root .tex-bar,#tm-ai-root .tex-overline,#tm-ai-root .tex-underline{position:relative; display:inline-block}
+#tm-ai-root .tex-vec::before{content:"→"; position:absolute; top:-.15em; left:50%; transform:translateX(-50%); font-size:.65em; line-height:1}
+#tm-ai-root .tex-dot::before{content:"·"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.9em; line-height:1}
+#tm-ai-root .tex-ddot::before{content:"··"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.9em; line-height:1}
+#tm-ai-root .tex-hat::before{content:"^"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.8em; line-height:1}
+#tm-ai-root .tex-bar,#tm-ai-root .tex-overline{border-top:1px solid currentColor}
+#tm-ai-root .tex-underline{border-bottom:1px solid currentColor}
+#tm-ai-root .tmai-math sub,#tm-ai-root .tmai-math sup{font-size:.7em; line-height:0}
+#tm-ai-root .tex-cmd{color:var(--tmai-muted); font-size:.9em}
+#tm-ai-root .tmai-cite{
+  display:inline-block; padding:0 .4em; margin:0 .15em; border-radius:4px;
+  background:rgba(255,210,122,.12); color:var(--tmai-solar); font-size:11px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+#tm-ai-root .tmai-msg-label{
+  margin-top:4px; font-size:11px; color:var(--tmai-muted); align-self:flex-start;
+}
+#tm-ai-root .tmai-typing{display:inline-flex; gap:4px; padding:2px 0}
+#tm-ai-root .tmai-typing span{
+  width:6px; height:6px; border-radius:50%; background:var(--tmai-text2);
+  animation:tmai-blink 1.2s infinite;
+}
+#tm-ai-root .tmai-typing span:nth-child(2){animation-delay:.2s}
+#tm-ai-root .tmai-typing span:nth-child(3){animation-delay:.4s}
+@keyframes tmai-blink{0%,80%,100%{opacity:.3} 40%{opacity:1}}
+#tm-ai-root .tmai-chips{display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 10px}
+#tm-ai-root .tmai-chips[hidden]{display:none !important}
+#tm-ai-root .tmai-chip{
+  font:inherit; font-size:12px; padding:5px 10px; border-radius:999px; cursor:pointer;
+  background:rgba(58,95,191,.14); border:1px solid rgba(146,182,255,.22); color:#cfdcff;
+  transition:.15s; text-align:left;
+}
+#tm-ai-root .tmai-chip:hover{background:rgba(94,162,255,.24)}
+#tm-ai-root .tmai-composer{
+  display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--tmai-line);
+  align-items:flex-end;
+}
+#tm-ai-root .tmai-composer textarea{
+  flex:1; resize:none; min-height:40px; max-height:120px;
+  background:rgba(6,10,22,.6); border:1px solid var(--tmai-line); border-radius:10px;
+  color:var(--tmai-text); font:inherit; font-size:14px; padding:8px 10px; line-height:1.5;
+}
+#tm-ai-root .tmai-composer textarea:focus-visible{outline:2px solid var(--tmai-cyan); outline-offset:1px}
+#tm-ai-root .tmai-composer button{
+  padding:0 14px; height:40px; border-radius:10px; border:1px solid #4f86ff;
+  background:linear-gradient(180deg,#3f7bff,#2b5fe0); color:#fff; cursor:pointer; font-weight:600;
+}
+#tm-ai-root .tmai-composer button:disabled{opacity:.5; cursor:not-allowed}
+#tm-ai-root .tmai-footer{
+  padding:6px 14px 10px; font-size:11.5px; color:var(--tmai-muted); text-align:center;
+}
+#tm-ai-root .tmai-sources{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+#tm-ai-root .tmai-src{
+  font-size:11px; padding:2px 8px; border-radius:999px; text-decoration:none;
+  border:1px solid rgba(146,182,255,.22); color:var(--tmai-text2);
+}
+#tm-ai-root .tmai-src:hover{color:var(--tmai-text); border-color:rgba(146,182,255,.4)}
+#tm-ai-root .tmai-src-pdf{border-color:rgba(255,210,122,.3); color:var(--tmai-solar)}
+#tm-ai-root .tmai-list{margin:4px 0 8px; padding-left:18px}
+@media (prefers-reduced-motion:reduce){
+  #tm-ai-root .tmai-launcher::after{animation:none}
+  #tm-ai-root .tmai-typing span{animation:none; opacity:.6}
+}
+</style>
+<div id="tm-ai-root">
+  <button id="tmai-launcher" class="tmai-launcher" type="button" aria-expanded="false" aria-label="打开问星助教">
+    <span class="tmai-launcher-glyph" aria-hidden="true">✦</span>
+    <span class="tmai-launcher-short">问星</span>
+    <span class="tmai-launcher-full">✦ 问星 · AI 助教</span>
+  </button>
+  <div id="tmai-panel" class="tmai-panel" role="dialog" aria-modal="false" aria-labelledby="tmai-title" hidden>
+    <div class="tmai-header">
+      <div class="tmai-header-left">
+        <span class="tmai-title" id="tmai-title">星语 · 讲义助教</span>
+        <div class="tmai-status">
+          <span class="tmai-status-dot" id="tmai-status-dot"></span>
+          <span class="tmai-status-text" id="tmai-status-text">检查中…</span>
+        </div>
+      </div>
+      <div class="tmai-header-right">
+        <div class="tmai-seg" role="group" aria-label="模式">
+          <button type="button" class="tmai-seg-btn" data-mode="quick" aria-pressed="true">快速</button>
+          <button type="button" class="tmai-seg-btn" data-mode="deep" aria-pressed="false">深空</button>
+        </div>
+        <button type="button" class="tmai-close" aria-label="关闭">×</button>
+      </div>
+    </div>
+    <div id="tmai-context" class="tmai-context" hidden>
+      <span id="tmai-context-text"></span>
+      <button type="button" id="tmai-context-close" aria-label="取消章节上下文">×</button>
+    </div>
+    <div id="tmai-messages" class="tmai-messages" aria-live="polite"></div>
+    <div id="tmai-chips" class="tmai-chips"></div>
+    <div class="tmai-composer">
+      <textarea id="tmai-input" rows="2" placeholder="输入问题…" aria-label="输入问题"></textarea>
+      <button id="tmai-send" type="button" aria-label="发送">发送</button>
+    </div>
+    <div class="tmai-footer">本地起草 + 学校 API 审核 · 问题会发送到本机与学校模型<br>AI 可能出错，请以讲义推导（note.pdf）为准<br>离线模式：讲义原文检索 + 常见问题直答</div>
+  </div>
+</div>
+<script id="tm-offline-kb">
+/* generated by tools/build_offline_kb.py */
+window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"比奈方程（现有样板）","tags":["中心力","比奈方程","圆锥曲线","进动"],"summary":"本文从极坐标下的牛顿第二定律出发，利用中心力场中的角动量守恒， 引入变量 $u=1/r$，逐步推导出比奈方程（Binet equation）。随后将其应用于万有引力情形，证明行星轨道为圆锥曲线， 并讨论偏心率 $e$ 与轨道类型的关系。","href":"modules/00-binet/index.html","pdf":"modules/00-binet/binet.pdf"},{"m":"M1","slug":"01-effective-potential","title":"有效势与轨道稳定性","tags":["有效势","RK4","Bertrand","进动"],"summary":"用有效势方法分析中心力场中的圆轨道、稳定性、径向振动与进动，并以 RK4 数值积分验证解析结论。","href":"modules/01-effective-potential/index.html","pdf":"modules/01-effective-potential/note.pdf"},{"m":"M2","slug":"02-scattering","title":"散射与俘获","tags":["散射","截面","俘获","RK4"],"summary":"用散射实验与有效势垒分析中心力场中的散射角、微分散射截面与俘获截面，并以 RK4 数值积分验证解析结论。","href":"modules/02-scattering/index.html","pdf":"modules/02-scattering/note.pdf"},{"m":"M3","slug":"03-two-body","title":"两体问题与系外行星","tags":["两体","RV","多普勒","系外行星"],"summary":"用质心与约化质量方法分析两体开普勒运动，计算恒星摆动速度与多普勒频移，并以太阳-木星/地球系统验证系外行星径向速度法。","href":"modules/03-two-body/index.html","pdf":"modules/03-two-body/note.pdf"},{"m":"M4","slug":"04-variational","title":"变分原理与等时摆","tags":["变分","费马","等时摆","Snell"],"summary":"用变分原理导出折射定律与最短路径，证明摆线的等时性，并以数值积分验证等时性离散度。","href":"modules/04-variational/index.html","pdf":"modules/04-variational/note.pdf"},{"m":"M5","slug":"05-virtual-work","title":"虚功原理与静力学","tags":["虚功","静力学","梯子","平衡"],"summary":"用虚功原理与势能驻值法分析静力学平衡，计算梯子临界角，并以数值验证。","href":"modules/05-virtual-work/index.html","pdf":"modules/05-virtual-work/note.pdf"},{"m":"M6","slug":"06-collisions","title":"碰撞与变质量","tags":["碰撞","变质量","恢复系数","雨滴"],"summary":"用碰撞几何与变质量动力学分析光滑球碰撞、雨滴下落与弹性碰撞链，并以数值验证。","href":"modules/06-collisions/index.html","pdf":"modules/06-collisions/note.pdf"},{"m":"M7","slug":"07-rigid-body","title":"刚体几何与角动量","tags":["刚体","角动量","球壳","质心"],"summary":"用质心积分、角动量守恒与 Newton 球壳定理分析刚体几何与引力势。","href":"modules/07-rigid-body/index.html","pdf":"modules/07-rigid-body/note.pdf"},{"m":"M8","slug":"08-kinematics","title":"运动学与非线性振动","tags":["运动学","振动","Lorentz","脱离"],"summary":"用运动学与非线性振荡分析圆柱脱离、单摆周期修正、Lorentz 力与相对运动。","href":"modules/08-kinematics/index.html","pdf":"modules/08-kinematics/note.pdf"}],"faq":[{"q":"什么是有效势？为什么能判断圆轨道稳定性？","a":"有效势把角动量项并进势能：$V_{eff}(r)=V(r)+L^2/(2mr^2)$。圆轨道要求 $V_{eff}'(r_0)=0$；若 $V_{eff}''(r_0)>0$，小扰动以 $\\omega_r=\\sqrt{V_{eff}''/m}$ 振动，轨道稳定；若小于 0 则不稳定。到 M1 拖 E 与 L 看曲线就明白了。","m":"M1","sec":"有效势"},{"q":"伯特兰定理是什么？","a":"在所有束缚轨道都闭合的中心力势中，只有两种幂律势：$V\\propto -1/r$（引力）与 $V\\propto r^2$（弹簧）。频率比 $\\omega_r/\\omega_\\theta=\\sqrt{k+2}$；只有 k=-2 与 k=2 给出有理比。","m":"M1","sec":"伯特兰定理"},{"q":"水星近日点进动对应广义相对论的哪个修正项？","a":"GR 的最低阶修正是 $u^2$ 项：$u''+u=GM/h^2+3GM\\,u^2/c^2$，不是 $u^3$。真实水星进动约 $5.02\\times10^{-7}$ rad/圈。页面里的 $\\mu u^3$ 是唯象进动项，用来演示“椭圆不闭合”，不要把它当成 GR。","m":"M0","sec":"GR 修正"},{"q":"离心势垒是什么？","a":"有效势里的 $L^2/(2mr^2)$ 在中心附近形成一堵“墙”，L 越大墙越高。高斯势 $V=-e^{-r^2/2}$ 的势垒只在 $L<2\\sqrt2/e\\approx1.04$ 时存在；超过它，势垒消失，粒子直坠中心。","m":"M1","sec":"离心势垒"},{"q":"散射截面为什么有时显示无穷大？","a":"对 $k/r^2$ 这种长程势，再远的粒子也会被偏转；前向 $\\Theta\\to0$ 的 $1/\\Theta^3$ 峰使总截面发散，所以显示“无有限截面”。这是物理结论，不是程序错误。","m":"M2","sec":"俘获截面"},{"q":"两体问题怎么化成单体？","a":"用约化质量 $\\mu=m_1m_2/(m_1+m_2)$ 和相对坐标 $r=r_1-r_2$，两体就化为“一个假想粒子绕固定中心转”。开普勒第三定律里的质量要用总质量 $M_1+M_2$。","m":"M3","sec":"约化质量"},{"q":"系外行星的 K 和 Δλ 是什么？","a":"恒星也绕共同质心转。视向速度半振幅 $K=\\frac{M_2}{M_1+M_2}\\frac{2\\pi a}{P\\sqrt{1-e^2}}\\sin i$；$\\Delta\\lambda$ 是 500nm 星光的多普勒偏移。到 M3 拖大 M2，看恒星小圈和 K 一起变大。","m":"M3","sec":"视向速度"},{"q":"等时摆为什么等时？","a":"沿摆线（cycloid）摆动时周期与振幅无关，是严格等时；普通单摆只在小角度近似等时。M4 里有不同高度的小球同时到达的演示。","m":"M4","sec":"等时摆"},{"q":"最速降线为什么不是直线？","a":"直线最短，但下降慢；摆线（brachistochrone）让小球先快速获得速度，整体用时更短。“更短 ≠ 更快”正是变分法的魅力。","m":"M4","sec":"最速降线"},{"q":"虚功原理为什么能求平衡？","a":"约束力不做功。给系统一个符合约束的虚位移，平衡时总虚功 $\\delta W=0$，于是广义力 $Q=0$；不用解出所有约束力就能得到平衡条件。","m":"M5","sec":"虚功"},{"q":"梯子临界角怎么推？","a":"力平衡给出 $N_w=P/(2\\tan\\theta)$，摩擦临界 $f=\\mu P=N_w$，所以 $\\tan\\theta_{min}=1/(2\\mu)$。临界是摩擦饱和，不是势能 Hessian 奇异。","m":"M5","sec":"梯子"},{"q":"恢复系数是什么？e=0 会粘住吗？","a":"$e$ 是碰后沿连心线的分离速度与碰前接近速度之比。光滑球 $e=0$ 只让法向速度相等，切向仍保留，所以一般不会粘住：$\\beta=\\arctan(2\\tan\\alpha)-\\alpha$，只有正碰 $\\alpha=0$ 才 $\\beta=0$。","m":"M6","sec":"恢复系数"},{"q":"雨滴为什么越落越快？","a":"雨滴质量随时间增加（$r=r_0+\\lambda t$），重力持续加速；在“静止雨水”模型（$u=0$）下 $v\\sim gt/4$，没有终端速度。","m":"M6","sec":"雨滴"},{"q":"转动惯量是什么？","a":"$I=\\sum mr^2$，是“难不难被转起来”的量度，地位相当于平动里的质量；平行轴定理 $I=I_{cm}+md^2$。","m":"M7","sec":"转动惯量"},{"q":"甲虫绕环一圈为什么只转 180°？","a":"角动量守恒：甲虫相对环走一圈，环反向转 $\\pi$；甲虫的世界角是相对角加环转角，正好到对侧。M7 的甲虫模式可以看拖尾与角度读数。","m":"M7","sec":"甲虫"},{"q":"球壳内部为什么没有引力？","a":"均匀球壳内部各方向引力抵消，势为常数 $-GM/R$，场强为零；壳外才等效为全部质量集中在球心。","m":"M7","sec":"球壳"},{"q":"圆柱脱离角为什么总是 48.19°？","a":"脱离条件 $N=0$ 给出 $\\cos\\theta=2/3$，所以 $\\theta=\\arccos(2/3)=48.19^\\circ$，与质量、半径、g 都无关。","m":"M8","sec":"圆柱脱离"},{"q":"单摆周期为什么随振幅变大？","a":"大角度不是简谐，周期 $T\\approx T_0(1+\\theta_0^2/16+\\cdots)$，振幅越大周期越长；小角度才近似等时。","m":"M8","sec":"单摆"},{"q":"双摆为什么混沌？","a":"对初值极端敏感：两条几乎相同的释放轨迹会指数分离；能量仍守恒，但长期不可预测。M8 的双摆模式能直接看到分道扬镳。","m":"M8","sec":"双摆"},{"q":"洛伦兹力和洛伦兹变换有什么区别？","a":"洛伦兹力 $F=-e(E+v\\times B)$ 描述电荷受力；洛伦兹变换是狭义相对论里两个惯性系的时间/坐标换算。两者不是一回事。","m":"M8","sec":"Lorentz 力"},{"q":"学理论力学先看哪章？","a":"推荐顺序：M0 比奈 → M1 有效势 → M2 散射 → M3 两体 → M4 变分 → M5 虚功 → M6 碰撞 → M7 刚体 → M8 运动学。每章先读 intro，再拖主滑块，最后看 note.pdf。","m":"M0","sec":"学习路径"},{"q":"这些模拟用的是什么单位？","a":"多数是无量纲演示单位（如 $G=M=1$、$m=1$、$L=1$），方便看规律；真实单位的换算在 note.pdf 的数值例子里。","m":"M1","sec":"单位"},{"q":"为什么行星轨道是椭圆？","a":"平方反比引力下，比奈方程给出圆锥曲线：$e<1$ 椭圆、$e=1$ 抛物线、$e>1$ 双曲线。M0 改 λ/μ 可以看到轨道闭合与进动。","m":"M0","sec":"圆锥曲线"},{"q":"什么是掠面速度/开普勒第二定律？","a":"行星与中心连线单位时间扫过的面积 $dA/dt=L/(2m)$ 恒定，所以近心点快、远心点慢；这是角动量守恒的几何表述。","m":"M0","sec":"掠面速度"},{"q":"拉格朗日方程是什么？","a":"拉格朗日方程是 $\\frac{d}{dt}\\frac{\\partial L}{\\partial \\dot q}-\\frac{\\partial L}{\\partial q}=0$，其中 $L=T-V$。它从能量出发，自动处理约束，比逐個画受力更适合复杂系统；M4 的变分法就是它的来源。","m":"M4","sec":"拉格朗日方程"},{"q":"最小作用量原理是什么？","a":"系统真实运动使作用量 $S=\\int L\\,dt$ 取驻值（$\\delta S=0$）。对 $S$ 做变分就得到拉格朗日方程；这是分析力学的核心出发点。","m":"M4","sec":"最小作用量"},{"q":"费马原理是什么？","a":"光走“时间最短”的路径。把时间写成路径的泛函并取驻值，就得到折射定律 $n_1\\sin\\theta_1=n_2\\sin\\theta_2$；M4 的折射模式可以直接拖折射率看光线弯折。","m":"M4","sec":"费马原理"},{"q":"角动量守恒是什么？","a":"合外力矩为零时，角动量 $L$ 保持不变。中心力场中 $L=mr^2\\dot\\theta$ 恒定，所以行星近心点快、远心点慢——这就是开普勒第二定律。","m":"M0","sec":"角动量守恒"},{"q":"平行轴定理是什么？","a":"$I=I_{cm}+md^2$：绕任意平行轴的转动惯量，等于绕质心轴的转动惯量加上 $md^2$。M7 的球壳/圆盘模式会用到它。","m":"M7","sec":"平行轴定理"},{"q":"简谐振动和阻尼振动有什么区别？","a":"简谐：$x''+\\omega_0^2x=0$，等幅振荡；阻尼：$x''+2\\gamma x'+\\omega_0^2x=0$，振幅指数衰减。M8 的单摆大角度还会出现周期随振幅变长。","m":"M8","sec":"阻尼振动"},{"q":"伽利略变换和洛伦兹变换有什么区别？","a":"伽利略变换 $x'=x-Vt$ 是低速近似；洛伦兹变换在接近光速时修正时间与长度。M8 讲的是洛伦兹力 $F=-e(E+v\\times B)$，不要和洛伦兹变换混为一谈。","m":"M8","sec":"参考系变换"},{"q":"M6 的两个球为什么现在会碰上了？","a":"碰撞判定改用真实半径 $R$，并用二维法向冲量求解；视觉半径与物理半径一致，还加了 0.5s 接触停顿与闪光。打开 `?demo=contact` 可以直接看接触瞬间。","m":"M6","sec":"碰撞接触"},{"q":"球冠高度 h 为什么可以到 2R？","a":"切割平面距球心 $b=R-h$，$b$ 可以从 $R$ 变到 $-R$，所以 $h$ 的范围是 $[0,2R]$；$h>R$ 时球冠超过半球，$h=2R$ 就是整个球。M7 的滑块上限已按直径 2R 限制。","m":"M7","sec":"球冠"},{"q":"线上网页的 AI 为什么是离线？","a":"GitHub Pages 只有静态文件，没有 `/api` 后端。要完整 AI，请在本机运行 `bash tools/serve.sh`，再打开 http://127.0.0.1:8765/；静态站会保留“讲义检索 + 常见问题直答”。","m":"M1","sec":"部署"},{"q":"HUD 里的数字和单位怎么看？","a":"多数模拟用无量纲演示单位（如 $G=M=1$、$m=1$、$L=1$），方便看规律；HUD 标签已写成“中文 + 符号”，真实单位换算在 note.pdf 的数值例子里。","m":"M1","sec":"单位"},{"q":"最大偏转角 β_max 怎么来的？","a":"对 $\\beta=\\arctan(2\\tan\\alpha)-\\alpha$ 求极值，得 $\\tan^2\\alpha=(1-e)/2$。$e=0$ 时 $\\beta_{max}=19.47^\\circ$，$e=0.5$ 时约 $36.87^\\circ$。","m":"M6","sec":"最大偏转"},{"q":"俘获截面怎么理解？","a":"$\\sigma=\\pi b_c^2$ 是一张“有效靶面积”：瞄准距离 $b<b_c$ 的入射粒子都会被势场俘获。M2 可以切到俘获模式拖 b 看螺旋。","m":"M2","sec":"俘获截面"},{"q":"为什么轨道会进动？","a":"当势不是严格的 $1/r^2$（例如加了 $\\lambda u^2$ 或 $\\mu u^3$ 修正），轨道不再闭合，近心点每圈转过一个角度，这就是进动。M0 拖 λ/μ 可以直接看。","m":"M0","sec":"进动"},{"q":"诺特定理是什么？","a":"每种连续对称性对应一个守恒量：时间平移对应能量，空间平移对应动量，旋转对应角动量。讲义没有展开证明，但 M4 的变分法与 M7 的角动量守恒都用到了这个思想。","m":"M4","sec":"诺特定理"},{"q":"开普勒第一定律是什么？","a":"行星轨道是椭圆，太阳位于一个焦点上。它来自平方反比引力下的比奈方程；偏心率 $e<1$ 就是椭圆，$e=1$ 抛物线，$e>1$ 双曲线。","m":"M0","sec":"开普勒第一定律"},{"q":"开普勒第二定律是什么？","a":"行星与太阳连线单位时间扫过的面积恒定（掠面速度守恒），所以近心点快、远心点慢；本质是角动量守恒。","m":"M0","sec":"开普勒第二定律"},{"q":"开普勒第三定律是什么？","a":"$P^2=\\frac{4\\pi^2 a^3}{G(M_1+M_2)}$；太阳系里近似为 $T^2\\propto a^3$。两体问题里质量要用总质量 $M_1+M_2$。","m":"M3","sec":"开普勒第三定律"},{"q":"中心力是什么？","a":"力只沿径向（指向或背离中心），横向分力为零；因此角动量 $L=mr^2\\dot\\theta$ 守恒，轨道在一平面内，开普勒第二定律成立。","m":"M0","sec":"中心力"},{"q":"比奈方程是什么？","a":"把 $u=1/r$ 代入中心力径向方程得到 $u''+u=-F(1/u)/(m h^2u^2)$（$h=L/m$）。它把轨道形状与力律直接联系起来，是 M0 的主方程。","m":"M0","sec":"比奈方程"},{"q":"微分散射截面是什么？","a":"$d\\sigma/d\\Omega=(b/\\sin\\Theta)|db/d\\Theta|$：把“瞄准距离在 $b\\sim b+db$ 的粒子”映射到“散射到 $\\Theta\\sim\\Theta+d\\Theta$ 的立体角”，是散射实验的核心观测量。","m":"M2","sec":"微分散射截面"},{"q":"什么是混沌？","a":"确定性系统对初值极端敏感：两条几乎相同的轨迹会指数分离。双摆就是典型例子——能量仍守恒，但长期运动不可预测。M8 的双摆模式能直接看到两条轨迹分道扬镳。","m":"M8","sec":"混沌"},{"q":"Lorentz 力的漂移方向怎么判断？","a":"漂移速度 $v_d=E\\times B/B^2$，方向由右手定则给出。例如 $E=E\\hat y$、$B=B\\hat z$ 时 $\\hat y\\times\\hat z=\\hat x$，漂移沿 $+x$。M8 的 Lorentz 模式会画出电子轨迹。","m":"M8","sec":"Lorentz 漂移"},{"q":"什么是变质量系统？","a":"质量随时间变化的系统，方程是 $d(mv)/dt=F+u\\,dm/dt$，$u$ 是加入质量的绝对速度。雨滴取 $u=0$（静止雨水），得到 $v\\sim gt/4$。","m":"M6","sec":"变质量"},{"q":"相空间的分界线是什么？","a":"单摆相图里分隔“振荡”和“旋转”的临界轨道：$E=mgL$，对应刚好到达最高点 $\\theta=\\pi$ 且速度为零。$E<mgL$ 振荡，$E>mgL$ 旋转。","m":"M8","sec":"分界线"}],"glossary":[{"t":"有效势","d":"真实势能与角动量项 L²/2r² 合成的曲线，把二维轨道变成“小球沿曲线滚动”的一维问题。","m":"M1"},{"t":"离心势垒","d":"有效势里因角动量在中心附近凸起的部分，像一堵墙，拦着带角动量的粒子掉进中心。","m":"M1"},{"t":"掠面速度","d":"行星与中心连线单位时间扫过的面积；中心力场里它不变，这就是开普勒第二定律。","m":"M0"},{"t":"伯特兰定理","d":"所有束缚轨道都闭合的中心力势只有两种：牛顿引力（∝1/r²）与弹簧（∝r²）。","m":"M1"},{"t":"约化质量","d":"μ=m₁m₂/(m₁+m₂)：把两个天体互绕化成“一个假想粒子绕固定中心转”的换算质量。","m":"M3"},{"t":"恢复系数","d":"e＝碰后沿连心线的分离速度与碰前接近速度之比：e=1 完全弹性，e=0 碰后法向速度相同（不是粘住）。","m":"M6"},{"t":"虚功","d":"给系统一个符合约束的“想象中的”微小位移时各力做的功；总虚功为零即平衡。","m":"M5"},{"t":"广义力","d":"虚功 Q·δq 中与每个广义坐标配对的 Q：它推动这个坐标，但不必是牛顿意义上的力。","m":"M5"},{"t":"转动惯量","d":"I=Σmr²：物体“难不难被转起来”的量度，地位相当于平动里的质量。","m":"M7"},{"t":"等时摆","d":"周期与摆幅无关的摆：单摆只在小角度近似等时，沿摆线摆动则严格等时。","m":"M4"},{"t":"洛伦兹变换","d":"两个相对匀速运动的观测者之间换算时间与坐标的公式（注意与“洛伦兹力”是两回事）。","m":"M8"},{"t":"俘获截面","d":"σ=πb_c²：一张“有效靶面积”，入射粒子瞄准进来就必被势场俘获。","m":"M2"}],"chunks":[{"m":"M0","sec":"模块概览","t":"本文从极坐标下的牛顿第二定律出发，利用中心力场中的角动量守恒， 引入变量 $u=1/r$，逐步推导出比奈方程（Binet equation）。 随后将其应用于万有引力情形，证明行星轨道为圆锥曲线， 并讨论偏心率 $e$ 与轨道类型的关系。 最后说明如何通过修改比奈方程的源项参数， 在数值模拟中改变行星的运动轨迹。"},{"m":"M0","sec":"万有引力与圆锥曲线轨道","t":"对行星绕太阳运动，万有引力为 F_r(r) = -GMmr^2 = -GMm u^2, 其中 $G$ 为引力常量，$M$ 为太阳质量，负号表示吸引力。 代入比奈方程 ： u''+u = -m≤ft(-GMm u^2)L^2u^2 = GMm^2L^2 . 定义 p ≡ L^2GMm^2 , 则方程化为常系数线性方程 d^2udθ^2 + u = (1)/(p) 其通解为 u(θ) = (1)/(p) + Aθ + Bθ , 其中 $A,B$ 为积分常数。令 A = (e)/(p)θ_0, B = (e)/(p)θ_0 , 则 u(θ) = (1)/(p)≤ft[1+e(θ-θ_0)], 从而 r(θ) = (p)/(1+e(θ-θ_0)) 这正是圆锥曲线的极坐标方程，其中 $p$ 为半通径， $e≥ 0$ 为偏心率，$θ_0$ 为轨道近心点方向。"},{"m":"M0","sec":"角动量守恒","t":"对中心力场，力只沿径向，横向分力为零： F_θ = 0 . 由式 得 m≤ft(2rθ + rθ)=0 . 注意到 (d)/(dt)≤ft(r^2θ) = 2rrθ + r^2θ = r≤ft(2rθ + rθ), 于是 (d)/(dt)≤ft(m r^2θ)=0 . 定义角动量 L ≡ m r^2θ = 常量. 由此可得角速度与半径的关系 θ = Lm r^2 . 这正是开普勒第二定律（面积定律）的微分形式。"},{"m":"M0","sec":"轨道类型与偏心率","t":"由式 可知，轨道类型完全由偏心率 $e$ 决定： →prule 偏心率 轨道类型 说明 $e=0$ 圆 半径 $r=p$ 的圆周运动 $0<e<1$ 椭圆 行星、多数卫星的轨道 $e=1$ 抛物线 临界逃逸轨道 $e>1$ 双曲线 非束缚的散射轨道 对于椭圆轨道，半长轴 $a$ 与半通径 $p$ 满足 p = a≤ft(1-e^2), 近日点与远日点距离分别为 r_=(p)/(1+e)=a(1-e), r_=(p)/(1-e)=a(1+e). 偏心率与总能量 $E$ 的关系为 e = 1+2E L^2G^2M^2m^3 . 当 $E<0$ 时 $e<1$，轨道为椭圆；当 $E=0$ 时 $e=1$； 当 $E>0$ 时 $e>1$。这体现了能量对轨道束缚性质的判据。"},{"m":"M0","sec":"比奈方程的推导","t":"引入新变量 u ≡ (1)/(r), 即 r=(1)/(u). 记 $u'=(du)/(dθ)$，$u''=d^2udθ^2$。 由链式法则与式 ， u = (du)/(dθ)θ = u' θ , 而 r = -1u^2u = -u'u^2θ . 代入 $θ = (L)/(m)u^2$，得 r = -u'u^2·(L)/(m)u^2 = -(L)/(m)u' . 对式 再求时间导数： r = -(L)/(m)(d u')/(dt) = -(L)/(m)u''θ = -(L)/(m)u''·(L)/(m)u^2, 即 r = -L^2m^2u^2u'' 同时 rθ^2 = (1)/(u)≤ft((L)/(m)u^2)^2 = L^2m^2u^3 . 将式 与式 代入径向方程 ： m≤ft(-L^2m^2u^2u'' - L^2m^2u^3)=F_r , 整理得 -L^2mu^2≤ft(u''+u)=F_r . 两边同除以 $-L^2mu^2$，得到比奈方程： d^2udθ^2 + u = -m F_r(1/u)L^2u^2 其中 $F_r(1/u)$ 表示把径向力 $F_r(r)$ 中的 $r$ 用 $1/u$ 替换。 式 把二维轨道问题化为一维关于 $u(θ)$ 的常微分方程。"},{"m":"M0","sec":"推广与数值模拟","t":"比奈方程的价值在于：给定任意中心力 $F_r(r)$， 都可以直接写出关于 $u(θ)$ 的轨道微分方程， 而不必求解含时的二维运动方程。若将源项作如下推广： d^2udθ^2 + u = C + λ u^2 + μ u^3, C=GMm^2L^2, 则 $λ,μ$ 分别代表对平方反比定律的二次、三次修正。 当 $λ=μ=0$ 时回到牛顿引力，轨道为闭合圆锥曲线； 当修正项不为零时，轨道的近心点会随每圈转动， 形成进动（precession）或玫瑰线型轨道。 广义相对论对牛顿引力的最低阶修正给出 $u''+u=GM/h^2+3GM u^2/c^2$（其中 $h=L/m$）， 即 $λ_ GR=3GM/c^2$、$μ=0$；水星近日点进动为 $5.02×10^-7 rad/orbit$ 量级。 为直观展示上述结论，配套的交互网页 index.html 对式 作四阶 Runge--Kutta 数值积分， 并实时绘制行星轨迹。用户可调参数包括 • $C$：中心引力强度（对应 $GMm^2/L^2$）； • $e$：初始偏心率（决定初始近心点距离）； • $λ$：二次修正系数； • $μ$：三次修正系数（唯象的非广义相对论进动，其进动幅度远大于水星实际 $5.02×10^-7 rad/orbit$）； • 动画速度与轨迹显示。"},{"m":"M0","sec":"极坐标下的运动方程","t":"设质量为 $m$ 的质点在中心力场中运动，其位置矢量用极坐标表示为 r = r e_r, 其中 $r$ 为径向距离，$θ$ 为极角。极坐标的单位矢量满足 e_r = θ e_θ, e_θ = -θ e_r . 对位置矢量求导，得到速度 v = r = r e_r + rθ e_θ . 再次求导，得到加速度 a = v = ≤ft(r - rθ^2)e_r + ≤ft(2rθ + rθ)e_θ . 因此，牛顿第二定律 $ma=F$ 在极坐标下的两个分量为 m≤ft(r - rθ^2) = F_r, m≤ft(2rθ + rθ) = F_θ ."},{"m":"M1","sec":"模块概览","t":"用有效势方法分析中心力场中的圆轨道、稳定性、径向振动与进动，并以 RK4 数值积分验证解析结论。 无量纲约定：m=1，Kepler 强度 α=1，高斯势 V0=λ=1。中心力 F=F(r)e_r 保守，存在 V(r)。有效势 V_eff(r)=V_base(r)+L²/(2r²)+γ/r³ 其中 base 势与导数： - 开普勒：V=-1/r，dV/dr=1/r² - 谐振子：V=r²/2，dV/dr=r - 高斯：V=-e^-r²，dV/dr=2r e^-r² - 幂律：V=sgn(k) r^k，dV/dr=sgn(k) k r^k-1（β=sgn(k)） 导数与加速度： dV_eff/dr = dV_base/dr - L²/r³ - 3γ/r⁴ r̈ = -dV_eff/dr θ̇ = L/r² 积分：RK4，固定步长 DT=0.004（动画按速度缩放）。能量 E=½ṙ²+V_eff(r) 在 HUD 监控漂移。约束：扫描下限 R_MIN=0.05，扫描上限 R_SCAN=12；r>14 判逃逸，r<0.04 判奇异。"},{"m":"M1","sec":"作业映射","t":"本模块覆盖以下作业题（题面为原文简述，记号与原文一致；公式均已在原文中给出或要求证明）： →prule 来源 题面简述 核心知识点 对应小节 作业-2 Q1 判断 $F(r)=F(r)e_r$ 是否保守 保守力判据、旋度、环路做功 作业-2 Q2 线性力场 $F_i=∑_j a_ijx_j$（$a_ij$ 常数）：满足什么条件才有势能？求其势能 旋度为零 $$ 系数矩阵对称 作业-2 Q3 高斯势 $V=-V_0e^-λ^2r^2$：(a) 给定 $L$ 何时存在稳定圆轨道；(b) 证明 $L$ 过大时不存在圆轨道，求允许的最大角动量 有效势极值与二阶判据、临界 $L$ :gaussian 作业-2 Q4 幂律势 $V=β r^k$：求圆轨道半径 $r_0$ 与径向振动频率 $ω_r$；设 $a=ω_r/ω_θ$，求 $a=1$ 与 $a=2$ 对应的势能 圆轨道、径向小振动、闭合条件 作业-2 Q5 抛物线彗星近日点为地球轨道半径的 $1/n$：证其在地球轨道内停留时间为 $T_E(2(n+2))/(3π n)√((n-1)/(2n))$，并证最长停留为 $(2)/(3π)$ 年 面积定律、抛物线轨道几何 作业-2 Q6 平方反比引力场中沿椭圆运动，最大角速度与最小角速度之比为 $n$：证离心率 $e=( n-1)/( n+1)$ 角动量守恒、近/远心点 作业-2 Q7 $V=-α/r$（轨道 $r=p/(1+eθ)$）加小修正 $δ V$ 后轨道不再闭合，每圈近心点改变小角度 $δθ$：求 (a) $δ V=β/r^2$；(b) $δ V=γ/r^3$ 的 $δθ$ 比奈方"},{"m":"M1","sec":"数值验证","t":"各项的实验设置与要点： • $r_0$（牛顿法）：对 $V_eff'(r)=α/r^2-L^2/r^3=0$ 牛顿迭代（$α=1$，$L=1.2$，初值 $0.8$，8 步）， 残差 $|V_eff'(r_0)|=1.110×10^-16<10^-9$（机器精度）。 • $ω_r$（近圆轨道）：初始 $r(0)=r_0+δ$、$r(0)=0$， RK4 积分约 20 个径向周期，用抛物线顶点定位相邻 $r$ 极大， $ω_r=2π/T_r$。Kepler（$r_0=L=α=1$）解析值 $V_eff''(r_0)=1$；高斯势（$r_0=1$， $L=√(2/e)$）解析值 $2/√(e)=1.2130613$。 两行偏差 $1.47×10^-4$、$7.21×10^-5$ 是有限振幅的 $O(δ^2)$ 修正（Kepler 行恰为 $32δ^2=1.5×10^-4$，见 节 的适用条件），不是积分误差。 • 频率比 $a$：幂律势取 $β=1/k$、$L=1$、$r_0=1$ （此时 $ω_θ=1$），$δ=0.01$，积分 10 个径向周期， $a=2π/Δθ$（$Δθ$ 为相邻远心点极角差）。 $k=-1$（Kepler）与 $k=2$（谐振子）的轨道对所有振幅严格闭合， 误差为机器精度 $10^-13$；$k=1$ 的 $8.2×10^-6$ 同样是 $O(δ^2)$ 修正。 • 进动 $δθ$：直接积分比奈方程 （$u(0)=(1+e)/p=1.3$，$u'(0)=0$，$e=0.3$，$p=1$， $h_θ=2π/5000$，12 圈），取相邻近心点极角间隔均值。 "},{"m":"M1","sec":"讨论","t":"极限行为。 $k→-2^+$ 时 $a=√(k+2)→0$：径向振动频率趋于零， 圆轨道趋于临界稳定（这与高斯势 $L→ L_^-$ 时 $ω_r→0$、$r_0→2/λ$ 的行为一致）。 $e→0$ 时进动公式 仍有限 （一阶 $γ/r^3$ 进动与 $e$ 无关，与广义相对论进动仅依赖 $p$ 一致）。 彗星问题中 $n→1^+$ 时 $t→0$（掠射），$n→∞$ 时 $t→(2)/(3π)T_E≈0.150 T_E$（径向往返极限，有限值）； $t_=(2)/(3π)T_E$ 在 $n=2$ 取得，是货真价实的内部极大。 误差来源。 三类偏差各有明确量级：(i) RK4 截断误差 $O(h^4)$——20 个周期能量漂移 $2.6×10^-14$；(ii) 周期测量的抛物线顶点误差 $O(h^2)$—— 被闭合轨道行的 $10^-13$ 水平证实；(iii) 模型本身的近似—— 小振动 $O(δ^2)$（Kepler 行 $1.47×10^-4≈32δ^2$） 与一阶摄动 $O(γ)$（$γ/r^3$ 行 $1.5×10^-2$， $γ$ 减半偏差比 $1.983$）。数值验证的价值正在于把 (iii) 与 (i)(ii) 清楚地区分开。 与作业题的对照。 表 覆盖了 节全部 9 道题的核心结论： 作业-2 Q3 的 $L_=2√(2mV_0)/(λe)$（二分法复现到 $4.5×10^-15$）；Q4 的 $a=√(k+2)$ 与 $a=1,2$ 对应 $k=-1,2$； Q5 的停留时间公式（$10^-13$ 复现）与最长停留 $2/(3π)$ 年； Q6 的 $e"},{"m":"M1","sec":"模型与假设","t":"考虑质量为 $m$ 的质点在中心力场中运动。以力心为原点建立平面极坐标 $(r,θ)$ （角动量守恒保证运动限于一个平面，见 小节）， 位矢 $r=re_r$，$e_r$ 为径向单位矢量， $e_θ$ 为横向单位矢量。基本假设与适用条件如下： • 有心力假设：$F=F(r)e_r$，力的大小只依赖 $r$。 这排除了各向异性与耗散性；何时这样的力存在势能，由 小节的判据回答（作业-2 Q1/Q2）。 • 保守力假设：所考虑的力场在 $r>0$ 的单连通区域内旋度为零， 从而存在势能 $V(r)$，$F=-∇ V$。 力心处的奇点（如 $1/r$ 型势）不影响 $r>0$ 区域内的全部结论。 • 单位制：解析推导保留 $m$ 与各势参数（$α$、$β$、$k$、$V_0$、$λ$ 等）； 数值验证统一取无量纲约定 $m=1$、Kepler 强度 $α=1$、 高斯势 $V_0=λ=1$ 等，表 同此约定。 • 记号约定：自然对数的底记作 $e$，离心率记作 $e$； 小节的 $a$ 是频率比 $ω_r/ω_θ$（作业-2 Q4 的记号）， 、 小节的 $a$ 是椭圆半长轴（作业-5 Q4 的记号）， 两处含义不同，各自在首次出现处重新定义；$T$ 表示动能（作业-5 Q4 记号）， 周期类量用 $T_r$（径向）、$T_E$（地球年）、$τ$（轨道周期）区分。 • 小振动线性化：径向小振动频率 $ω_r$ 由 $V_eff$ 在 $r_0$ 处的泰勒展开保留到二阶项得到，适用条件为径向偏移 $|δ r| r_0$； 有限振幅带来的频率修正为 $O(δ^2)$（数值验证中 Kepl"},{"m":"M1","sec":"位力定理与椭圆轨道的时间平均（作业-5 Q4）","t":"对周期为 $τ$ 的束缚运动，定义时间平均 $⟨ f⟩≡1τ∫_0^τ f dt$。 由 $l⟨(d)/(dt) (mr·r)r⟩=0$ （周期函数全周期平均下导数的平均为零）得位力定理 2⟨ T⟩=l⟨r·∇ Vr⟩, 其中 $T=12mv^2$ 为动能（作业-5 Q4 记号）。对引力势 $V=-k/r$ （$k>0$）：$r·∇ V=k/r=-V$，故 $2⟨ T⟩=-⟨ V⟩$。 $⟨1/r⟩$ 用面积定律计算：$dt=(m/L)r^2 dθ$， 轨道 （$p=a(1-e^2)$，半长轴 $a$、半短轴 $b=a√(1-e^2)$， 周期 $τ=2π ab m/L$ 即面积除以面积速率），则 ≤ft⟨1r⟩ =(m/L)/(τ)∫_0^2π r dθ =(1)/(2π ab)·2π p√(1-e^2) =(1)/(a), 其中用了标准积分 $∫_0^2π(dθ)/(1+eθ)=2π√(1-e^2)$ （$0≤ e<1$）。于是 ⟨ V⟩=-(k)/(a), ⟨ T⟩=(k)/(2a), 2⟨ T⟩=-⟨ V⟩, 位力定理得到验证，且 $E=⟨ T⟩+⟨ V⟩=-k/(2a)$。 适用条件：束缚椭圆轨道（$0≤ e<1$）、时间平均取整周期。"},{"m":"M1","sec":"圆轨道、稳定性与径向小振动（作业-2 Q4）","t":"圆轨道 $r(t)≡ r_0$ 要求 $r=r=0$，即 $V_eff$ 取驻值： V_eff'(r_0)=0, ω_θ≡θ=(L)/(mr_0^2), 其中 $ω_θ$ 为圆周运动角频率。给径向一个小扰动 $r=r_0+δ r$ （$|δ r| r_0$），把 中的 $V_eff$ 在 $r_0$ 处 泰勒展开保留到二阶： 12ml(δ rr)^2 +12V_eff''(r_0)(δ r)^2 =E-V_eff(r_0), 即扰动以频率 ω_r=V_eff''(r_0)/m 绕 $r_0$ 简谐振动。这正是稳定条件 V_eff''(r_0)>0 的物理内容：$V_eff''(r_0)<0$ 时 左端第二项为负， 扰动按 $e^|ω_r|t$ 指数发散（不稳定）；$V_eff''(r_0)=0$ 为临界情形。 的适用条件是线性化 $|δ r| r_0$； 有限振幅的频率修正为 $O(δ^2)$（见 节的数值证据）。 对幂律势 $V=β r^k$（作业-2 Q4；$β$、$k$ 为常数）： $V_eff'=β k r^k-1-L^2/(mr^3)=0$ 给出圆轨道半径 r_0=≤ft((L^2)/(mkβ))^ (1)/(k+2), 要求 $kβ>0$（势足够吸引，否则无圆轨道）。在 $r_0$ 处 ω_r^2=V_eff''(r_0)m =((k+2) kβ)/(m) r_0^ k-2, 与 $ω_θ=L/(mr_0^2)$ 之比为（用 消去 $L$） a≡(ω_r)/(ω_θ)=√(k+2) （此处 $a$ 为频率比，作业-2 Q4 记号）。稳定要求 $k>-2$。 轨道闭合"},{"m":"M2","sec":"讨论","t":"长程势的总截面发散。 $V=k/r^2$ 的总散射截面发散，是因为势的衰减慢于 $1/r$； 任何有限 $b$ 都被偏转。物理上需要截断（如原子屏蔽或有限靶尺寸）。 这与 Rutherford 散射（$V∝ 1/r$）不同：Coulomb 势的总截面也发散， 但微分散射截面在 $Θ→0$ 时 $∼ 1/Θ^4$，比 $k/r^2$ 势的 $∼ 1/Θ^3$ 更强。 俘获的物理意义。 $V=-α/r^4$ 在 $r→0$ 时 $V→-∞$，粒子一旦越过势垒就螺旋坠入； $b_c$ 给出俘获的``靶面积''半径。这种势在原子/分子碰撞中出现 （如 van der Waals 吸引尾），俘获截面 $σ∝ E^-1/2$， 能量越低俘获截面越大。 散射角与碰撞参数的关系。 给出 $Θ$ 随 $b$ 单调递减：$b=0$ 时 $Θ=π$ （正碰回弹），$b→∞$ 时 $Θ→0$（掠射）。微分散射截面 在 $Θ→0$ 处按 $1/Θ^3$ 发散（前向峰，源于长程势）， 在 $Θ=π$ 处有限（背散射有限）。 与 Rutherford 散射的比较。 Coulomb 势 $V=α/r$ 的散射角为 $Θ=2(α/(2Eb))$， 微分散射截面 $dσ/dΩ=(α/(4E))^2/^4(Θ/2)$。 相比之下，$V=k/r^2$ 势的微分散射截面在 $Θ→0$ 时发散更慢 （$∼ 1/Θ^3$ vs $∼ 1/Θ^4$），反映势的衰减更快。 与作业题的对照。 表 覆盖了作业-3 Q2 的散射角与微分散射截面、 Q3 的 $b_c$ 与俘获截面。所有数值与解析公式逐位一致。 可交互化方向。 配套交"},{"m":"M2","sec":"散射的基本公式","t":"对中心力散射，粒子从无穷远处入射，能量 $E>0$，碰撞参数 $b$。 轨道在极坐标下由比奈方程描述。散射角 $Θ$（入射与出射渐近线夹角）由 积分公式给出： Θ = π - 2∫_r_^∞ b drr^2√(1-V(r)/E-b^2/r^2), 其中 $r_$ 是转折点（最近距离），满足 $V_eff(r_)=E$。 截面的定义。 微分散射截面 $dσ/dΩ$ 描述散射到立体角 $dΩ$ 中的粒子数占比。几何上，碰撞参数在 $[b,b+db]$ 环带内的粒子被散射到 $[Θ,Θ+dΘ]$ 角度范围， 因此 2π b |db| = (dσ)/(dΩ) 2πΘ |dΘ|, 即 。总散射截面 $σ=∫(dσ/dΩ) dΩ$。 俘获截面。 对吸引势，若存在有效势垒且 $E>V_eff,max$，粒子越过势垒 到达 $r=0$（俘获）。临界碰撞参数 $b_c$ 满足 $E=V_eff,max$， 俘获截面为 $σ=π b_c^2$（圆盘面积）。 其中 $r_$ 是转折点（最近距离），满足 $V_eff(r_)=E$，即 1-V(r_)E-b^2r_^2=0. 微分散射截面定义为 (dσ)/(dΩ) = (b)/(Θ)≤ft|(db)/(dΘ)|, 总散射截面为 $σ=∫ (dσ/dΩ) dΩ$。"},{"m":"M2","sec":"模块概览","t":"用散射实验与有效势垒分析中心力场中的散射角、微分散射截面与俘获截面，并以 RK4 数值积分验证解析结论。 无量纲约定：m=1，散射能量 E>0。 - 排斥势：V(r)=k/r²（k>0） - 吸引势：V(r)=-α/r⁴（α>0） 散射角：Θ = π(1 - 1/√(1+k/(Eb²))) 微分散射截面：dσ/dΩ = (k/E)·(1-x)/[π·x²·(2-x)²·sin(πx)]，x=Θ/π 俘获：b_c = (4α/E)^1/4，σ = 2π√(α/E)"},{"m":"M2","sec":"作业映射","t":"→prule 来源 题面简述 核心知识点 对应小节 作业-3 Q2 质量为 $m$ 的粒子以能量 $E$ 入射，受到中心排斥势 $V=k/r^2$ 的散射； 碰撞参数为 $b$：(a) 求散射角与 $b$ 的关系；(b) 推导微分散射截面 $dσ/dΩ$；(c) 求总散射截面 $σ$ 比奈方程、散射角、截面定义 作业-3 Q3 在势场 $V=-α/r^4$ 中运动，质量为 $m$，能量为 $E$； 存在临界碰撞参数 $b_c$，当 $b<b_c$ 时粒子不受势垒阻挡而越过有效势垒而``螺旋坠入''力心； 推导 $b_c$ 的表达式，以及计算对应的总俘获截面 $σ$ 有效势垒、俘获条件、截面"},{"m":"M2","sec":"吸引势 $V=-α/r^4$ 的俘获（作业-3 Q3）","t":"势能 $V(r)=-α/r^4$（$α>0$，吸引，短程奇异）。有效势 V_eff(r)=-(α)/(r^4)+(L^2)/(2mr^2) =-(α)/(r^4)+(Eb^2)/(r^2), 其中 $L=mv_0 b$、$E=12 mv_0^2$。 令 $u=1/r^2$，则 V_eff(u)=-α u^2+Eb^2 u, 这是 $u$ 的下开口抛物线，在 u_*=(Eb^2)/(2α) r_*=√((2α)/(Eb^2)) 处取得极大值（有效势垒）： V_eff,max = -α≤ft((Eb^2)/(2α))^2 + Eb^2≤ft((Eb^2)/(2α)) = (E^2 b^4)/(4α). 俘获条件：粒子能量 $E$ 超过势垒，即 $E>V_eff,max$： E > (E^2 b^4)/(4α) b^4 < (4α)/(E). 因此临界碰撞参数为 b_c=≤ft((4α)/(E))^1/4 （作业-3 Q3 所求）。$b<b_c$ 时粒子越过势垒，$r→0$ 螺旋坠入力心（俘获）； $b≥ b_c$ 时粒子被势垒反射（散射）。 总俘获截面为圆盘面积： σ=π b_c^2 =π√((4α)/(E)) =2π√((α)/(E)) （作业-3 Q3 所求）。"},{"m":"M2","sec":"模型与假设","t":"考虑质量为 $m$ 的质点在中心力场中运动。以力心为原点建立平面极坐标 $(r,θ)$。基本假设： • 有心力假设：$F=F(r)e_r$，力的大小只依赖 $r$。 • 保守力假设：力场在 $r>0$ 区域旋度为零，存在势能 $V(r)$， $F=-∇ V$。 • 单位制：解析推导保留 $m$、$k$、$α$、$E$ 等参数； 数值验证统一取无量纲约定 $m=1$、$k=1$、$α=1$、$E=1$。 • 散射设定：粒子从无穷远处入射，能量 $E>0$，碰撞参数 $b≥0$； 入射方向为 $x$ 轴，力心在原点，轨道对 $x$ 轴对称。 • 俘获设定：吸引势 $V=-α/r^4$（$α>0$）， 粒子能量 $E>0$；有效势存在势垒，$b<b_c$ 时粒子越过势垒到达 $r=0$ （俘获），$b≥ b_c$ 时粒子被势垒反射（散射）。 • 小角/远场近似：散射角 $Θ$ 为入射与出射渐近线的夹角， $0≤Θ≤π$；$Θ=0$ 对应无偏转，$Θ=π$ 对应正碰回弹。"},{"m":"M2","sec":"排斥势 $V=k/r^2$ 的散射（作业-3 Q2）","t":"势能 $V(r)=k/r^2$（$k>0$，排斥）。有效势 V_eff(r)=(k)/(r^2)+(L^2)/(2mr^2) =(k+L^2/(2m))/(r^2). 利用 $L=mv_0 b$、$E=12 mv_0^2$，有 $L^2/(2m)=Eb^2$，故 V_eff(r)=(k+Eb^2)/(r^2). 转折点由 给出： r_^2 = (k+Eb^2)/(E) = b^2+(k)/(E). 令 $κ≡ k/E$。则 $r_=√(b^2+κ)$。 把 代入 。积分 I≡∫_r_^∞ b drr^2√(1-(b^2+κ)/r^2). 令 $u=(b^2+κ)/r^2=r_^2/r^2$，则 $dr=-r_/(2u^3/2) du$， 当 $r=r_$ 时 $u=1$，$r→∞$ 时 $u→0$： I = b2r_∫_0^1 du√(u(1-u)) = b2r_ B ≤ft(12,12) = π b2r_. 其中 $B(1/2,1/2)=π$。于是 Θ = π - 2I = π≤ft(1-br_) = π≤ft(1-1√(1+k/(Eb^2))). 是作业-3 Q2(a) 的答案：$Θ$ 随 $b$ 从 $π$（正碰，$b=0$） 单调减到 $0$（$b→∞$）。"},{"m":"M3","sec":"模块概览","t":"用质心与约化质量方法分析两体开普勒运动，计算恒星摆动速度与多普勒频移，并以太阳-木星/地球系统验证系外行星径向速度法。 两体系统：质量 M1（恒星）、M2（行星），间距 a。质心条件 M1 r1 = M2 r2，r1+r2=a。 r1 = M2/(M1+M2) · a r2 = M1/(M1+M2) · a 约化质量 μ = M1 M2/(M1+M2)。两体 Kepler 第三定律：ω² = G(M1+M2)/a³。 摆动速度 v1 = ω r1。多普勒频移 Δλ/λ = v/c。 无量纲单位：M☉=1、AU=1、yr=1，G=4π²。太阳-木星：M2=0.000954 M☉、a=5.20 AU。太阳-地球：M2=0.000003 M☉、a=1.00 AU。"},{"m":"M3","sec":"讨论","t":"约化质量与等效单体问题。 两体问题通过质心分离与约化质量 $μ=M_1M_2/(M_1+M_2)$ 等价为单体中心力问题。这一技巧在天体力学、分子物理中广泛使用。 相对运动的轨道形状与单体 Kepler 问题相同，仅时间尺度由总质量决定。 质心在太阳表面之外。 木星引起的太阳摆动幅度 $r_1≈7.4×10^8 m>R_$， 太阳绕质心的轨道半径超过太阳半径，恒星的`` Reflex motion'' 可观。 类地行星的挑战。 地球信号 $∼0.09 m/s$，比太阳表面噪声 $∼1 m/s$ 小一个数量级，需要长时间积分与多普勒测量精度 $∼0.1 m/s$。 系外行星探测方法。 径向速度法（RV）是最成功的系外行星探测方法之一，发现了数千颗行星。 其精度要求随行星质量与轨道距离变化：热木星（$M_p∼ M_J$，$a∼0.05 AU$） 信号 $∼ 50 m/s$，地球类似行星信号 $∼ 0.1 m/s$。 其他方法包括凌星法（transit）、直接成像、微引力透镜等。 径向速度曲线的形状。 对圆轨道，$v_r(t)$ 为正弦函数，振幅 $K=v_1$（）。对椭圆轨道， $v_r(t)$ 非正弦，振幅为 $K=(M_2)/(M_1+M_2)2π aP√(1-e^2) i$。 实际观测中拟合 Kepler 轨道得到 $K$、$P$、$e$，再反推 $M_2 i$（最小质量）， 不直接使用圆轨道公式 。 与作业题的对照。 表 覆盖了作业题 (a)--(e) 的全部数值结果。 goldstein H. Goldstein, C. P. Poole, J. L. Safko, Cl"},{"m":"M3","sec":"两体能量与 virial","t":"两体系统的总能量（圆轨道）： E = -(GM_1M_2)/(2a). 动能 $T=12 M_1 v_1^2+12 M_2 v_2^2 =12 μ v_rel^2$， 势能 $V=-GM_1M_2/a$。virial 定理 $2⟨ T⟩=-⟨ V⟩$ 成立。"},{"m":"M3","sec":"太阳--木星系统（作业题 (a)(b)(c)）","t":"给定：$M_=1.989×10^30 kg$， $M_J=1.898×10^27 kg$， $a_J=7.78×10^11 m$， $P_J=11.86 yr=11.86×3.156×10^7 s$。 (a) 质心距离。 由 ： r_1=(M_J)/(M_+M_J) a_J =1.898×10^271.989×10^30+1.898×10^27×7.78×10^11 ≈ 7.42×10^8 m. 太阳半径 $R_=6.96×10^8 m$，比值 (r_1)/(R_)≈(7.42×10^8)/(6.96×10^8)≈1.07. $r_1>R_$：太阳质心在太阳表面之外，太阳绕质心的``摆动''幅度 超过太阳半径。 (b) 角速度与摆动速度。 由 ： ω=√((G(M_+M_J))/(a_J^3)) =(2π)/(P_J)≈1.68×10^-8 rad/s. 摆动速度 v_1=ω r_1≈1.68×10^-8×7.42×10^8 ≈ 12.5 m/s. (c) 多普勒位移。 取 $λ=500 nm$，$v_1≈12.5 m/s$： Δλ=λ(v_1)/(c) =500 nm×(12.5)/(3.0×10^8) ≈ 2.08×10^-5 nm."},{"m":"M3","sec":"太阳--地球系统（作业题 (d)(e)）","t":"给定：$M_E=5.97×10^24 kg$， $a_E=1.496×10^11 m$，$P_E=1 yr$。 (d) 重算。 r_1=(M_E)/(M_+M_E) a_E ≈5.97×10^241.989×10^30×1.496×10^11 ≈ 4.49×10^5 m (449 km). ω=(2π)/(P_E)≈1.99×10^-7 rad/s, v_1=ω r_1≈ 0.089 m/s (8.9 cm/s). 与走路速度 $1.4 m/s$ 相比，地球引起的太阳摆动慢约 16 倍； 与蜗牛速度 $1.3 cm/s$ 相比，快约 7 倍。 一句话：地球拖动太阳的摆动速度仅 $9 cm/s$， 比人走路慢一个数量级，但比蜗牛快。 (e) 为什么需要 $0.1 m/s$ 精度。 • 信号本身仅 $∼ 0.09 m/s$（地球），仪器噪声必须优于信号， 否则无法分辨。 • 太阳表面噪声（米粒组织、$p$ 模振荡等）量级 $∼ 1 m/s$， 远大于地球信号，需要长时间平均与建模扣除。"},{"m":"M3","sec":"解析结果","t":"• 质心距离：$r_1=M_2 a/(M_1+M_2)$（）。 • 两体 Kepler：$ω^2=G(M_1+M_2)/a^3$（）。 • 摆动速度：$v_1=ω r_1$（）。 • 多普勒：$Δλ/λ=v/c$（）。 • 木星：$r_1≈7.42×10^8 m$，$r_1/R_≈1.07$， $v_1≈12.5 m/s$，$Δλ≈2.08×10^-5 nm$。 • 地球：$r_1≈4.49×10^5 m$，$v_1≈0.089 m/s$。"},{"m":"M3","sec":"椭圆轨道的两体修正","t":"一般椭圆轨道：半长轴 $a$，离心率 $e$。两体 Kepler 第三定律仍为 $P^2=4π^2 a^3/(G(M_1+M_2))$，与单体形式相同，仅 $M→ M_1+M_2$。 恒星到质心的最大距离为 $r_1,=M_2 a(1+e)/(M_1+M_2)$。 径向速度半振幅为 $K=(M_2)/(M_1+M_2)2π aP√(1-e^2) i$； 正弦形式 $v_r(t)=K(2π t/P+φ)$ 仅适用于圆轨道（$e=0$）， 一般椭圆轨道的 $v_r(t)$ 非正弦。 在固定 $M_1,M_2,a$ 与 $ i≠0$ 下，$e→1$ 时 $K→∞$ （形式上的牛顿极限）。"},{"m":"M4","sec":"模块概览","t":"用变分原理导出折射定律与最短路径，证明摆线的等时性，并以数值积分验证等时性离散度。 变分原理：物理路径使泛函 J[y]=∫L(x,y,y')dx 取驻值，Euler-Lagrange 方程 ∂L/∂y - d/dx(∂L/∂y')=0。 费马原理：光程时间 T=∫n(s)/c ds 取驻值 → Snell 定律 n1 sinθ1=n2 sinθ2。 最短路径：弧长 S=∫ds 取驻值 → 直线 y=kx+c。 等时摆：摆线 h=s²/(8a)，下滑时间 T=π√(a/g)，与释放位置无关。一般：h=Cs²，T0=π/(2√(2gC))。"},{"m":"M4","sec":"摆线的等时性（作业-6 Q3）","t":"摆线参数方程： x=a(θ-θ), h=a(1+θ), 0≤θ≤π, $h$ 为相对最低点（$θ=π$）的竖直高度。弧长从最低点向上： s=∫_θ^π 2a(t/2) dt =4a(θ/2). 高度： h=a(1+θ)=2a^2(θ/2)=(s^2)/(8a). （作业-6 Q3(a)：$s=4a(θ/2)$，$h=s^2/(8a)$） 能量守恒：从 $s_0$ 释放，到达 $s$ 时下降高度为 $h_0-h=(s_0^2-s^2)/(8a)$，故 v(s)=√(2g(h_0-h))=√((g)/(4a)) √(s_0^2-s^2). 下滑时间从 $s_0$ 到 $0$： T=∫_0^s_0(ds)/(v(s)) =√((4a)/(g))∫_0^s_0ds√(s_0^2-s^2) =√((4a)/(g))·(π)/(2) =π√((a)/(g)). $T$ 与 $s_0$ 无关，等时性得证（作业-6 Q3(c)）。"},{"m":"M4","sec":"最短路径（作业-6 Q2）","t":"二维平面中，两点间最短路径使弧长泛函 S=∫ ds=∫√(x^2+y^2) dt 取驻值。Euler-Lagrange 方程：$L=√(x^2+y^2)$， $∂ L/∂ x=0$，$∂ L/∂x=x/√(x^2+y^2)$， $d/dt(∂ L/∂x)=0$，故 $x/√(x^2+y^2)=const$。 同理 $y/√(x^2+y^2)=const$。两式相除：$y/x=const$， 即 $y=kx+c$，直线。 极坐标证明。 弧长 $ds=√(r^2+r^2θ^2) dt$。 Lagrange 方程对 $θ$：$∂ L/∂θ=0$（旋转对称）， 故 $∂ L/∂θ=r^2θ/√(r^2+r^2θ^2)=const=h$。 这给出角动量守恒。结合径向方程，积分得 $r(θ-θ_0)=const$， 即直线的极坐标方程。"},{"m":"M4","sec":"费马原理与折射定律（作业-6 Q1）","t":"光在介质中速度 $v=c/n$（$n$ 为折射率）。费马原理：光程时间 T=∫ (n(s))/(c) ds 取驻值。考虑两层介质界面（$y=0$），折射率 $n_1$（上）、$n_2$（下）。 路径从 $A=(x_1,y_1)$ 到 $B=(x_2,y_2)$，在界面点 $(x,0)$ 折射。 时间泛函 T(x)=(n_1)/(c)√((x-x_1)^2+y_1^2) +(n_2)/(c)√((x-x_2)^2+y_2^2). 驻值条件 $dT/dx=0$： (n_1)/(c)x-x_1√((x-x_1)^2+y_1^2) +(n_2)/(c)x-x_2√((x-x_2)^2+y_2^2)=0. 设入射角 $θ_1$、折射角 $θ_2$（均与法线夹角），则 n_1θ_1=n_2θ_2 即 Snell 折射定律。"},{"m":"M4","sec":"数值验证","t":"全部数值实验由配套脚本 qa/numeric_check.py 完成（仅依赖 numpy）。 →prule 物理量 解析值 数值值 $T$（摆线，$a=1,g=1,s_0=1$） $π=3.14159$ $3.14159$ $T$（摆线，$a=1,g=1,s_0=0.5$） $π=3.14159$ $3.14159$ $T_0$（$C=1/8,g=1$） $π=3.14159$ $3.14159$ $T_0$（$C=1/4,g=1$） $π/(2√(0.5))=2.221$ $2.221$ ∩tion数值验证汇总。全部数值取自 qa/numeric_check.py 的实际输出。"},{"m":"M4","sec":"作业映射","t":"→prule 来源 题面简述 核心知识点 对应小节 作业-6 Q1 用费马原理和变分法证明折射定律 泛函变分、Snell 定律 作业-6 Q2 二维平面内，极坐标证明直线距离最短 测地线、Euler--Lagrange 作业-6 Q3 摆线：$s=4a(θ/2)$，$h=s^2/(8a)$； 从 $s_0$ 释放，证明下滑时间与 $s_0$ 无关 等时摆、时间积分 作业-6 Q3(d) 若 $h=C s^2$，证明时间仍与 $s_0$ 无关，求 $T_0$ 与 $C$ 的关系 一般等时条件"},{"m":"M4","sec":"一般等时条件（作业-6 Q3(d)）","t":"若高度满足 $h(s)=C s^2$（$C>0$），则下降高度 $h_0-h=C(s_0^2-s^2)$， 速度 $v(s)=√(2gC(s_0^2-s^2))$，下滑时间 T_0=∫_0^s_0ds√(2gC(s_0^2-s^2)) =1√(2gC)·(π)/(2) =π2√(2gC). $T_0$ 与 $s_0$ 无关。与摆线对应：$C=1/(8a)$ 时 $T_0=π/(2√(2g/(8a)))=π√(a/g)$，与 Q3(c) 一致。"},{"m":"M5","sec":"模块概览","t":"用虚功原理与势能驻值法分析静力学平衡，计算梯子临界角，并以数值验证。 虚功原理：平衡时 δW=0。保守系统 δV=0（势能驻值）。 梯子临界角：tan θ_min = 1/(2μ)。μ 增大时 θ_min 减小。 弹簧杆：势能 V(θ) = -Pl/2 sinθ + ½k(BC-l0)²，平衡 dV/dθ=0。"},{"m":"M5","sec":"解析结果","t":"• 虚功原理：$δ W=0$，保守系统 $δ V=0$（、）。 • 梯子临界角：$θ_=1/(2μ)$（）。 • 弹簧杆平衡：$dV/dθ=0$（）。 • 圆柱平衡：$φ=0$（底部，稳定）。"},{"m":"M5","sec":"稳定性的判定","t":"平衡稳定 iff 势能 Hessian 矩阵正定： (∂^2 V)/(∂ q_i∂ q_j)g|_ eq 0. 注意：梯子靠摩擦维持平衡，临界状态是摩擦饱和 $f=μ N$，不是势能 Hessian 奇异；势能 $V=P(l/2)θ$ 在该处并没有极小。"},{"m":"M5","sec":"圆槽中的两圆柱（作业-7 Q3）","t":"半径 $R$ 的光滑圆槽，两圆柱半径 $r$，重量 $P_1$、$P_2$。 两柱相切且都与槽相切时，几何关系固定： φ=(r)/(R-r), 其中 $φ$ 为每柱中心与槽底方向的夹角。两柱作为整体还可绕槽心转动角度 $α$， 势能 $V=-(P_1+P_2)(R-r)φα$ 在 $α=0$ 取极小， 故平衡时两柱关于槽底对称；$φ$ 由几何决定，不能由 $dV/dφ=0$ 定出 （$φ=0$ 意味着两柱中心重合，几何上不可能）。 对等重 $P_1=P_2=P$ 的情形，单柱径向平衡给出 N=Pφ+Fφ, F=Pφ N=(P)/(φ). $P_1≠ P_2$ 时接触力不再水平，需联立两柱的径向与切向平衡消去 $F$ 后求 $N_1,N_2$。"},{"m":"M5","sec":"数值验证","t":"全部数值实验由配套脚本 qa/numeric_check.py 完成（仅依赖 numpy）。 →prule 物理量 解析值 数值值 $θ_$（$μ=0.5$） $(1)=45.0^∘$ $45.0^∘$ $θ_$（$μ=0.25$） $(2)=63.4^∘$ $63.4^∘$ $θ_$（$μ=1.0$） $(0.5)=26.6^∘$ $26.6^∘$ ∩tion数值验证汇总。全部数值取自 qa/numeric_check.py 的实际输出。"},{"m":"M5","sec":"弹簧杆平衡（作业-7 Q5）","t":"杆 AB 长 $l$，重量 $P$，铰链 A，弹簧连接 B 与 C（C 在 A 上方 $h$ 处）。 设杆与水平线夹角 $θ$（$θ>0$ 表示 B 在 A 上方）。 势能（$θ>0$ 表示 B 在 A 上方，故重力势为正）： V(θ)=+(Pl)/(2)θ+12 k≤ft(L-l_0)^2, L=√(h^2+l^2-2hlθ). 平衡：$dV/dθ=0$： (Pl)/(2)θ + k≤ft(L-l_0)(-hlθ)/(L)=0. 非竖直平衡（$θ≠0$）条件： (P)/(2)=k≤ft(L-l_0)(h)/(L). 竖直平衡（$θ=π/2$）始终存在。"},{"m":"M5","sec":"约束与自由度","t":"一个含 $N$ 质点的系统有 $3N$ 个自由度。每个约束减少一个自由度。 完整约束（位置约束）：$f(r_i,t)=0$，减少 1 个自由度。 非完整约束（速度约束）：$∑ a_i·dr_i=0$， 减少自由度但不减少坐标数。虚功原理适用于所有约束。 完整约束的分类。 固定端约束：质点位置固定（3 个约束）。 刚体约束：两点间距离固定（1 个约束）。 曲面约束：质点在曲面上运动（1 个约束）。 自由度计数。 单摆：1 个质点，1 个约束（绳长），自由度 $3-1=2$（平面运动）或 $1$（平面内）。 双摆：2 个质点，2 个约束，自由度 $6-2=4$（平面内 2）。"},{"m":"M6","sec":"模块概览","t":"用碰撞几何与变质量动力学分析光滑球碰撞、雨滴下落与弹性碰撞链，并以数值验证。 光滑球碰撞：法向恢复系数 e，切向无摩擦。偏转角 β，最大偏转角条件 tan²α=(1-e)/2。 变质量雨滴：dr/dt=λ=const，v(t)=g/(4λ)[(r0+λt)-r0⁴/(r0+λt)³]，t→∞ 时 v gt/4。 弹性碰撞链：m2≪m1 时，B2 反弹高度 H≈4h。"},{"m":"M6","sec":"数值验证","t":"全部数值实验由配套脚本 qa/numeric_check.py 完成（仅依赖 numpy）。 →prule 物理量 解析值 数值值 $β_$（$e=0.5$） $36.9^∘$ $36.8699^∘$ $v(t)$（雨滴，$t=10$） 公式值 数值积分一致 $H/h$（碰撞链） $4.0$ $4.0$ ∩tion数值验证汇总。全部数值取自 qa/numeric_check.py 的实际输出。"},{"m":"M6","sec":"附录：碰撞公式汇总","t":"• 一维弹性碰撞：$v_1'=(m_1-m_2)v_1/(m_1+m_2)$，$v_2'=2m_1 v_1/(m_1+m_2)$。 • 二维光滑球碰撞：法向恢复系数 $e$，切向不变。 • 变质量方程：$d(mv)/dt=F+m u$。 • 雨滴：$r=r_0+λ t$，$v=g/(4λ)[(r_0+λ t)-r_0^4/(r_0+λ t)^3]$。 • 碰撞链：$H=4h$（$m_2 m_1$）。"},{"m":"M6","sec":"解析结果","t":"• 球碰撞偏转角：$β$ 公式（）， $β_$ 时 $^2α=(1-e)/2$（）。 • 雨滴速度：$v(t)=(g)/(4λ)[(r_0+λ t)-r_0^4/(r_0+λ t)^3]$ （），$t→∞$ 时 $v∼ gt/4$。 • 弹性碰撞链：$H≈ 4h$（$m_2 m_1$）。"},{"m":"M6","sec":"碰撞与变质量的应用","t":"台球游戏。 台球碰撞是完全弹性碰撞（$e≈1$）的日常例子。 碰撞角、偏转角的计算可预测台球轨迹。 火箭推进。 火箭是变质量系统（$dm/dt<0$），推力 $F=-m u$。 Tsiolkovsky 公式：$Δ v=u(m_0/m_f)$。 雨滴增长。 雨滴下落时质量增长，速度增长慢于自由落体（$v∼ gt/4$ vs $gt$）。"},{"m":"M6","sec":"弹性碰撞链（作业-5 Q3）","t":"球 B1 质量 $m_1$，B2 质量 $m_2$（$m_2 m_1$）。B1 从高度 $h$ 落下， 与地面弹性碰撞后上升速度 $v_1=√(2gh)$，再与 B2（静止）弹性碰撞。 一维弹性碰撞公式： v_2'=(2m_1)/(m_1+m_2)v_1≈ 2v_1 (m_2 m_1). B2 反弹高度 H=(v_2'^2)/(2g)≈(4v_1^2)/(2g)=4h. H≈ 4h"},{"m":"M6","sec":"雨滴变质量运动（作业-5 Q2）","t":"雨滴半径 $r$，质量 $m=ρ43π r^3$。质量增加率与表面积成正比： (dm)/(dt)=k· 4π r^2. 另一方面 $dm/dt=ρ· 4π r^2 r$，故 $r=k/ρ=λ$（常数）。 所以 $r(t)=r_0+λ t$。 变质量牛顿方程（增加质量初速度为 0）： (d(mv))/(dt)=mg mv+vm=mg v=g-(vm)/(m). $m/m=3λ/(r_0+λ t)$，故 v+(3λ)/(r_0+λ t)v=g. 积分因子 $μ=(r_0+λ t)^3$： (d)/(dt)≤ft[v(r_0+λ t)^3]=g(r_0+λ t)^3. 积分（$v(0)=0$）： v(t)=(g)/(4λ)≤ft[(r_0+λ t)-(r_0^4)/((r_0+λ t)^3)] 当 $t→∞$，$v→ gt/4$（线性增长）。"},{"m":"M7","sec":"模块概览","t":"用质心积分、角动量守恒与 Newton 球壳定理分析刚体几何与引力势。 球冠质心：d=(R-b)(3R+b)/[4(2R+b)]。半球 (b=0): d=3R/8。 甲虫-圆环：角动量守恒，环转角 π (180°)。 圆盘角动量：L=½MR²ω。 Newton 球壳：r<R 时 V=-GMm/R（常数），r>R 时 V=-GMm/r。"},{"m":"M7","sec":"讨论","t":"角动量守恒的普遍性。 甲虫-圆环问题是角动量守恒的经典演示。系统初始角动量为零， 甲虫运动时环反向旋转，保持总角动量为零。 Newton 球壳定理的意义。 球壳定理是 Newton 万有引力理论的基石，解释了为什么行星可视为质点， 以及为什么球壳内部引力为零。 球冠质心的应用。 球冠质心公式用于计算球形天体（如行星、恒星）的引力势与转动惯量。 Newton 球壳定理的应用。 球壳定理解释了为什么行星内部（r<R）引力随 r 线性增加（$g∝ r$）， 而外部（r>R）按 $1/r^2$ 衰减。 与作业题的对照。 表 覆盖了作业-4 Q1--Q4 的全部数值结果。 goldstein H. Goldstein, C. P. Poole, J. L. Safko, Classical Mechanics, 3rd ed., Pearson, 2002. （刚体、角动量、引力势。） newton I. Newton, Principia Mathematica, 1687. （球壳定理。） zhou 周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （刚体几何与角动量。）"},{"m":"M7","sec":"Newton 球壳定理的证明概要","t":"球壳定理的证明利用高斯定律类比：引力场 $g$ 的通量 $∮ g·dA=-4π GM_ enc$。 壳内 $M_ enc=0$，故 $g=0$；壳外 $M_ enc=M$， 故 $g=-GM/r^2 e_r$。"},{"m":"M7","sec":"Newton 球壳定理（作业-4 Q4）","t":"质量为 $M$ 的均匀球壳，半径 $a$。质点质量 $m$ 在距中心 $r$ 处。 壳内（$r<a$）： 引力势能为常数： V=-(GMm)/(a). 引力为零。 壳外（$r>a$）： 等效于质量 $M$ 集中于中心： V=-(GMm)/(r). 球壳表面（$r=a$）： $V=-GMm/a$，与壳内连续。"},{"m":"M7","sec":"转动惯量与平行轴定理","t":"平行轴定理：$I=I_ cm+Md^2$，其中 $d$ 为新轴到质心轴的距离。 对圆盘：$I_ cm=12 MR^2$（中心轴），$I_ edge=I_ cm+MR^2=32 MR^2$（边缘轴）。"},{"m":"M7","sec":"作业映射","t":"→prule 来源 题面简述 核心知识点 对应小节 作业-4 Q1 球冠质心（球冠高度 $h$） 质心积分、几何 作业-4 Q2 甲虫在光滑圆环上爬行，环转角 角动量守恒、约束 作业-4 Q3 薄圆盘绕中心轴角动量 转动惯量、角动量 作业-4 Q4 球壳对质点的引力势能 Newton 球壳定理"},{"m":"M7","sec":"甲虫与圆环（作业-4 Q2）","t":"圆环质量 $m$，半径 $R$，甲虫质量 $m$。系统初始静止。 甲虫在环上逆时针爬行，速度 $u$（相对环）。设环角速度 $Ω$（顺时针为正， 即甲虫相对环运动方向为正时环旋转为负）。 角动量守恒（无外力矩）： 0 = mR(u-Ω R?) + I_ ringΩ. 设甲虫相对环的速度为 $v$（切向，逆时针为正），环角速度为 $ω$（逆时针为正）。 甲虫惯性系速度 $=v+ω R$（切向）。甲虫角动量 $=mR(v+ω R)$。 环角动量 $=mR^2ω$（薄环转动惯量 $mR^2$）。 mR(v+ω R)+mR^2ω=0 v+2ω R=0 ω=-(v)/(2R). 环以角速度 $v/(2R)$ 顺时针旋转。甲虫相对环走一圈（$2π R$）耗时 $T=2π R/v$。环转角 Δθ=|ω|T=(v)/(2R)·(2π R)/(v)=π 即环转 $180^∘$（$π$ 弧度）。"},{"m":"M8","sec":"模块概览","t":"用运动学与非线性振荡分析圆柱脱离、单摆周期修正、Lorentz 力与相对运动。 圆柱脱离：cos θ = 2/3，θ ≈ 48.19°。 单摆周期：T ≈ 2π√(L/g)(1 + θ0²/16)。 Lorentz 力：回旋半径 r = mv/(eB)，漂移 v_d = E×B/B²。"},{"m":"M8","sec":"极坐标运动学","t":"极坐标 $(r,θ)$ 中的速度与加速度： v = r e_r + rθ e_θ, a = (r-rθ^2) e_r + (rθ+2rθ) e_θ. 作业-1 Q1 的椭圆交点速度即用此公式计算。"},{"m":"M8","sec":"讨论","t":"非线性振荡的重要性。 单摆周期的振幅修正 $θ_0^2/16$ 是非线性效应的体现。 大振幅时需用椭圆积分精确计算。 Lorentz 力的应用。 回旋运动与 $E×B$ 漂移是等离子体物理、 加速器物理的基础。 圆柱脱离的物理解释。 质点在圆柱上滑动时，法向力 $N=mgθ-mv^2/R$。 当 $N=0$ 时脱离，即 $mgθ=mv^2/R$。 结合能量守恒 $v^2=2gR(1-θ)$，得 $θ=2/3$。 单摆的非线性效应。 大振幅单摆周期比小振幅长。振幅 $θ_0=90^∘$ 时， 周期增加约 $18 与作业题的对照。 表 覆盖了作业-1 Q4--Q6 的核心结论。 goldstein H. Goldstein, C. P. Poole, J. L. Safko, Classical Mechanics, 3rd ed., Pearson, 2002. （运动学与非线性振动。） jackson J. D. Jackson, Classical Electrodynamics, 3rd ed., Wiley, 1999. （Lorentz 力。） zhou 周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （运动学与振动。）"},{"m":"M8","sec":"圆柱脱离（作业-1 Q6）","t":"质点从圆柱顶部（$r=R$）静止滑下，圆柱光滑。设滑下角度为 $θ$（从顶点量）。 能量守恒：$12 mv^2=mgR(1-θ)$，故 $v^2=2gR(1-θ)$。 径向牛顿方程（向心为正）： mgθ - N = (mv^2)/(R). 脱离条件 $N=0$： gθ = (v^2)/(R) = 2g(1-θ) 3θ=2 θ=23, θ=23≈48.2^∘"},{"m":"M8","sec":"相空间与非线性振荡","t":"单摆相空间：$(θ,θ)$ 平面。小振幅：椭圆（简谐）。 大振幅：扭曲的闭合曲线。分界线（separatrix） separates 振荡与旋转。 能量 $E=12 m L^2 θ^2 - mgLθ$。 $E<-mgL$ 不允许；$-mgL<E<mgL$：振荡；$E>mgL$：旋转；$E=mgL$：分界线（过最高点 $θ=π$ 的临界轨道）。"},{"m":"M8","sec":"Lorentz 力（作业-1 Q4）","t":"电子在相互垂直的匀强 $E$、$B$ 场中， 初速度 $v⊥E,B$。 Lorentz 力 $F=-e(E+v×B)$。 设 $E=Ey$，$B=Bz$，$v=(v_0,0,0)$。 运动方程：$mv=-e(E+v×B)$。 $x$-$y$ 平面：$mv_x=-eB v_y$，$mv_y=-eE+eB v_x$。 解为回旋运动叠加 $E×B$ 漂移： v_d=(E×B)/(B^2). 回旋半径 $r_c=mv_⊥/(eB)$，回旋频率 $ω_c=eB/m$。"},{"m":"M8","sec":"相对运动与伽利略变换","t":"伽利略变换：$r'=r-V t$， $v'=v-V$，$a'=a$。 作业-1 Q3 的渡河问题即相对运动的应用：船对地速度 = 船对水速度 + 水对地速度。 渡河最短时间。 船相对水速度 $v_2$，水流速度 $v_1$。最短渡河时间 $T=d/v_2$（垂直渡河）， 设船头与河岸法线夹角为 $θ$，则渡河时间 $T=d/(v_2θ)$， 沿河漂移 $x=(v_1-v_2θ)T$。对 $θ$ 求极小，当 $v_1>v_2$ 时 x_=(d)/(v_2)√(v_1^2-v_2^2). 例如 $v_1=2, v_2=1$ 时 $x_=3 d≈1.732d$， 而不是垂直船头时的 $d v_1/v_2=2d$。"}]};
+
+</script>
+<script id="tm-ai-js">
+(function () {
+  'use strict';
+
+  var root = document.getElementById('tm-ai-root');
+  if (!root) return;
+  var API_BASE = (location.protocol === 'file:') ? 'http://127.0.0.1:8765' : '';
+  var KB = window.TM_OFFLINE_KB || null;
+  var healthOk = false;
+
+  var launcher = document.getElementById('tmai-launcher');
+  var panel = document.getElementById('tmai-panel');
+  var statusDot = document.getElementById('tmai-status-dot');
+  var statusText = document.getElementById('tmai-status-text');
+  var messagesEl = document.getElementById('tmai-messages');
+  var chipsEl = document.getElementById('tmai-chips');
+  var inputEl = document.getElementById('tmai-input');
+  var sendBtn = document.getElementById('tmai-send');
+  var contextEl = document.getElementById('tmai-context');
+  var contextText = document.getElementById('tmai-context-text');
+  var contextClose = document.getElementById('tmai-context-close');
+  var segBtns = root.querySelectorAll('.tmai-seg-btn');
+  var closeBtn = root.querySelector('.tmai-close');
+
+  var isOpen = false;
+  var inFlight = false;
+  var mode = 'quick';
+  var healthChecked = false;
+  var statusState = 'checking';
+  var modelName = '';
+  var moduleContext = null;
+  var conversation = [];
+  var typingEl = null;
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function unesc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+      .replace(/&amp;/g, '&');
+  }
+
+  var TEX_SYM = {
+    alpha:'α', beta:'β', gamma:'γ', delta:'δ', epsilon:'ε', varepsilon:'ϵ',
+    zeta:'ζ', eta:'η', theta:'θ', vartheta:'ϑ', iota:'ι', kappa:'κ',
+    lambda:'λ', mu:'μ', nu:'ν', xi:'ξ', pi:'π', varpi:'ϖ', rho:'ρ',
+    varrho:'ϱ', sigma:'σ', varsigma:'ς', tau:'τ', upsilon:'υ', phi:'φ',
+    varphi:'ϕ', chi:'χ', psi:'ψ', omega:'ω',
+    Gamma:'Γ', Delta:'Δ', Theta:'Θ', Lambda:'Λ', Xi:'Ξ', Pi:'Π',
+    Sigma:'Σ', Upsilon:'Υ', Phi:'Φ', Psi:'Ψ', Omega:'Ω',
+    times:'×', cdot:'·', pm:'±', mp:'∓', ast:'∗', star:'⋆',
+    approx:'≈', sim:'∼', simeq:'≃', cong:'≅', equiv:'≡', propto:'∝',
+    neq:'≠', ne:'≠', le:'≤', leq:'≤', ge:'≥', geq:'≥', ll:'≪', gg:'≫',
+    to:'→', rightarrow:'→', leftarrow:'←', Rightarrow:'⇒', Leftarrow:'⇐',
+    leftrightarrow:'↔', mapsto:'↦', infty:'∞', partial:'∂', nabla:'∇',
+    int:'∫', oint:'∮', sum:'∑', prod:'∏', angle:'∠', perp:'⊥',
+    parallel:'∥', in:'∈', notin:'∉', subset:'⊂', supset:'⊃',
+    cup:'∪', cap:'∩', emptyset:'∅', forall:'∀', exists:'∃',
+    langle:'⟨', rangle:'⟩', ldots:'…', cdots:'⋯', ddots:'⋱',
+    circ:'∘', degree:'°', prime:'′', hbar:'ℏ', ell:'ℓ',
+    Re:'ℜ', Im:'ℑ', aleph:'ℵ', therefore:'∴', because:'∵',
+    quad:'&#160;&#160;', qquad:'&#160;&#160;&#160;&#160;'
+  };
+
+  function texToHtml(tex) {
+    var src = String(tex == null ? '' : tex);
+    var i = 0, n = src.length;
+    function parseCommand() {
+      i++;
+      if (i >= n) return '';
+      var ch = src.charAt(i);
+      if (ch === '\\') { i++; return '<br>'; }
+      if (ch === ',') { i++; return '&#8201;'; }
+      if (ch === ';') { i++; return ' '; }
+      if (ch === '!') { i++; return ''; }
+      if (ch === ' ') { i++; return ' '; }
+      if (!/[A-Za-z]/.test(ch)) { i++; return esc(ch); }
+      var cmd = '';
+      while (i < n && /[A-Za-z]/.test(src.charAt(i))) { cmd += src.charAt(i); i++; }
+      if (cmd === 'frac' || cmd === 'dfrac' || cmd === 'tfrac') {
+        var a = parseArg(), b = parseArg();
+        return '<span class="tex-frac"><span class="tex-num">' + a + '</span><span class="tex-den">' + b + '</span></span>';
+      }
+      if (cmd === 'sqrt') {
+        if (src.charAt(i) === '[') {
+          var close = src.indexOf(']', i);
+          if (close !== -1) i = close + 1;
+        }
+        var a = parseArg();
+        return '<span class="tex-sqrt-wrap">√<span class="tex-sqrt">' + a + '</span></span>';
+      }
+      if (cmd === 'sin' || cmd === 'cos' || cmd === 'tan' || cmd === 'cot' || cmd === 'sec' || cmd === 'csc' || cmd === 'arcsin' || cmd === 'arccos' || cmd === 'arctan' || cmd === 'ln' || cmd === 'log' || cmd === 'exp' || cmd === 'max' || cmd === 'min' || cmd === 'lim' || cmd === 'det') {
+        return '<span class="tex-text">' + cmd + '</span> ';
+      }
+      if (cmd === 'text' || cmd === 'mathrm' || cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm' || cmd === 'mathit' || cmd === 'mathsf' || cmd === 'operatorname' || cmd === 'mathbb' || cmd === 'mathcal' || cmd === 'mathfrak') {
+        var a = parseArg();
+        var cls = (cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm') ? 'tex-b' : (cmd === 'mathit' ? 'tex-i' : 'tex-text');
+        return '<span class="' + cls + '">' + a + '</span>';
+      }
+      if (cmd === 'vec' || cmd === 'dot' || cmd === 'ddot' || cmd === 'hat' || cmd === 'bar' || cmd === 'overline' || cmd === 'underline') {
+        var a = parseArg();
+        return '<span class="tex-' + cmd + '">' + a + '</span>';
+      }
+      if (cmd === 'left' || cmd === 'right' || cmd === 'big' || cmd === 'Big' || cmd === 'bigg' || cmd === 'Bigg' || cmd === 'displaystyle' || cmd === 'limits') return '';
+      if (cmd === 'begin' || cmd === 'end' || cmd === 'label' || cmd === 'tag') { parseArg(); return ''; }
+      if (TEX_SYM[cmd]) return TEX_SYM[cmd];
+      return '<span class="tex-cmd">' + esc(cmd) + '</span>';
+    }
+    function parseArg() {
+      while (i < n && /\s/.test(src.charAt(i))) i++;
+      if (i >= n) return '';
+      if (src.charAt(i) === '{') return parseGroup();
+      if (src.charAt(i) === '\\') return parseCommand();
+      var c = src.charAt(i); i++;
+      return esc(c);
+    }
+    function parseGroup() {
+      if (src.charAt(i) === '{') i++;
+      var out = parseSeq('}');
+      if (src.charAt(i) === '}') i++;
+      return out;
+    }
+    function parseSeq(end) {
+      var out = '';
+      while (i < n) {
+        var c = src.charAt(i);
+        if (end && c === end) break;
+        if (c === '\\') { out += parseCommand(); }
+        else if (c === '{') { out += parseGroup(); }
+        else if (c === '_') { i++; out += '<sub>' + parseArg() + '</sub>'; }
+        else if (c === '^') { i++; out += '<sup>' + parseArg() + '</sup>'; }
+        else if (c === '&' || c === '~') { i++; out += ' '; }
+        else { i++; out += esc(c); }
+      }
+      return out;
+    }
+    return parseSeq(null);
+  }
+
+  function formatInline(s) {
+    var out = esc(s);
+    out = out.replace(/\$\$([\s\S]+?)\$\$/g, function (_, m) {
+      return '<span class="tmai-mathblock">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\\\[([\s\S]+?)\\\]/g, function (_, m) {
+      return '<span class="tmai-mathblock">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\\\(([\s\S]+?)\\\)/g, function (_, m) {
+      return '<span class="tmai-math">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\$([^$\n]+?)\$/g, function (_, m) {
+      return '<span class="tmai-math">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+    out = out.replace(/\[(M\d+)\]/g, '<span class="tmai-cite">[$1]</span>');
+    return out;
+  }
+
+  function formatBlock(block) {
+    var lines = block.split('\n');
+    var hasList = lines.some(function (l) {
+      var t = l.trim();
+      return t.indexOf('- ') === 0 || t.indexOf('* ') === 0;
+    });
+    var isList = hasList && lines.every(function (l) {
+      var t = l.trim();
+      return t === '' || t.indexOf('- ') === 0 || t.indexOf('* ') === 0;
+    });
+    if (isList) {
+      var items = lines.filter(function (l) { return l.trim() !== ''; }).map(function (l) {
+        var t = l.trim().replace(/^[-*]\s*/, '');
+        return '<li>' + formatInline(t) + '</li>';
+      });
+      return '<ul class="tmai-list">' + items.join('') + '</ul>';
+    }
+    return '<p>' + lines.map(function (l) { return formatInline(l); }).join('<br>') + '</p>';
+  }
+
+  function formatContent(text) {
+    return String(text == null ? '' : text).split(/\n{2,}/).map(formatBlock).join('');
+  }
+
+  function setStatus(state, model) {
+    statusState = state;
+    if (model) modelName = model;
+    if (statusDot) {
+      statusDot.className = 'tmai-status-dot tmai-status-' + state;
+    }
+    if (statusText) {
+      if (state === 'checking') statusText.textContent = '检查中…';
+      else if (state === 'online') statusText.textContent = 'AI 助教在线 · ' + (modelName || 'model');
+      else if (state === 'offline') statusText.textContent = '离线 · 本地检索模式';
+      else if (state === 'error') statusText.textContent = '连接错误';
+    }
+  }
+
+  function getModules() {
+    if (window.TM_MODULES && Array.isArray(window.TM_MODULES)) return window.TM_MODULES;
+    return null;
+  }
+
+  function findModule(milestone) {
+    var mods = getModules();
+    if (!mods) return null;
+    for (var i = 0; i < mods.length; i++) {
+      if (mods[i].milestone === milestone) return mods[i];
+    }
+    return null;
+  }
+
+  function setContext(moduleId) {
+    moduleContext = moduleId;
+    var title = moduleId;
+    var m = findModule(moduleId);
+    if (m && m.title) title = m.title;
+    if (contextText) contextText.textContent = '当前章节 ' + moduleId + ' · ' + title;
+    if (contextEl) contextEl.hidden = false;
+  }
+
+  function clearContext() {
+    moduleContext = null;
+    if (contextEl) contextEl.hidden = true;
+  }
+
+  function cjkBigrams(str) {
+    var out = [];
+    var s = String(str == null ? '' : str);
+    for (var i = 0; i < s.length - 1; i++) {
+      var a = s.charAt(i);
+      var b = s.charAt(i + 1);
+      if (/[\u4e00-\u9fff]/.test(a) && /[\u4e00-\u9fff]/.test(b)) {
+        out.push(a + b);
+      }
+    }
+    return out;
+  }
+
+  function latinTokens(str) {
+    return String(str == null ? '' : str).toLowerCase().split(/[^a-z0-9]+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function normText(x) {
+    return String(x == null ? '' : x).toLowerCase()
+      .replace(/[\s，。？！、；：""''（）()\[\]{}《》·—…!?.,;:'"`]/g, '');
+  }
+  var SYN = [
+    ['拉格朗日', 'lagrange euler'], ['欧拉', 'euler'], ['作用量', 'action'],
+    ['费马', 'fermat'], ['斯涅尔', 'snell'], ['折射', 'refraction'],
+    ['最短路径', 'brachistochrone shortest'], ['有效势', 'veff'],
+    ['离心', 'centrifugal'], ['约化', 'reduced'], ['恢复系数', 'restitution'],
+    ['转动惯量', 'moment inertia'], ['角动量', 'angular momentum'],
+    ['洛伦兹力', 'lorentz'], ['单摆', 'pendulum'], ['双摆', 'double pendulum'],
+    ['圆柱', 'cylinder'], ['碰撞', 'collision'], ['变分', 'variational'],
+    ['虚功', 'virtual work'], ['截面', 'cross section'], ['球壳', 'shell'],
+    ['甲虫', 'beetle'], ['平行轴', 'parallel axis'], ['阻尼', 'damping']
+  ];
+  function expandQuery(q) {
+    var out = q;
+    for (var i = 0; i < SYN.length; i++) {
+      if (q.indexOf(SYN[i][0]) !== -1) out += ' ' + SYN[i][1];
+    }
+    return out;
+  }
+  function overlapScore(a, b) {
+    var A = cjkBigrams(a), B = cjkBigrams(b);
+    if (!A.length || !B.length) return 0;
+    var hit = 0;
+    for (var i = 0; i < A.length; i++) if (B.indexOf(A[i]) !== -1) hit++;
+    return hit / Math.sqrt(A.length * B.length);
+  }
+  function latinHit(a, b) {
+    var A = latinTokens(a), B = latinTokens(b), n = 0;
+    for (var i = 0; i < A.length; i++) if (B.indexOf(A[i]) !== -1) n++;
+    return n;
+  }
+  function sourceFor(ms, sec) {
+    var m = null, mods = (KB && KB.modules) ? KB.modules : (getModules() || []);
+    for (var i = 0; i < mods.length; i++) {
+      if ((mods[i].m || mods[i].milestone) === ms) { m = mods[i]; break; }
+    }
+    if (!m) return { milestone: ms, title: ms, section: sec || '', href: '', pdf: '' };
+    return {
+      milestone: ms, title: m.title, section: sec || m.title,
+      href: m.href || m.sim || '', pdf: m.pdf || m.note || ''
+    };
+  }
+  function pickSentences(text, q, maxN) {
+    var parts = String(text || '').split(/[。；\n]+/).filter(function (x) {
+      if (x.trim().length <= 6) return false;
+      return (x.match(/\\/g) || []).length <= 4;
+    });
+    var scored = parts.map(function (x, i) {
+      return {s: x.trim(), i: i, sc: overlapScore(q, x) + latinHit(q, x) * 0.2};
+    });
+    scored.sort(function (a, b) { return b.sc - a.sc; });
+    var top = scored.slice(0, maxN || 2);
+    top.sort(function (a, b) { return a.i - b.i; });
+    return top.map(function (x) { return x.s; }).join('。') + '。';
+  }
+
+  function localAnswer(question) {
+    var q = normText(question);
+    var GREET = {你好:1, 您好:1, 哈喽:1, 嗨:1, hi:1, hello:1, hey:1, 在吗:1, 在不在:1, 老师好:1, 同学好:1};
+    if (GREET[q]) {
+      return {answer: '你好同学，有什么问题？', sources: [], label: '问候'};
+    }
+    var VAGUE = {方程:1, 公式:1, 定理:1, 物理:1, 力学:1, 理论力学:1, 怎么做:1, 怎么学:1, 是什么:1, 为什么:1, 讲讲:1, 介绍一下:1, 总结:1, 重点:1};
+    if (VAGUE[q] && KB) {
+      var menu = '你问得有点宽，想具体看哪一章？\n' + KB.modules.map(function (m) { return m.m + ' ' + m.title; }).join(' · ') + '\n可以直接问“M4 的拉格朗日方程是什么”。';
+      return {answer: menu, sources: KB.modules.map(function (m) {
+        return {milestone: m.m, title: m.title, section: m.title, href: m.href, pdf: m.pdf};
+      }), label: '章节索引'};
+    }
+    if (!KB) {
+      var mods0 = getModules();
+      if (!mods0) {
+        return {answer: '离线模式没有加载到知识库。请通过 http://127.0.0.1:8765 打开，或运行 tools/build_offline_kb.py 重新生成。', sources: [], label: '离线检索'};
+      }
+      var lines0 = mods0.slice(0, 3).map(function (m) {
+        return '**' + m.milestone + ' · ' + m.title + '**\n' + (m.summary || m.src || '');
+      });
+      return {answer: '离线检索（章节级）：\n\n' + lines0.join('\n\n'), sources: mods0.slice(0, 3).map(function (m) {
+        return {milestone: m.milestone, title: m.title, section: m.title, href: m.sim, pdf: m.note};
+      }), label: '离线检索'};
+    }
+
+    var gHit = null;
+    for (var gi = 0; gi < KB.glossary.length; gi++) {
+      if (q.indexOf(normText(KB.glossary[gi].t)) !== -1) { gHit = KB.glossary[gi]; break; }
+    }
+
+    var best = null, bestSc = 0;
+    for (var fi = 0; fi < KB.faq.length; fi++) {
+      var f = KB.faq[fi];
+      var sc = overlapScore(q, normText(f.q)) + latinHit(q, f.q) * 0.15;
+      if (sc > bestSc) { bestSc = sc; best = f; }
+    }
+    if (best && bestSc >= 0.55) {
+      var ans = best.a;
+      if (gHit && normText(ans).indexOf(normText(gHit.t)) === -1) ans = gHit.d + '\n\n' + ans;
+      var metaSec = /部署|离线|单位|学习路径|诺特/.test(best.sec || '');
+      ans += metaSec ? '\n\n（离线直答）' : '\n\n（离线直答 · ' + best.m + ' · 完整推导见 note.pdf）';
+      return {answer: ans, sources: metaSec ? [] : [sourceFor(best.m, best.sec)], label: '离线直答'};
+    }
+
+    var qe = expandQuery(q);
+    var scored = KB.chunks.map(function (c) {
+      var corpus = c.t + ' ' + c.sec;
+      var sc = overlapScore(qe, corpus) * 2 + latinHit(qe, corpus) * 0.5;
+      var bad = (c.t.match(/\\/g) || []).length;
+      sc *= (1 - Math.min(0.6, bad / 30));
+      return {c: c, sc: sc};
+    });
+    scored.sort(function (a, b) { return b.sc - a.sc; });
+    var top = scored.filter(function (x) { return x.sc > 0.02; }).slice(0, 2);
+    if (top.length) {
+      var lines = [];
+      if (gHit) lines.push(gHit.d);
+      top.forEach(function (x) {
+        lines.push('**' + x.c.m + ' · ' + x.c.sec + '**\n' + pickSentences(x.c.t, q, 2));
+      });
+      lines.push('（离线检索：讲义原文摘录；完整推理请连接 AI 服务或看 note.pdf）');
+      return {answer: lines.join('\n\n'), sources: top.map(function (x) {
+        return sourceFor(x.c.m, x.c.sec);
+      }), label: '离线检索'};
+    }
+
+    var mods = KB.modules.map(function (m) {
+      return {m: m, sc: overlapScore(q, normText(m.title + ' ' + m.tags.join(' ') + ' ' + m.summary))};
+    }).sort(function (a, b) { return b.sc - a.sc; }).slice(0, 2);
+    var fallback = ['离线模式只做讲义检索，没有理解到这个问题。换个更具体的关键词（如「有效势」「恢复系数」「Lorentz 力」「等时摆」），或连接 AI 服务获得完整推理。'];
+    if (mods.length && mods[0].sc > 0) {
+      fallback.push('可以先看：' + mods.map(function (x) { return x.m.m + ' ' + x.m.title; }).join('；'));
+    }
+    return {answer: fallback.join('\n\n'), sources: mods.map(function (x) {
+      return sourceFor(x.m.m, x.m.title);
+    }), label: '离线检索'};
+  }
+
+  function renderSources(container, sources) {
+    if (!sources || !sources.length) return;
+    var seen = {};
+    var wrap = document.createElement('div');
+    wrap.className = 'tmai-sources';
+    var count = 0;
+    for (var i = 0; i < sources.length && count < 5; i++) {
+      var s = sources[i];
+      var href = s.href || s.sim || '';
+      var key = href;
+      if (key && seen[key]) continue;
+      if (key) seen[key] = true;
+      if (href) {
+        var a = document.createElement('a');
+        a.className = 'tmai-src';
+        a.href = href;
+        a.textContent = (s.milestone ? s.milestone + ' · ' : '') + (s.section || s.title || '');
+        wrap.appendChild(a);
+        count++;
+      }
+      if (s.pdf && count < 5) {
+        var pdfKey = s.pdf;
+        if (!seen[pdfKey]) {
+          seen[pdfKey] = true;
+          var p = document.createElement('a');
+          p.className = 'tmai-src tmai-src-pdf';
+          p.href = s.pdf;
+          p.textContent = 'PDF';
+          wrap.appendChild(p);
+          count++;
+        }
+      }
+    }
+    if (wrap.childNodes.length) container.appendChild(wrap);
+  }
+
+  function appendMessage(msg) {
+    var el = document.createElement('div');
+    el.className = 'tmai-msg tmai-msg-' + (msg.role === 'user' ? 'user' : 'assistant');
+    var content = document.createElement('div');
+    content.className = 'tmai-msg-content';
+    if (msg.typing) {
+      content.innerHTML = '<span class="tmai-typing"><span></span><span></span><span></span></span>';
+    } else {
+      content.innerHTML = formatContent(msg.content);
+    }
+    el.appendChild(content);
+    if (msg.label) {
+      var badge = document.createElement('div');
+      badge.className = 'tmai-msg-label';
+      badge.textContent = msg.label;
+      el.appendChild(badge);
+    }
+    if (msg.sources && msg.sources.length) {
+      renderSources(el, msg.sources);
+    }
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return el;
+  }
+
+  function removeTyping() {
+    if (typingEl && typingEl.parentNode) typingEl.parentNode.removeChild(typingEl);
+    typingEl = null;
+  }
+
+  function openPanel() {
+    if (isOpen) return;
+    isOpen = true;
+    panel.hidden = false;
+    launcher.setAttribute('aria-expanded', 'true');
+    if (!healthOk) {
+      setStatus('checking');
+      fetch(API_BASE + '/api/health').then(function (res) {
+        if (!res.ok) throw new Error('bad');
+        return res.json();
+      }).then(function (data) {
+        if (data && data.ok && data.upstream) {
+          healthOk = true;
+          setStatus('online', data.model);
+        } else {
+          setStatus('offline');
+        }
+      }).catch(function () {
+        setStatus('offline');
+      });
+    }
+    setTimeout(function () { try { inputEl.focus(); } catch (e) {} }, 50);
+  }
+
+  function closePanel() {
+    if (!isOpen) return;
+    isOpen = false;
+    panel.hidden = true;
+    launcher.setAttribute('aria-expanded', 'false');
+  }
+
+  function togglePanel() {
+    if (isOpen) closePanel(); else openPanel();
+  }
+
+  function sendQuestion() {
+    if (inFlight) return;
+    var text = inputEl.value.trim();
+    if (text === '') return;
+    inFlight = true;
+    sendBtn.disabled = true;
+    appendMessage({ role: 'user', content: text });
+    conversation.push({ role: 'user', content: text });
+    inputEl.value = '';
+    typingEl = appendMessage({ role: 'assistant', content: '', typing: true });
+    var history = conversation.slice(-6);
+    fetch(API_BASE + '/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: text, module: moduleContext, mode: mode, history: history })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('bad');
+      return res.json();
+    }).then(function (data) {
+      removeTyping();
+      var answer = (data && data.answer) ? data.answer : '';
+      var sources = (data && data.sources) ? data.sources : [];
+      var lab = (data && data.reviewed === false) ? '本地草稿（未审核）' : ((data && data.pipeline === 'local_review') ? '学校审核' : '');
+      appendMessage({ role: 'assistant', content: answer, sources: sources, label: lab });
+      conversation.push({ role: 'assistant', content: answer });
+    }).catch(function () {
+      removeTyping();
+      var la = localAnswer(text);
+      appendMessage({ role: 'assistant', content: la.answer, sources: la.sources, label: la.label || '离线检索' });
+      conversation.push({ role: 'assistant', content: la.answer });
+    }).then(function () {
+      inFlight = false;
+      sendBtn.disabled = false;
+    });
+  }
+
+  launcher.addEventListener('click', togglePanel);
+  closeBtn.addEventListener('click', closePanel);
+  sendBtn.addEventListener('click', sendQuestion);
+  inputEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      sendQuestion();
+    }
+    if (e.key === 'Escape') {
+      closePanel();
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen) closePanel();
+  });
+  contextClose.addEventListener('click', clearContext);
+  Array.prototype.forEach.call(segBtns, function (b) {
+    b.addEventListener('click', function () {
+      mode = b.getAttribute('data-mode');
+      Array.prototype.forEach.call(segBtns, function (x) {
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
+    });
+  });
+
+  var suggestions = [
+    '什么是有效势？它为什么能判断圆轨道稳定性？',
+    '伯特兰定理说明了什么？',
+    '两体问题怎么化成单体问题？',
+    '碰撞恢复系数在二维碰撞里怎么用？'
+  ];
+  suggestions.forEach(function (q) {
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'tmai-chip';
+    chip.textContent = q;
+    chip.addEventListener('click', function () {
+      inputEl.value = q;
+      sendQuestion();
+      if (chipsEl) chipsEl.hidden = true;
+    });
+    chipsEl.appendChild(chip);
+  });
+
+  appendMessage({ role: 'assistant', content: '你好，我是星语——理论力学讲义助教。可以问我有效势、轨道稳定性、两体问题、碰撞恢复系数等。' });
+
+  try {
+    var params = new URLSearchParams(location.search);
+    if (params.has('m')) setContext(params.get('m'));
+  } catch (e) {}
+
+  try {
+    var params2 = new URLSearchParams(location.search);
+    if (params2.get('ask') === '1') {
+      setTimeout(openPanel, 300);
+    }
+  } catch (e2) {}
+
+  window.TM_AI = {
+    open: function (opts) {
+      if (opts && opts.module) setContext(opts.module);
+      openPanel();
+    },
+    close: closePanel,
+    toggle: togglePanel
+  };
+  window.TM_AI.renderMath = formatInline;
+  window.TM_AI.localAnswer = localAnswer;
+
+  document.addEventListener('tm:open-ai', function (e) {
+    var opts = e && e.detail ? e.detail : null;
+    if (opts && opts.module) setContext(opts.module);
+    openPanel();
+  });
+})();
+</script>
+filePath: /home/wck/Theoretical-Mechanics/assets/tm-ai-panel.html
+<!-- TM-AI:END -->
+</body>
+</html>

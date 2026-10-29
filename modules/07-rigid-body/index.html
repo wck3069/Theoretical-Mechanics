@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刚体几何与角动量 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .intro{margin:6px 0 0; font-size:12px; color:var(--muted); line-height:1.6; max-width:90%}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:12px; color:var(--muted);
+       display:flex; gap:14px; flex-wrap:wrap; pointer-events:none}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice.bad{color:#ffd7d7;border-color:rgba(255,123,123,.5);background:rgba(60,10,16,.6)}
+  .notice{position:absolute; right:16px; bottom:16px; max-width:60%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent); border:2px solid #0a1020; cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35); transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{white-space:pre-wrap;position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  span.doc{cursor:default;color:var(--muted);pointer-events:none}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+  }
+</style>
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="stage-canvas"></canvas>
+    <div class="brand">
+      <h1>刚体几何与角动量</h1>
+      <p>球冠质心、甲虫转环、球壳势能</p>
+      <p class="intro">刚体的怪事：甲虫绕自由圆环走一圈，环会反转；反转角随甲虫质量 m 改变（默认 m=1 时 120°）。均匀球壳内部的引力恰好为零，可与均匀实心球对比。第一步：选「球冠质心」模式，拖 h 看质心 d 如何非线性上移。球壳模式可直接拖动左侧质点。</p>
+    </div>
+    <div class="hud">
+      <span>模式 <b id="hudMode">-</b></span>
+      <span>质心高度 d <b id="hudD">-</b></span>
+      <span>转角 <b id="hudAngle">-</b></span>
+      <span>势能 V <b id="hudV">-</b></span>
+      <span>状态 <b id="hudState">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="eq">
+      <div><span class="num">球冠：</span> d=h(4R−h)/[4(3R−h)]（h＝右侧滑块的球冠高度；R−h＝切割平面距球心）</div>
+      <div><span class="num">转环：</span> Δθ_ring=−2πm/(M+2m)（自由环，M=1；默认 m=1 时环反转 120°、甲虫实验室方位转 240°）</div>
+      <div><span class="num">球壳：</span> r&lt;R: V=-GMm/R; r&gt;R: V=-GMm/r（取 V(∞)=0；壳内 V 为常数：壳内任意点受力为零）</div>
+      <div><span class="num">实心球：</span> r&lt;R: V=-GMm(3−r²/R²)/(2R); r&gt;R: V=-GMm/r（同一 V(∞)=0 约定）</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sel-mode">模式</label></div>
+      <select id="sel-mode" aria-label="模式">
+        <option value="cap">球冠质心</option>
+        <option value="beetle">甲虫转环</option>
+        <option value="shell">球壳势能</option>
+      </select>
+    </div>
+    <div class="group" id="group-R">
+      <div class="row"><label for="param-R">球半径 R</label><span class="val" id="val-R">1.00</span></div>
+      <input id="param-R" type="range" min="0.5" max="3" step="0.1" value="1.0" aria-label="球半径 R">
+    </div>
+    <div class="group" id="group-beetleM" style="display:none">
+      <div class="row"><label for="param-beetleM">甲虫质量 m（环质量 M=1）</label><span class="val" id="val-beetleM">1.00</span></div>
+      <input id="param-beetleM" type="range" min="0.1" max="5" step="0.1" value="1.0" aria-label="甲虫质量 m">
+    </div>
+    <div class="group" id="group-h">
+      <div class="row"><label for="param-h">球冠高度 h（0–2R）</label><span class="val" id="val-h">1.00</span></div>
+      <input id="param-h" type="range" min="0.01" max="3" step="0.01" value="1.0" aria-label="球冠高度 h，上限为直径 2R">
+    </div>
+    <div class="group" id="group-M">
+      <div class="row"><label for="param-M">质量 M</label><span class="val" id="val-M">1.00</span></div>
+      <input id="param-M" type="range" min="0.1" max="5" step="0.1" value="1.0" aria-label="质量 M">
+    </div>
+    <div class="btns">
+      <button id="btn-reset">重置</button>
+    </div>
+    <div class="tag">URL 可复现：<span>?mode=…&R=…&h=…&M=…&beetleM=…</span><br>
+    本页采用无量纲演示单位（R、M、ω 等均为无量纲，见底部说明）。<br>
+    自测：<span>index.html?selftest=1</span>（6 项硬断言，全 PASS 才通过）</div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+    <a class="doc" href="../06-collisions/index.html">← 上一模块：碰撞与变质量</a>
+    <a class="doc" href="../08-kinematics/index.html">下一模块：运动学与非线性振动 →</a>
+    <details class="mapping">
+      <summary>作业映射（本模块覆盖：作业-4）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-4 Q1</td><td>球冠质心</td><td>模式=球冠质心；滑块 R 与球冠高度 h</td></tr>
+        <tr><td>作业-4 Q2</td><td>甲虫转环</td><td>阅读推导 note.pdf</td></tr>
+        <tr><td>作业-4 Q4</td><td>球壳势能</td><td>模式=球壳势能；HUD 显示 V</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+// ==================== 1) PARAMS ====================
+var DEFAULTS = {mode:'cap', R:1.0, h:1.0, M:1.0, beetleM:1.0};
+var RANGE = {R:[0.5,3], h:[0.01,6], M:[0.1,5], beetleM:[0.1,5]};
+var P = {mode:DEFAULTS.mode, R:DEFAULTS.R, h:DEFAULTS.h, M:DEFAULTS.M, beetleM:DEFAULTS.beetleM};
+
+// ==================== 2) URL 同步 ====================
+function loadFromURL(){
+  var q = {};
+  var s = window.location.search.replace(/^\?/, '');
+  if (s) { var parts = s.split('&');
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split('=');
+      if (kv.length === 2) q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+    }
+  }
+  if (q.mode) P.mode = q.mode;
+  if (q.R !== undefined) P.R = Math.min(Math.max(parseFloat(q.R), RANGE.R[0]), RANGE.R[1]) || DEFAULTS.R;
+  if (q.h !== undefined) P.h = Math.min(Math.max(parseFloat(q.h), RANGE.h[0]), RANGE.h[1]) || DEFAULTS.h;
+  if (q.M !== undefined) P.M = Math.min(Math.max(parseFloat(q.M), RANGE.M[0]), RANGE.M[1]) || DEFAULTS.M;
+  if (q.beetleM !== undefined) P.beetleM = Math.min(Math.max(parseFloat(q.beetleM), RANGE.beetleM[0]), RANGE.beetleM[1]) || DEFAULTS.beetleM;
+  return q;
+}
+function syncURL(){
+  var s = '?mode=' + P.mode + '&R=' + P.R + '&h=' + P.h + '&M=' + P.M + '&beetleM=' + P.beetleM;
+  if (typeof history !== 'undefined' && history.replaceState) history.replaceState(null, '', s);
+}
+
+// ==================== 2.5) BEETLE ANIMATION ====================
+var beetle = {angle:0, running:true, done:false, trail:[]};
+function beetleStep(){
+  if (P.mode !== 'beetle' || !beetle.running) return;
+  beetle.angle += 0.02;
+  beetle.trail.push(beetle.angle);
+  if (beetle.trail.length > 400) beetle.trail.shift();
+  if (beetle.angle >= 2*Math.PI) { beetle.angle = 2*Math.PI; beetle.running = false; beetle.done = true; }
+}
+function beetleLabAngle(){ return (1 + P.beetleM) / (1 + 2 * P.beetleM) * beetle.angle; }
+function ringRotation(){ return -P.beetleM / (1 + 2 * P.beetleM) * beetle.angle; }
+function prewarmBeetle(n){
+  for (var i=0;i<(n||130);i++){ beetle.angle += 0.02; beetle.trail.push(beetle.angle); }
+}  // angular momentum conservation: ring turns -pi per lap
+
+// ==================== 3) 物理 ====================
+function capCentroid(R, h) {
+  // b = R - h (plane distance from center)
+  // d = h(4R-h) / [4(2R+b)] = h(4R-h) / [4(3R-h)]
+  h = Math.min(Math.max(h, 0), 2 * R);
+  if (h <= 0) return 0;
+  var b = R - h;
+  return (R - b) * (3 * R + b) / (4 * (2 * R + b));
+}
+function shellV(rho, M, a) {
+  // rho: actual distance; a: shell radius
+  if (rho <= a) return -M / a; // G=M=m=1
+  return -M / rho;
+}
+function solidV(rho, M, a) {
+  // 均匀实心球：内部 V=-GM(3-r²/a²)/(2a)，外部同球壳
+  if (rho <= a) return -M * (3 - (rho*rho)/(a*a)) / (2*a);
+  return -M / rho;
+}
+
+// ==================== 4) 渲染 ====================
+var cv = document.getElementById('stage-canvas');
+var ctx = cv.getContext('2d');
+var W = 0, H = 0;
+function resize(){
+  var dpr = window.devicePixelRatio || 1;
+  var rect = cv.getBoundingClientRect();
+  W = Math.max(80, Math.floor(rect.width));
+  H = Math.max(80, Math.floor(rect.height));
+  cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+var shellPoint = {q:0.5, angle:0.6};
+var shellDragging = false;
+function shellGeom(){
+  return {cx: W*0.20, cy: H*0.52, sc: Math.min(W*0.085, H*0.18)};
+}
+function shellPick(e){
+  var rect=cv.getBoundingClientRect();
+  var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  var g=shellGeom();
+  var dx=mx-g.cx, dy=my-g.cy;
+  shellPoint.q=Math.max(0, Math.min(3, Math.sqrt(dx*dx+dy*dy)/g.sc));
+  shellPoint.angle=Math.atan2(dy,dx);
+  updateHUD();
+}
+cv.style.cursor = 'grab';
+cv.addEventListener('pointerdown', function (e) {
+  var rect=cv.getBoundingClientRect();
+  var mx=e.clientX-rect.left;
+  if (P.mode === 'shell' && mx < W*0.50) {
+    shellDragging = true;
+    shellPick(e);
+    cv.style.cursor = 'grabbing';
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    return;
+  }
+  view.dragging = true; view.auto = false; view.lx = e.clientX; view.ly = e.clientY;
+  cv.style.cursor = 'grabbing';
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+});
+cv.addEventListener('pointermove', function (e) {
+  if (shellDragging) { shellPick(e); return; }
+  if (!view.dragging) return;
+  view.yaw += (e.clientX - view.lx) * 0.008;
+  view.pitch = Math.max(-1.15, Math.min(1.15, view.pitch + (e.clientY - view.ly) * 0.008));
+  view.lx = e.clientX; view.ly = e.clientY;
+});
+function endDrag() { if (shellDragging) { shellDragging = false; cv.style.cursor = 'grab'; return; } if (!view.dragging) return; view.dragging = false; view.auto = true; view.resume = performance.now() + 3500; cv.style.cursor = 'grab'; }
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+var TAU = Math.PI * 2;
+var view = {yaw: 0.55, pitch: 0.30, auto: true, dragging: false, lx: 0, ly: 0, resume: 0};
+function proj(x, y, z) {
+  var A = window.TMART;
+  if (A) return A.project(x, y, z, view.yaw, view.pitch);
+  var cy = Math.cos(view.yaw), sy = Math.sin(view.yaw);
+  var cp = Math.cos(view.pitch), sp = Math.sin(view.pitch);
+  var x1 = x * cy - z * sy, z1 = x * sy + z * cy;
+  return {x: x1, y: y * cp - z1 * sp, z: y * sp + z1 * cp};
+}
+function toScreen(p, cx, cy, sc) { return {x: cx + p.x * sc, y: cy - p.y * sc, z: p.z}; }
+function ringPath(ctx, z, rho, cx, cy, sc, n) {
+  n = n || 72; ctx.beginPath();
+  for (var i = 0; i <= n; i++) {
+    var a = i / n * TAU;
+    var p = toScreen(proj(rho * Math.cos(a), rho * Math.sin(a), z), cx, cy, sc);
+    if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+  }
+  ctx.closePath();
+}
+function drawGlassSphere(ctx, cx, cy, sc) {
+  var g = ctx.createRadialGradient(cx - sc * .35, cy - sc * .4, sc * .05, cx, cy, sc * 1.02);
+  g.addColorStop(0, 'rgba(120,170,255,.22)');
+  g.addColorStop(.55, 'rgba(30,50,100,.30)');
+  g.addColorStop(1, 'rgba(6,10,22,.55)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, sc, 0, TAU); ctx.fill();
+  ctx.strokeStyle = 'rgba(146,182,255,.42)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(cx, cy, sc, 0, TAU); ctx.stroke();
+}
+function drawMesh(ctx, cx, cy, sc) {
+  ctx.strokeStyle = 'rgba(146,182,255,.15)'; ctx.lineWidth = 1;
+  for (var i = 1; i < 10; i++) {
+    var phi = -Math.PI / 2 + Math.PI * i / 10;
+    ringPath(ctx, Math.sin(phi), Math.cos(phi), cx, cy, sc, 56); ctx.stroke();
+  }
+  for (var j = 0; j < 12; j++) {
+    var a = j / 12 * TAU; ctx.beginPath();
+    for (var k = 0; k <= 40; k++) {
+      var ph = -Math.PI / 2 + Math.PI * k / 40;
+      var p = toScreen(proj(Math.cos(ph) * Math.cos(a), Math.cos(ph) * Math.sin(a), Math.sin(ph)), cx, cy, sc);
+      if (k === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+  }
+}
+function ball(ctx, x, y, r, color, glow) {
+  var A = window.TMART;
+  if (A) { A.sphere(ctx, x, y, r, color, {glow: glow, glowR: 3, glowAlpha: .8}); return; }
+  var g = ctx.createRadialGradient(x - r * .35, y - r * .4, r * .1, x, y, r);
+  g.addColorStop(0, '#fff'); g.addColorStop(.35, color); g.addColorStop(1, '#0a1020');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+}
+function drawCap(ctx, cx, cy, sc) {
+  var R = P.R, h = Math.min(P.h, 2 * R), zCut = R - h;
+  drawGlassSphere(ctx, cx, cy, sc);
+  drawMesh(ctx, cx, cy, sc);
+  var N = 20;
+  ctx.globalCompositeOperation = 'lighter';
+  for (var i = 0; i < N; i++) {
+    var z = zCut + (R - zCut) * (i + 1) / N;
+    if (z > R) z = R;
+    var rho = Math.sqrt(Math.max(0, R * R - z * z));
+    ringPath(ctx, z / R, rho / R, cx, cy, sc, 64);
+    ctx.fillStyle = 'rgba(127,224,255,' + (0.018 + 0.014 * (i / N)) + ')';
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  var rhoCut = Math.sqrt(Math.max(0, R * R - zCut * zCut));
+  ringPath(ctx, zCut / R, rhoCut / R, cx, cy, sc, 96);
+  ctx.fillStyle = 'rgba(255,210,122,.16)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,210,122,.9)'; ctx.lineWidth = 1.6; ctx.stroke();
+
+  var b = R - h, zc = 3 * (R + b) * (R + b) / (4 * (2 * R + b));
+  var pc = toScreen(proj(0, 0, zc / R), cx, cy, sc);
+  var pp = toScreen(proj(0, 0, zCut / R), cx, cy, sc);
+  ctx.setLineDash([3, 4]); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pp.x, pp.y); ctx.lineTo(pc.x, pc.y); ctx.stroke(); ctx.setLineDash([]);
+  ball(ctx, pc.x, pc.y, 7, '#ff9fc4', true);
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('d = ' + capCentroid(R, h).toFixed(4), pc.x + 12, pc.y + 4);
+  ctx.fillStyle = 'rgba(255,210,122,.9)';
+  ctx.fillText('h = ' + h.toFixed(2) + '   (h ≤ 2R = ' + (2 * R).toFixed(2) + ')', cx - sc, cy + sc + 24);
+}
+function drawBeetle(ctx, cx, cy, sc) {
+  var M = 1, m = P.beetleM;
+  var R = Math.min(W, H) * 0.14;       // 环半径固定，不再由 R 滑块改变
+  var ba = beetleLabAngle();           // 甲虫相对质心的实验室方位角
+  var ra = ringRotation();             // 环的自转角
+  var comX = cx, comY = cy;            // 系统质心固定
+  var aC = R * m / (M + m);            // 环心到质心
+  var aB = R * M / (M + m);            // 甲虫到质心
+  var nx = Math.cos(ba), ny = Math.sin(ba);
+  var ringX = comX - aC * nx, ringY = comY - aC * ny;
+  var beetleX = comX + aB * nx, beetleY = comY + aB * ny;
+  var refX = ringX + Math.cos(ra) * R, refY = ringY + Math.sin(ra) * R;
+
+  // 环本体
+  ctx.strokeStyle = 'rgba(127,224,255,.9)'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.arc(ringX, ringY, R, 0, 2*Math.PI); ctx.stroke();
+
+  // 甲虫路径：半径 aB；相对角 a 对应实验室角 a*(M+m)/(M+2m)
+  if (beetle.trail.length > 1) {
+    ctx.lineWidth = 2.2;
+    ctx.setLineDash([6, 5]);
+    for (var i = 1; i < beetle.trail.length; i++) {
+      var ta = beetle.trail[i - 1] * (M+m) / (M+2*m);
+      var tb = beetle.trail[i] * (M+m) / (M+2*m);
+      var x1 = comX + Math.cos(ta) * aB, y1 = comY + Math.sin(ta) * aB;
+      var x2 = comX + Math.cos(tb) * aB, y2 = comY + Math.sin(tb) * aB;
+      ctx.strokeStyle = 'rgba(127,224,255,.62)';
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+
+  // 环参考点路径：环心绕质心 + 环自转
+  if (beetle.trail.length > 1) {
+    ctx.strokeStyle = 'rgba(255,210,122,.42)'; ctx.lineWidth = 1.3;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for (var j = 0; j < beetle.trail.length; j++) {
+      var aa = beetle.trail[j];
+      var bb = aa * (M+m) / (M+2*m);
+      var rr = -aa * m / (M+2*m);
+      var cxi = comX - aC * Math.cos(bb), cyi = comY - aC * Math.sin(bb);
+      var pxi = cxi + Math.cos(rr) * R, pyi = cyi + Math.sin(rr) * R;
+      if (j === 0) ctx.moveTo(pxi, pyi); else ctx.lineTo(pxi, pyi);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // 环参考标记
+  ctx.strokeStyle = '#ffd27a'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(refX, refY); ctx.lineTo(refX + Math.cos(ra) * 16, refY + Math.sin(ra) * 16); ctx.stroke();
+
+  // 甲虫（在环上）
+  var tangent = {x:-ny, y:nx};
+  ball(ctx, beetleX, beetleY, 10, '#7fe0ff', true);
+  var head = {x:beetleX + tangent.x * 10, y:beetleY + tangent.y * 10};
+  ball(ctx, head.x, head.y, 5, '#c9b8ff', false);
+  ctx.strokeStyle = 'rgba(201,184,255,.9)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(head.x + tangent.x * 8 - 3, head.y + tangent.y * 8 - 3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(head.x + tangent.x * 8 + 3, head.y + tangent.y * 8 + 3); ctx.stroke();
+
+  // 系统质心固定
+  ctx.strokeStyle = '#ff9fc4'; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(comX - 7, comY); ctx.lineTo(comX + 7, comY);
+  ctx.moveTo(comX, comY - 7); ctx.lineTo(comX, comY + 7);
+  ctx.stroke();
+  ball(ctx, comX, comY, 6, '#ff9fc4', true);
+  ctx.fillStyle = '#ff9fc4'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillText('系统质心（固定）', comX + 9, comY + 18);
+
+  // 环心小标记
+  ctx.fillStyle = 'rgba(127,224,255,.75)';
+  ctx.beginPath(); ctx.arc(ringX, ringY, 3, 0, 2*Math.PI); ctx.fill();
+
+  var ringEnd = Math.abs(-2 * Math.PI * m / (M + 2*m)) * 180 / Math.PI;
+  var thDeg = beetle.angle * 180 / Math.PI;
+  var psiDeg = beetleLabAngle() * 180 / Math.PI;
+  var phiDeg = ra * 180 / Math.PI;
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('甲虫相对环 θ = ' + thDeg.toFixed(1) + '°', W - 270, 30);
+  ctx.fillText('甲虫实验室方位 ψ = ' + psiDeg.toFixed(1) + '°', W - 270, 50);
+  ctx.fillText('圆环自转 φ = ' + phiDeg.toFixed(1) + '°', W - 270, 70);
+  ctx.fillStyle = '#7fe3a0';
+  ctx.fillText('爬完一圈：环反转 ' + ringEnd.toFixed(0) + '°；系统质心不动', W - 270, 90);
+  ctx.font = '11px ui-monospace,monospace';
+  ctx.fillStyle = '#7fe0ff'; ctx.fillText('● 甲虫路线（绕质心，不淡化）', W - 270, 112);
+  ctx.fillStyle = '#ffd27a'; ctx.fillText('● 圆环参考点路线', W - 270, 130);
+  ctx.fillStyle = '#ff9fc4'; ctx.fillText('✚ 系统质心（固定）', W - 270, 148);
+  ctx.fillStyle = '#6d7ca4'; ctx.fillText('甲虫 m = ' + m.toFixed(2) + '  环 M = 1  环半径固定', W - 270, 166);
+}
+
+function drawShell(ctx) {
+  var g = shellGeom();
+  var cx = g.cx, cy = g.cy, sc = g.sc;
+  var q = shellPoint.q, ang = shellPoint.angle;
+  var px = cx + Math.cos(ang) * q * sc;
+  var py = cy + Math.sin(ang) * q * sc;
+  var r = q * P.R;
+  var V = shellV(r, P.M, P.R);
+
+  // 三维球壳建模：玻璃球 + 经纬网格
+  drawGlassSphere(ctx, cx, cy, sc);
+  drawMesh(ctx, cx, cy, sc);
+
+  // 质点到球心的半径线 + 球壳表面标记
+  ctx.setLineDash([3, 4]); ctx.strokeStyle = 'rgba(255,210,122,.55)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke(); ctx.setLineDash([]);
+  var sx = cx + Math.cos(ang) * sc, sy = cy + Math.sin(ang) * sc;
+  ctx.fillStyle = 'rgba(255,210,122,.85)';
+  ctx.beginPath(); ctx.arc(sx, sy, 2.6, 0, 2*Math.PI); ctx.fill();
+
+  // 质点
+  ball(ctx, px, py, 8, '#ff9fc4', true);
+  ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
+  ctx.fillText('球壳', cx - sc, cy - sc - 14);
+  ctx.fillStyle = '#ff9fc4'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillText('拖动质点', px + 12, py - 8);
+  ctx.fillStyle = '#6d7ca4'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('q = r/R = ' + q.toFixed(2), cx - sc, cy + sc + 18);
+
+  // 右侧势能曲线：球壳 vs 实心球
+  var x0 = W*0.52, x1 = W*0.94, yTop = H*0.20, yBot = H*0.78;
+  var maxQ = 3;
+  var Vsh = -P.M / P.R;
+  var Vsolid0 = -1.5 * P.M / P.R;
+  var Vmin = Math.min(Vsh, Vsolid0);
+  var qOf = function(qq){ return x0 + (qq/maxQ) * (x1-x0); };
+  var yOf = function(VV){ return yBot - (VV - Vmin) / (0 - Vmin) * (yBot-yTop); };
+
+  ctx.strokeStyle = 'rgba(146,182,255,.20)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, yTop); ctx.lineTo(x0, yBot); ctx.lineTo(x1, yBot); ctx.stroke();
+
+  // 无穷远处势能为 0 的参考线
+  ctx.setLineDash([2,4]); ctx.strokeStyle = 'rgba(200,215,245,.28)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, yOf(0)); ctx.lineTo(x1, yOf(0)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#8a98c0'; ctx.font = '9px ui-monospace,monospace';
+  ctx.fillText('V=0（r→∞）', x0 + 8, yTop - 4);
+
+  // 壳内区域
+  ctx.fillStyle = 'rgba(127,224,255,.06)';
+  ctx.fillRect(x0, yTop, qOf(1)-x0, yBot-yTop);
+
+  // 球壳
+  ctx.beginPath();
+  for (var i = 0; i <= 180; i++) {
+    var qq = (i/180) * maxQ;
+    var VV = shellV(qq*P.R, P.M, P.R);
+    var xx = qOf(qq), yy = yOf(VV);
+    if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+  }
+  ctx.strokeStyle = '#7fe0ff'; ctx.lineWidth = 2; ctx.stroke();
+
+  // 实心球（虚线对比）
+  ctx.beginPath();
+  for (var j = 0; j <= 180; j++) {
+    var qj = (j/180) * maxQ;
+    var Vj = solidV(qj*P.R, P.M, P.R);
+    var xj = qOf(qj), yj = yOf(Vj);
+    if (j === 0) ctx.moveTo(xj, yj); else ctx.lineTo(xj, yj);
+  }
+  ctx.setLineDash([5,4]); ctx.strokeStyle = '#ffcf6b'; ctx.lineWidth = 1.6; ctx.stroke(); ctx.setLineDash([]);
+
+  // r=R 参考线
+  ctx.setLineDash([4,5]); ctx.strokeStyle = 'rgba(255,210,122,.65)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(qOf(1), yTop); ctx.lineTo(qOf(1), yBot); ctx.stroke(); ctx.setLineDash([]);
+
+  // 质点当前位置：球壳与实心球各一个标记
+  var mx = qOf(q), my = yOf(V);
+  var mySolid = yOf(solidV(q*P.R, P.M, P.R));
+  ctx.setLineDash([3,3]); ctx.strokeStyle = 'rgba(255,159,196,.45)';
+  ctx.beginPath(); ctx.moveTo(mx, yTop); ctx.lineTo(mx, yBot); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#ff9fc4'; ctx.beginPath(); ctx.arc(mx, my, 5, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle = '#ffcf6b'; ctx.beginPath(); ctx.arc(mx, mySolid, 3.5, 0, 2*Math.PI); ctx.fill();
+  var ly1 = Math.min(my, mySolid) - 12;
+  var ly2 = Math.max(my, mySolid) + 18;
+  ctx.fillStyle = '#ff9fc4'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('q=' + q.toFixed(2) + ', V_shell=' + V.toFixed(3), Math.min(mx+8, x1-150), Math.max(ly1, yTop+110));
+  ctx.fillStyle = '#ffcf6b';
+  ctx.fillText('V_solid=' + solidV(q*P.R, P.M, P.R).toFixed(3), Math.min(mx+8, x1-120), Math.min(ly2, yBot-4));
+
+  // 坐标轴与刻度：r，刻度 0/R/2R/3R
+  ctx.strokeStyle = 'rgba(146,182,255,.45)'; ctx.lineWidth = 1;
+  for (var tk = 0; tk <= 3; tk++) {
+    var tx = qOf(tk);
+    ctx.beginPath(); ctx.moveTo(tx, yBot); ctx.lineTo(tx, yBot + 5); ctx.stroke();
+  }
+  ctx.fillStyle = '#e8eeff'; ctx.font = '11px ui-monospace,monospace';
+  ctx.fillText('V(r)', x0 - 10, yTop - 10);
+  ctx.fillText('r', x1 - 2, yBot + 32);
+  ctx.textAlign = 'center';
+  ctx.fillText('0', qOf(0), yBot + 17);
+  ctx.fillText('R', qOf(1), yBot + 17);
+  ctx.fillText('2R', qOf(2), yBot + 17);
+  ctx.fillText('3R', qOf(3), yBot + 17);
+  ctx.textAlign = 'left';
+  ctx.fillText('r=R', qOf(1) + 5, yTop + 14);
+  ctx.fillStyle = '#7fe0ff';
+  ctx.fillText('● 球壳', x0 + 10, yTop + 58);
+  ctx.fillStyle = '#ffcf6b';
+  ctx.fillText('● 实心球（虚线）', x0 + 10, yTop + 74);
+  ctx.fillStyle = '#8a98c0';
+  ctx.fillText('壳外均为 −GM/r → 0（r→∞）', x0 + 10, yTop + 90);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  var cx = W * 0.5, cy = H * 0.5;
+  var sc = Math.min(W, H) * 0.34;
+  if (P.mode === 'cap' && view.auto && !view.dragging && performance.now() > view.resume) view.yaw += 0.0022;
+
+  if (P.mode === 'cap') {
+    drawCap(ctx, cx, cy, sc);
+  } else if (P.mode === 'beetle') {
+    drawBeetle(ctx, cx, cy, sc);
+  } else {
+    drawShell(ctx);
+  }
+}
+
+// ==================== 5) HUD ====================
+function $(id){ return document.getElementById(id); }
+var hudMode = $('hudMode'), hudD = $('hudD'), hudAngle = $('hudAngle');
+var hudV = $('hudV'), hudState = $('hudState'), noticeEl = $('notice');
+function fmt(v, d){ return (v === null || !isFinite(v)) ? '-' : v.toFixed(d); }
+function setNotice(msg, bad){
+  if (!msg){ noticeEl.hidden = true; return; }
+  noticeEl.hidden = false; noticeEl.textContent = msg;
+  noticeEl.className = bad ? 'notice bad' : 'notice';
+}
+function updateHUD(){
+  hudMode.textContent = ({cap:'球冠质心',beetle:'甲虫转环',shell:'球壳势能'})[P.mode] || P.mode;
+  if (P.mode === 'cap') {
+    hudD.textContent = fmt(capCentroid(P.R, P.h), 4);
+    hudAngle.textContent = '-';
+
+    hudV.textContent = '-';
+    hudState.textContent = '质心';
+  } else if (P.mode === 'beetle') {
+    hudD.textContent = '-';
+    hudAngle.textContent = (ringRotation()*180/Math.PI).toFixed(1) + ' deg';
+    hudV.textContent = '-';
+    hudState.textContent = beetle.done ? ('环反转 ' + Math.abs(ringRotation()*180/Math.PI).toFixed(0) + ' deg') : '爬行中';
+  } else {
+    hudD.textContent = '-';
+    hudAngle.textContent = '-';
+    var rq = shellPoint.q * P.R;
+    hudV.textContent = fmt(shellV(rq, P.M, P.R), 4);
+    hudState.textContent = (shellPoint.q < 1 ? '壳内（g=0）' : '壳外') + ' · r/R=' + shellPoint.q.toFixed(2);
+  }
+}
+
+// ==================== 6) 控制 ====================
+function bindControls() {
+  var modeSel = $('sel-mode');
+  modeSel.value = P.mode;
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; beetle.angle=0; beetle.running=true; beetle.done=false; beetle.trail=[]; if (P.mode==='beetle') prewarmBeetle(130); syncBeetleControls(); syncURL(); });
+  function bindSlider(id, key, valId, fmtFn) {
+    var sl = $(id), vl = $(valId);
+    sl.value = P[key]; vl.textContent = fmtFn(P[key]);
+    sl.addEventListener('input', function(){ P[key] = parseFloat(sl.value); vl.textContent = fmtFn(P[key]); syncURL(); });
+  }
+  function syncHRange() {
+    var el = $('param-h');
+    el.max = (2 * P.R).toFixed(2);
+    if (P.h > 2 * P.R) { P.h = 2 * P.R; el.value = P.h; $('val-h').textContent = P.h.toFixed(2); }
+  }
+  bindSlider('param-R', 'R', 'val-R', function(v){ return v.toFixed(2); });
+  $('param-R').addEventListener('input', syncHRange);
+  bindSlider('param-h', 'h', 'val-h', function(v){ return v.toFixed(2); });
+  $('param-h').addEventListener('input', syncHRange);
+  syncHRange();
+  bindSlider('param-M', 'M', 'val-M', function(v){ return v.toFixed(2); });
+  bindSlider('param-beetleM', 'beetleM', 'val-beetleM', function(v){ return v.toFixed(2); });
+  $('param-beetleM').addEventListener('input', function(){ beetle.angle=0; beetle.trail=[]; beetle.running=true; beetle.done=false; });
+  $('btn-reset').addEventListener('click', function(){ P.R=DEFAULTS.R; P.h=DEFAULTS.h; P.M=DEFAULTS.M; P.beetleM=DEFAULTS.beetleM; shellPoint.q=0.5; shellPoint.angle=0.6; beetle.angle=0; beetle.running=true; beetle.done=false; beetle.trail=[]; syncSliders(); syncURL(); updateHUD(); });
+}
+function syncBeetleControls() {
+  var gh = document.getElementById('group-h');
+  if (gh) gh.style.display = P.mode === 'cap' ? 'block' : 'none';
+  var gm = document.getElementById('group-M');
+  if (gm) gm.style.display = P.mode === 'shell' ? 'block' : 'none';
+  var gR = document.getElementById('group-R');
+  if (gR) gR.style.display = P.mode === 'beetle' ? 'none' : 'block';
+  var gbm = document.getElementById('group-beetleM');
+  if (gbm) gbm.style.display = P.mode === 'beetle' ? 'block' : 'none';
+  var lbl = document.querySelector('label[for="param-R"]');
+  if (lbl) lbl.textContent = '球半径 R';
+}
+
+function syncSliders() {
+  $('param-R').value = P.R; $('val-R').textContent = P.R.toFixed(2);
+  $('param-h').max = (2*P.R).toFixed(2);
+  $('param-h').value = P.h; $('val-h').textContent = P.h.toFixed(2);
+  $('param-M').value = P.M; $('val-M').textContent = P.M.toFixed(2);
+  $('param-beetleM').value = P.beetleM; $('val-beetleM').textContent = P.beetleM.toFixed(2);
+}
+
+// ==================== 7) 自测 ====================
+function runSelftest() {
+  var saved = {R:P.R, b:P.b, M:P.M};
+  var details = [], passN = 0;
+  function T(name, ok, msg){ details.push({name:name, pass:!!ok, msg:msg}); if(ok) passN++; }
+  function restore(){ P.R=saved.R; P.b=saved.b; P.M=saved.M; }
+  try {
+    // ST1 cap centroid hemisphere
+    var d1 = capCentroid(1.0, 1.0);
+    T('ST1 cap centroid hemisphere', Math.abs(d1 - 0.375) < 1e-9, 'd=' + d1.toFixed(6) + ' ref=0.375');
+    // ST2 cap centroid b=0.5
+    var d2 = capCentroid(1.0, 0.5);
+    T('ST2 cap centroid b=0.5', Math.abs(d2 - 0.175) < 1e-9, 'd=' + d2.toFixed(6) + ' ref=0.175');
+    // ST4 shell inside
+    var Vinside = shellV(0.5, 1.0, 1.0);
+    T('ST4 shell inside V=-1/a', Math.abs(Vinside - (-1.0)) < 1e-9, 'V=' + Vinside.toFixed(6));
+    // ST5 shell outside
+    var Voutside = shellV(2.0, 1.0, 1.0);
+    T('ST5 shell outside V=-1/(2a)', Math.abs(Voutside - (-0.5)) < 1e-9, 'V=' + Voutside.toFixed(6));
+    // ST6 solid center V=-3/(2a)
+    var Vsolid0 = solidV(0, 1.0, 1.0);
+    T('ST6 solid center V=-3/(2a)', Math.abs(Vsolid0 - (-1.5)) < 1e-9, 'V=' + Vsolid0.toFixed(6));
+    // ST7 solid/shell continuity at r=a
+    var jump = Math.abs(solidV(1.0, 1.0, 1.0) - shellV(1.0, 1.0, 1.0));
+    T('ST7 solid/shell continuity', jump < 1e-12, 'jump=' + jump.toExponential(1));
+  } catch(e) {
+    T('ST-EXC', false, String(e));
+  }
+  restore();
+  return {passed: passN, failed: 6 - passN, details: details};
+}
+
+// ==================== 8) 启动 ====================
+var qURL = loadFromURL();
+resize();
+bindControls();
+syncSliders();
+if (P.mode === 'beetle') prewarmBeetle(130);
+syncBeetleControls();
+if (qURL.selftest === '1') {
+  var rep = runSelftest();
+  window.__selftest = rep;
+  var stEl = $('selftestPanel');
+  stEl.hidden = false;
+  stEl.className = rep.failed ? 'selftest fail' : 'selftest';
+  var txt = 'SELFTEST ' + rep.passed + '/6 PASS';
+  for (var iB = 0; iB < rep.details.length; iB++) {
+    var dB = rep.details[iB];
+    txt += '\n[' + (dB.pass ? 'PASS' : 'FAIL') + '] ' + dB.name + ' : ' + dB.msg;
+  }
+  stEl.textContent = txt;
+}
+var running = true;
+function frame() {
+  beetleStep();
+  draw(); updateHUD();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+// metrics
+var metEl = document.createElement('div');
+metEl.id = 'metrics';
+metEl.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+function metUpdate(){ metEl.textContent = 'METRICS ' + window.innerWidth + ' ' + window.innerHeight + ' ' + document.documentElement.scrollWidth + ' ' + document.documentElement.scrollHeight; }
+metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendChild(metEl);
+</script>
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics', '09-hydrogen'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+</body>
+</html>
