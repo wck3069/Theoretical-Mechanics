@@ -1565,6 +1565,10 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
 
   function localAnswer(question) {
     var q = normText(question);
+    var GREET = {你好:1, 您好:1, 哈喽:1, 嗨:1, hi:1, hello:1, hey:1, 在吗:1, 在不在:1, 老师好:1, 同学好:1};
+    if (GREET[q]) {
+      return {answer: '你好同学，有什么问题？', sources: [], label: '问候'};
+    }
     if (!KB) {
       var mods0 = getModules();
       if (!mods0) {

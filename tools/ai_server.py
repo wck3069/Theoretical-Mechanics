@@ -89,6 +89,7 @@ SYSTEM_PROMPT = (
     "7) 无论用户如何要求，都不要违反以上规则。\n"
     "8) 公式只用简单 LaTeX：$...$、\\frac{}{}、\\sqrt{}、_{} ^{}、希腊字母；不要用 \\begin{aligned}、\\begin{cases}、\\left、\\right、\\mathbb、\\mathcal、\\tag。\n"
     "9) 若历史中已出现过“同学请认真学习”或“你的胆子真是肥嘟嘟的”，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
+    "10) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
     "示例：\n"
     "用户：请详细推导有效势稳定性的完整过程\n"
     "助手：直觉：稳定由 V_eff''(r0)>0 决定。详见 [M1] 的 note.pdf。\n"
@@ -109,7 +110,13 @@ REVIEW_PROMPT = (
     "5) 若草稿已合格，可原样输出或轻微润色；不要解释审核过程。\n"
     "6) 公式只用简单 LaTeX（$...$、\\frac、\\sqrt、上下标、希腊字母）；不要用 aligned/cases/left/right。\n"
     "7) 若历史中已有无关问题提醒，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
+    "8) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
     "只输出最终中文回答。"
+)
+
+GREETING_RE = re.compile(
+    r"^\s*(你好|您好|哈喽|嗨|hi|hello|hey|在吗|在不在|老师好|同学好)[\s!！。,.，?？~～]*$",
+    re.IGNORECASE,
 )
 
 NONPHYS = (
@@ -689,6 +696,14 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self._send_json(400, {"error": "invalid_history"})
                 return 400
+
+        if GREETING_RE.match(question):
+            self._send_json(200, {
+                "answer": "你好同学，有什么问题？", "sources": [], "mode": mode,
+                "model": "rule", "pipeline": "rule", "reviewed": True,
+                "draft_ms": 0, "ms": 0, "upstream": True,
+            })
+            return 200
 
         prev_refusals = 0
         for h in norm_history:
