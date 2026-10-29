@@ -106,3 +106,7 @@ Cloudflare Zero Trust → Access 里加邮箱/组织策略。详见 `deploy/clou
 - **备选**：公网服务器 + Caddy Basic Auth（`deploy/Caddyfile`）；应用同样以 `TM_STATIC_ROOT=dist` 启动。
 - **不要**把 `TM_AI_KEY` 写进 `index.html`、Pages、Worker 的前端代码；key 只留在服务端环境变量。
 - 静态 Pages 仍保持离线检索；它没有 `/api`，也不应该持有 key。
+
+## Windows
+
+Windows 上自己跑服务/登录，见 `deploy/windows.md`；启动脚本 `tools/serve.ps1` / `tools/serve.cmd`，静态导出 `tools/export_static.ps1`。
