@@ -1142,7 +1142,25 @@ window.TM_MODULES = [
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px;
   background:rgba(146,182,255,.10); padding:1px 5px; border-radius:4px; color:var(--tmai-cyan);
 }
-#tm-ai-root .tmai-math{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:var(--tmai-solar)}
+#tm-ai-root .tmai-math{font-family:"STIX Two Math","Cambria Math","Latin Modern Math",Cambria,Georgia,serif; color:var(--tmai-text); font-size:1.02em; line-height:1.55; white-space:normal}
+#tm-ai-root .tmai-mathblock{display:block; margin:8px 0; padding:8px 10px; border-left:2px solid var(--tmai-line); background:rgba(146,182,255,.06); text-align:center; overflow-x:auto; color:var(--tmai-text); font-family:"STIX Two Math","Cambria Math","Latin Modern Math",Cambria,Georgia,serif}
+#tm-ai-root .tex-frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .18em; line-height:1.1}
+#tm-ai-root .tex-num{border-bottom:1px solid currentColor; padding:0 .18em}
+#tm-ai-root .tex-den{padding:0 .18em}
+#tm-ai-root .tex-sqrt-wrap{white-space:nowrap}
+#tm-ai-root .tex-sqrt{border-top:1px solid currentColor; padding:0 .1em; margin-left:1px}
+#tm-ai-root .tex-text{font-family:inherit; font-style:normal; white-space:pre}
+#tm-ai-root .tex-b{font-weight:700}
+#tm-ai-root .tex-i{font-style:italic}
+#tm-ai-root .tex-vec,#tm-ai-root .tex-dot,#tm-ai-root .tex-ddot,#tm-ai-root .tex-hat,#tm-ai-root .tex-bar,#tm-ai-root .tex-overline,#tm-ai-root .tex-underline{position:relative; display:inline-block}
+#tm-ai-root .tex-vec::before{content:"→"; position:absolute; top:-.15em; left:50%; transform:translateX(-50%); font-size:.65em; line-height:1}
+#tm-ai-root .tex-dot::before{content:"·"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.9em; line-height:1}
+#tm-ai-root .tex-ddot::before{content:"··"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.9em; line-height:1}
+#tm-ai-root .tex-hat::before{content:"^"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.8em; line-height:1}
+#tm-ai-root .tex-bar,#tm-ai-root .tex-overline{border-top:1px solid currentColor}
+#tm-ai-root .tex-underline{border-bottom:1px solid currentColor}
+#tm-ai-root .tmai-math sub,#tm-ai-root .tmai-math sup{font-size:.7em; line-height:0}
+#tm-ai-root .tex-cmd{color:var(--tmai-muted); font-size:.9em}
 #tm-ai-root .tmai-cite{
   display:inline-block; padding:0 .4em; margin:0 .15em; border-radius:4px;
   background:rgba(255,210,122,.12); color:var(--tmai-solar); font-size:11px;
@@ -1282,9 +1300,121 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
       .replace(/'/g, '&#39;');
   }
 
+  function unesc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+      .replace(/&amp;/g, '&');
+  }
+
+  var TEX_SYM = {
+    alpha:'α', beta:'β', gamma:'γ', delta:'δ', epsilon:'ε', varepsilon:'ϵ',
+    zeta:'ζ', eta:'η', theta:'θ', vartheta:'ϑ', iota:'ι', kappa:'κ',
+    lambda:'λ', mu:'μ', nu:'ν', xi:'ξ', pi:'π', varpi:'ϖ', rho:'ρ',
+    varrho:'ϱ', sigma:'σ', varsigma:'ς', tau:'τ', upsilon:'υ', phi:'φ',
+    varphi:'ϕ', chi:'χ', psi:'ψ', omega:'ω',
+    Gamma:'Γ', Delta:'Δ', Theta:'Θ', Lambda:'Λ', Xi:'Ξ', Pi:'Π',
+    Sigma:'Σ', Upsilon:'Υ', Phi:'Φ', Psi:'Ψ', Omega:'Ω',
+    times:'×', cdot:'·', pm:'±', mp:'∓', ast:'∗', star:'⋆',
+    approx:'≈', sim:'∼', simeq:'≃', cong:'≅', equiv:'≡', propto:'∝',
+    neq:'≠', ne:'≠', le:'≤', leq:'≤', ge:'≥', geq:'≥', ll:'≪', gg:'≫',
+    to:'→', rightarrow:'→', leftarrow:'←', Rightarrow:'⇒', Leftarrow:'⇐',
+    leftrightarrow:'↔', mapsto:'↦', infty:'∞', partial:'∂', nabla:'∇',
+    int:'∫', oint:'∮', sum:'∑', prod:'∏', angle:'∠', perp:'⊥',
+    parallel:'∥', in:'∈', notin:'∉', subset:'⊂', supset:'⊃',
+    cup:'∪', cap:'∩', emptyset:'∅', forall:'∀', exists:'∃',
+    langle:'⟨', rangle:'⟩', ldots:'…', cdots:'⋯', ddots:'⋱',
+    circ:'∘', degree:'°', prime:'′', hbar:'ℏ', ell:'ℓ',
+    Re:'ℜ', Im:'ℑ', aleph:'ℵ', therefore:'∴', because:'∵',
+    quad:'&#160;&#160;', qquad:'&#160;&#160;&#160;&#160;'
+  };
+
+  function texToHtml(tex) {
+    var src = String(tex == null ? '' : tex);
+    var i = 0, n = src.length;
+    function parseCommand() {
+      i++;
+      if (i >= n) return '';
+      var ch = src.charAt(i);
+      if (ch === '\\') { i++; return '<br>'; }
+      if (ch === ',') { i++; return '&#8201;'; }
+      if (ch === ';') { i++; return ' '; }
+      if (ch === '!') { i++; return ''; }
+      if (ch === ' ') { i++; return ' '; }
+      if (!/[A-Za-z]/.test(ch)) { i++; return esc(ch); }
+      var cmd = '';
+      while (i < n && /[A-Za-z]/.test(src.charAt(i))) { cmd += src.charAt(i); i++; }
+      if (cmd === 'frac' || cmd === 'dfrac' || cmd === 'tfrac') {
+        var a = parseArg(), b = parseArg();
+        return '<span class="tex-frac"><span class="tex-num">' + a + '</span><span class="tex-den">' + b + '</span></span>';
+      }
+      if (cmd === 'sqrt') {
+        if (src.charAt(i) === '[') {
+          var close = src.indexOf(']', i);
+          if (close !== -1) i = close + 1;
+        }
+        var a = parseArg();
+        return '<span class="tex-sqrt-wrap">√<span class="tex-sqrt">' + a + '</span></span>';
+      }
+      if (cmd === 'text' || cmd === 'mathrm' || cmd === 'mathbf' || cmd === 'mathit' || cmd === 'mathsf' || cmd === 'operatorname' || cmd === 'mathbb' || cmd === 'mathcal' || cmd === 'mathfrak') {
+        var a = parseArg();
+        var cls = cmd === 'mathbf' ? 'tex-b' : (cmd === 'mathit' ? 'tex-i' : 'tex-text');
+        return '<span class="' + cls + '">' + a + '</span>';
+      }
+      if (cmd === 'vec' || cmd === 'dot' || cmd === 'ddot' || cmd === 'hat' || cmd === 'bar' || cmd === 'overline' || cmd === 'underline') {
+        var a = parseArg();
+        return '<span class="tex-' + cmd + '">' + a + '</span>';
+      }
+      if (cmd === 'left' || cmd === 'right' || cmd === 'big' || cmd === 'Big' || cmd === 'bigg' || cmd === 'Bigg' || cmd === 'displaystyle' || cmd === 'limits') return '';
+      if (cmd === 'begin' || cmd === 'end' || cmd === 'label' || cmd === 'tag') { parseArg(); return ''; }
+      if (TEX_SYM[cmd]) return TEX_SYM[cmd];
+      return '<span class="tex-cmd">' + esc(cmd) + '</span>';
+    }
+    function parseArg() {
+      while (i < n && /\s/.test(src.charAt(i))) i++;
+      if (i >= n) return '';
+      if (src.charAt(i) === '{') return parseGroup();
+      if (src.charAt(i) === '\\') return parseCommand();
+      var c = src.charAt(i); i++;
+      return esc(c);
+    }
+    function parseGroup() {
+      if (src.charAt(i) === '{') i++;
+      var out = parseSeq('}');
+      if (src.charAt(i) === '}') i++;
+      return out;
+    }
+    function parseSeq(end) {
+      var out = '';
+      while (i < n) {
+        var c = src.charAt(i);
+        if (end && c === end) break;
+        if (c === '\\') { out += parseCommand(); }
+        else if (c === '{') { out += parseGroup(); }
+        else if (c === '_') { i++; out += '<sub>' + parseArg() + '</sub>'; }
+        else if (c === '^') { i++; out += '<sup>' + parseArg() + '</sup>'; }
+        else if (c === '&' || c === '~') { i++; out += ' '; }
+        else { i++; out += esc(c); }
+      }
+      return out;
+    }
+    return parseSeq(null);
+  }
+
   function formatInline(s) {
-    var out = s;
-    out = out.replace(/\$([^$]+)\$/g, '<span class="tmai-math">$1</span>');
+    var out = esc(s);
+    out = out.replace(/\$\$([\s\S]+?)\$\$/g, function (_, m) {
+      return '<span class="tmai-mathblock">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\\\[([\s\S]+?)\\\]/g, function (_, m) {
+      return '<span class="tmai-mathblock">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\\\(([\s\S]+?)\\\)/g, function (_, m) {
+      return '<span class="tmai-math">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\$([^$\n]+?)\$/g, function (_, m) {
+      return '<span class="tmai-math">' + texToHtml(unesc(m)) + '</span>';
+    });
     out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
     out = out.replace(/\[(M\d+)\]/g, '<span class="tmai-cite">[$1]</span>');
@@ -1704,6 +1834,7 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
     close: closePanel,
     toggle: togglePanel
   };
+  window.TM_AI.renderMath = formatInline;
   window.TM_AI.localAnswer = localAnswer;
 
   document.addEventListener('tm:open-ai', function (e) {

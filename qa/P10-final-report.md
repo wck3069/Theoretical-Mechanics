@@ -265,3 +265,13 @@ python3 tools/layout_qa.py
 - 学校审核的 prompt：只审核不引入新知识；以参考文段为准；站外物理/非物理按规则拒绝；≤3 句/120 字；详细推导只给一句直觉 + note.pdf。
 - 实测：fast 9.5s（草稿 4.8s + 审核）、deep 10.7s；QFT 6.4s“网站未收录”；天气 0ms“同学请认真学习”。
 - 隐私：问题与草稿会发送到本机模型和学校模型；key 仍只在服务端。
+
+---
+
+# 第八轮：AI 答案公式排版
+
+- 面板内置零依赖 LaTeX 子集渲染器（`texToHtml`）：分数、根号、上下标、希腊字母、`\text/\mathrm/\mathbf`、`\vec/\dot/\ddot/\hat/\bar/\overline`、`\left/\right`、`\pm/\times/\cdot/\approx/\propto/\Delta/\omega` 等，以及 `$...$`、`$$...$$`、`\(...\)`、`\[...\]` 四种定界符。
+- 公式不再显示原始 LaTeX：分数用横线、根号用上划线、上下标缩小、向量加箭头；未知命令降级为小字提示，不会破坏整段。
+- `formatInline` 先做 HTML 转义，再解析公式；避免模型输出 HTML 注入。
+- 服务端 system/review prompt 限制为简单 LaTeX（禁用 aligned/cases/left/right/mathbb/tag），减少渲染器覆盖不到的情况。
+- 视觉模型确认：7 组公式全部正确排版，无 `\frac`/`\sqrt`/`\omega` 原文残留。

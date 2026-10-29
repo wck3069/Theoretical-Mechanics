@@ -167,3 +167,7 @@ TM_REVIEW_MAX_TOKENS=260
 实测 fast 约 9–13s（本地草稿 5–9s + 审核 4s），deep 约 10–11s；非物理问题走规则 0ms。
 
 Windows 部署见 `deploy/windows.md`（`tools/serve.ps1`）。
+
+## 公式排版
+
+面板内置零依赖 LaTeX 子集渲染器：分数、根号、上下标、希腊字母、向量/点/帽、`$...$` 与 `\(...\)` 等；服务端提示模型只用简单 LaTeX。
