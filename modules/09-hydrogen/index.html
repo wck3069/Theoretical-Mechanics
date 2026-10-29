@@ -477,7 +477,7 @@ window.TMART = (function () {
       <span>径向节点 <b id="hudRN">0</b></span>
       <span>角节点 <b id="hudAN">0</b></span>
       <span>叠加 <b id="hudCount">1</b></span>
-      <span>采样 <b id="hudPts">0</b></span>
+      <span>采样/面片 <b id="hudPts">0</b></span>
     </div>
     <div id="notice" hidden></div>
   </div>
@@ -675,6 +675,82 @@ window.TMART = (function () {
     o.voxels = pts;
     o.count = pts.length;
   }
+  function buildSurface(o) {
+    // 以 |psi| 的等值面把“概率较大的区域”整体包起来
+    var N = 22;
+    var rmax = Math.max(4.5, 3.2 * o.n * o.n);
+    var step = 2 * rmax / N;
+    var vals = new Float32Array((N + 1) * (N + 1) * (N + 1));
+    var mx = 0, i, j, k;
+    function idx(ii, jj, kk) { return (ii * (N + 1) + jj) * (N + 1) + kk; }
+    for (i = 0; i <= N; i++) {
+      var x = -rmax + i * step;
+      for (j = 0; j <= N; j++) {
+        var y = -rmax + j * step;
+        for (k = 0; k <= N; k++) {
+          var z = -rmax + k * step;
+          var v = Math.abs(psi(o.n, o.l, o.m, x, y, z));
+          vals[idx(i, j, k)] = v;
+          if (v > mx) mx = v;
+        }
+      }
+    }
+    var th = mx * 0.10;
+    if (!(th > 0)) th = 1e-9;
+    var tris = [];
+    var corners = [[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]];
+    var tets = [[0,5,1,6],[0,1,2,6],[0,2,3,6],[0,3,7,6],[0,7,4,6],[0,4,5,6]];
+    var edges = [[0,1],[1,2],[2,0],[0,3],[1,3],[2,3]];
+    function lerp(a, b, f) {
+      return {x:a.x + (b.x-a.x)*f, y:a.y + (b.y-a.y)*f, z:a.z + (b.z-a.z)*f};
+    }
+    for (i = 0; i < N; i++) {
+      for (j = 0; j < N; j++) {
+        for (k = 0; k < N; k++) {
+          var vv = [], pp = [];
+          for (var c = 0; c < 8; c++) {
+            var cc = corners[c];
+            var ii = i + cc[0], jj = j + cc[1], kk = k + cc[2];
+            vv[c] = vals[idx(ii, jj, kk)];
+            pp[c] = {x:-rmax + ii*step, y:-rmax + jj*step, z:-rmax + kk*step};
+          }
+          for (var t = 0; t < 6; t++) {
+            var ids = tets[t], pts = [];
+            for (var e = 0; e < 6; e++) {
+              var a = ids[edges[e][0]], b = ids[edges[e][1]];
+              var va = vv[a], vb = vv[b];
+              if ((va - th) * (vb - th) < 0) {
+                pts.push(lerp(pp[a], pp[b], (th - va) / (vb - va)));
+              }
+            }
+            if (pts.length === 3) {
+              tris.push([pts[0], pts[1], pts[2]]);
+            } else if (pts.length === 4) {
+              tris.push([pts[0], pts[1], pts[2]]);
+              tris.push([pts[0], pts[2], pts[3]]);
+            }
+          }
+        }
+      }
+    }
+    o.surface = tris;
+    o.count = tris.length;
+    o.rmax = rmax;
+  }
+
+  function drawSurface(o) {
+    if (!o.surface) buildSurface(o);
+    var list = [];
+    for (var i = 0; i < o.surface.length; i++) {
+      var t = o.surface[i];
+      var a = project(t[0].x, t[0].y, t[0].z);
+      var b = project(t[1].x, t[1].y, t[1].z);
+      var c = project(t[2].x, t[2].y, t[2].z);
+      list.push({a:a, b:b, c:c, z:(a.z+b.z+c.z)/3});
+    }
+    return list;
+  }
+
   function ensurePoints(o) {
     if (!o.pts) o.pts = [];
     if (o.pts.length >= o.target) return;
@@ -695,7 +771,7 @@ window.TMART = (function () {
       }
     }
     var o = {n: n, l: l, m: m, color: orbColor(n, l, m), pts: [], target: density, voxels: null, count: 0};
-    if (mode === 'cloud') buildVoxels(o);
+    if (mode === 'cloud') buildSurface(o);
     orbitals.push(o);
     renderList();
     notify('');
@@ -797,10 +873,10 @@ window.TMART = (function () {
       ctx.beginPath(); ctx.moveTo(cx + a.x * sc, cy - a.y * sc); ctx.lineTo(cx + b.x * sc, cy - b.y * sc); ctx.stroke();
     });
 
-    ctx.globalCompositeOperation = 'lighter';
-    for (var oi = 0; oi < orbitals.length; oi++) {
-      var o = orbitals[oi];
-      if (mode === 'dots') {
+    if (mode === 'dots') {
+      ctx.globalCompositeOperation = 'lighter';
+      for (var oi = 0; oi < orbitals.length; oi++) {
+        var o = orbitals[oi];
         ensurePoints(o);
         ctx.fillStyle = o.color;
         ctx.globalAlpha = 0.55;
@@ -810,19 +886,47 @@ window.TMART = (function () {
           ctx.fillRect(sx, sy, 1.5, 1.5);
         }
         ctx.globalAlpha = 1;
-      } else {
-        if (!o.voxels) buildVoxels(o);
-        var img = glow(o.color);
-        for (i = 0; i < o.voxels.length; i++) {
-          p = project(o.voxels[i].x, o.voxels[i].y, o.voxels[i].z);
-          sx = cx + p.x * sc; sy = cy - p.y * sc;
-          ctx.globalAlpha = 0.055;
-          ctx.drawImage(img, sx - 9, sy - 9, 18, 18);
-        }
-        ctx.globalAlpha = 1;
       }
+      ctx.globalCompositeOperation = 'source-over';
+    } else {
+      // 透明等值面：把概率较大的区域整体包起来
+      var allTris = [];
+      var viewR = 4.5;
+      for (var oi2 = 0; oi2 < orbitals.length; oi2++) {
+        var o2 = orbitals[oi2];
+        if (!o2.surface) buildSurface(o2);
+        viewR = Math.max(viewR, o2.rmax || RMAX);
+        var tl = drawSurface(o2);
+        for (var ti2 = 0; ti2 < tl.length; ti2++) {
+          tl[ti2].color = o2.color;
+          allTris.push(tl[ti2]);
+        }
+      }
+      var scS = Math.min(W, H) * 0.42 / viewR;
+      allTris.sort(function (a, b) { return a.z - b.z; });
+      var zmin = allTris.length ? allTris[0].z : 0;
+      var zmax = allTris.length ? allTris[allTris.length-1].z : 1;
+      var zr = Math.max(1e-6, zmax - zmin);
+      ctx.globalCompositeOperation = 'source-over';
+      for (var ti3 = 0; ti3 < allTris.length; ti3++) {
+        var tr = allTris[ti3];
+        var depth = (tr.z - zmin) / zr;
+        ctx.globalAlpha = 0.10 + 0.10 * depth;
+        ctx.fillStyle = tr.color;
+        ctx.beginPath();
+        ctx.moveTo(cx + tr.a.x*scS, cy - tr.a.y*scS);
+        ctx.lineTo(cx + tr.b.x*scS, cy - tr.b.y*scS);
+        ctx.lineTo(cx + tr.c.x*scS, cy - tr.c.y*scS);
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 0.06;
+        ctx.strokeStyle = tr.color;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = 1;
     }
-    ctx.globalCompositeOperation = 'source-over';
 
     // proton
     var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, 14);
@@ -838,8 +942,12 @@ window.TMART = (function () {
     var m = parseInt($('sel-m').value, 10);
     var pts = 0, target = 0;
     orbitals.forEach(function (o) {
-      target += o.target;
-      pts += (mode === 'dots' ? o.pts.length : o.count);
+      if (mode === 'dots') {
+        target += o.target;
+        pts += o.pts.length;
+      } else {
+        pts += o.count;
+      }
     });
     $('hudName').textContent = orbName(n, l, m);
     $('hudN').textContent = n;
@@ -848,7 +956,7 @@ window.TMART = (function () {
     $('hudRN').textContent = n - l - 1;
     $('hudAN').textContent = l;
     $('hudCount').textContent = orbitals.length;
-    $('hudPts').textContent = pts + ' / ' + target;
+    $('hudPts').textContent = (mode === 'dots') ? (pts + ' / ' + target) : (pts + ' 面片');
   }
 
   function setMode(md) {
@@ -856,7 +964,7 @@ window.TMART = (function () {
     $('btn-cloud').classList.toggle('active', md === 'cloud');
     $('btn-dots').classList.toggle('active', md === 'dots');
     orbitals.forEach(function (o) {
-      if (md === 'cloud') { if (!o.voxels) buildVoxels(o); }
+      if (md === 'cloud') { if (!o.surface) buildSurface(o); }
       else { o.pts = []; }
     });
   }
