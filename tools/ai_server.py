@@ -304,6 +304,20 @@ def make_sources(selected) -> list[dict]:
     return out
 
 
+def module_source(mid: str):
+    for m in MODULES:
+        if m.get("milestone") == mid:
+            return {
+                "id": m.get("id", mid),
+                "milestone": mid,
+                "title": m.get("title"),
+                "section": m.get("title"),
+                "href": m.get("href"),
+                "pdf": m.get("pdf"),
+            }
+    return None
+
+
 def strip_trailing_sentence(text: str) -> str:
     text = (text or "").strip()
     if not text:
@@ -771,11 +785,24 @@ class Handler(BaseHTTPRequestHandler):
                 top = sources[0] if sources else {}
                 answer = "直觉：请直接看 " + (top.get("milestone") or module or "对应章节") + " 的 note.pdf 的对应小节。"
                 refused = False
+        answer = re.sub(r"(详见|见|参考|查看)\s*\[?M(\d)\]?", r"\1 [M\2]", answer)
         cited = set(re.findall(r"\[(M\d)\]", answer))
         if cited:
             filtered = [s for s in sources if s.get("milestone") in cited]
+            have = {s.get("milestone") for s in filtered}
+            for mid in cited:
+                if mid in have:
+                    continue
+                extra = module_source(mid)
+                if extra:
+                    filtered.append(extra)
+                    have.add(mid)
             if filtered:
                 sources = filtered
+        elif module:
+            extra = module_source(module.get("milestone"))
+            if extra:
+                sources = [extra] + [s for s in sources if s.get("milestone") != extra["milestone"]]
         if refused:
             sources = []
 
