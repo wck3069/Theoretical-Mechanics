@@ -39,6 +39,13 @@ _UPSTREAM_LOCK = threading.Lock()
 AUTH_USER = os.environ.get("TM_AUTH_USER", "")
 AUTH_USER_ALT = os.environ.get("TM_AUTH_USER_ALT", "")
 AUTH_PASS = os.environ.get("TM_AUTH_PASS", "")
+LOCAL_BASE = os.environ.get("TM_LOCAL_BASE", "http://127.0.0.1:8080/v1").rstrip("/")
+LOCAL_MODEL = os.environ.get("TM_LOCAL_MODEL", "qwen3.8-flash-next-iq3_s")
+LOCAL_KEY = os.environ.get("TM_LOCAL_KEY", "strata-local")
+LOCAL_TIMEOUT = int(os.environ.get("TM_LOCAL_TIMEOUT", "90"))
+PIPELINE = os.environ.get("TM_PIPELINE", "school")
+REVIEW_EFFORT = os.environ.get("TM_REVIEW_EFFORT", "minimal")
+REVIEW_MAX_TOKENS = int(os.environ.get("TM_REVIEW_MAX_TOKENS", "260"))
 RATE_PER_MIN = int(os.environ.get("TM_RATE_PER_MIN", "20"))
 MAX_CONCURRENT = int(os.environ.get("TM_MAX_CONCURRENT", "2"))
 _SEM = threading.BoundedSemaphore(MAX_CONCURRENT)
@@ -87,6 +94,18 @@ SYSTEM_PROMPT = (
     "助手：同学请认真学习。\n"
     "用户：量子场论的重化是什么\n"
     "助手：网站未收录这个问题。"
+)
+
+REVIEW_PROMPT = (
+    "你是《理论力学·交互讲义》的审核助教。只审核，不引入新知识。\n"
+    "你会收到：学生问题、参考文段、本地助教草稿。\n"
+    "审核标准：\n"
+    "1) 事实以参考文段为准；公式或结论错误必须改正。\n"
+    "2) 只允许本站 9 章（M0-M8）的物理内容；站外物理只回复“网站未收录这个问题。”；非物理只回复“同学请认真学习。”。\n"
+    "3) 最多 3 句、120 字；要求详细推导时只给一句直觉 + “详见 [M#] 的 note.pdf”，不要展开。\n"
+    "4) 引用 [M#] 必须对应正确章节。\n"
+    "5) 若草稿已合格，可原样输出或轻微润色；不要解释审核过程。\n"
+    "只输出最终中文回答。"
 )
 
 NONPHYS = (
@@ -300,12 +319,14 @@ def strip_trailing_sentence(text: str) -> str:
     return text
 
 
-def call_llm(messages: list[dict], max_tokens: int, effort: str | None = None) -> dict:
-    url = AI_BASE + "/chat/completions"
+def call_api(base: str, model: str, key: str, timeout: int,
+             messages: list[dict], max_tokens: int,
+             effort: str | None = None, temperature: float = 0.2) -> dict:
+    url = base.rstrip("/") + "/chat/completions"
     payload = {
-        "model": AI_MODEL,
+        "model": model,
         "messages": messages,
-        "temperature": 0.2,
+        "temperature": temperature,
         "max_tokens": max_tokens,
     }
     if effort:
@@ -316,14 +337,31 @@ def call_llm(messages: list[dict], max_tokens: int, effort: str | None = None) -
         data=data,
         headers={
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + AI_KEY,
+            "Authorization": "Bearer " + key,
         },
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=AI_TIMEOUT) as resp:
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
         raw = resp.read().decode("utf-8")
     obj = json.loads(raw)
     return obj["choices"][0]["message"]
+
+
+def call_llm(messages: list[dict], max_tokens: int, effort: str | None = None) -> dict:
+    return call_api(AI_BASE, AI_MODEL, AI_KEY, AI_TIMEOUT, messages, max_tokens, effort)
+
+
+def call_local(messages: list[dict], max_tokens: int) -> dict:
+    return call_api(LOCAL_BASE, LOCAL_MODEL, LOCAL_KEY, LOCAL_TIMEOUT, messages, max_tokens, None)
+
+
+def extract_answer(msg: dict) -> str:
+    text = msg.get("content")
+    if text is None or not str(text).strip():
+        text = msg.get("reasoning_content")
+    if text is None:
+        return ""
+    return strip_trailing_sentence(str(text))
 
 
 def run_check() -> int:
@@ -342,6 +380,7 @@ def run_check() -> int:
     print(f"mode_hint: {mode_hint()}")
     print(f"effort   : fast={EFFORT_FAST} deep={EFFORT_DEEP}")
     print(f"auth     : {'on' if AUTH_USER else 'off'}")
+    print(f"pipeline : {PIPELINE} (local={LOCAL_MODEL})")
     print(f"kb       : {'OK' if kb_ok else 'FAIL'} (chunks={KB.get('chunk_count')})")
     print(f"upstream : {'OK' if upstream else 'DOWN'}")
     return 0 if (kb_ok and upstream) else 1
@@ -477,6 +516,7 @@ class Handler(BaseHTTPRequestHandler):
                     "kb_chunks": len(CHUNKS_FLAT),
                     "version": 1,
                     "mode_hint": mode_hint(),
+                    "pipeline": PIPELINE,
                     "busy": _ACTIVE,
                     "max_concurrent": MAX_CONCURRENT,
                     "rate_per_min": RATE_PER_MIN,
@@ -636,7 +676,8 @@ class Handler(BaseHTTPRequestHandler):
         if (not covered) and any(k in question for k in NONPHYS):
             self._send_json(200, {
                 "answer": "同学请认真学习。", "sources": [], "mode": mode,
-                "model": "rule", "ms": 0, "upstream": True,
+                "model": "rule", "pipeline": "rule", "reviewed": True,
+                "draft_ms": 0, "ms": 0, "upstream": True,
             })
             return 200
         selected = retrieve(question, module, mode)
@@ -658,23 +699,57 @@ class Handler(BaseHTTPRequestHandler):
         answer = None
         effort = EFFORT_FAST if mode == "fast" else EFFORT_DEEP
         cap = 220 if mode == "fast" else 500
-        try:
-            msg = call_llm(messages, cap, effort)
-            answer = msg.get("content")
-            if answer is None or (isinstance(answer, str) and not answer.strip()):
-                answer = msg.get("reasoning_content")
-            if answer is None or (isinstance(answer, str) and not answer.strip()):
-                retry_messages = [dict(messages[0])]
-                retry_messages[0]["content"] = messages[0]["content"] + "\n直接输出最终回答，不要输出推理过程。"
-                retry_messages.extend(messages[1:])
-                msg2 = call_llm(retry_messages, cap + 180, effort)
-                answer = msg2.get("content")
-                if answer is None or (isinstance(answer, str) and not answer.strip()):
-                    answer = msg2.get("reasoning_content")
-        except Exception as e:
-            detail = str(e)
-            self._send_json(503, {"error": "upstream_offline", "detail": detail, "fallback": "local-retrieval"})
-            return 503
+        draft = None
+        draft_ms = 0
+        reviewed = True
+
+        if PIPELINE == "local_review":
+            try:
+                t0 = time.perf_counter()
+                lmsg = call_local(messages, max(420, cap))
+                draft = extract_answer(lmsg)
+                draft_ms = int((time.perf_counter() - t0) * 1000)
+            except Exception:
+                draft = None
+
+        if PIPELINE == "local_review" and draft:
+            review_messages = [
+                {"role": "system", "content": REVIEW_PROMPT},
+                {"role": "user", "content": (
+                    f"学生问题：{question}\n\n参考文段：\n{context[:6000]}\n\n"
+                    f"本地草稿：\n{draft}\n\n请输出审核后的最终回答。"
+                )},
+            ]
+            try:
+                rmsg = call_llm(review_messages, REVIEW_MAX_TOKENS, REVIEW_EFFORT)
+                final = extract_answer(rmsg)
+                if final:
+                    answer = final
+                else:
+                    answer = draft
+                    reviewed = False
+            except Exception:
+                answer = draft
+                reviewed = False
+
+        if answer is None:
+            try:
+                msg = call_llm(messages, cap, effort)
+                answer = extract_answer(msg)
+                if not answer:
+                    retry_messages = [dict(messages[0])]
+                    retry_messages[0]["content"] = messages[0]["content"] + "\n直接输出最终回答，不要输出推理过程。"
+                    retry_messages.extend(messages[1:])
+                    msg2 = call_llm(retry_messages, cap + 180, effort)
+                    answer = extract_answer(msg2)
+            except Exception as e:
+                if draft:
+                    answer = draft
+                    reviewed = False
+                else:
+                    detail = str(e)
+                    self._send_json(503, {"error": "upstream_offline", "detail": detail, "fallback": "local-retrieval"})
+                    return 503
 
         if not isinstance(answer, str):
             answer = "" if answer is None else str(answer)
@@ -710,6 +785,9 @@ class Handler(BaseHTTPRequestHandler):
             "sources": sources,
             "mode": mode,
             "model": AI_MODEL,
+            "pipeline": PIPELINE,
+            "reviewed": reviewed,
+            "draft_ms": draft_ms,
             "ms": ms,
             "upstream": True,
         })
@@ -725,7 +803,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> int:
-    global AI_BASE, AI_MODEL, AI_KEY, AI_TIMEOUT, DEEP_MAX_CHARS, MAX_BODY, EFFORT_FAST, EFFORT_DEEP, STATIC_ROOT, AUTH_USER, AUTH_USER_ALT, AUTH_PASS
+    global AI_BASE, AI_MODEL, AI_KEY, AI_TIMEOUT, DEEP_MAX_CHARS, MAX_BODY, EFFORT_FAST, EFFORT_DEEP, STATIC_ROOT, AUTH_USER, AUTH_USER_ALT, AUTH_PASS, LOCAL_BASE, LOCAL_MODEL, LOCAL_KEY, LOCAL_TIMEOUT, PIPELINE, REVIEW_EFFORT, REVIEW_MAX_TOKENS
     ap = argparse.ArgumentParser()
     ap.add_argument("--host", default=DEFAULT_HOST,
                     help="bind address; use 0.0.0.0 to allow LAN access")
@@ -743,6 +821,13 @@ def main() -> int:
     AUTH_USER = os.environ.get("TM_AUTH_USER", AUTH_USER)
     AUTH_USER_ALT = os.environ.get("TM_AUTH_USER_ALT", AUTH_USER_ALT)
     AUTH_PASS = os.environ.get("TM_AUTH_PASS", AUTH_PASS)
+    LOCAL_BASE = os.environ.get("TM_LOCAL_BASE", LOCAL_BASE).rstrip("/")
+    LOCAL_MODEL = os.environ.get("TM_LOCAL_MODEL", LOCAL_MODEL)
+    LOCAL_KEY = os.environ.get("TM_LOCAL_KEY", LOCAL_KEY)
+    LOCAL_TIMEOUT = int(os.environ.get("TM_LOCAL_TIMEOUT", str(LOCAL_TIMEOUT)))
+    PIPELINE = os.environ.get("TM_PIPELINE", PIPELINE)
+    REVIEW_EFFORT = os.environ.get("TM_REVIEW_EFFORT", REVIEW_EFFORT)
+    REVIEW_MAX_TOKENS = int(os.environ.get("TM_REVIEW_MAX_TOKENS", str(REVIEW_MAX_TOKENS)))
     AI_TIMEOUT = int(os.environ.get("TM_AI_TIMEOUT", str(AI_TIMEOUT)))
     DEEP_MAX_CHARS = int(os.environ.get("TM_DEEP_MAX_CHARS", str(DEEP_MAX_CHARS)))
     MAX_BODY = int(os.environ.get("TM_MAX_BODY", str(MAX_BODY)))

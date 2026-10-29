@@ -214,7 +214,7 @@
       <textarea id="tmai-input" rows="2" placeholder="输入问题…" aria-label="输入问题"></textarea>
       <button id="tmai-send" type="button" aria-label="发送">发送</button>
     </div>
-    <div class="tmai-footer">校内 AI · 问题仅发送到学校模型服务<br>AI 可能出错，请以讲义推导（note.pdf）为准<br>离线模式：讲义原文检索 + 常见问题直答</div>
+    <div class="tmai-footer">本地起草 + 学校 API 审核 · 问题会发送到本机与学校模型<br>AI 可能出错，请以讲义推导（note.pdf）为准<br>离线模式：讲义原文检索 + 常见问题直答</div>
   </div>
 </div>
 <!-- TM-OFFLINE-KB -->
@@ -603,7 +603,8 @@
       removeTyping();
       var answer = (data && data.answer) ? data.answer : '';
       var sources = (data && data.sources) ? data.sources : [];
-      appendMessage({ role: 'assistant', content: answer, sources: sources });
+      var lab = (data && data.reviewed === false) ? '本地草稿（未审核）' : ((data && data.pipeline === 'local_review') ? '学校审核' : '');
+      appendMessage({ role: 'assistant', content: answer, sources: sources, label: lab });
       conversation.push({ role: 'assistant', content: answer });
     }).catch(function () {
       removeTyping();

@@ -145,3 +145,23 @@ TM_AUTH_PASS=<密码>
 
 `tools/serve.sh` 会从 `~/.config/tm-ai.env` 读取。启动后浏览器弹登录框；未登录 401。
 公网必须走 HTTPS；`file://` 打开不会带 Basic Auth，请用 `http(s)://` 地址。
+
+## 本地起草 + 学校 API 审核（默认）
+
+`TM_PIPELINE=local_review` 时：
+
+1. 本机 Strata（`qwen3.8-flash-next-iq3_s`，8080）根据 RAG 文段写草稿；
+2. 学校 `SDU-AI/DeepSeek-V4-Flash` 以 `reasoning_effort=minimal` 审核：事实、范围、长度、引用；
+3. 返回审核后的最终答案，面板标注「学校审核」。
+4. 本地不可用 → 学校直答；审核不可用 → 返回本地草稿并标注「本地草稿（未审核）」。
+
+```bash
+TM_PIPELINE=local_review
+TM_LOCAL_BASE=http://127.0.0.1:8080/v1
+TM_LOCAL_MODEL=qwen3.8-flash-next-iq3_s
+TM_LOCAL_KEY=strata-local
+TM_REVIEW_EFFORT=minimal
+TM_REVIEW_MAX_TOKENS=260
+```
+
+实测 fast 约 9–13s（本地草稿 5–9s + 审核 4s），deep 约 10–11s；非物理问题走规则 0ms。
