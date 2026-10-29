@@ -38,6 +38,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .top-actions{display:flex;gap:8px}
 .top-actions button{padding:7px 12px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:12px;color:var(--tm-text-2);transition:background .12s}
 .top-actions button:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
+.top-actions a{padding:7px 12px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:12px;color:var(--tm-text-2);text-decoration:none;transition:background .12s}
+.top-actions a:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
 
 /* hero */
 .hero{position:fixed;top:120px;left:24px;max-width:380px;z-index:40}
@@ -163,7 +165,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   .monogram{gap:8px}
   .monogram svg{width:28px;height:28px}
   .top-actions{gap:4px}
-  .top-actions button{padding:6px 8px;font-size:11px}
+  .top-actions button,.top-actions a{padding:6px 8px;font-size:11px}
   .cmd-ms{max-width:100%;overflow-x:auto;flex-wrap:nowrap}
   .hud{display:none}
 }
@@ -191,6 +193,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   <div class="top-actions">
     <button type="button" id="btnCatalog" aria-label="打开星表">星表</button>
     <button type="button" id="btnPath" aria-label="打开学习路径">学习路径</button>
+    <a class="top-link" href="modules/09-hydrogen/index.html">氢原子</a>
     <button type="button" id="btnGloss" aria-label="打开术语表">术语</button>
     <button type="button" id="btnAbout" aria-label="打开关于">关于</button>
   </div>
