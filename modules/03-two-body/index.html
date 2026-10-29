@@ -730,12 +730,12 @@ function draw() {
   ctx.strokeStyle = 'rgba(120,160,255,.2)';
   ctx.strokeRect(rvX0, rvY0, rvW, rvH);
   ctx.fillStyle = '#8a98c0'; ctx.font = '10px ui-monospace,monospace';
-  ctx.fillText('RV(t) m/s', rvX0 + 4, rvY0 - 4);
+  ctx.fillText('恒星视向速度 v_r(t)', rvX0 + 4, rvY0 - 4);
   // draw zero line
   ctx.strokeStyle = 'rgba(120,160,255,.15)';
   ctx.beginPath(); ctx.moveTo(rvX0, rvY0 + rvH/2); ctx.lineTo(rvX0 + rvW, rvY0 + rvH/2); ctx.stroke();
+  var vmax = Math.max(0.0001, v1() * 1.5);
   if (rvData.length > 1) {
-    var vmax = Math.max(0.0001, v1() * 1.5);
     ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 1.4;
     ctx.beginPath();
     for (var i = 0; i < rvData.length; i++) {
@@ -745,14 +745,23 @@ function draw() {
     }
     ctx.stroke(); ctx.lineWidth = 1;
   }
-  // draw current value dot
+  // current value dot (same scale as the curve)
   if (rvData.length > 0) {
     var last = rvData[rvData.length-1];
-    var vmax2 = Math.max(0.001, v1() * 1.2);
-    var dx = rvX0 + rvW, dy = rvY0 + rvH/2 - (last.v / vmax2) * (rvH/2);
+    var dx = rvX0 + rvW, dy = rvY0 + rvH/2 - (last.v / vmax) * (rvH/2);
+    ctx.setLineDash([2, 3]);
+    ctx.strokeStyle = 'rgba(255,207,107,.35)';
+    ctx.beginPath(); ctx.moveTo(dx, rvY0 + rvH/2); ctx.lineTo(dx, dy); ctx.stroke();
+    ctx.setLineDash([]);
     ctx.fillStyle = '#ffcf6b';
-    ctx.beginPath(); ctx.arc(dx, dy, 3, 0, 2*Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(dx, dy, 3.2, 0, 2*Math.PI); ctx.fill();
+    ctx.font = '9px ui-monospace,monospace';
+    ctx.fillText('当前', dx - 26, dy - 6);
   }
+  ctx.fillStyle = '#6d7ca4'; ctx.font = '9px ui-monospace,monospace';
+  ctx.fillText('时间 →', rvX0 + rvW - 38, rvY0 + rvH - 4);
+  ctx.fillText('0', rvX0 - 8, rvY0 + rvH/2 + 3);
+  ctx.fillText('v_r', rvX0 - 16, rvY0 + 10);
 }
 
 // ==================== 5) HUD ====================
