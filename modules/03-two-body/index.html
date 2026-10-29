@@ -461,7 +461,7 @@ window.TMART = (function () {
       <span>恒星到质心距离 r1 <b id="hudR1">-</b></span>
       <span>恒星速度 v1 <b id="hudV1">-</b></span>
       <span>恒星速度 K（m/s，已折算真实单位） <b id="hudK">-</b></span>
-      <span>多普勒偏移 Δλ（nm：500nm 星光因恒星运动产生的波长移动） <b id="hudDl">-</b></span>
+      <span>瞬时多普勒偏移 Δλ（nm，正=红移/负=蓝移） <b id="hudDl">-</b></span>
       <span>轨道周期 P（年） <b id="hudP">-</b></span>
       <span>状态 <b id="hudState">-</b></span>
     </div>
@@ -561,6 +561,8 @@ function omega() { return Math.sqrt(G * (P.M1 + P.M2) / Math.pow(P.a, 3)); }
 function period() { return 2 * Math.PI / omega(); }
 function v1() { return omega() * comR1(); }
 function dopplerShift(lambda_nm) { return lambda_nm * (v1() * 4740.0) / 3e8; } // AU/yr -> m/s: *4740
+function currentRV() { return v1() * Math.sin(omega() * t); }
+function dopplerNow(lambda_nm) { return lambda_nm * (currentRV() * 4740.0) / 3e8; }
 
 // ==================== 4) 渲染 ====================
 var cv = document.getElementById('stage-canvas');
@@ -616,6 +618,44 @@ function viewScale() {
   return Math.min(W, H) * 0.45 / (maxR * 1.2 + 0.1);
 }
 
+function drawSpectrum(ctx, W, H) {
+  var spW = Math.min(W * 0.42, 360), spH = 88;
+  var spX = W - spW - 20, spY = H - spH - 18;
+  ctx.strokeStyle = 'rgba(120,160,255,.2)';
+  ctx.strokeRect(spX, spY, spW, spH);
+  ctx.fillStyle = '#8a98c0'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('多普勒频移 Δλ', spX + 4, spY - 4);
+  ctx.fillText('观测者 →', spX + 4, spY + 14);
+  var bx = spX + 14, by = spY + 30, bw = spW - 28, bh = 16;
+  var grad = ctx.createLinearGradient(bx, 0, bx + bw, 0);
+  grad.addColorStop(0, '#3b4bff'); grad.addColorStop(.25, '#00c2ff');
+  grad.addColorStop(.5, '#3dff9e'); grad.addColorStop(.75, '#ffe14d'); grad.addColorStop(1, '#ff6b4a');
+  ctx.fillStyle = grad; ctx.fillRect(bx, by, bw, bh);
+  var mid = bx + bw / 2;
+  ctx.setLineDash([3, 3]); ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(mid, by - 6); ctx.lineTo(mid, by + bh + 6); ctx.stroke();
+  ctx.setLineDash([]);
+  var Kms = v1() * 4740;
+  var dl = dopplerNow(500);
+  var dlMax = 500 * Kms / 3e8;
+  var win = Math.max(1e-7, Math.abs(dlMax) * 1.5);
+  var u = Math.max(-1, Math.min(1, dl / win));
+  var mx = mid + u * (bw / 2);
+  ctx.fillStyle = dl >= 0 ? 'rgba(255,80,80,.20)' : 'rgba(80,150,255,.20)';
+  ctx.fillRect(Math.min(mid, mx), by, Math.abs(mx - mid), bh);
+  ctx.strokeStyle = dl >= 0 ? '#ff6b6b' : '#6bb6ff'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(mx, by - 8); ctx.lineTo(mx, by + bh + 8); ctx.stroke();
+  ctx.fillStyle = '#e8eeff'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('静止 500.000 nm', bx, by - 10);
+  ctx.fillText('观测 ' + (500 + dl).toFixed(5) + ' nm', bx, by + bh + 16);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = dl >= 0 ? '#ff8a8a' : '#7fb8ff';
+  ctx.fillText(dl >= 0 ? '红移（远离观测者）' : '蓝移（靠近观测者）', bx + bw, by + bh + 16);
+  ctx.fillStyle = '#6d7ca4';
+  ctx.fillText('Δλ=' + dl.toExponential(2) + ' nm · 窗口 ±' + win.toExponential(2) + ' nm', bx + bw, by + bh + 30);
+  ctx.textAlign = 'left';
+}
+
 function draw() {
   ctx.clearRect(0, 0, W, H);
   var sc = viewScale();
@@ -625,6 +665,8 @@ function draw() {
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+  ctx.fillStyle = '#6d7ca4'; ctx.font = '10px ui-monospace,monospace';
+  ctx.fillText('观测者（视线 →）', 20, cy + 4);
   // COM crosshair
   ctx.strokeStyle = 'rgba(255,210,122,.9)';
   ctx.lineWidth = 1.2;
@@ -683,6 +725,17 @@ function draw() {
   var mTot = P.M1 + P.M2, rs = 6 + 5*(P.M1/mTot);
   ctx.beginPath(); ctx.arc(sx, sy, rs, 0, 2*Math.PI); ctx.fill();
   ctx.shadowBlur = 0;
+  var fr = Math.max(-1, Math.min(1, currentRV() / (v1() || 1)));
+  if (Math.abs(fr) > 0.05) {
+    ctx.globalAlpha = Math.abs(fr) * 0.18;
+    ctx.fillStyle = fr > 0 ? '#ff5a5a' : '#5aa8ff';
+    ctx.beginPath(); ctx.arc(sx, sy, rs * 2.4, 0, 2*Math.PI); ctx.fill();
+    ctx.globalAlpha = Math.abs(fr) * 0.9;
+    ctx.strokeStyle = fr > 0 ? '#ff6b6b' : '#6bb6ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(sx, sy, rs * 1.7, 0, 2*Math.PI); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
   // planet
   ctx.fillStyle = '#5ea2ff';
   ctx.shadowColor = 'rgba(94,162,255,.8)'; ctx.shadowBlur = 8;
@@ -762,6 +815,7 @@ function draw() {
   ctx.fillText('时间 →', rvX0 + rvW - 38, rvY0 + rvH - 4);
   ctx.fillText('0', rvX0 - 8, rvY0 + rvH/2 + 3);
   ctx.fillText('v_r', rvX0 - 16, rvY0 + 10);
+  drawSpectrum(ctx, W, H);
 }
 
 // ==================== 5) HUD ====================
@@ -779,7 +833,9 @@ function updateHUD(){
   hudR1.textContent = fmt(comR1(), 3) + ' AU';
   hudV1.textContent = fmt(v1() * 4740, 2) + ' m/s';
   hudK.textContent = fmt(v1() * 4740, 2) + ' m/s';
-  hudDl.textContent = fmt(dopplerShift(500), 5) + ' nm';
+  var dlNow = dopplerNow(500);
+  hudDl.textContent = fmt(dlNow, 5) + ' nm ' + (dlNow > 0 ? '红移' : (dlNow < 0 ? '蓝移' : ''));
+  hudDl.style.color = dlNow > 0 ? '#ff8a8a' : (dlNow < 0 ? '#7fb8ff' : '');
   hudP.textContent = fmt(period(), 3) + ' yr';
   hudState.textContent = '运行中';
 }
