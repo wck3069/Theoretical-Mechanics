@@ -599,7 +599,7 @@ function drawTrail(trail,color){
 // ==================== 4) 状态 ====================
 var particles = [];
 var refr = {phase:0, trail:[]};
-var shortState = {straight:{d:0,t:0,done:false,trail:[]}, curve:{d:0,t:0,done:false,trail:[]}};
+var shortState = {speedScale:0, straight:{d:0,t:0,done:false,trail:[]}, curve:{d:0,t:0,done:false,trail:[]}};
 var running = true;
 
 function initParticles() {
@@ -613,6 +613,8 @@ function initParticles() {
   refr.phase = 0; refr.trail = [];
   shortState.straight = {d:0, t:0, done:false, trail:[]};
   shortState.curve = {d:0, t:0, done:false, trail:[]};
+  var sp0 = shortStraightPts(), sc0 = cumLen(sp0);
+  shortState.speedScale = pathTime(sp0, sc0) / 3.5;
 }
 
 // ==================== 5) 渲染基础 ====================
@@ -681,7 +683,7 @@ function stepBall(ball, pts, cum) {
   var drop = pos.y - A.y;
   var v = Math.sqrt(2 * P.g * 0.01 * Math.max(drop, 0.5));
   var dt = 0.02 * P.speed;
-  ball.d += v * dt;
+  ball.d += v * dt * shortState.speedScale;
   ball.t += dt;
   if (ball.d >= total) { ball.d = total; ball.done = true; }
   var p2 = pointAtDist(pts, cum, ball.d);
@@ -732,10 +734,32 @@ function shortStraightPts(){
 }
 function shortCurvePts(){
   var A=shortA(), B=shortB();
-  var pts=[]; var N=60;
-  var D = 0.32*(B.y-A.y);
-  for (var i=0;i<=N;i++){ var u=i/N; pts.push({x:A.x+(B.x-A.x)*u, y:A.y+(B.y-A.y)*u + D*Math.sin(Math.PI*u)}); }
+  var dx = B.x - A.x, dy = B.y - A.y;
+  var k = dy / dx;
+  var lo = 1e-5, hi = 2*Math.PI - 1e-5;
+  for (var it = 0; it < 90; it++) {
+    var mid = (lo + hi) / 2;
+    var f = (1 - Math.cos(mid)) / (mid - Math.sin(mid));
+    if (f > k) lo = mid; else hi = mid;
+  }
+  var thB = (lo + hi) / 2;
+  var a = dx / (thB - Math.sin(thB));
+  var pts = []; var N = 90;
+  for (var i = 0; i <= N; i++) {
+    var th = thB * i / N;
+    pts.push({x: A.x + a*(th - Math.sin(th)), y: A.y + a*(1 - Math.cos(th))});
+  }
   return pts;
+}
+function pathTime(pts, cum){
+  var A = shortA(), T = 0;
+  for (var i = 1; i < pts.length; i++) {
+    var ds = cum[i] - cum[i-1];
+    var midY = (pts[i].y + pts[i-1].y) / 2 - A.y;
+    var v = Math.sqrt(2 * P.g * 0.01 * Math.max(midY, 0.5));
+    if (v > 1e-9) T += ds / v;
+  }
+  return T;
 }
 function cumLen(pts){
   var cum=[0];
@@ -995,7 +1019,7 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
   var CHAPTERS = [
     '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
     '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
-    '08-kinematics'
+    '08-kinematics', '09-hydrogen'
   ];
 
   function currentFolder() {
