@@ -1111,7 +1111,7 @@ function updateHUD(){
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
-  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; syncModeControls(); if (P.mode === 'double') { P.th1 = DEFAULTS.th1; P.th2 = DEFAULTS.th2; syncSliders(); dpReset(); prewarmDouble(600); } else if (P.mode === 'cylinder') { cylReset(); } else { pendReset(); } syncURL(); });
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; syncModeControls(); if (P.mode === 'double') { P.th1 = DEFAULTS.th1; P.th2 = DEFAULTS.th2; syncSliders(); dpReset(); } else if (P.mode === 'cylinder') { cylReset(); } else { pendReset(); } syncURL(); });
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
@@ -1125,13 +1125,13 @@ function bindControls() {
   selBall.value = P.ballType;
   selBall.addEventListener('change', function(){ P.ballType = selBall.value; if (P.mode === 'cylinder') cylReset(); syncModeControls(); syncURL(); updateHUD(); });
   bindSlider('param-th1', 'th1', 'val-th1', function(v){ return v.toFixed(1); });
-  $('param-th1').addEventListener('input', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(400); } });
+  $('param-th1').addEventListener('input', function(){ if (P.mode === 'double') dpReset(); });
   bindSlider('param-th2', 'th2', 'val-th2', function(v){ return v.toFixed(1); });
-  $('param-th2').addEventListener('input', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(400); } });
+  $('param-th2').addEventListener('input', function(){ if (P.mode === 'double') dpReset(); });
   bindSlider('param-L', 'L', 'val-L', function(v){ return v.toFixed(2); });
   $('param-L').addEventListener('input', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(400); } });
   bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
-  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(600); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; P.ballR = DEFAULTS.ballR; P.ballType = DEFAULTS.ballType; syncSliders(); if (P.mode === 'cylinder') cylReset(); else pendReset(); } syncModeControls(); syncURL(); updateHUD(); });
+  $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dpReset(); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; P.ballR = DEFAULTS.ballR; P.ballType = DEFAULTS.ballType; syncSliders(); if (P.mode === 'cylinder') cylReset(); else pendReset(); } syncModeControls(); syncURL(); updateHUD(); });
 }
 function syncModeControls() {
   var isCyl = P.mode === 'cylinder';
@@ -1217,7 +1217,7 @@ resize();
 bindControls();
 syncModeControls();
 syncSliders();
-if (P.mode === 'double') prewarmDouble(600);
+if (P.mode === 'double') { dpReset(); }
 if (P.mode === 'cylinder') cylReset();
 if (P.mode === 'pendulum') pendReset();
 if (qURL.selftest === '1') {
