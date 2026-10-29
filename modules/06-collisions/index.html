@@ -452,7 +452,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>碰撞与变质量</h1>
       <p>弹性碰撞、变质量雨滴、碰撞链</p>
-      <p class="intro">篮球落地弹起，每次反弹的高度都乘上 e²——一个数 e（恢复系数）就写尽了"弹不弹"。彩蛋：雨滴下落时不断吸湿变重，速度反而越掉越快。第一步：把 e 从 0 拖到 1，看绿箭头（球 1 碰后速度）如何变化；再切"变质量雨滴"，看三维雨滴下落、拖尾和 v(t)/s(t) 曲线。</p>
+      <p class="intro">篮球落地弹起，每次反弹的高度都乘上 e²——一个数 e（恢复系数）就写尽了"弹不弹"。彩蛋：雨滴质量增加率正比于表面积，半径 r=a+λt，速度反而越掉越快。第一步：把 e 从 0 拖到 1，看绿箭头（球 1 碰后速度）如何变化；再切"变质量雨滴"，看三维雨滴、左侧加速度矢量和 v(t)/s(t) 曲线。</p>
     </div>
     <div class="hud">
       <span>恢复系数 e <b id="hudE">-</b></span>
@@ -564,7 +564,7 @@ function raindropV(t, g, lam, r0) {
 }
 function raindropS(t, g, lam, r0) {
   var r = r0 + lam * t;
-  return g/(4*lam) * (r0*t + 0.5*lam*t*t - Math.pow(r0,4)/(2*lam*r*r) + r0*r0/(2*lam));
+  return g/(4*lam) * (r0*t + 0.5*lam*t*t + Math.pow(r0,4)/(2*lam*r*r) - r0*r0/(2*lam));
 }
 
 // ==================== 4) 渲染 ====================
@@ -581,8 +581,8 @@ function resize(){
 }
 window.addEventListener('resize', resize);
 
-var rain = {t:0, tMax:10, trail:[]};
-function resetRain(){ rain.t=0; rain.trail.length=0; }
+var rain = {t:0, tMax:36};
+function resetRain(){ rain.t=0; }
 
 function rainDropPos(t){
   var lam=0.1, r0=1;
@@ -590,18 +590,15 @@ function rainDropPos(t){
   var s=raindropS(t,1,lam,r0);
   var sMax=raindropS(rain.tMax,1,lam,r0)||1;
   var sx0=W*0.05, sx1=W*0.58, sy0=H*0.14, sy1=H*0.52;
-  var x=(sx0+sx1)/2 + 3*Math.sin(t*2.6);
-  var y=sy0 + (s/sMax)*(sy1-sy0) + 6*Math.sin(t*7.0);
+  var x=(sx0+sx1)/2;                    // 不左右摇摆
+  var y=(sy0+sy1)/2 + 12*Math.sin(t*4.5); // 上下小范围摆动
   var r=10 + Math.max(0, (r0+lam*t-1))*7;
   return {x:x, y:y, r:r, v:v, s:s, sMax:sMax};
 }
 
 function stepRain(dt){
   rain.t += dt;
-  if (rain.t > rain.tMax){ rain.t=0; rain.trail.length=0; }
-  var p=rainDropPos(rain.t);
-  rain.trail.push({x:p.x, y:p.y, v:p.v});
-  if (rain.trail.length>64) rain.trail.shift();
+  if (rain.t > rain.tMax){ rain.t=0; }
 }
 
 function drawRaindrop3D(x, y, r){
@@ -681,24 +678,45 @@ function drawRaindropScene(){
   for (var rs=0;rs<18;rs++){
     var rx=sx0+sw*(0.08+0.84*((rs*37)%100)/100);
     var len=14+((rs*53)%40);
-    var ry=sy0+sh*(0.10+0.80*((rs*29)%100)/100);
-    ctx.strokeStyle='rgba(146,182,255,.07)';
+    var ry=sy0 + ((rs*29 + rain.t*70) % sh);
+    ctx.strokeStyle='rgba(146,182,255,.08)';
     ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx+3,ry+len); ctx.stroke();
   }
 
-  // 拖尾：空间长度与线宽随速度增大
-  var tr=rain.trail, n=tr.length;
+  // 左侧加速度矢量：a(t)=g/4·(1+3r0⁴/r⁴)，方向向下
   var vmax=Math.max(1e-6, raindropV(rain.tMax,1,0.1,1));
-  ctx.lineCap='round';
-  for (var ti=1;ti<n;ti++){
-    var a=ti/n;
-    ctx.globalAlpha=a*0.58;
-    ctx.strokeStyle='#7fe0ff';
-    ctx.lineWidth=0.8+3.0*a*(pos.v/vmax);
-    ctx.beginPath(); ctx.moveTo(tr[ti-1].x,tr[ti-1].y); ctx.lineTo(tr[ti].x,tr[ti].y); ctx.stroke();
-  }
-  ctx.globalAlpha=1; ctx.lineWidth=1; ctx.lineCap='butt';
+  var rrNow=1 + 0.1*rain.t;
+  var acc=0.25 * (1 + 3 / Math.pow(rrNow,4));
+  var ax=pos.x - Math.max(58, pos.r*3.0);
+  var ay=pos.y - 4;
+  var alen=10 + 54*Math.min(1.2, acc);
 
+  // 箭头辉光
+  var ag=ctx.createLinearGradient(ax, ay, ax, ay+alen);
+  ag.addColorStop(0,'rgba(255,207,107,.05)');
+  ag.addColorStop(0.5,'rgba(255,207,107,.20)');
+  ag.addColorStop(1,'rgba(255,207,107,.02)');
+  ctx.strokeStyle=ag; ctx.lineWidth=10; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax, ay+alen); ctx.stroke();
+
+  // 箭头主体
+  ctx.strokeStyle='#ffcf6b'; ctx.lineWidth=2.4;
+  ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax, ay+alen); ctx.stroke();
+  ctx.fillStyle='#ffcf6b';
+  ctx.beginPath();
+  ctx.moveTo(ax, ay+alen);
+  ctx.lineTo(ax-6, ay+alen-10);
+  ctx.lineTo(ax+6, ay+alen-10);
+  ctx.closePath(); ctx.fill();
+
+  // 标签
+  ctx.fillStyle='#ffcf6b'; ctx.font='11px ui-monospace,monospace';
+  ctx.fillText('a', ax-16, ay+12);
+  ctx.font='9px ui-monospace,monospace';
+  ctx.fillText(acc.toFixed(2), ax-24, ay+24);
+  ctx.lineCap='butt';
+
+  ctx.globalAlpha = 1;
   // 球体辉光 + 三维雨滴
   var dg=ctx.createRadialGradient(pos.x,pos.y,pos.r*0.4,pos.x,pos.y,pos.r*3.0);
   dg.addColorStop(0,'rgba(127,224,255,.18)'); dg.addColorStop(1,'rgba(127,224,255,0)');
@@ -711,13 +729,27 @@ function drawRaindropScene(){
   ctx.fillText('t = '+rain.t.toFixed(2),sx0+14,sy0+40);
   ctx.fillText('v = '+pos.v.toFixed(3),sx0+14,sy0+54);
   ctx.fillText('s = '+pos.s.toFixed(3),sx0+14,sy0+68);
-  ctx.fillText('拖尾长度 ∝ 速度',sx0+14,sy1-14);
+  ctx.fillText('左侧箭头长度 ∝ 加速度 a',sx0+14,sy1-14);
 
   // 右侧上下两张曲线
   var px=W*0.63, pw=W*0.33;
   var spY=H*0.14, spH=H*0.32;
   var dpY=H*0.60, dpH=H*0.26;
   drawRaindropPlot(px,spY,pw,spH,function(t){return raindropV(t,1,0.1,1);},rain.tMax,'#7fe0ff','v(t) 速度',rain.t,pos.v,vmax);
+  // 长时间渐近线 v≈gt/4；速度仍增长，趋于常数的是加速度 g/4
+  ctx.save();
+  ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(200,215,245,.30)'; ctx.lineWidth=1;
+  ctx.beginPath();
+  for (var ai=0; ai<=60; ai++){
+    var at=rain.tMax*ai/60, av=at/4;
+    var ax=px+(at/rain.tMax)*pw;
+    var ay=spY+spH-(av/vmax)*spH;
+    if (ai===0) ctx.moveTo(ax,ay); else ctx.lineTo(ax,ay);
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='rgba(200,215,245,.65)'; ctx.font='9px ui-monospace,monospace';
+  ctx.fillText('v≈gt/4（仍增长；a→g/4）', px+8, spY+spH-6);
+  ctx.restore();
   var smax=Math.max(1e-6,raindropS(rain.tMax,1,0.1,1));
   drawRaindropPlot(W*0.05,dpY,W*0.90,dpH,function(t){return raindropS(t,1,0.1,1);},rain.tMax,'#ffcf6b','s(t) 位移',rain.t,pos.s,smax);
 }
