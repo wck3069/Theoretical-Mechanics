@@ -453,7 +453,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>运动学与非线性振动</h1>
       <p>圆柱脱离、单摆周期修正、双摆混沌、Lorentz 力与参考系变换</p>
-      <p class="intro">一个小球从三维圆柱顶端纯滚动下滑，半径 r 可调。滚动把部分重力势能变成转动动能，脱离角不再是 48.19°：实心球从顶端释放约 54.0°，空心球约 56.9°，质点仍 48.19°。改 r 看中心轨迹与滚动标记，改球型看临界角。</p>
+      <p class="intro">质点模式保持二维圆截面；实心/空心球为三维圆柱，球在圆柱长度中间纯滚动。滚动把部分重力势能变成转动动能，脱离角不再是 48.19°：实心球从顶端释放约 54.0°，空心球约 56.9°，质点仍 48.19°。改 r 看球心轨迹，改球型看临界角。</p>
     </div>
     <div class="hud">
       <span>θ0 <b id="hudTheta">-</b></span>
@@ -511,7 +511,7 @@ window.TMART = (function () {
         <option value="hollow">空心球 I=2/3mr²</option>
         <option value="point">质点 I=0</option>
       </select>
-      <div class="hint" id="ball-hint">均匀球 I∝mr²，临界角与 r 无关；r 改变中心轨迹、视觉与滚动。</div>
+      <div class="hint" id="ball-hint">质点模式保持二维；实心/空心球在三维圆柱中间滚动。</div>
     </div>
     <div class="group" id="group-g">
       <div class="row"><label for="param-g">重力 g</label><span class="val" id="val-g">1.00</span></div>
@@ -657,12 +657,29 @@ function pendStep(h){
 function artHex(hex){ var h = hex.replace('#',''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
 function artRgba(hex, a){ var c = artHex(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
 function artShade(hex, f){ var c = artHex(hex); return 'rgb(' + Math.round(Math.min(255, c[0]*f)) + ',' + Math.round(Math.min(255, c[1]*f)) + ',' + Math.round(Math.min(255, c[2]*f)) + ')'; }
-function tmSphere(x, y, r, color, glow){
+function tmSphere(x, y, r, color, glow, alpha){
   if (glow === undefined) glow = 0.5;
+  if (alpha === undefined) alpha = 1;
   if (window.TMART && typeof window.TMART.sphere === 'function'){
-    window.TMART.sphere(ctx, x, y, r, color, {glow: glow});
+    if (alpha >= 0.999){
+      window.TMART.sphere(ctx, x, y, r, color, {glow: glow});
+      return;
+    }
+    // 透明 3D 球：先在离屏画布画好球体精灵，再按 alpha 合成
+    var pad = Math.max(8, Math.ceil(r * (glow > 0 ? 3.2 : 0.7)));
+    var size = Math.ceil((r + pad) * 2);
+    var tmp = document.createElement('canvas');
+    tmp.width = size; tmp.height = size;
+    var tctx = tmp.getContext('2d');
+    window.TMART.sphere(tctx, size/2, size/2, r, color, {glow: glow});
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    ctx.drawImage(tmp, x - size/2, y - size/2);
+    ctx.restore();
     return;
   }
+  ctx.save();
+  ctx.globalAlpha *= alpha;
   if (glow > 0){
     var gl = ctx.createRadialGradient(x, y, r*0.75, x, y, r*2.4);
     gl.addColorStop(0, artRgba(color, 0.30*glow));
@@ -677,6 +694,7 @@ function tmSphere(x, y, r, color, glow){
   g1.addColorStop(1, artShade(color, 0.32));
   ctx.fillStyle = g1;
   ctx.beginPath(); ctx.arc(x, y, r, 0, 2*Math.PI); ctx.fill();
+  ctx.restore();
 }
 
 // ==================== 1) PARAMS ====================
@@ -741,124 +759,207 @@ function resize(){
 }
 window.addEventListener('resize', resize);
 
+function drawHollowSphere(x, y, r) {
+  // 三维球体精灵 + 透明度，再补一圈玻璃外壳边缘
+  tmSphere(x, y, r, ART.cyan, 0, 0.30);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(190,240,255,.85)';
+  ctx.lineWidth = Math.max(1.2, r * 0.07);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,.55)';
+  ctx.lineWidth = 1.1;
+  ctx.beginPath(); ctx.arc(x - r * 0.26, y - r * 0.28, r * 0.40, -2.7, -1.1); ctx.stroke();
+  ctx.restore();
+}
+
 function draw() {
   ctx.clearRect(0, 0, W, H);
   var cx = W * 0.5, cy = H * 0.5;
   var sc = Math.min(W, H) * 0.35;
   if (P.mode === 'cylinder') {
-    var R = Math.min(W, H) * 0.30;
-    var ccy = cy + Math.min(W, H) * 0.04;
-    var rho = ballRho();
-    var rPx = P.ballType === 'point' ? 3 : Math.max(4, R * P.ballR);
+    var isPoint = P.ballType === 'point';
     var thd = detachAngleRad();
     var onSurface = cyl.phase === 'contact';
-
-    // 三维圆柱：后盖 + 柱身 + 前盖（轴向略向屏幕内）
-    var dx = R * 0.30, dy = -R * 0.16;
-    var backX = cx + dx, backY = ccy + dy;
-    var bg = ctx.createRadialGradient(backX - R*0.30, backY - R*0.30, R*0.08, backX, backY, R);
-    bg.addColorStop(0, '#0b1227'); bg.addColorStop(1, '#03060d');
-    ctx.fillStyle = bg;
-    ctx.beginPath(); ctx.arc(backX, backY, R*0.98, 0, 2*Math.PI); ctx.fill();
-    ctx.strokeStyle = 'rgba(96,116,180,.35)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(backX, backY, R*0.98, 0, 2*Math.PI); ctx.stroke();
-
-    // 柱身
-    var bodyGrad = ctx.createLinearGradient(cx, ccy - R, cx + dx, ccy + R);
-    bodyGrad.addColorStop(0, '#0a1024'); bodyGrad.addColorStop(0.55, '#070c1c'); bodyGrad.addColorStop(1, '#03060e');
-    ctx.fillStyle = bodyGrad;
-    ctx.beginPath();
-    ctx.moveTo(cx, ccy - R);
-    ctx.lineTo(backX, backY - R*0.98);
-    ctx.arc(backX, backY, R*0.98, -Math.PI/2, Math.PI/2);
-    ctx.lineTo(cx, ccy + R);
-    ctx.arc(cx, ccy, R, Math.PI/2, -Math.PI/2, true);
-    ctx.closePath(); ctx.fill();
-
-    // 柱身环线，增强 3D 纵深感
-    for (var ring = 1; ring <= 3; ring++) {
-      var tr = ring / 4;
-      ctx.strokeStyle = 'rgba(127,224,255,' + (0.10 - tr*0.02).toFixed(3) + ')';
-      ctx.beginPath();
-      ctx.arc(cx + dx*tr, ccy + dy*tr, R*(0.98 + 0.006*ring), 0, 2*Math.PI);
-      ctx.stroke();
-    }
-
-    // 前盖
-    var fg = ctx.createRadialGradient(cx - R*0.35, ccy - R*0.35, R*0.08, cx, ccy, R);
-    fg.addColorStop(0, '#122044'); fg.addColorStop(0.55, '#090f22'); fg.addColorStop(1, '#04070f');
-    ctx.fillStyle = fg;
-    ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.fill();
-    ctx.strokeStyle = 'rgba(183,155,255,.55)'; ctx.lineWidth = 1.6;
-    ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.stroke();
-    ctx.lineWidth = 2.4; ctx.strokeStyle = 'rgba(127,224,255,.25)';
-    ctx.beginPath(); ctx.arc(cx, ccy, R - 2.2, Math.PI*0.72, Math.PI*1.55); ctx.stroke();
-    ctx.lineWidth = 1;
-
-    // 球心：接触段沿半径 rho=R+r 的圆；脱离后为解析抛体
-    var bx, by;
-    if (onSurface) {
-      bx = cx + R*rho*Math.sin(cyl.th);
-      by = ccy - R*rho*Math.cos(cyl.th);
-    } else {
-      bx = cx + R*(cyl.px + cyl.vx*cyl.projT);
-      by = ccy + R*(cyl.py + cyl.vy*cyl.projT + 0.5*P.g*cyl.projT*cyl.projT);
-    }
-
-    // 球心轨迹
-    ctx.lineWidth = 2;
-    for (var it = 1; it < cyl.trail.length; it++) {
-      var tB = cyl.trail[it - 1], tA = cyl.trail[it];
-      ctx.globalAlpha = (it / cyl.trail.length) * 0.55 * cyl.alpha;
-      ctx.strokeStyle = ART.cyan;
-      ctx.beginPath();
-      ctx.moveTo(cx + R*tB.x, ccy + R*tB.y);
-      ctx.lineTo(cx + R*tA.x, ccy + R*tA.y);
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1; ctx.lineWidth = 1;
-
-    // 脱离点：球心所在半径 rho
-    var dx0 = cx + R*rho*Math.sin(thd), dy0 = ccy - R*rho*Math.cos(thd);
-    ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(255,210,122,.45)';
-    ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(dx0, dy0); ctx.stroke();
-    ctx.setLineDash([]); ctx.strokeStyle = ART.solar; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(dx0, dy0, 5, 0, 2*Math.PI); ctx.stroke();
-    ctx.lineWidth = 1;
-
-    // θ 角弧
     var thShown = onSurface ? Math.min(cyl.th, thd) : thd;
-    ctx.strokeStyle = 'rgba(127,240,207,.6)'; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(cx, ccy, R*0.34, -Math.PI/2, -Math.PI/2 + thShown); ctx.stroke();
-    ctx.fillStyle = ART.teal; ctx.font = '10px ui-monospace,monospace';
-    ctx.fillText('θ', cx + R*0.36, ccy - R*0.18);
-    ctx.lineWidth = 1;
+    var bx, by;
+    var R, ccy, rho;
 
-    // 接触段：球心半径辅助线 + 圆柱表面接触点
-    if (onSurface) {
-      var cpx = cx + R*Math.sin(cyl.th), cpy = ccy - R*Math.cos(cyl.th);
-      ctx.setLineDash([3,4]); ctx.strokeStyle = 'rgba(127,224,255,.35)';
-      ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(bx, by); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(127,224,255,.8)';
-      ctx.beginPath(); ctx.arc(cpx, cpy, 2.4, 0, 2*Math.PI); ctx.fill();
-    }
+    if (isPoint) {
+      // 二维质点：保持圆截面，不做 3D
+      R = Math.min(W, H) * 0.34;
+      ccy = cy + Math.min(W, H) * 0.04;
+      rho = 1;
+      var cg2 = ctx.createRadialGradient(cx - R*0.35, ccy - R*0.35, R*0.12, cx, ccy, R);
+      cg2.addColorStop(0, '#101a38'); cg2.addColorStop(0.5, '#090f22'); cg2.addColorStop(1, '#04070f');
+      ctx.fillStyle = cg2;
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(183,155,255,.5)';
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(127,224,255,.30)';
+      ctx.beginPath(); ctx.arc(cx, ccy, R - 2.5, Math.PI*0.72, Math.PI*1.6); ctx.stroke();
+      ctx.lineWidth = 1;
 
-    // 小球：3D 球体；非质点画滚动标记（无滑动滚动）
-    ctx.globalAlpha = cyl.alpha;
-    tmSphere(bx, by, rPx, ART.cyan, 0.55);
-    if (P.ballType !== 'point') {
-      ctx.fillStyle = 'rgba(4,8,18,.72)';
+      if (onSurface) {
+        bx = cx + R * Math.sin(cyl.th);
+        by = ccy - R * Math.cos(cyl.th);
+      } else {
+        bx = cx + R * (cyl.px + cyl.vx * cyl.projT);
+        by = ccy + R * (cyl.py + cyl.vy * cyl.projT + 0.5 * P.g * cyl.projT * cyl.projT);
+      }
+
+      ctx.lineWidth = 2;
+      for (var it2 = 1; it2 < cyl.trail.length; it2++) {
+        var tB2 = cyl.trail[it2 - 1], tA2 = cyl.trail[it2];
+        ctx.globalAlpha = (it2 / cyl.trail.length) * 0.55 * cyl.alpha;
+        ctx.strokeStyle = ART.cyan;
+        ctx.beginPath();
+        ctx.moveTo(cx + R*tB2.x, ccy + R*tB2.y);
+        ctx.lineTo(cx + R*tA2.x, ccy + R*tA2.y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1; ctx.lineWidth = 1;
+
+      var dxp = cx + R*Math.sin(thd), dyp = ccy - R*Math.cos(thd);
+      ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(255,210,122,.45)';
+      ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(dxp, dyp); ctx.stroke();
+      ctx.setLineDash([]); ctx.strokeStyle = ART.solar; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(dxp, dyp, 5, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      ctx.strokeStyle = 'rgba(127,240,207,.6)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx, ccy, R*0.3, -Math.PI/2, -Math.PI/2 + thShown); ctx.stroke();
+      ctx.fillStyle = ART.teal; ctx.font = '10px ui-monospace,monospace';
+      ctx.fillText('θ', cx + R*0.32, ccy - R*0.18);
+      ctx.lineWidth = 1;
+
+      if (onSurface) {
+        ctx.setLineDash([3,4]); ctx.strokeStyle = 'rgba(127,224,255,.35)';
+        ctx.beginPath(); ctx.moveTo(cx, ccy); ctx.lineTo(bx, by); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // 二维质点（无黑点）
+      ctx.globalAlpha = cyl.alpha;
+      var pg = ctx.createRadialGradient(bx - 1.5, by - 1.5, 0, bx, by, 6);
+      pg.addColorStop(0, '#effdff'); pg.addColorStop(0.45, ART.cyan); pg.addColorStop(1, 'rgba(127,224,255,0)');
+      ctx.fillStyle = pg;
+      ctx.beginPath(); ctx.arc(bx, by, 6, 0, 2*Math.PI); ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
+      ctx.fillText('2D point mass · detach=' + detachAngle().toFixed(2) + '°', 20, 30);
+    } else {
+      // 三维圆柱：球在圆柱长度中间
+      R = Math.min(W, H) * 0.33;
+      ccy = cy + Math.min(W, H) * 0.055;
+      rho = ballRho();
+      var rPx = Math.max(4, R * P.ballR);
+      var dx = R * 0.38, dy = -R * 0.22;
+      var axisX = cx + dx * 0.5, axisY = ccy + dy * 0.5;
+      var backX = cx + dx, backY = ccy + dy;
+
+      // 后盖
+      var bg3 = ctx.createRadialGradient(backX - R*0.30, backY - R*0.30, R*0.08, backX, backY, R);
+      bg3.addColorStop(0, '#0b1227'); bg3.addColorStop(1, '#03060d');
+      ctx.fillStyle = bg3;
+      ctx.beginPath(); ctx.arc(backX, backY, R*0.98, 0, 2*Math.PI); ctx.fill();
+      ctx.strokeStyle = 'rgba(96,116,180,.35)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(backX, backY, R*0.98, 0, 2*Math.PI); ctx.stroke();
+
+      // 柱身：半透明，便于看见中间的小球
+      ctx.globalAlpha = 0.62;
+      var bodyGrad3 = ctx.createLinearGradient(cx, ccy - R, cx + dx, ccy + R);
+      bodyGrad3.addColorStop(0, '#0a1024'); bodyGrad3.addColorStop(0.55, '#070c1c'); bodyGrad3.addColorStop(1, '#03060e');
+      ctx.fillStyle = bodyGrad3;
       ctx.beginPath();
-      ctx.arc(bx + Math.cos(cyl.spin)*rPx*0.48, by + Math.sin(cyl.spin)*rPx*0.48, Math.max(1.6, rPx*0.16), 0, 2*Math.PI);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+      ctx.moveTo(cx, ccy - R);
+      ctx.lineTo(backX, backY - R*0.98);
+      ctx.arc(backX, backY, R*0.98, -Math.PI/2, Math.PI/2);
+      ctx.lineTo(cx, ccy + R);
+      ctx.arc(cx, ccy, R, Math.PI/2, -Math.PI/2, true);
+      ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1;
 
-    // 读数
-    ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
-    var typeName = P.ballType === 'solid' ? 'solid' : (P.ballType === 'hollow' ? 'hollow' : 'point');
-    ctx.fillText('3D cylinder · ball r=' + P.ballR.toFixed(2) + 'R · ' + typeName + ' · detach=' + detachAngle().toFixed(2) + '°', 20, 30);
+      for (var ring3 = 1; ring3 <= 3; ring3++) {
+        var tr3 = ring3 / 4;
+        ctx.strokeStyle = 'rgba(127,224,255,' + (0.10 - tr3*0.02).toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.arc(cx + dx*tr3, ccy + dy*tr3, R*(0.98 + 0.006*ring3), 0, 2*Math.PI);
+        ctx.stroke();
+      }
+
+      // 前盖半透明，避免挡住圆柱中间的小球
+      var fg3 = ctx.createRadialGradient(cx - R*0.35, ccy - R*0.35, R*0.08, cx, ccy, R);
+      fg3.addColorStop(0, '#122044'); fg3.addColorStop(0.55, '#090f22'); fg3.addColorStop(1, '#04070f');
+      ctx.globalAlpha = 0.20; ctx.fillStyle = fg3;
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = 'rgba(183,155,255,.5)'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(cx, ccy, R, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 2.4; ctx.strokeStyle = 'rgba(127,224,255,.25)';
+      ctx.beginPath(); ctx.arc(cx, ccy, R - 2.2, Math.PI*0.72, Math.PI*1.55); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      // 球心在圆柱长度中间截面
+      if (onSurface) {
+        bx = axisX + R * rho * Math.sin(cyl.th);
+        by = axisY - R * rho * Math.cos(cyl.th);
+      } else {
+        bx = axisX + R * (cyl.px + cyl.vx * cyl.projT);
+        by = axisY + R * (cyl.py + cyl.vy * cyl.projT + 0.5 * P.g * cyl.projT * cyl.projT);
+      }
+
+      // 球心轨迹
+      ctx.lineWidth = 2;
+      for (var it3 = 1; it3 < cyl.trail.length; it3++) {
+        var tB3 = cyl.trail[it3 - 1], tA3 = cyl.trail[it3];
+        ctx.globalAlpha = (it3 / cyl.trail.length) * 0.55 * cyl.alpha;
+        ctx.strokeStyle = ART.cyan;
+        ctx.beginPath();
+        ctx.moveTo(axisX + R*tB3.x, axisY + R*tB3.y);
+        ctx.lineTo(axisX + R*tA3.x, axisY + R*tA3.y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1; ctx.lineWidth = 1;
+
+      // 脱离点
+      var dx3 = axisX + R*rho*Math.sin(thd), dy3 = axisY - R*rho*Math.cos(thd);
+      ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(255,210,122,.45)';
+      ctx.beginPath(); ctx.moveTo(axisX, axisY); ctx.lineTo(dx3, dy3); ctx.stroke();
+      ctx.setLineDash([]); ctx.strokeStyle = ART.solar; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(dx3, dy3, 5, 0, 2*Math.PI); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      // θ 角弧
+      ctx.strokeStyle = 'rgba(127,240,207,.6)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(axisX, axisY, R*0.34, -Math.PI/2, -Math.PI/2 + thShown); ctx.stroke();
+      ctx.fillStyle = ART.teal; ctx.font = '10px ui-monospace,monospace';
+      ctx.fillText('θ', axisX + R*0.36, axisY - R*0.18);
+      ctx.lineWidth = 1;
+
+      // 接触点
+      if (onSurface) {
+        var cpx3 = axisX + R*Math.sin(cyl.th), cpy3 = axisY - R*Math.cos(cyl.th);
+        ctx.setLineDash([3,4]); ctx.strokeStyle = 'rgba(127,224,255,.35)';
+        ctx.beginPath(); ctx.moveTo(axisX, axisY); ctx.lineTo(bx, by); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(127,224,255,.8)';
+        ctx.beginPath(); ctx.arc(cpx3, cpy3, 2.4, 0, 2*Math.PI); ctx.fill();
+      }
+
+      // 三维球：无黑点；空心球透明
+      ctx.globalAlpha = cyl.alpha;
+      if (P.ballType === 'hollow') {
+        drawHollowSphere(bx, by, rPx);
+      } else {
+        tmSphere(bx, by, rPx, ART.cyan, 0.55);
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
+      var typeName3 = P.ballType === 'solid' ? 'solid' : 'hollow';
+      ctx.fillText('3D cylinder · ball at mid-length · ' + typeName3 + ' r=' + P.ballR.toFixed(2) + 'R · detach=' + detachAngle().toFixed(2) + '°', 20, 30);
+    }
   } else if (P.mode === 'double') {
     var L1 = P.L, L2 = P.L;
     var cx = W * 0.5, cy = H * 0.32;
@@ -868,8 +969,8 @@ function draw() {
       ctx.lineWidth = 1.4;
       ctx.beginPath();
       for (var i = 0; i < dp.trail.length; i++) {
-        var px = cx + dp.trail[i].x2 * sc;
-        var py = cy + dp.trail[i].y2 * sc;
+        var px = cx + P.L * dp.trail[i].x2 * sc;
+        var py = cy + P.L * dp.trail[i].y2 * sc;
         if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
       }
       ctx.stroke(); ctx.lineWidth = 1;
@@ -968,12 +1069,15 @@ function setNotice(msg, bad){
 }
 function updateHUD(){
   if (P.mode === 'cylinder') {
+    var isPointCyl = P.ballType === 'point';
     if (cyl.phase === 'contact') {
       hudTheta.textContent = (cyl.th * 180 / Math.PI).toFixed(1) + '°';
-      hudState.textContent = '纯滚动（θ < ' + detachAngle().toFixed(1) + '°）';
+      hudState.textContent = isPointCyl
+        ? '二维质点（θ < ' + detachAngle().toFixed(1) + '°）'
+        : '三维纯滚动（θ < ' + detachAngle().toFixed(1) + '°）';
     } else {
       hudTheta.textContent = detachAngle().toFixed(1) + '°';
-      hudState.textContent = '抛体运动（脱离后自转）';
+      hudState.textContent = isPointCyl ? '抛体运动（二维）' : '抛体运动（脱离后自转）';
     }
     hudDetach.textContent = detachAngle().toFixed(2) + '°';
     hudBallR.textContent = P.ballType === 'point' ? '质点' : P.ballR.toFixed(2) + ' R';
@@ -1019,12 +1123,13 @@ function bindControls() {
   $('param-ballR').addEventListener('input', function(){ if (P.mode === 'cylinder') { cylReset(); updateHUD(); } });
   var selBall = $('sel-ballType');
   selBall.value = P.ballType;
-  selBall.addEventListener('change', function(){ P.ballType = selBall.value; if (P.mode === 'cylinder') cylReset(); syncURL(); updateHUD(); });
+  selBall.addEventListener('change', function(){ P.ballType = selBall.value; if (P.mode === 'cylinder') cylReset(); syncModeControls(); syncURL(); updateHUD(); });
   bindSlider('param-th1', 'th1', 'val-th1', function(v){ return v.toFixed(1); });
   $('param-th1').addEventListener('input', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(400); } });
   bindSlider('param-th2', 'th2', 'val-th2', function(v){ return v.toFixed(1); });
   $('param-th2').addEventListener('input', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(400); } });
   bindSlider('param-L', 'L', 'val-L', function(v){ return v.toFixed(2); });
+  $('param-L').addEventListener('input', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(400); } });
   bindSlider('param-g', 'g', 'val-g', function(v){ return v.toFixed(2); });
   $('btn-reset').addEventListener('click', function(){ if (P.mode === 'double') { dpReset(); prewarmDouble(600); } else { P.theta0 = DEFAULTS.theta0; P.L = DEFAULTS.L; P.g = DEFAULTS.g; P.ballR = DEFAULTS.ballR; P.ballType = DEFAULTS.ballType; syncSliders(); if (P.mode === 'cylinder') cylReset(); else pendReset(); } syncModeControls(); syncURL(); updateHUD(); });
 }
@@ -1040,7 +1145,7 @@ function syncModeControls() {
   var g2 = $('group-th2');
   if (g2) g2.style.display = isDbl ? 'block' : 'none';
   var gbr = $('group-ballR');
-  if (gbr) gbr.style.display = isCyl ? 'block' : 'none';
+  if (gbr) gbr.style.display = (isCyl && P.ballType !== 'point') ? 'block' : 'none';
   var gbt = $('group-ballType');
   if (gbt) gbt.style.display = isCyl ? 'block' : 'none';
   var lbl = document.querySelector('label[for="param-theta0"]');
@@ -1051,7 +1156,9 @@ function syncModeControls() {
     if (isCyl && P.theta0 > 47) { P.theta0 = 47; th.value = 47; $('val-theta0').textContent = '47.0'; }
   }
   var hint = $('mode-hint');
-  if (hint) hint.textContent = isCyl ? '圆柱：θ0 起始角、r 球半径、球型（I）、g；L 不参与。' : (P.mode === 'pendulum' ? '单摆：θ0 振幅、L 摆长、g 重力。' : '双摆：θ1/θ2 两个初始角、L 杆长、g 重力。');
+  if (hint) hint.textContent = isCyl ? '圆柱：θ0 起始角、球型（I）、r（质点隐藏）、g；L 不参与。' : (P.mode === 'pendulum' ? '单摆：θ0 振幅、L 摆长、g 重力。' : '双摆：θ1/θ2 两个初始角、L 杆长、g 重力。');
+  var bh = $('ball-hint');
+  if (bh) bh.textContent = (isCyl && P.ballType === 'point') ? '质点保持二维圆截面，球半径参数隐藏。' : '均匀球 I∝mr²，临界角与 r 无关；r 改变球心轨迹与滚动。';
 }
 
 function syncSliders() {
