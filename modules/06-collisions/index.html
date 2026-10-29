@@ -452,7 +452,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>碰撞与变质量</h1>
       <p>弹性碰撞、变质量雨滴、碰撞链</p>
-      <p class="intro">篮球落地弹起，每次反弹的高度都乘上 e²——一个数 e（恢复系数）就写尽了"弹不弹"。彩蛋：雨滴下落时不断吸湿变重，速度反而越掉越快。第一步：把 e 从 0 拖到 1，看绿箭头（球 1 碰后速度）如何变化；再切"变质量雨滴"，看 v(t) 曲线为何越走越陡。</p>
+      <p class="intro">篮球落地弹起，每次反弹的高度都乘上 e²——一个数 e（恢复系数）就写尽了"弹不弹"。彩蛋：雨滴下落时不断吸湿变重，速度反而越掉越快。第一步：把 e 从 0 拖到 1，看绿箭头（球 1 碰后速度）如何变化；再切"变质量雨滴"，看三维雨滴下落、拖尾和 v(t)/s(t) 曲线。</p>
     </div>
     <div class="hud">
       <span>恢复系数 e <b id="hudE">-</b></span>
@@ -494,7 +494,7 @@ window.TMART = (function () {
       <button id="btn-reset">重置</button>
     </div>
     <div class="tag">本页采用无量纲演示单位（e、α 无量纲，速度取 1）。<br>
-    HUD "v / e′" 一格两用：球碰撞模式＝恢复系数 e；变质量雨滴模式＝t = 10 时的下落速度 v（无量纲）。<br>
+    HUD "v / e′" 一格两用：球碰撞模式＝恢复系数 e；变质量雨滴模式＝当前下落速度 v（无量纲）。<br>
     URL 可复现：<span>?e=…&alpha=…&speed=…</span><br>
     自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
     <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
@@ -562,6 +562,10 @@ function raindropV(t, g, lam, r0) {
   var r = r0 + lam * t;
   return g/(4*lam) * (r - Math.pow(r0,4)/Math.pow(r,3));
 }
+function raindropS(t, g, lam, r0) {
+  var r = r0 + lam * t;
+  return g/(4*lam) * (r0*t + 0.5*lam*t*t - Math.pow(r0,4)/(2*lam*r*r) + r0*r0/(2*lam));
+}
 
 // ==================== 4) 渲染 ====================
 var cv = document.getElementById('stage-canvas');
@@ -576,6 +580,147 @@ function resize(){
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 window.addEventListener('resize', resize);
+
+var rain = {t:0, tMax:10, trail:[]};
+function resetRain(){ rain.t=0; rain.trail.length=0; }
+
+function rainDropPos(t){
+  var lam=0.1, r0=1;
+  var v=raindropV(t,1,lam,r0);
+  var s=raindropS(t,1,lam,r0);
+  var sMax=raindropS(rain.tMax,1,lam,r0)||1;
+  var sx0=W*0.05, sx1=W*0.58, sy0=H*0.14, sy1=H*0.52;
+  var x=(sx0+sx1)/2 + 3*Math.sin(t*2.6);
+  var y=sy0 + (s/sMax)*(sy1-sy0) + 6*Math.sin(t*7.0);
+  var r=10 + Math.max(0, (r0+lam*t-1))*7;
+  return {x:x, y:y, r:r, v:v, s:s, sMax:sMax};
+}
+
+function stepRain(dt){
+  rain.t += dt;
+  if (rain.t > rain.tMax){ rain.t=0; rain.trail.length=0; }
+  var p=rainDropPos(rain.t);
+  rain.trail.push({x:p.x, y:p.y, v:p.v});
+  if (rain.trail.length>64) rain.trail.shift();
+}
+
+function drawRaindrop3D(x, y, r){
+  ctx.save();
+  ctx.translate(x, y);
+  var g=ctx.createRadialGradient(-r*0.35, -r*0.55, r*0.08, 0, 0, r*1.9);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.18, '#c8f6ff');
+  g.addColorStop(0.46, '#59c8ff');
+  g.addColorStop(0.76, '#2a6fe0');
+  g.addColorStop(1, '#12306e');
+  ctx.fillStyle=g;
+  ctx.beginPath();
+  ctx.moveTo(0, -r*1.85);
+  ctx.bezierCurveTo(r*0.20, -r*1.15, r*0.95, -r*0.30, r*0.82, r*0.35);
+  ctx.bezierCurveTo(r*0.70, r*1.02, -r*0.70, r*1.02, -r*0.82, r*0.35);
+  ctx.bezierCurveTo(-r*0.95, -r*0.30, -r*0.20, -r*1.15, 0, -r*1.85);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle='rgba(200,245,255,.55)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.80)';
+  ctx.beginPath(); ctx.ellipse(-r*0.30, -r*0.52, r*0.16, r*0.30, -0.5, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle='rgba(127,224,255,.18)';
+  ctx.beginPath(); ctx.ellipse(r*0.22, r*0.42, r*0.22, r*0.10, 0.3, 0, 2*Math.PI); ctx.fill();
+  ctx.restore();
+}
+
+function drawRaindropPlot(x, y, w, h, fn, tMax, color, label, tNow, valNow, maxVal){
+  ctx.fillStyle='rgba(8,14,30,.45)'; ctx.fillRect(x,y,w,h);
+  ctx.strokeStyle='rgba(127,224,255,.12)'; ctx.lineWidth=1; ctx.strokeRect(x+0.5,y+0.5,w-1,h-1);
+  ctx.strokeStyle='rgba(146,182,255,.07)';
+  for (var i=0;i<=4;i++){ var gx=x+w*i/4; ctx.beginPath(); ctx.moveTo(gx,y); ctx.lineTo(gx,y+h); ctx.stroke(); }
+  for (var j=0;j<=3;j++){ var gy=y+h*j/3; ctx.beginPath(); ctx.moveTo(x,gy); ctx.lineTo(x+w,gy); ctx.stroke(); }
+  ctx.strokeStyle='rgba(146,182,255,.28)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y+h); ctx.lineTo(x+w,y+h); ctx.stroke();
+  ctx.strokeStyle=color; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  for (var k=0;k<=120;k++){
+    var tt=tMax*k/120, vv=fn(tt);
+    var px=x+(tt/tMax)*w;
+    var py=y+h-(vv/maxVal)*h;
+    if (k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke(); ctx.lineWidth=1;
+  var cx=x+(tNow/tMax)*w;
+  var cy=y+h-(valNow/maxVal)*h;
+  ctx.setLineDash([3,3]); ctx.strokeStyle='rgba(255,210,122,.35)';
+  ctx.beginPath(); ctx.moveTo(cx,y); ctx.lineTo(cx,y+h); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#ffd27a'; ctx.beginPath(); ctx.arc(cx,cy,3.4,0,2*Math.PI); ctx.fill();
+  ctx.fillStyle='#dbe4ff'; ctx.font='11px ui-monospace,monospace'; ctx.fillText(label,x+8,y+16);
+  ctx.fillStyle=color; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='right';
+  ctx.fillText(valNow.toFixed(3),x+w-8,y+16); ctx.textAlign='left';
+  ctx.fillStyle='#8a98c0'; ctx.font='9px ui-monospace,monospace';
+  ctx.fillText('0',x+4,y+h-5); ctx.textAlign='right'; ctx.fillText('t='+tMax,x+w-6,y+h-5); ctx.textAlign='left';
+}
+
+function drawRaindropScene(){
+  var pos=rainDropPos(rain.t);
+  var sx0=W*0.05, sx1=W*0.58, sy0=H*0.14, sy1=H*0.52;
+  var sw=sx1-sx0, sh=sy1-sy0;
+  var pg=ctx.createLinearGradient(sx0,sy0,sx0,sy1);
+  pg.addColorStop(0,'rgba(9,16,34,.55)'); pg.addColorStop(1,'rgba(4,8,18,.55)');
+  ctx.fillStyle=pg; ctx.fillRect(sx0,sy0,sw,sh);
+  ctx.strokeStyle='rgba(127,224,255,.12)'; ctx.lineWidth=1; ctx.strokeRect(sx0+0.5,sy0+0.5,sw-1,sh-1);
+
+  // 透视网格 + 深度雨丝
+  var vx=sx0+sw*0.52, vy=sy0+sh*0.18;
+  ctx.strokeStyle='rgba(127,224,255,.055)';
+  for (var gi=0;gi<=8;gi++){
+    var bx=sx0+sw*gi/8;
+    ctx.beginPath(); ctx.moveTo(vx,vy); ctx.lineTo(bx,sy1); ctx.stroke();
+  }
+  for (var gj=1;gj<=6;gj++){
+    var yy=vy+(sy1-vy)*(gj/6);
+    ctx.beginPath(); ctx.moveTo(sx0,yy); ctx.lineTo(sx1,yy); ctx.stroke();
+  }
+  for (var rs=0;rs<18;rs++){
+    var rx=sx0+sw*(0.08+0.84*((rs*37)%100)/100);
+    var len=14+((rs*53)%40);
+    var ry=sy0+sh*(0.10+0.80*((rs*29)%100)/100);
+    ctx.strokeStyle='rgba(146,182,255,.07)';
+    ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx+3,ry+len); ctx.stroke();
+  }
+
+  // 拖尾：空间长度与线宽随速度增大
+  var tr=rain.trail, n=tr.length;
+  var vmax=Math.max(1e-6, raindropV(rain.tMax,1,0.1,1));
+  ctx.lineCap='round';
+  for (var ti=1;ti<n;ti++){
+    var a=ti/n;
+    ctx.globalAlpha=a*0.58;
+    ctx.strokeStyle='#7fe0ff';
+    ctx.lineWidth=0.8+3.0*a*(pos.v/vmax);
+    ctx.beginPath(); ctx.moveTo(tr[ti-1].x,tr[ti-1].y); ctx.lineTo(tr[ti].x,tr[ti].y); ctx.stroke();
+  }
+  ctx.globalAlpha=1; ctx.lineWidth=1; ctx.lineCap='butt';
+
+  // 球体辉光 + 三维雨滴
+  var dg=ctx.createRadialGradient(pos.x,pos.y,pos.r*0.4,pos.x,pos.y,pos.r*3.0);
+  dg.addColorStop(0,'rgba(127,224,255,.18)'); dg.addColorStop(1,'rgba(127,224,255,0)');
+  ctx.fillStyle=dg; ctx.beginPath(); ctx.arc(pos.x,pos.y,pos.r*3.0,0,2*Math.PI); ctx.fill();
+  drawRaindrop3D(pos.x,pos.y,pos.r);
+
+  ctx.fillStyle='#dbe4ff'; ctx.font='12px ui-monospace,monospace';
+  ctx.fillText('3D 雨滴',sx0+14,sy0+24);
+  ctx.fillStyle='#8a98c0'; ctx.font='10px ui-monospace,monospace';
+  ctx.fillText('t = '+rain.t.toFixed(2),sx0+14,sy0+40);
+  ctx.fillText('v = '+pos.v.toFixed(3),sx0+14,sy0+54);
+  ctx.fillText('s = '+pos.s.toFixed(3),sx0+14,sy0+68);
+  ctx.fillText('拖尾长度 ∝ 速度',sx0+14,sy1-14);
+
+  // 右侧上下两张曲线
+  var px=W*0.63, pw=W*0.33;
+  var spY=H*0.14, spH=H*0.32;
+  var dpY=H*0.60, dpH=H*0.26;
+  drawRaindropPlot(px,spY,pw,spH,function(t){return raindropV(t,1,0.1,1);},rain.tMax,'#7fe0ff','v(t) 速度',rain.t,pos.v,vmax);
+  var smax=Math.max(1e-6,raindropS(rain.tMax,1,0.1,1));
+  drawRaindropPlot(W*0.05,dpY,W*0.90,dpH,function(t){return raindropS(t,1,0.1,1);},rain.tMax,'#ffcf6b','s(t) 位移',rain.t,pos.s,smax);
+}
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
@@ -632,20 +777,7 @@ function draw() {
     ctx.fillStyle = '#8a98c0'; ctx.font = '11px ui-monospace,monospace';
     ctx.fillText('瞄准角 α = ' + P.alpha.toFixed(1) + '°   恢复系数 e = ' + P.e.toFixed(2), W - 250, 104);
   } else {
-    // Raindrop: draw v(t) curve
-    var g = 1, lam = 0.1, r0 = 1;
-    ctx.strokeStyle = '#5ea2ff'; ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    for (var i = 0; i < 200; i++) {
-      var t = i * 0.5;
-      var v = raindropV(t, g, lam, r0);
-      var px = 40 + t * 8;
-      var py = H - 40 - v * 20;
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
-    ctx.fillStyle = '#8a98c0'; ctx.font = '11px ui-monospace,monospace';
-    ctx.fillText('v(t)（雨滴）', 40, 30);
+    drawRaindropScene();
   }
 }
 
@@ -704,6 +836,7 @@ function resetCollision(){
 function stepAnim(){
   if (!animRunning) return;
   var dt = 0.02 * P.speed;
+  if (P.mode === 'raindrop') { stepRain(dt); return; }
   if (col.flash > 0) col.flash = Math.max(0, col.flash - dt * 4);
   if (col.phase === 'contact') {
     if (col.hold < 1e8) col.hold -= dt;
@@ -754,7 +887,7 @@ function updateHUD(){
   hudE.textContent = fmt(P.e, 2);
   hudAlpha.textContent = fmt(P.alpha, 1) + ' deg';
   hudBeta.textContent = fmt(betaDeflection(P.e, P.alpha), 2) + ' deg';
-  hudV.textContent = (P.mode === 'raindrop') ? fmt(raindropV(10, 1, 0.1, 1), 3) : fmt(P.e, 2);
+  hudV.textContent = (P.mode === 'raindrop') ? fmt(raindropV(rain.t, 1, 0.1, 1), 3) : fmt(P.e, 2);
   var MODE_CN={collision:'碰撞',raindrop:'变质量雨滴'};
   hudState.textContent = MODE_CN[P.mode] || P.mode;
 }
@@ -763,7 +896,7 @@ function updateHUD(){
 function bindControls() {
   var modeSel = $('sel-mode');
   modeSel.value = P.mode;
-  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; resetCollision(); syncURL(); });
+  modeSel.addEventListener('change', function(){ P.mode = modeSel.value; resetCollision(); if (P.mode === 'raindrop') resetRain(); syncURL(); updateHUD(); });
   function bindSlider(id, key, valId, fmtFn) {
     var sl = $(id), vl = $(valId);
     sl.value = P[key]; vl.textContent = fmtFn(P[key]);
@@ -772,8 +905,11 @@ function bindControls() {
   bindSlider('param-e', 'e', 'val-e', function(v){ return v.toFixed(2); });
   bindSlider('param-alpha', 'alpha', 'val-alpha', function(v){ return v.toFixed(1); });
   bindSlider('param-speed', 'speed', 'val-speed', function(v){ return v.toFixed(2); });
-  $('btn-pause').addEventListener('click', function(){});
-  $('btn-reset').addEventListener('click', function(){ P.e = DEFAULTS.e; P.alpha = DEFAULTS.alpha; syncSliders(); syncURL(); resetCollision(); });
+  $('btn-pause').addEventListener('click', function(){
+    animRunning = !animRunning;
+    this.textContent = animRunning ? '暂停' : '继续';
+  });
+  $('btn-reset').addEventListener('click', function(){ P.e = DEFAULTS.e; P.alpha = DEFAULTS.alpha; syncSliders(); syncURL(); resetCollision(); if (P.mode === 'raindrop') resetRain(); });
 }
 function syncSliders() {
   $('param-e').value = P.e; $('val-e').textContent = P.e.toFixed(2);
