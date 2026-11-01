@@ -31,6 +31,7 @@
 ## 2. 最近提交
 
 ```text
+249e7b3 feat(manuscripts): add handwritten-note OCR versions to chapters 1-3
 c64f428 feat(M9-M11): visualize the Lagrangian problems from assignment 8
 a7f526e refactor: move hydrogen out of the theoretical-mechanics site
 8236aaa docs: update handoff for the hydrogen topic, webp textures and new structure
@@ -151,6 +152,22 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 - 每页都有 `?selftest=1` 硬断言；`?scene=...` 可直接打开指定场景（M10/M11）。
 - 三份 `note.tex` 由 `tools/build_note.sh` 编译；`qa/numeric_check.py` 给出数值证据。
 
+### 手写手稿 OCR（章节资源）
+
+四份扫描手稿已转写为 LaTeX/PDF，并作为章节资源挂到对应章节：
+
+| 章节 | 文件 | 内容 |
+|---|---|---|
+| 第 1 章 | `chapters/01-particle/manuscripts/hw1-chapter1-ocr.pdf` | 作业一·第一章 26 页，28 页排版；图已用 TikZ 重绘；第 2 题速度公式已修正 |
+| 第 1 章 | `chapters/01-particle/manuscripts/intro-chapter1-ocr.pdf` | 绪论与第一章笔记 49 页，74 页排版；手绘图按原页裁剪 |
+| 第 2 章 | `chapters/02-system/manuscripts/chapter2-notes-ocr.pdf` | 第二章 质点系力学笔记 60 页，76 页排版；手绘图按原页裁剪 |
+| 第 3 章 | `chapters/03-variational/manuscripts/variational-ocr.pdf` | 变分原理笔记 27 页，28 页排版 |
+
+- OCR 流程：`/home/wck/Desktop/incoming/ocr/`（不在仓库），Doubao-Seed-2.0-mini 视觉模型；每页缓存可续跑。
+- 公式、编号按原页保留；无法辨认处保留 `[?]`。
+- **注意**：除作业一第 2 题外，其余属于 OCR 初稿，未做逐题物理审校；引用前需人工复核。
+- 章节页的卡片只链接 PDF，不改变原有模块结构。
+
 ## 6. 运行与部署
 
 ### 本地服务
@@ -252,6 +269,7 @@ python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html mod
 
 - `index.html`：首页、七章星图、行星纹理、太阳、缩放、拖动、星空。
 - `chapters/01-particle/index.html` … `chapters/07-hamiltonian/index.html`：七章总览。
+- `chapters/0{1,2,3}-*/manuscripts/`：四份手写手稿的 OCR PDF。
 - `modules/00-binet` … `modules/08-kinematics`：M0–M8 子模块。
 - `modules/09-atwood-pulley`：M9 有转动惯量的 Atwood 机（作业-8 Q1）。
 - `modules/10-coupled-systems`：M10 斜面滑块 + 弹簧摆 + 小车单摆（作业-8 Q3/Q4/Q5）。
