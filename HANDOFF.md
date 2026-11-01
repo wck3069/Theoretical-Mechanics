@@ -167,7 +167,8 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 - OCR 流程：`/home/wck/Desktop/incoming/ocr/`（不在仓库），Doubao-Seed-2.0-mini 视觉模型；每页缓存可续跑。
 - 公式、编号按原页保留；无法辨认处保留 `[?]`。
 - **物理修正**：作业一手稿已逐题检查并修正 9 处（速度公式、E×B 解、单摆展开、圆柱能量、2πω、径向符号、彗星因子、r⁻³ 扰动等），详见 `chapters/01-particle/manuscripts/CORRECTIONS.md`。
-- 其余三份课堂笔记仍属 OCR 初稿，未逐式物理审校；引用前需人工复核。
+- 变分原理手稿已修正 4 处（Snell 定律、摆线参数方程、悬链线分离变量与 cosh/tanh），详见 `chapters/03-variational/manuscripts/CORRECTIONS.md`。
+- 第 2 章笔记、绪论笔记仍属 OCR 初稿，未逐式物理审校；引用前需人工复核。
 - 章节页的卡片只链接 PDF，不改变原有模块结构。
 
 ### 章册（第 1–3 章）
