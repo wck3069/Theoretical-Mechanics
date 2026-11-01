@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>氢原子 · 薛定谔方程的解 · 交互演示</title>
+<title>氢原子 · 电子云与径向波函数 · 交互演示</title>
 <style>
   :root{
     --bg:#03050c; --panel:rgba(9,14,30,.74); --line:rgba(146,182,255,.14);
@@ -69,6 +69,36 @@
   a.doc:hover{text-decoration:underline}
   #notice{position:absolute;z-index:3;top:16px;right:16px;max-width:60%;padding:8px 12px;border-radius:9px;
     background:rgba(60,10,16,.9);border:1px solid #a33;color:#ffd7d7;font-size:12px}
+  /* —— 径向波函数全屏面板 —— */
+  .radial-sheet{position:fixed;inset:0;z-index:80;display:none;flex-direction:column;
+    padding:14px 20px 12px;background:rgba(3,5,12,.95);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  .radial-sheet.open{display:flex}
+  .radial-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+  .radial-head h2{margin:0;font-size:15px;font-weight:650;letter-spacing:.02em}
+  .radial-head h2 .num{color:var(--accent2);font-family:ui-monospace,monospace;font-size:12px}
+  .radial-head .sp{flex:1;min-width:8px}
+  .radial-note{font-size:11px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}
+  .radial-note b{color:var(--text);font-weight:600}
+  .radial-close{font-size:12px;padding:6px 12px}
+  .radial-wrap{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 210px;gap:10px}
+  .radial-card{display:flex;flex-direction:column;min-height:0;padding:9px 11px 8px;border:1px solid var(--line);
+    border-radius:11px;background:rgba(9,14,30,.6)}
+  .radial-card.sel{border-color:rgba(255,210,122,.55);box-shadow:0 0 0 1px rgba(255,210,122,.16),0 0 24px rgba(255,210,122,.09)}
+  .radial-card h3{margin:0 0 2px;font-size:12px;font-weight:600;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+  .radial-card h3 em{font-style:normal;color:var(--accent2);font-family:ui-monospace,monospace;font-size:11px;white-space:nowrap}
+  .radial-card .read{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);min-height:15px;font-variant-numeric:tabular-nums}
+  .rlegend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:0 0 2px}
+  .rlegend span{display:inline-flex;align-items:center;gap:5px}
+  .rlegend i{width:13px;height:2px;border-radius:2px;display:inline-block}
+  .radial-card canvas{flex:1;min-height:96px;width:100%;display:block;touch-action:none;cursor:crosshair}
+  .energy-card canvas{cursor:pointer}
+  .radial-foot{margin-top:8px;font-size:11px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+  .radial-foot b{color:var(--text);font-weight:600}
+  @media (max-width:1100px){
+    .radial-wrap{grid-template-columns:repeat(2,minmax(0,1fr));overflow:auto}
+    .energy-card{grid-column:span 2;min-height:190px}
+  }
   @media (max-width:820px){
     .app{flex-direction:column}
     .stage{height:56vh}
@@ -76,6 +106,14 @@
     .brand{left:14px;top:12px;max-width:calc(100% - 28px)}
     .brand h1{font-size:18px}
     .hud{left:14px;bottom:10px;gap:10px;font-size:11px}
+    .radial-sheet{padding:10px 10px 8px}
+    .radial-head{gap:8px;margin-bottom:8px}
+    .radial-head h2{font-size:13px}
+    .radial-note{display:none}
+    .radial-wrap{grid-template-columns:1fr}
+    .radial-card{min-height:210px}
+    .energy-card{grid-column:auto;min-height:170px}
+    .radial-foot{font-size:11px;gap:8px}
   }
   sub{font-size:11px;line-height:0;vertical-align:sub}
   sup{font-size:11px;line-height:0;vertical-align:super}
@@ -465,15 +503,16 @@ window.TMART = (function () {
   <div class="stage">
     <canvas id="stage-canvas"></canvas>
     <div class="brand">
-      <h1>氢原子 · 薛定谔方程的解</h1>
+      <h1>氢原子 · 电子云与径向波函数</h1>
       <p>ψ<sub>nlm</sub>(r,θ,φ) = R<sub>nl</sub>(r) · Y<sub>lm</sub>(θ,φ)</p>
-      <p class="intro">电子云不是一条轨道，而是 |ψ|² 的概率分布。调 n、l、m，看节面、瓣数与形状；同 n 或不同 n 的轨道可以叠加。拖动旋转，滚轮/双指缩放。</p>
+      <p class="intro">电子云不是一条轨道，而是 |ψ|² 的概率分布。调 n、l、m，看节面、瓣数与形状；同 n 或不同 n 的轨道可以叠加。拖动旋转，滚轮/双指缩放；点「径向波函数」看 R<sub>nl</sub>(r) 与能级。</p>
     </div>
     <div class="hud">
       <span>轨道 <b id="hudName">1s</b></span>
       <span>n <b id="hudN">1</b></span>
       <span>l <b id="hudL">0</b></span>
       <span>m <b id="hudM">0</b></span>
+      <span>能级 <b id="hudE">−13.60 eV</b></span>
       <span>径向节点 <b id="hudRN">0</b></span>
       <span>角节点 <b id="hudAN">0</b></span>
       <span>叠加 <b id="hudCount">1</b></span>
@@ -507,6 +546,9 @@ window.TMART = (function () {
       <button id="btn-cloud" class="mode-btn active">透明立体</button>
       <button id="btn-dots" class="mode-btn">点状图</button>
     </div>
+    <div class="btns one">
+      <button id="btn-radial">径向波函数与能级</button>
+    </div>
     <div class="group">
       <div class="row"><label for="param-density">点状图上限</label><span class="val" id="val-density">4000 / 轨道</span></div>
       <input id="param-density" type="range" min="500" max="8000" step="500" value="4000">
@@ -520,10 +562,56 @@ window.TMART = (function () {
       <button id="btn-reset">重置视角</button>
     </div>
     <div class="orb-list" id="orbList"></div>
-    <div class="tag">n 决定主色（1 青 / 2 金 / 3 紫）；l 改变主色色相，m 再微调。所有 nlm 都可叠加，颜色区分轨道。</div>
-    <a class="doc" href="../../index.html">← 返回星图</a>
+    <div class="tag">n 决定主色（1 青 / 2 金 / 3 紫）；l 改变主色色相，m 再微调。所有 nlm 都可叠加，颜色区分轨道。径向图里同一 (n,l) 用同一颜色。</div>
+    <a class="doc" href="index.html">← 氢原子导读</a>
+    <a class="doc" href="../index.html">✦ 星图</a>
   </aside>
 </div>
+
+<div class="radial-sheet" id="radialSheet" role="dialog" aria-modal="true" aria-labelledby="radialTitle" aria-hidden="true">
+  <div class="radial-head">
+    <h2 id="radialTitle">径向波函数 R<sub>nl</sub>(r) <span class="num">a₀ = 1</span></h2>
+    <div class="radial-note">
+      <span><b>粗线</b> = 当前 (n,l)</span>
+      <span>空心圆 = 径向节点</span>
+      <span>颜色与 3D 轨道一致</span>
+    </div>
+    <div class="sp"></div>
+    <button type="button" class="radial-close" id="radialClose">关闭 ×</button>
+  </div>
+  <div class="radial-wrap" id="radialWrap">
+    <div class="radial-card" data-n="1">
+      <h3>n = 1 <em>E = −13.60 eV</em></h3>
+      <div class="rlegend" data-legend="1"></div>
+      <div class="read" data-read="1">—</div>
+      <canvas data-radial="1" aria-label="n=1 径向波函数"></canvas>
+    </div>
+    <div class="radial-card" data-n="2">
+      <h3>n = 2 <em>E = −3.40 eV</em></h3>
+      <div class="rlegend" data-legend="2"></div>
+      <div class="read" data-read="2">—</div>
+      <canvas data-radial="2" aria-label="n=2 径向波函数"></canvas>
+    </div>
+    <div class="radial-card" data-n="3">
+      <h3>n = 3 <em>E = −1.51 eV</em></h3>
+      <div class="rlegend" data-legend="3"></div>
+      <div class="read" data-read="3">—</div>
+      <canvas data-radial="3" aria-label="n=3 径向波函数"></canvas>
+    </div>
+    <div class="radial-card energy-card" data-n="energy">
+      <h3><span>能级 E<sub>n</sub></span> <em>eV</em></h3>
+      <div class="read">点击能级选择 n</div>
+      <canvas id="energyCanvas" aria-label="氢原子能级阶梯"></canvas>
+    </div>
+  </div>
+  <div class="radial-foot">
+    <span>横轴 r/a₀，纵轴 R<sub>nl</sub>(r)；每条曲线零点即径向节点，共 n−l−1 个</span>
+    <span>点击曲线选择 (n,l)，再点「叠加到图像」</span>
+    <span id="radialNow">当前 1s</span>
+  </div>
+</div>
+<div id="selftestPanel" hidden></div>
+
 <script>
 'use strict';
 (function () {
@@ -957,6 +1045,11 @@ window.TMART = (function () {
     $('hudAN').textContent = l;
     $('hudCount').textContent = orbitals.length;
     $('hudPts').textContent = (mode === 'dots') ? (pts + ' / ' + target) : (pts + ' 面片');
+    var E = energyOf(n);
+    $('hudE').textContent = E.toFixed(2).replace('-', '\u2212') + ' eV';
+    if (radialOpen && $('radialNow')) {
+      $('radialNow').textContent = '当前 ' + orbName(n, l, m) + ' · E = ' + E.toFixed(2).replace('-', '\u2212') + ' eV';
+    }
   }
 
   function setMode(md) {
@@ -1012,81 +1105,359 @@ window.TMART = (function () {
     $('val-speed').textContent = speed.toFixed(2);
   });
 
+  // ---------- 径向波函数 · 多子图 ----------
+  var RADIAL_XMAX = {};
+  var XMAX_NICE = [6, 8, 10, 12, 16, 20, 24, 28, 32, 40, 48];
+  var radialSheet = $('radialSheet');
+  var energyCanvas = $('energyCanvas');
+  var radialOpen = false;
+
+  function energyOf(n) { return -13.6 / (n * n); }
+  function fmtE(v) { return v.toFixed(2).replace('-', '\u2212'); }
+
+  // 在 (0, xmax) 内找 R_nl 的零点（径向节点），二分法细化
+  // 跳过恰好落在节点上的零样本，用“最后一个非零符号”判翻转，
+  // 否则 root 正好被采样到 0 时会被漏掉（如 R_3_1 的 r=6）。
+  function radialRoots(n, l, xmax) {
+    var roots = [], lastSign = 0, lastR = 0;
+    for (var i = 1; i <= 1000; i++) {
+      var r = xmax * i / 1000, v = radial(n, l, r);
+      if (Math.abs(v) <= 1e-13) continue;
+      var s = v > 0 ? 1 : -1;
+      if (lastSign !== 0 && s !== lastSign) {
+        var a = lastR, b = r;
+        for (var k = 0; k < 40; k++) {
+          var mid = (a + b) / 2, vm = radial(n, l, mid);
+          if (Math.abs(vm) <= 1e-15) { a = b = mid; break; }
+          if ((vm > 0 ? 1 : -1) === lastSign) a = mid; else b = mid;
+        }
+        var root = (a + b) / 2;
+        if (root > 1e-3 && root < xmax - 1e-3) roots.push(root);
+      }
+      lastSign = s; lastR = r;
+    }
+    return roots;
+  }
+
+  function fitCanvas(canvas) {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(80, Math.floor(rect.width));
+    var h = Math.max(50, Math.floor(rect.height));
+    var pw = Math.floor(w * dpr), ph = Math.floor(h * dpr);
+    if (canvas.width !== pw || canvas.height !== ph) { canvas.width = pw; canvas.height = ph; }
+    var g = canvas.getContext('2d');
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return {g: g, w: w, h: h};
+  }
+
+  // 横轴自适应：找到所有 l 的 |R| 都衰减到峰值 1% 以下的外缘，再取整齐刻度
+  function radialXMax(n) {
+    if (RADIAL_XMAX[n]) return RADIAL_XMAX[n];
+    var peak = 0, last = 0, l, i, r, v;
+    for (l = 0; l < n; l++) {
+      for (i = 0; i <= 400; i++) {
+        v = Math.abs(radial(n, l, 80 * i / 400));
+        if (v > peak) peak = v;
+      }
+    }
+    var thr = peak * 0.01;
+    for (l = 0; l < n; l++) {
+      for (i = 1; i <= 800; i++) {
+        r = 80 * i / 800;
+        if (Math.abs(radial(n, l, r)) >= thr && r > last) last = r;
+      }
+    }
+    var need = Math.max(last * 1.06, 4 * n);
+    var pick = XMAX_NICE[XMAX_NICE.length - 1];
+    for (i = 0; i < XMAX_NICE.length; i++) {
+      if (XMAX_NICE[i] >= need) { pick = XMAX_NICE[i]; break; }
+    }
+    RADIAL_XMAX[n] = pick;
+    return pick;
+  }
+
+  // 坐标映射：横轴 r/a0，纵轴按该 n 下所有 l 的 |R| 峰值对称展开
+  function radialGeom(n, w, h) {
+    var padL = 34, padR = 14, padT = 10, padB = 22;
+    var iw = Math.max(20, w - padL - padR);
+    var ih = Math.max(20, h - padT - padB);
+    var xmax = radialXMax(n), ymax = 0;
+    for (var l = 0; l < n; l++) {
+      for (var i = 0; i <= 200; i++) {
+        var v = Math.abs(radial(n, l, xmax * i / 200));
+        if (v > ymax) ymax = v;
+      }
+    }
+    ymax = ymax > 0 ? ymax * 1.14 : 1;
+    return {
+      padL: padL, padR: padR, padT: padT, padB: padB,
+      iw: iw, ih: ih, xmax: xmax, ymax: ymax,
+      X: function (r) { return padL + r / xmax * iw; },
+      Y: function (v) { return padT + (ymax - v) / (2 * ymax) * ih; }
+    };
+  }
+
+  function drawRadialCard(n) {
+    var card = document.querySelector('.radial-card[data-n="' + n + '"]');
+    if (!card) return;
+    var canvas = card.querySelector('canvas[data-radial]');
+    if (!canvas) return;
+    var fit = fitCanvas(canvas), g = fit.g, w = fit.w, h = fit.h;
+    var geo = radialGeom(n, w, h);
+    var selN = parseInt($('sel-n').value, 10);
+    var selL = parseInt($('sel-l').value, 10);
+    card.classList.toggle('sel', selN === n);
+
+    g.clearRect(0, 0, w, h);
+
+    // 轴与网格
+    g.strokeStyle = 'rgba(146,182,255,.16)'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(geo.padL, geo.Y(0)); g.lineTo(geo.padL + geo.iw, geo.Y(0)); g.stroke();
+    g.strokeStyle = 'rgba(146,182,255,.10)';
+    g.beginPath(); g.moveTo(geo.padL, geo.padT); g.lineTo(geo.padL, geo.padT + geo.ih); g.stroke();
+    g.fillStyle = 'rgba(146,182,255,.6)'; g.font = '10px ui-monospace,monospace';
+    g.textAlign = 'left'; g.textBaseline = 'middle';
+    g.fillText('R', 6, geo.padT + 5);
+    g.textAlign = 'right'; g.fillText('0', geo.padL - 6, geo.Y(0));
+    g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    g.fillText('0', geo.X(0), h - 7);
+    g.fillText((geo.xmax / 2).toFixed(0), geo.X(geo.xmax / 2), h - 7);
+    g.fillText(geo.xmax + ' a\u2080', geo.X(geo.xmax), h - 7);
+
+    // 曲线 + 节点
+    for (var l = 0; l < n; l++) {
+      var color = orbColor(n, l, 0);
+      var on = (selN === n && selL === l);
+      g.strokeStyle = color;
+      g.lineWidth = on ? 2.8 : 1.5;
+      g.shadowColor = color;
+      g.shadowBlur = on ? 12 : 0;
+      g.beginPath();
+      var steps = 240;
+      for (var i = 0; i <= steps; i++) {
+        var r = geo.xmax * i / steps;
+        var x = geo.X(r), y = geo.Y(radial(n, l, r));
+        if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+      }
+      g.stroke();
+      g.shadowBlur = 0;
+      var roots = radialRoots(n, l, geo.xmax);
+      for (var k = 0; k < roots.length; k++) {
+        g.beginPath(); g.arc(geo.X(roots[k]), geo.Y(0), 3.1, 0, Math.PI * 2);
+        g.fillStyle = 'rgba(3,5,12,1)'; g.fill();
+        g.strokeStyle = color; g.lineWidth = 1.4; g.stroke();
+      }
+    }
+
+    var em = card.querySelector('h3 em');
+    if (em) em.textContent = 'E = ' + fmtE(energyOf(n)) + ' eV';
+  }
+
+  function drawEnergy() {
+    if (!energyCanvas) return;
+    var fit = fitCanvas(energyCanvas), g = fit.g, w = fit.w, h = fit.h;
+    var padL = 40, padR = 10, padT = 14, padB = 16;
+    var iw = Math.max(20, w - padL - padR), ih = Math.max(20, h - padT - padB);
+    var emin = -14.6, emax = 1.6;
+    function Y(E) { return padT + (emax - E) / (emax - emin) * ih; }
+    var selN = parseInt($('sel-n').value, 10);
+
+    g.clearRect(0, 0, w, h);
+    g.fillStyle = 'rgba(127,224,255,.055)';
+    g.fillRect(padL, padT, iw, Math.max(0, Y(0) - padT));
+    g.strokeStyle = 'rgba(146,182,255,.35)'; g.setLineDash([4, 4]); g.lineWidth = 1;
+    g.beginPath(); g.moveTo(padL, Y(0)); g.lineTo(padL + iw, Y(0)); g.stroke();
+    g.setLineDash([]);
+    g.fillStyle = 'rgba(146,182,255,.75)'; g.font = '10px ui-monospace,monospace';
+    g.textAlign = 'left'; g.textBaseline = 'bottom';
+    g.fillText('0 eV · 电离', padL + 2, Y(0) - 2);
+
+    for (var n = 1; n <= 3; n++) {
+      var E = energyOf(n), y = Y(E), color = orbColor(n, 0, 0);
+      var on = (n === selN);
+      g.strokeStyle = color; g.lineWidth = on ? 3 : 1.6;
+      g.shadowColor = color; g.shadowBlur = on ? 10 : 0;
+      g.beginPath(); g.moveTo(padL, y); g.lineTo(padL + iw, y); g.stroke();
+      g.shadowBlur = 0;
+      g.fillStyle = color; g.textBaseline = 'middle'; g.textAlign = 'left';
+      g.font = (on ? '600 ' : '') + '10.5px ui-monospace,monospace';
+      g.fillText('n=' + n, 2, y);
+      g.textAlign = 'right';
+      g.fillText(fmtE(E) + ' eV', padL + iw, y - 9);
+    }
+  }
+
+  function drawRadialAll() {
+    for (var n = 1; n <= 3; n++) drawRadialCard(n);
+    drawEnergy();
+    var n0 = parseInt($('sel-n').value, 10);
+    var l0 = parseInt($('sel-l').value, 10);
+    var m0 = parseInt($('sel-m').value, 10);
+    if ($('radialNow')) {
+      $('radialNow').textContent = '当前 ' + orbName(n0, l0, m0) + ' · E = ' + fmtE(energyOf(n0)) + ' eV';
+    }
+  }
+
+  function selectOrbital(n, l) {
+    $('sel-n').value = String(n);
+    syncSelectors();
+    $('sel-l').value = String(clamp(l, 0, n - 1));
+    syncM();
+    $('sel-m').value = '0';
+    drawRadialAll();
+    updateHUD();
+  }
+
+  function openRadial() {
+    radialOpen = true;
+    radialSheet.classList.add('open');
+    radialSheet.setAttribute('aria-hidden', 'false');
+    drawRadialAll();
+    try { $('radialClose').focus({preventScroll: true}); } catch (e) {}
+  }
+  function closeRadial() {
+    radialOpen = false;
+    radialSheet.classList.remove('open');
+    radialSheet.setAttribute('aria-hidden', 'true');
+    try { $('btn-radial').focus({preventScroll: true}); } catch (e) {}
+  }
+
+  (function buildLegends() {
+    for (var n = 1; n <= 3; n++) {
+      var box = document.querySelector('.rlegend[data-legend="' + n + '"]');
+      if (!box) continue;
+      for (var l = 0; l < n; l++) {
+        var item = document.createElement('span');
+        var sw = document.createElement('i');
+        sw.style.background = orbColor(n, l, 0);
+        item.appendChild(sw);
+        item.appendChild(document.createTextNode('l=' + l + ' ' + ['s', 'p', 'd'][l]));
+        box.appendChild(item);
+      }
+    }
+  })();
+
+  (function bindRadial() {
+    for (var n = 1; n <= 3; n++) {
+      (function (nn) {
+        var card = document.querySelector('.radial-card[data-n="' + nn + '"]');
+        if (!card) return;
+        var canvas = card.querySelector('canvas[data-radial]');
+        var read = card.querySelector('[data-read]');
+        function local(e) {
+          var rect = canvas.getBoundingClientRect();
+          return {x: e.clientX - rect.left, y: e.clientY - rect.top, w: rect.width, h: rect.height};
+        }
+        canvas.addEventListener('pointermove', function (e) {
+          var p = local(e);
+          var geo = radialGeom(nn, p.w, p.h);
+          var r = (p.x - geo.padL) / geo.iw * geo.xmax;
+          if (!read) return;
+          if (r < 0 || r > geo.xmax) { read.textContent = '\u2014'; return; }
+          var l = parseInt($('sel-l').value, 10);
+          if (!(l >= 0 && l < nn)) l = 0;
+          read.textContent = 'r=' + r.toFixed(2) + ' a\u2080 \u00b7 R=' + radial(nn, l, r).toFixed(3);
+        });
+        canvas.addEventListener('pointerleave', function () { if (read) read.textContent = '\u2014'; });
+        canvas.addEventListener('click', function (e) {
+          var p = local(e);
+          var geo = radialGeom(nn, p.w, p.h);
+          var r = clamp((p.x - geo.padL) / geo.iw * geo.xmax, 0, geo.xmax);
+          var best = 0, bestD = Infinity;
+          for (var l = 0; l < nn; l++) {
+            var d = Math.abs(geo.Y(radial(nn, l, r)) - p.y);
+            if (d < bestD) { bestD = d; best = l; }
+          }
+          selectOrbital(nn, best);
+        });
+      })(n);
+    }
+    if (energyCanvas) {
+      energyCanvas.addEventListener('click', function (e) {
+        var rect = energyCanvas.getBoundingClientRect();
+        var padT = 14, padB = 16, ih = Math.max(20, rect.height - padT - padB);
+        var emin = -14.6, emax = 1.6;
+        var E = emax - (e.clientY - rect.top - padT) / ih * (emax - emin);
+        var best = 1, bestD = Infinity;
+        for (var n = 1; n <= 3; n++) {
+          var d = Math.abs(energyOf(n) - E);
+          if (d < bestD) { bestD = d; best = n; }
+        }
+        selectOrbital(best, 0);
+      });
+    }
+    $('btn-radial').addEventListener('click', openRadial);
+    $('radialClose').addEventListener('click', closeRadial);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && radialOpen) closeRadial();
+    });
+    window.addEventListener('resize', function () { if (radialOpen) drawRadialAll(); });
+  })();
+
+  // ---------- 数值自检：归一化与节点数 ----------
+  function radialRootCount(n, l, rmax, steps) {
+    var count = 0, lastSign = 0;
+    for (var i = 1; i <= steps; i++) {
+      var v = radial(n, l, rmax * i / steps);
+      if (Math.abs(v) <= 1e-14) continue;  // 节点上的零样本：等下一次非零样本判符号
+      var s = v > 0 ? 1 : -1;
+      if (lastSign !== 0 && s !== lastSign) count++;
+      lastSign = s;
+    }
+    return count;
+  }
+  function runSelftest() {
+    if (!/[?&]selftest=1(?:&|$)/.test(location.search)) return;
+    var panel = $('selftestPanel');
+    if (!panel) return;
+    var lines = [], fails = 0;
+    function chk(name, ok, detail) {
+      if (!ok) fails++;
+      lines.push((ok ? 'PASS' : 'FAIL') + '  ' + name + (detail ? '  ' + detail : ''));
+    }
+    for (var n = 1; n <= 3; n++) {
+      for (var l = 0; l < n; l++) {
+        var N = 8000, rmax = 120, sum = 0, prev = 0;
+        for (var i = 1; i <= N; i++) {
+          var r = rmax * i / N, R = radial(n, l, r), f = r * r * R * R;
+          sum += (i === 1 ? f : (prev + f) / 2) * (rmax / N);
+          prev = f;
+        }
+        chk('R_' + n + '_' + l + ' normalization', Math.abs(sum - 1) < 2e-3, 'integral=' + sum.toFixed(5));
+        var nodes = radialRootCount(n, l, rmax, 20000);
+        chk('R_' + n + '_' + l + ' radial nodes', nodes === n - l - 1, 'nodes=' + nodes + ' expect=' + (n - l - 1));
+      }
+    }
+    chk('R_1_0(0)=2', Math.abs(radial(1, 0, 0) - 2) < 1e-9, 'R(0)=' + radial(1, 0, 0));
+    panel.textContent = lines.join('\n') + '\n-- ' + (fails === 0 ? 'ALL PASS' : fails + ' FAIL');
+    panel.hidden = false;
+  }
+
   resize();
   syncSelectors();
   addOrbital();
+  runSelftest();
+  if (!/[?&]selftest=1/.test(location.search) && /[?&]radial=1/.test(location.search)) {
+    setTimeout(openRadial, 80);
+  }
   requestAnimationFrame(frame);
 })();
 </script>
 <!-- TM-THEME-BODY:START -->
 <canvas class="tm-stars" aria-hidden="true"></canvas>
-<nav class="tm-orbit-nav" aria-label="章节导航">
-  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
-  <a data-tm-nav="prev" href="#">‹ 上一章</a>
-  <a data-tm-nav="next" href="#">下一章 ›</a>
-  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+<nav class="tm-orbit-nav" aria-label="专题导航">
+  <a href="../index.html">✦ 星图</a>
+  <a href="index.html">‹ 专题导读</a>
+  <a href="../chapters/07-hamiltonian/index.html">哈密顿 ›</a>
+  <a href="../index.html?ask=1">问星</a>
 </nav>
 <script id="tm-theme-js">
 (function () {
   'use strict';
-  var CHAPTERS = [
-    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
-    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
-    '08-kinematics', '09-hydrogen'
-  ];
-
-  function currentFolder() {
-    var path = location.pathname || '';
-    var parts = path.split('/');
-    var last = '';
-    for (var i = parts.length - 1; i >= 0; i--) {
-      if (parts[i]) { last = parts[i]; break; }
-    }
-    var folder = last;
-    if (folder === 'index.html') {
-      folder = '';
-      for (var j = parts.length - 1; j >= 0; j--) {
-        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
-      }
-    }
-    return folder;
-  }
-
-  var folder = currentFolder();
-  var idx = -1;
-  for (var i = 0; i < CHAPTERS.length; i++) {
-    if (CHAPTERS[i] === folder) { idx = i; break; }
-  }
-  if (idx < 0) {
-    var n = parseInt(folder, 10);
-    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
-  }
-  if (idx < 0) idx = 0;
-
   var nav = document.querySelector('.tm-orbit-nav');
   var stage = document.querySelector('.stage');
   if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
-  function setLink(key, href, text) {
-    if (!nav) return;
-    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
-    if (!a) return;
-    if (href !== null) a.setAttribute('href', href);
-    if (text !== null) a.textContent = text;
-  }
-  var base = '../../';
-  setLink('index', base + 'index.html', null);
-  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
-  if (idx > 0) {
-    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
-  } else {
-    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
-    if (prevA) prevA.style.display = 'none';
-  }
-  if (idx < CHAPTERS.length - 1) {
-    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
-  } else {
-    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
-  }
 
   var canvas = document.querySelector('.tm-stars');
   if (!canvas) return;
