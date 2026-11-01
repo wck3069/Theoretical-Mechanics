@@ -31,6 +31,7 @@
 ## 2. 最近提交
 
 ```text
+1cac9e8 feat(chapters): add printable chapter books with cover, TOC and bookmarks
 249e7b3 feat(manuscripts): add handwritten-note OCR versions to chapters 1-3
 c64f428 feat(M9-M11): visualize the Lagrangian problems from assignment 8
 a7f526e refactor: move hydrogen out of the theoretical-mechanics site
@@ -168,6 +169,20 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 - **注意**：除作业一第 2 题外，其余属于 OCR 初稿，未做逐题物理审校；引用前需人工复核。
 - 章节页的卡片只链接 PDF，不改变原有模块结构。
 
+### 章册（第 1–3 章）
+
+第 1–3 章各有一本「章册」PDF，作为章节页的第一入口：
+
+| 章 | 文件 | 页数 | 组成 |
+|---|---|---|---|
+| 第 1 章 | `chapters/01-particle/manuscripts/chapter-01-book.pdf` | 126 | M0 + M1 + M2 + 作业一手稿 + 绪论手稿 |
+| 第 2 章 | `chapters/02-system/manuscripts/chapter-02-book.pdf` | 90 | M3 + M6 + 第二章手稿 |
+| 第 3 章 | `chapters/03-variational/manuscripts/chapter-03-book.pdf` | 36 | M4 + 变分原理手稿 |
+
+- 每本含封面、目录（真实起始页）、PDF 书签；
+- 用 PyMuPDF (`fitz`) 合并并写入 TOC，封面由 ctexart 生成；
+- 章节页新增 `CHAPTER BOOK · PDF` 卡片，位于模块卡片之前。
+
 ## 6. 运行与部署
 
 ### 本地服务
@@ -269,7 +284,7 @@ python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html mod
 
 - `index.html`：首页、七章星图、行星纹理、太阳、缩放、拖动、星空。
 - `chapters/01-particle/index.html` … `chapters/07-hamiltonian/index.html`：七章总览。
-- `chapters/0{1,2,3}-*/manuscripts/`：四份手写手稿的 OCR PDF。
+- `chapters/0{1,2,3}-*/manuscripts/`：四份手写手稿的 OCR PDF 与三本章册。
 - `modules/00-binet` … `modules/08-kinematics`：M0–M8 子模块。
 - `modules/09-atwood-pulley`：M9 有转动惯量的 Atwood 机（作业-8 Q1）。
 - `modules/10-coupled-systems`：M10 斜面滑块 + 弹簧摆 + 小车单摆（作业-8 Q3/Q4/Q5）。
