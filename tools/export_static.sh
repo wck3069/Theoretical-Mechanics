@@ -7,7 +7,6 @@ mkdir -p "$OUT"
 cp "$ROOT/index.html" "$ROOT/catalog.html" "$OUT/"
 cp -r "$ROOT/modules" "$OUT/modules"
 cp -r "$ROOT/chapters" "$OUT/chapters"
-cp -r "$ROOT/hydrogen" "$OUT/hydrogen"
 mkdir -p "$OUT/assets"
 cp -r "$ROOT/assets/textures" "$OUT/assets/textures"
 find "$OUT/modules" -type d -name qa -prune -exec rm -rf {} + 2>/dev/null || true

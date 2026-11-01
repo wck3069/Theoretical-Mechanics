@@ -50,9 +50,8 @@ def run_one(path: Path) -> tuple[int, int, str]:
 
 
 def main(argv: list[str]) -> int:
-    targets = [Path(a).resolve() for a in argv] or (
-        sorted(ROOT.glob("modules/*/index.html")) +
-        [ROOT / "hydrogen" / "sim.html"])
+    targets = [Path(a).resolve() for a in argv] or sorted(
+        ROOT.glob("modules/*/index.html"))
     if not targets:
         print("没有找到模块")
         return 2
