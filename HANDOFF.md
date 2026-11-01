@@ -168,7 +168,8 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 - 公式、编号按原页保留；无法辨认处保留 `[?]`。
 - **物理修正**：作业一手稿已逐题检查并修正 9 处（速度公式、E×B 解、单摆展开、圆柱能量、2πω、径向符号、彗星因子、r⁻³ 扰动等），详见 `chapters/01-particle/manuscripts/CORRECTIONS.md`。
 - 变分原理手稿已修正 4 处（Snell 定律、摆线参数方程、悬链线分离变量与 cosh/tanh），详见 `chapters/03-variational/manuscripts/CORRECTIONS.md`。
-- 第 2 章笔记、绪论笔记仍属 OCR 初稿，未逐式物理审校；引用前需人工复核。
+- 第二章笔记已修正 8 处（角动量 ω²、径向符号、维里符号、圆盘动能、变质量笔误、角动量分解等），见 `chapters/02-system/manuscripts/CORRECTIONS.md`。
+- 绪论与第一章笔记已修正 2 处（比耐微扰展开、斥力轨道分母），见 `chapters/01-particle/manuscripts/INTRO-CORRECTIONS.md`。
 - 章节页的卡片只链接 PDF，不改变原有模块结构。
 
 ### 章册（第 1–3 章）
