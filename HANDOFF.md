@@ -166,7 +166,7 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 
 - 公式：本地 `assets/mathjax/tex-svg.js`（离线，无 CDN）；正文里的 `$...$`、`\[...\]` 由 MathJax 直接渲染。
 - 图：TikZ 图编译为 SVG；截图裁剪用 `vtracer` 转矢量 SVG。
-- **图像审核**：用可识图模型逐张审核 72 张 SVG，13 张 PASS 保留，59 张因标注不可读/截断/误检从正文移除；页面顶部有说明。
+- **图像审核与重绘**：72 张 SVG 逐张视觉审核；37 张失败图按上下文重新生成 TikZ 并复审通过，最终 50 张保留、22 张不可读/误检图移除；页面顶部有说明。
 - 交互链接：按章节在顶部与相关小节插入 M0–M11 的「交互演示」入口。
 - 样式：`assets/manuscript.css`。
 - 物理修正：作业一 9 处、变分原理 4 处、第二章 8 处、绪论 2 处；记录在同目录 `CORRECTIONS.md` / `INTRO-CORRECTIONS.md`。
