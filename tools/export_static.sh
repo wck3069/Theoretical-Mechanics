@@ -6,6 +6,10 @@ rm -rf "$OUT"
 mkdir -p "$OUT"
 cp "$ROOT/index.html" "$ROOT/catalog.html" "$OUT/"
 cp -r "$ROOT/modules" "$OUT/modules"
+cp -r "$ROOT/chapters" "$OUT/chapters"
+cp -r "$ROOT/hydrogen" "$OUT/hydrogen"
+mkdir -p "$OUT/assets"
+cp -r "$ROOT/assets/textures" "$OUT/assets/textures"
 find "$OUT/modules" -type d -name qa -prune -exec rm -rf {} + 2>/dev/null || true
 find "$OUT/modules" \( -name '*.aux' -o -name '*.log' -o -name '*.out' -o -name '*.toc' \
   -o -name '*.fls' -o -name '*.fdb_latexmk' -o -name '*.xdv' -o -name '*.synctex.gz' \) -delete

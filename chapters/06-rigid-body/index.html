@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第6章 刚体力学 · 理论力学：从质点到哈密顿</title>
+<style>
+:root{--bg:#03050c;--text:#e8eeff;--text2:#b8c6e6;--muted:#7f8fb8;--line:rgba(146,182,255,.16);--panel:rgba(10,16,32,.72);--solar:#ffd27a;--cyan:#7fe0ff;--soft:rgba(127,224,255,.08)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:
+  radial-gradient(900px 620px at 88% -5%,rgba(38,54,120,.48),transparent 62%),
+  radial-gradient(700px 520px at 8% 105%,rgba(12,70,96,.36),transparent 62%),
+  var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;background-image:
+  radial-gradient(1px 1px at 15% 22%,#fff,transparent),
+  radial-gradient(1px 1px at 72% 14%,#dff4ff,transparent),
+  radial-gradient(1.5px 1.5px at 44% 68%,#fff,transparent),
+  radial-gradient(1px 1px at 86% 58%,#cfe6ff,transparent),
+  radial-gradient(1px 1px at 28% 86%,#fff,transparent),
+  radial-gradient(1.5px 1.5px at 62% 40%,#ffe8b8,transparent)}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:26px 22px 64px}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.home{color:var(--solar);text-decoration:none;font-size:13px;letter-spacing:.08em;white-space:nowrap}
+.proj{color:var(--text2);font-size:13px;letter-spacing:.04em;flex:1;min-width:180px}
+.chapter-nav{display:flex;flex-wrap:wrap;gap:6px}
+.chapter-nav a{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);padding:4px 9px;border-radius:999px}
+.chapter-nav a:hover,.chapter-nav a.active{color:var(--text);border-color:rgba(127,224,255,.45);background:var(--soft)}
+.hero{padding:46px 0 24px;max-width:780px}
+.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--cyan);text-transform:uppercase}
+h1{font-size:clamp(36px,6vw,64px);line-height:1.08;margin:12px 0 14px;letter-spacing:.02em}
+h1 .num{display:block;font-size:14px;letter-spacing:.3em;color:var(--solar);margin-bottom:10px}
+.lead{color:var(--text2);font-size:15px;max-width:720px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:14px;margin-top:22px}
+.card{position:relative;background:linear-gradient(155deg,rgba(22,32,60,.72),rgba(7,11,24,.86));border:1px solid var(--line);border-left:3px solid var(--accent,#7fe0ff);border-radius:14px;padding:18px 18px 16px;overflow:hidden}
+.card::after{content:"";position:absolute;inset:0;background:radial-gradient(300px 160px at 100% 0%,color-mix(in srgb,var(--accent,#7fe0ff) 12%,transparent),transparent 70%);pointer-events:none}
+.ms{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.18em;color:var(--accent,#7fe0ff)}
+.card h2{font-size:18px;margin:8px 0 8px;line-height:1.35}
+.card p{color:var(--text2);font-size:13px;margin:0 0 12px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.tags span{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:2px 7px;border-radius:999px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1}
+.enter,.pdf{font-size:12px;text-decoration:none;padding:6px 10px;border-radius:8px;border:1px solid var(--line)}
+.enter{color:#08101f;background:var(--accent,#7fe0ff);border-color:transparent}
+.pdf{color:var(--text2)}
+.pdf:hover{color:var(--text);border-color:rgba(127,224,255,.4)}
+.placeholder{margin-top:22px;border:1px dashed rgba(255,210,122,.35);border-radius:14px;padding:22px;background:rgba(20,18,10,.25)}
+.placeholder h2{margin:0 0 8px;font-size:20px;color:var(--solar)}
+.placeholder p{color:var(--text2);font-size:13px;margin:0 0 12px}
+.placeholder ul{margin:0;padding-left:18px;color:var(--text2);font-size:13px}
+.placeholder li{margin:5px 0}
+.badge{display:inline-block;font-size:11px;letter-spacing:.12em;color:#2a1d05;background:var(--solar);padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:36px;padding-top:18px;border-top:1px solid var(--line);font-size:12px}
+.footer a{color:var(--text2);text-decoration:none}
+.footer a:hover{color:var(--solar)}
+.note{margin-top:28px;color:var(--muted);font-size:12px}
+@media(max-width:620px){.wrap{padding:18px 14px 46px}.hero{padding:30px 0 18px}.top{gap:8px}.chapter-nav a{font-size:12px;padding:3px 7px}.card{padding:15px}.footer{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="home" href="../../index.html">✦ 星图</a>
+    <div class="proj">理论力学：从质点到哈密顿</div>
+    <nav class="chapter-nav" aria-label="七章导航"><a class="" href="../01-particle/index.html">1 质点力学</a><a class="" href="../02-system/index.html">2 质点系力学</a><a class="" href="../03-variational/index.html">3 变分法</a><a class="" href="../04-lagrangian/index.html">4 拉格朗日力学</a><a class="" href="../05-oscillations/index.html">5 小振动</a><a class="active" href="../06-rigid-body/index.html">6 刚体力学</a><a class="" href="../07-hamiltonian/index.html">7 哈密顿力学</a></nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">CHAPTER 06 · RIGID BODY MECHANICS</div>
+      <h1><span class="num">06 / 07</span>刚体力学</h1>
+      <p class="lead">质心、转动惯量、角动量、球壳与刚体：把刚体拆成质心平动与绕质心转动。</p>
+    </section>
+    <section class="grid" aria-label="本章模块"><article class="card" style="--accent:#c9b8ff">
+  <div class="ms">M7</div>
+  <h2>刚体几何与角动量</h2>
+  <p>转动惯量、平行轴定理与角动量守恒；球壳、滚动物体与质心系的分解。</p>
+  <div class="tags"><span>刚体</span><span>角动量</span><span>球壳</span><span>质心</span></div>
+  <div class="actions"><a class="enter" href="../../modules/07-rigid-body/index.html">进入模拟</a><a class="pdf" href="../../modules/07-rigid-body/note.pdf">推导 PDF</a></div>
+</article>
+</section>
+    <p class="note">每章模块可独立打开：note.tex 推导、note.pdf 阅读版、index.html 数值实验。星图为七章总览，模块页保留原有 M0–M8 编号。</p>
+  </main>
+  <footer class="footer">
+  <a href="../../index.html">✦ 返回星图</a>
+  <div><a href="../05-oscillations/index.html">← 小振动</a></div>
+  <div><a href="../07-hamiltonian/index.html">哈密顿力学 →</a></div>
+</footer>
+</div>
+</body>
+</html>
