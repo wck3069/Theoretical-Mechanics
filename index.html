@@ -206,7 +206,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
     <span class="chip-stat">7 章</span>
     <span class="chip-stat">8 次作业</span>
     
-    <span class="chip-stat">9 个可交互模块</span>
+    <span class="chip-stat">12 个可交互模块</span>
   </div>
   <div class="hint">拖动星图 · 滚轮缩放 · 拖动太阳移动系统 · 点击行星进入章节 · / 搜索</div>
 </section>
@@ -240,7 +240,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 </div>
 
 <div class="hud">开普勒第二定律 · 掠面速度守恒</div>
-<div class="footnote">零外部依赖 · 单文件 · 7 章 · 9 个模块全部可离线打开</div>
+<div class="footnote">零外部依赖 · 单文件 · 7 章 · 12 个模块全部可离线打开</div>
 
 <div class="overlay" id="overlay"></div>
 <div class="drawer" id="drawer">
@@ -270,7 +270,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   <button class="close" type="button" id="aboutClose" aria-label="关闭">×</button>
   <h3>关于 ABOUT</h3>
   <p>每章三件套：note.tex 推导 / note.pdf 阅读版 / index.html 数值实验。</p>
-  <p>七章覆盖质点力学、质点系力学、变分法、拉格朗日力学、小振动、刚体力学、哈密顿力学；共 9 个可交互模块。单文件、零外部依赖、全部可离线打开。</p>
+  <p>七章覆盖质点力学、质点系力学、变分法、拉格朗日力学、小振动、刚体力学、哈密顿力学；共 12 个可交互模块。单文件、零外部依赖、全部可离线打开。</p>
 </div>
 
 <canvas id="starfield"></canvas>
@@ -286,13 +286,16 @@ window.TM_SUBMODULES = [
  {slug:'05-virtual-work',milestone:'M5',title:'虚功原理与静力学',src:'作业-7',tags:['虚功','静力学','梯子','平衡'],summary:'M5 约束力不做功，虚功原理给出静力平衡与广义力；梯子平衡、分离条件与摩擦角。',sim:'modules/05-virtual-work/index.html',note:'modules/05-virtual-work/note.pdf',color:'#ffc46b'},
  {slug:'06-collisions',milestone:'M6',title:'碰撞与变质量',src:'作业-5 Q1–Q3',tags:['碰撞','变质量','恢复系数','雨滴'],summary:'M6 动量守恒与恢复系数，一维与二维碰撞，以及雨滴变质量系统的运动方程。',sim:'modules/06-collisions/index.html',note:'modules/06-collisions/note.pdf',color:'#ff9d6b'},
  {slug:'07-rigid-body',milestone:'M7',title:'刚体几何与角动量',src:'作业-4',tags:['刚体','角动量','球壳','质心'],summary:'M7 转动惯量、平行轴定理与角动量守恒；球壳、滚动物体与质心系的分解。',sim:'modules/07-rigid-body/index.html',note:'modules/07-rigid-body/note.pdf',color:'#c9b8ff'},
- {slug:'08-kinematics',milestone:'M8',title:'运动学与非线性振动',src:'作业-1',tags:['运动学','振动','Lorentz','脱离'],summary:'M8 自然坐标下的切向/法向加速度、带电粒子在 Lorentz 力下的运动与参考系变换，以及阻尼、受迫与非线性振动。',sim:'modules/08-kinematics/index.html',note:'modules/08-kinematics/note.pdf',color:'#9fd8ff'}
+ {slug:'08-kinematics',milestone:'M8',title:'运动学与非线性振动',src:'作业-1',tags:['运动学','振动','Lorentz','脱离'],summary:'M8 自然坐标下的切向/法向加速度、带电粒子在 Lorentz 力下的运动与参考系变换，以及阻尼、受迫与非线性振动。',sim:'modules/08-kinematics/index.html',note:'modules/08-kinematics/note.pdf',color:'#9fd8ff'},
+ {slug:'09-atwood-pulley',milestone:'M9',title:'有转动惯量的 Atwood 机',src:'作业-8 Q1',tags:['Atwood','转动惯量','张力差','拉格朗日'],summary:'M9 以 m2 向下位移为广义坐标，得到等效质量 m1+m2+I/R² 与张力差 T2−T1=Ia/R²。',sim:'modules/09-atwood-pulley/index.html',note:'modules/09-atwood-pulley/note.pdf',color:'#7fe0ff'},
+ {slug:'10-coupled-systems',milestone:'M10',title:'耦合系统与小振动',src:'作业-8 Q3 · Q4 · Q5',tags:['循环坐标','弹簧摆','小车单摆','小振动'],summary:'M10 合并斜面滑块、弹簧摆与小车单摆：水平动量守恒、动能分配、平衡位置与两种小振动频率。',sim:'modules/10-coupled-systems/index.html',note:'modules/10-coupled-systems/note.pdf',color:'#b79bff'},
+ {slug:'11-rotation-and-field',milestone:'M11',title:'旋转参考系与磁场',src:'作业-8 Q5 · Q6',tags:['有效势','稳定性','雅可比积分','诺特荷'],summary:'M11 处理旋转圆环上的珠子与均匀磁场中的带电粒子：分岔、临界角速度、雅可比积分与锁定回旋圆心的诺特荷。',sim:'modules/11-rotation-and-field/index.html',note:'modules/11-rotation-and-field/note.pdf',color:'#7ff0cf'}
 ];
 window.TM_MODULES = [
  {n:1,slug:'chapter-01-particle',milestone:'C1',title:'质点力学',src:'中心力 · 比奈方程 · 有效势 · 散射',tags:['中心力','有效势','散射','俘获'],summary:'第一章：单质点在有心力场中的轨道、有效势、稳定性、散射与俘获。',sim:'chapters/01-particle/index.html',color:'#b9b0a0',texture:'assets/textures/2k_mercury.webp',modules:['M0','M1','M2']},
  {n:2,slug:'chapter-02-system',milestone:'C2',title:'质点系力学',src:'两体问题 · 约化质量 · 碰撞 · 变质量',tags:['两体','碰撞','变质量','系外行星'],summary:'第二章：两体问题、约化质量、动量守恒、碰撞与变质量系统。',sim:'chapters/02-system/index.html',color:'#e6c98c',texture:'assets/textures/2k_venus_surface.webp',modules:['M3','M6']},
  {n:3,slug:'chapter-03-variational',milestone:'C3',title:'变分法',src:'最小作用量 · 最速降线 · 费马原理 · 等时摆',tags:['变分','最速降线','费马','等时摆'],summary:'第三章：用变分原理统一处理最速降线、费马原理与等时摆。',sim:'chapters/03-variational/index.html',color:'#6fb7ff',texture:'assets/textures/2k_earth_daymap.webp',modules:['M4']},
- {n:4,slug:'chapter-04-lagrangian',milestone:'C4',title:'拉格朗日力学',src:'虚功原理 · 约束 · 广义力 · 拉格朗日方程',tags:['虚功','约束','广义力','拉格朗日'],summary:'第四章：从虚功原理和广义坐标出发，建立拉格朗日力学。',sim:'chapters/04-lagrangian/index.html',color:'#e07a4f',texture:'assets/textures/2k_mars.webp',modules:['M5']},
+ {n:4,slug:'chapter-04-lagrangian',milestone:'C4',title:'拉格朗日力学',src:'虚功原理 · 约束 · 广义力 · 拉格朗日方程',tags:['虚功','约束','广义力','拉格朗日'],summary:'第四章：从虚功原理和广义坐标出发，建立拉格朗日力学。',sim:'chapters/04-lagrangian/index.html',color:'#e07a4f',texture:'assets/textures/2k_mars.webp',modules:['M5','M9','M10','M11']},
  {n:5,slug:'chapter-05-oscillations',milestone:'C5',title:'小振动',src:'单摆 · 双摆 · 非线性振动 · 运动学',tags:['单摆','双摆','非线性','振动'],summary:'第五章：平衡点附近的线性化、周期运动与非线性振动。',sim:'chapters/05-oscillations/index.html',color:'#d8b48a',texture:'assets/textures/2k_jupiter.webp',modules:['M8']},
  {n:6,slug:'chapter-06-rigid-body',milestone:'C6',title:'刚体力学',src:'质心 · 转动惯量 · 角动量 · 球壳',tags:['刚体','转动惯量','角动量','球壳'],summary:'第六章：质心分解、转动惯量、角动量守恒与刚体几何。',sim:'chapters/06-rigid-body/index.html',color:'#e7d39b',texture:'assets/textures/2k_saturn.webp',modules:['M7']},
  {n:7,slug:'chapter-07-hamiltonian',milestone:'C7',title:'哈密顿力学',src:'正则方程 · 相空间 · 泊松括号 · 正则变换',tags:['哈密顿','相空间','泊松括号','正则方程'],summary:'第七章：从拉格朗日力学走向哈密顿正则方程、相空间与泊松括号；建设中。',sim:'chapters/07-hamiltonian/index.html',color:'#9fe6e6',texture:'assets/textures/2k_uranus.webp',modules:[]}

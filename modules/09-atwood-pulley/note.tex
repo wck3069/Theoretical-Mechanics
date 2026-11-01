@@ -1,0 +1,163 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M9《有转动惯量的 Atwood 机》note.tex
+% 覆盖作业-8 第 1 题
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{有转动惯量的 Atwood 机}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理作业-8 第 1 题：不可伸长的轻绳跨过有转动惯量 $I$、半径 $R$ 的定滑轮，
+两端悬挂质量 $m_1,m_2$（$m_2>m_1$）。以 $m_2$ 向下的位移 $s$ 为广义坐标，
+用拉格朗日方法求两物体加速度与绳两端张力。核心结果是等效质量
+$m_1+m_2+I/R^2$ 与张力差 $T_2-T_1=Ia/R^2$。
+配套交互页对三组参数做数值积分，与解析式相对误差在 $10^{-11}$ 量级。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{作业映射}
+
+\begin{center}
+\small
+\begin{tabular}{cp{6.2cm}p{3.4cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-8 Q1 & 定滑轮两端挂 $m_1,m_2$，绳不打滑，求 $a,T_1,T_2$ &
+  拉格朗日量、转动惯量、张力差 & \ref{sec:derive}--\ref{sec:result} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{模型与假设}\label{sec:model}
+
+取 $m_2$ 向下的位移 $s$ 为广义坐标。绳不可伸长且不打滑，因此：
+\begin{enumerate}
+  \item $m_2$ 下降 $s$ 时，$m_1$ 上升 $s$；
+  \item 滑轮边缘转过的弧长为 $s$，转角 $\varphi=s/R$，角速度 $\dot\varphi=\dot s/R$；
+  \item 绳轻且不可伸长，绳中张力在两侧可以不同（滑轮有转动惯量）；
+  \item 轮轴无摩擦，绳与轮之间无滑动，故无耗散。
+\end{enumerate}
+系统只有 1 个自由度，取 $s$ 即可。重力加速度记为 $g$。
+
+\section{推导}\label{sec:derive}
+
+\subsection{拉格朗日量}
+
+两物体的速度大小都是 $|\dot s|$，滑轮角速度为 $\dot s/R$。动能为
+\begin{equation}
+  T=\frac12 m_1\dot s^2+\frac12 m_2\dot s^2+\frac12 I\left(\frac{\dot s}{R}\right)^2
+   =\frac12\left(m_1+m_2+\frac{I}{R^2}\right)\dot s^2 .
+  \label{eq:T}
+\end{equation}
+取 $s=0$ 时势能为零，$m_2$ 下降、$m_1$ 上升，势能为
+\begin{equation}
+  V=-(m_2-m_1)gs .
+  \label{eq:V}
+\end{equation}
+于是
+\begin{equation}
+  L=T-V=\frac12 M_{\mathrm{eff}}\dot s^2+(m_2-m_1)gs,
+  \qquad
+  M_{\mathrm{eff}}\equiv m_1+m_2+\frac{I}{R^2}.
+  \label{eq:L}
+\end{equation}
+
+\subsection{运动方程}
+
+$L$ 含 $s$ 的一次项，故 $s$ 不是循环坐标。拉格朗日方程
+$\dfrac{d}{dt}\dfrac{\partial L}{\partial\dot s}-\dfrac{\partial L}{\partial s}=0$ 给出
+\begin{equation}
+  M_{\mathrm{eff}}\ddot s=(m_2-m_1)g,
+  \qquad
+  \boxed{\ a=\ddot s=\frac{(m_2-m_1)g}{m_1+m_2+I/R^2}\ }.
+  \label{eq:a}
+\end{equation}
+$I=0$ 时退化为理想滑轮 $a=(m_2-m_1)g/(m_1+m_2)$。
+滑轮转动惯量相当于给系统增加了一个等效质量 $I/R^2$，它只让加速度变小，不改变方向。
+
+\subsection{张力}
+
+对 $m_2$ 写牛顿第二定律（向下为正）：
+\begin{equation}
+  m_2g-T_2=m_2a \quad\Longrightarrow\quad T_2=m_2(g-a).
+  \label{eq:T2}
+\end{equation}
+对 $m_1$（向上为正）：
+\begin{equation}
+  T_1-m_1g=m_1a \quad\Longrightarrow\quad T_1=m_1(g+a).
+  \label{eq:T1}
+\end{equation}
+滑轮转动方程给出张力差与角加速度的关系：
+\begin{equation}
+  (T_2-T_1)R=I\alpha=I\frac{a}{R}
+  \quad\Longrightarrow\quad
+  T_2-T_1=\frac{Ia}{R^2}.
+  \label{eq:dT}
+\end{equation}
+把 \eqref{eq:a} 代入可验证 \eqref{eq:dT} 与 \eqref{eq:T1}--\eqref{eq:T2} 自洽。
+$I\neq0$ 时 $T_1\neq T_2$；$I=0$ 时两张力相等。
+
+\section{解析结果}\label{sec:result}
+
+\begin{align}
+  a&=\frac{(m_2-m_1)g}{m_1+m_2+I/R^2}, \label{eq:res-a}\\
+  T_1&=m_1\left(g+a\right), \label{eq:res-T1}\\
+  T_2&=m_2\left(g-a\right), \label{eq:res-T2}\\
+  T_2-T_1&=\frac{Ia}{R^2}. \label{eq:res-dT}
+\end{align}
+适用条件：绳不可伸长且不打滑、轮轴无摩擦、绳质量可忽略；结果与初始 $s$ 无关。
+
+\section{数值验证}\label{sec:numeric}
+
+配套交互页对 $\ddot s=a$ 作四阶 Runge--Kutta 积分（步长 $10^{-5}\,\mathrm{s}$），
+把 $t=0.4\,\mathrm{s}$ 的位移与解析解 $s=\tfrac12 at^2$ 比较；同时用
+\eqref{eq:res-T1}--\eqref{eq:res-dT} 计算张力。
+
+\begin{center}
+\small
+\begin{tabular}{cccccc}
+\toprule
+$m_1,m_2,I,R$ & $M_{\mathrm{eff}}$ & $a$ & $T_1$ & $T_2$ & 相对误差 \\
+\midrule
+$1,2,0.5,0.2$ & 15.500 & 0.632903 & 10.442903 & 18.354194 & $1.4\times10^{-12}$ \\
+$0.5,4,1.2,0.3$ & 17.833 & 1.925327 & 5.867664 & 31.538692 & $1.5\times10^{-12}$ \\
+$2,2,1,0.25$ & 20.000 & 0 & 19.620000 & 19.620000 & $0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+表中单位：质量 kg，长度 m，时间 s，力 N，加速度 m/s$^2$。
+相对误差定义为 $|s_{\rm num}-s_{\rm ana}|/|s_{\rm ana}|$（$s_{\rm ana}\neq0$）。
+
+\section{讨论}
+
+\begin{enumerate}
+  \item \textbf{等效质量.} $M_{\mathrm{eff}}=m_1+m_2+I/R^2$ 把滑轮的转动惯量折算成平动质量。
+        $I$ 越大，加速度越小，张力差越大。
+  \item \textbf{能量.} 机械能 $E=\tfrac12M_{\mathrm{eff}}\dot s^2-(m_2-m_1)gs$ 守恒；
+        重力势能减少量转化为两物体与滑轮的动能。
+  \item \textbf{极限.} $I\to0$ 时 $T_1=T_2$；$m_2\to m_1$ 时 $a\to0$，但张力仍为 $mg$。
+  \item \textbf{为什么绳两端张力不同.} 滑轮有角加速度，必须有净力矩；
+        绳对轮两侧的切向力差提供这个力矩。
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{landau} L. D. Landau, E. M. Lifshitz, \emph{Mechanics}, 3rd ed., Pergamon, 1976.
+\bibitem{goldstein} H. Goldstein, C. Poole, J. Safko, \emph{Classical Mechanics}, 3rd ed., Addison-Wesley, 2002.
+\end{thebibliography}
+
+\end{document}

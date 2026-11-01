@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旋转参考系与磁场 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:11.5px; color:var(--muted);
+       display:flex; gap:11px; flex-wrap:wrap; pointer-events:none}
+  .stage .hud{max-width:calc(100% - 200px)}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice.bad{color:#ffd7d7;border-color:rgba(255,123,123,.5);background:rgba(60,10,16,.6)}
+  .notice{position:absolute; right:16px; bottom:58px; max-width:52%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  .hint{font-size:11px; color:#6d7ba3; margin-top:4px; line-height:1.5}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent); border:2px solid #0a1020; cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35); transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{white-space:pre-wrap;position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  span.doc{cursor:default;color:var(--muted);pointer-events:none}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+    .stage .hud{left:10px; top:146px; bottom:auto; max-width:calc(100% - 20px);
+      font-size:11px; gap:7px; padding:4px 7px; border-radius:8px;
+      background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.10)}
+    .stage .hud .lg, .stage .hud .hud-extra{display:none}
+    .stage .notice{top:180px; bottom:auto; left:10px; right:auto;
+      max-width:calc(100% - 200px); font-size:11px; padding:5px 8px}
+  }
+</style>
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+</head>
+<body>
+<style>
+  .scene-group{display:none}
+  .scene-group.on{display:block}
+  .scene-select{margin-bottom:14px}
+  .scene-select select{width:100%}
+  .eq .num{color:var(--accent2)}
+  .muted{color:var(--muted)}
+</style>
+<div class="app">
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="brand">
+      <h1>旋转参考系与磁场</h1>
+      <p>旋转圆环上的珠子 · 均匀磁场中的带电粒子</p>
+      <p class="intro">两个单粒子问题，两种“看起来像能量/动量”的守恒量。旋转圆环给出雅可比积分 ℰ，它不等于惯性系机械能；磁场里机械动量不守恒，但平移对称性仍给出守恒的诺特荷，它们正好锁定回旋圆心。</p>
+    </div>
+    <div class="hud">
+      <span><span id="l1">—</span> <b id="h1">-</b></span>
+      <span><span id="l2">—</span> <b id="h2">-</b></span>
+      <span><span id="l3">—</span> <b id="h3">-</b></span>
+      <span><span id="l4">—</span> <b id="h4">-</b></span>
+      <span><span id="l5">—</span> <b id="h5">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="scene-select">
+      <div class="row"><label for="sel-scene">场景</label></div>
+      <select id="sel-scene">
+        <option value="ring">Q5 · 旋转圆环上的珠子</option>
+        <option value="cyclotron">Q6 · 磁场中的带电粒子</option>
+      </select>
+    </div>
+    <div class="eq" id="eqBox"></div>
+
+    <div class="scene-group" data-scene="ring">
+      <div class="group">
+        <div class="row"><label for="p-R">圆环半径 R（m）</label><span class="val" id="v-R">1.20</span></div>
+        <input id="p-R" type="range" min="0.5" max="2" step="0.01" value="1.2">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-Om">角速度 Ω（rad/s）</label><span class="val" id="v-Om">2.00</span></div>
+        <input id="p-Om" type="range" min="0" max="5" step="0.05" value="2">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-th0">初始 θ₀（°）</label><span class="val" id="v-th0">8.6</span></div>
+        <input id="p-th0" type="range" min="1" max="45" step="0.5" value="8.6">
+      </div>
+    </div>
+
+    <div class="scene-group" data-scene="cyclotron">
+      <div class="group">
+        <div class="row"><label for="p-B">磁感应强度 B</label><span class="val" id="v-B">1.20</span></div>
+        <input id="p-B" type="range" min="0.4" max="3" step="0.02" value="1.2">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-v0">初速度 v₀</label><span class="val" id="v-v0">1.00</span></div>
+        <input id="p-v0" type="range" min="0.4" max="2.5" step="0.02" value="1">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-q">电荷符号 q</label><span class="val" id="v-q">+1</span></div>
+        <input id="p-q" type="range" min="-1" max="1" step="2" value="1">
+        <div class="hint">拖动到 −1 切换电荷符号；回旋转向随之反转。</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="p-speed">动画速度（×）</label><span class="val" id="v-speed">1.0</span></div>
+      <input id="p-speed" type="range" min="0.1" max="3" step="0.1" value="1">
+    </div>
+    <div class="btns">
+      <button id="btn-pause">暂停</button>
+      <button id="btn-reset">重置</button>
+    </div>
+    <div class="tag">圆环场景取 m = 1；磁场场景取 m = 1、q = ±1，B 与 v₀ 为任意一致单位。<br>
+    自测：<span>index.html?selftest=1</span></div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+    <a class="doc" href="../10-coupled-systems/index.html">← 上一模块：耦合系统与小振动</a>
+    <a class="doc" href="../../chapters/04-lagrangian/index.html">回到第 4 章：拉格朗日力学 →</a>
+    <details class="mapping">
+      <summary>作业映射（作业-8 Q5 圆环、Q6 磁场）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-8 Q5</td><td>有效势、相对平衡、稳定性、雅可比积分</td><td>圆环场景：Ω/Ω_c、θ_eq、ℰ 与 E_mech</td></tr>
+        <tr><td>作业-8 Q6</td><td>拉格朗日方程、诺特荷、回旋圆心</td><td>磁场场景：Q_x、Q_y、p_x、圆心</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var G = 9.81;
+  var cv = $('cv'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+  var scene = 'ring', playing = true, speed = 1, last = 0;
+  var reduced = false;
+  try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+
+  var ring = { R: 1.2, Om: 2, th0: 0.15, th: 0.15, om: 0, t: 0, trail: [] };
+  var cyc = { B: 1.2, v0: 1, q: 1, t: 0, trail: [] };
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    W = Math.max(120, Math.floor(r.width));
+    H = Math.max(120, Math.floor(r.height));
+    cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+
+  function setHud(pairs) {
+    for (var i = 0; i < 5; i++) {
+      var p = pairs[i] || ['', ''];
+      $('l' + (i + 1)).textContent = p[0];
+      $('h' + (i + 1)).textContent = p[1];
+    }
+  }
+
+  /* ---------------- Q5 旋转圆环 ---------------- */
+  function Omc() { return Math.sqrt(G / ring.R); }
+  function ringThdd(th, om) { return (ring.Om * ring.Om * Math.cos(th) - G / ring.R) * Math.sin(th); }
+  function ringJacobi() {
+    return 0.5 * ring.R * ring.R * ring.om * ring.om
+      - 0.5 * ring.R * ring.R * ring.Om * ring.Om * Math.sin(ring.th) * Math.sin(ring.th)
+      - G * ring.R * Math.cos(ring.th);
+  }
+  function ringEmech() {
+    return 0.5 * ring.R * ring.R * (ring.om * ring.om + ring.Om * ring.Om * Math.sin(ring.th) * Math.sin(ring.th))
+      - G * ring.R * Math.cos(ring.th);
+  }
+  function equilibrium() {
+    var c = G / (ring.Om * ring.Om * ring.R);
+    if (c <= 1) return Math.acos(c);
+    return null;
+  }
+  function ringStep(dt) {
+    var rem = dt;
+    while (rem > 1e-9) {
+      var h = Math.min(0.002, rem); rem -= h;
+      var a = { th: ring.om, om: ringThdd(ring.th, ring.om) };
+      var b = { th: ring.om + a.om * h / 2, om: ringThdd(ring.th + a.th * h / 2, ring.om + a.om * h / 2) };
+      var c = { th: ring.om + b.om * h / 2, om: ringThdd(ring.th + b.th * h / 2, ring.om + b.om * h / 2) };
+      var d = { th: ring.om + c.om * h, om: ringThdd(ring.th + c.th * h, ring.om + c.om * h) };
+      ring.th += (a.th + 2 * b.th + 2 * c.th + d.th) * h / 6;
+      ring.om += (a.om + 2 * b.om + 2 * c.om + d.om) * h / 6;
+      ring.t += h;
+    }
+    var phi = ring.Om * ring.t;
+    ring.trail.push({ x: ring.R * Math.sin(ring.th) * Math.cos(phi), y: ring.R * Math.cos(ring.th) });
+    if (ring.trail.length > 300) ring.trail.shift();
+  }
+  function resetRing() {
+    ring.th = ring.th0; ring.om = 0; ring.t = 0; ring.trail = [];
+  }
+
+  function drawRing() {
+    var cx = W * 0.5, cy = H * 0.48;
+    var scale = Math.min(W, H) * 0.28;
+    var phi = ring.Om * ring.t;
+    var cphi = Math.cos(phi);
+    var Rs = ring.R * scale;
+
+    ctx.strokeStyle = 'rgba(140,160,220,.35)'; ctx.lineWidth = 1;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(cx, cy - Rs - 24); ctx.lineTo(cx, cy + Rs + 24); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 圆环投影：绕竖直直径旋转的圆
+    ctx.strokeStyle = 'rgba(127,224,255,.55)'; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (var i = 0; i <= 96; i++) {
+      var u = i / 96 * Math.PI * 2;
+      var x = cx + Rs * Math.cos(u) * cphi;
+      var y = cy - Rs * Math.sin(u);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // 赤道参考
+    ctx.strokeStyle = 'rgba(183,155,255,.25)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.ellipse(cx, cy, Math.abs(Rs * cphi), Rs * 0.22, 0, 0, Math.PI * 2); ctx.stroke();
+
+    // 平衡位置
+    var eq = equilibrium();
+    var marks = [0, Math.PI];
+    if (eq !== null) marks.push(eq);
+    marks.forEach(function (th, idx) {
+      var x = cx + Rs * Math.sin(th) * cphi;
+      var y = cy + Rs * Math.cos(th);
+      ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctx.strokeStyle = idx === 2 ? '#ffd27a' : 'rgba(200,214,255,.55)';
+      ctx.lineWidth = 1.4; ctx.stroke();
+    });
+
+    // 轨迹
+    ctx.strokeStyle = 'rgba(255,210,122,.35)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ring.trail.forEach(function (p, i) {
+      var x = cx + p.x * scale, y = cy + p.y * scale;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // 珠子
+    var bx = cx + Rs * Math.sin(ring.th) * cphi;
+    var by = cy + Rs * Math.cos(ring.th);
+    ctx.fillStyle = '#ffd27a';
+    ctx.beginPath(); ctx.arc(bx, by, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(5,7,15,.85)';
+    ctx.beginPath(); ctx.arc(bx, by, 4, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = 'rgba(150,165,210,.8)'; ctx.font = '11px ui-monospace,monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('绕竖直直径以 Ω 转动', cx, cy + Rs + 40);
+
+    var ratio = ring.Om / Omc();
+    setHud([
+      ['θ', (ring.th * 180 / Math.PI).toFixed(1) + '°'],
+      ['θ̇', ring.om.toFixed(3) + ' rad/s'],
+      ['Ω/Ω_c', ratio.toFixed(2) + (ratio >= 1 ? '（>1）' : '（<1）')],
+      ['θ_eq', eq === null ? '无（只有 0、π）' : (eq * 180 / Math.PI).toFixed(1) + '°'],
+      ['ℰ', ringJacobi().toFixed(4) + '　E_mech ' + ringEmech().toFixed(4)]
+    ]);
+  }
+
+  /* ---------------- Q6 磁场中的带电粒子 ---------------- */
+  function omegaC() { return cyc.q * cyc.B; }
+  function cycState(t) {
+    var w = omegaC(), v0 = cyc.v0;
+    return {
+      x: (v0 / w) * Math.sin(w * t),
+      y: (v0 / w) * (Math.cos(w * t) - 1),
+      vx: v0 * Math.cos(w * t),
+      vy: -v0 * Math.sin(w * t)
+    };
+  }
+  function cycStep(dt) {
+    cyc.t += dt;
+    var s = cycState(cyc.t);
+    cyc.trail.push({ x: s.x, y: s.y });
+    if (cyc.trail.length > 420) cyc.trail.shift();
+  }
+  function resetCyc() { cyc.t = 0; cyc.trail = []; }
+  function drawCyc() {
+    var s = cycState(cyc.t), w = omegaC();
+    var rOrbit = Math.abs(cyc.v0 / w);
+    var scale = Math.min(W, H) * 0.30 / Math.max(0.2, rOrbit);
+    var cx = W * 0.5, cy = H * 0.5;
+    var centerX = 0, centerY = -cyc.v0 / w;
+    // 把回旋圆心放在画布中心，原点坐标单独换算
+    function sx(x) { return cx + (x - centerX) * scale; }
+    function sy(y) { return cy - (y - centerY) * scale; }
+    var ox = sx(0), oy = sy(0);
+
+    ctx.strokeStyle = 'rgba(140,160,220,.16)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, H); ctx.stroke();
+
+    // 回旋圆
+    ctx.strokeStyle = 'rgba(127,224,255,.35)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(cx, cy, rOrbit * scale, 0, Math.PI * 2); ctx.stroke();
+
+    // 圆心
+    ctx.strokeStyle = 'rgba(255,210,122,.75)'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(cx - 7, cy); ctx.lineTo(cx + 7, cy);
+    ctx.moveTo(cx, cy - 7); ctx.lineTo(cx, cy + 7);
+    ctx.stroke();
+
+    // 轨迹
+    ctx.strokeStyle = 'rgba(183,155,255,.45)'; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    cyc.trail.forEach(function (p, i) {
+      var x = sx(p.x), y = sy(p.y);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // 粒子
+    var px = sx(s.x), py = sy(s.y);
+    ctx.fillStyle = '#7fe0ff';
+    ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.fill();
+
+    // 速度箭头
+    var vx = s.vx * scale * 0.18, vy = -s.vy * scale * 0.18;
+    ctx.strokeStyle = '#7ff0cf'; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + vx, py + vy); ctx.stroke();
+
+    // 守恒量
+    var Qx = s.vx - cyc.q * cyc.B * s.y;
+    var Qy = s.vy + cyc.q * cyc.B * s.x;
+    var pxCanon = s.vx - 0.5 * cyc.q * cyc.B * s.y;
+    var pyCanon = s.vy + 0.5 * cyc.q * cyc.B * s.x;
+    setHud([
+      ['ω_c = qB/m', w.toFixed(3) + (w < 0 ? '（顺时针）' : '（逆时针）')],
+      ['r_c = v₀/|ω_c|', rOrbit.toFixed(3)],
+      ['Q_x = mẋ−qBy', Qx.toFixed(4) + '（守恒）'],
+      ['Q_y = mẏ+qBx', Qy.toFixed(4) + '（守恒）'],
+      ['p_x（机械动量）', pxCanon.toFixed(4) + '　p_y ' + pyCanon.toFixed(4)]
+    ]);
+  }
+
+  function eqHtml() {
+    if (scene === 'ring') return '' +
+      '<div><span class="num">L =</span> ½mR²θ̇² + ½mR²Ω²sin²θ + mgR cosθ</div>' +
+      '<div><span class="num">θ̈ =</span> (Ω²cosθ − g/R) sinθ</div>' +
+      '<div><span class="num">Ω_c =</span> √(g/R)　<span class="num">cosθ_eq =</span> g/(Ω²R)</div>' +
+      '<div><span class="num">ℰ =</span> θ̇∂L/∂θ̇ − L = ½mR²θ̇² − ½mR²Ω²sin²θ − mgR cosθ</div>';
+    return '' +
+      '<div><span class="num">L =</span> ½m(ẋ²+ẏ²) + (qB/2)(xẏ−yẋ)</div>' +
+      '<div><span class="num">E-L：</span> mẍ = qBẏ　mÿ = −qBẋ</div>' +
+      '<div><span class="num">Q_x =</span> mẋ − qBy　<span class="num">Q_y =</span> mẏ + qBx（守恒）</div>' +
+      '<div><span class="num">圆心：</span> X_c = x + ẏ/ω_c　Y_c = y − ẋ/ω_c</div>';
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (scene === 'ring') drawRing();
+    else drawCyc();
+  }
+  function step(dt) {
+    if (scene === 'ring') ringStep(dt);
+    else cycStep(dt);
+  }
+  function frame(now) {
+    if (!last) last = now;
+    var dt = Math.min(0.033, (now - last) / 1000) * speed;
+    last = now;
+    if (playing && !reduced) step(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  function sync() {
+    ring.R = parseFloat($('p-R').value);
+    ring.Om = parseFloat($('p-Om').value);
+    ring.th0 = parseFloat($('p-th0').value) * Math.PI / 180;
+    cyc.B = parseFloat($('p-B').value);
+    cyc.v0 = parseFloat($('p-v0').value);
+    cyc.q = parseFloat($('p-q').value);
+    speed = parseFloat($('p-speed').value);
+
+    $('v-R').textContent = ring.R.toFixed(2);
+    $('v-Om').textContent = ring.Om.toFixed(2);
+    $('v-th0').textContent = (ring.th0 * 180 / Math.PI).toFixed(1);
+    $('v-B').textContent = cyc.B.toFixed(2);
+    $('v-v0').textContent = cyc.v0.toFixed(2);
+    $('v-q').textContent = cyc.q > 0 ? '+1' : '−1';
+    $('v-speed').textContent = speed.toFixed(1);
+
+    resetRing(); resetCyc();
+    draw();
+  }
+
+  function setScene(s) {
+    scene = s;
+    document.querySelectorAll('.scene-group').forEach(function (g) {
+      g.classList.toggle('on', g.getAttribute('data-scene') === s);
+    });
+    $('eqBox').innerHTML = eqHtml();
+    sync();
+  }
+
+  ['p-R', 'p-Om', 'p-th0', 'p-B', 'p-v0', 'p-q', 'p-speed']
+    .forEach(function (id) { $(id).addEventListener('input', sync); });
+  $('sel-scene').addEventListener('change', function () { setScene(this.value); });
+  $('btn-pause').addEventListener('click', function () {
+    playing = !playing; this.textContent = playing ? '暂停' : '继续';
+  });
+  $('btn-reset').addEventListener('click', function () {
+    resetRing(); resetCyc(); playing = true;
+    $('btn-pause').textContent = '暂停'; draw();
+  });
+
+  function runSelftest() {
+    if (!/[?&]selftest=1(?:&|$)/.test(location.search)) return;
+    var panel = $('selftestPanel'), lines = [], fails = 0;
+    function chk(name, ok, detail) {
+      if (!ok) fails++;
+      lines.push((ok ? 'PASS' : 'FAIL') + '  ' + name + (detail ? '  ' + detail : ''));
+    }
+    // Q5
+    var R = 1.2, Om = 3.0;
+    var critical = Math.sqrt(G / R);
+    chk('Q5 Ω_c = √(g/R)', Math.abs(critical - 2.8591) < 2e-3, 'Ωc=' + critical.toFixed(4));
+    var c = G / (Om * Om * R);
+    var thEq = Math.acos(c);
+    chk('Q5 θ_eq = arccos(g/(Ω²R))', Math.abs(thEq - 0.4305) < 2e-3, 'θeq=' + (thEq * 180 / Math.PI).toFixed(2) + '°');
+    var V0 = (G / R - Om * Om) * R * R; // mR²(Ωc²−Ω²)
+    chk('Q5 θ=0 在 Ω>Ω_c 时不稳定', V0 < 0, 'Veff\'\'=mR²(Ωc²−Ω²)<0');
+    var Veq = R * R * Om * Om * Math.sin(thEq) * Math.sin(thEq);
+    chk('Q5 θ_eq 稳定', Veq > 0, 'Veff\'\'=' + Veq.toFixed(4) + '>0');
+    // ℰ 守恒：RK4 2s
+    var th = 0.3, om = 0, E0 = null, Emax = -1e9, Emin = 1e9, h = 1e-4;
+    for (var i = 0; i < 20000; i++) {
+      var d1th = om, d1om = (Om * Om * Math.cos(th) - G / R) * Math.sin(th);
+      var d2th = om + d1om * h / 2, d2om = (Om * Om * Math.cos(th + d1th * h / 2) - G / R) * Math.sin(th + d1th * h / 2);
+      var d3th = om + d2om * h / 2, d3om = (Om * Om * Math.cos(th + d2th * h / 2) - G / R) * Math.sin(th + d2th * h / 2);
+      var d4th = om + d3om * h, d4om = (Om * Om * Math.cos(th + d3th * h) - G / R) * Math.sin(th + d3th * h);
+      th += (d1th + 2 * d2th + 2 * d3th + d4th) * h / 6;
+      om += (d1om + 2 * d2om + 2 * d3om + d4om) * h / 6;
+      var E = 0.5 * R * R * om * om - 0.5 * R * R * Om * Om * Math.sin(th) * Math.sin(th) - G * R * Math.cos(th);
+      if (E0 === null) E0 = E;
+      Emax = Math.max(Emax, E); Emin = Math.min(Emin, E);
+    }
+    chk('Q5 ℰ 守恒（2 s RK4）', Emax - Emin < 1e-6, 'Δℰ=' + (Emax - Emin).toExponential(2));
+    // Q6
+    var q = 1, B = 1.2, v0 = 1, w = q * B;
+    var QxList = [], QyList = [], pxList = [];
+    for (var t = 0; t <= 2; t += 0.02) {
+      var x = (v0 / w) * Math.sin(w * t), y = (v0 / w) * (Math.cos(w * t) - 1);
+      var vx = v0 * Math.cos(w * t), vy = -v0 * Math.sin(w * t);
+      QxList.push(vx - q * B * y);
+      QyList.push(vy + q * B * x);
+      pxList.push(vx - 0.5 * q * B * y);
+    }
+    function spread(arr) { return Math.max.apply(null, arr) - Math.min.apply(null, arr); }
+    chk('Q6 Q_x 守恒（t∈[0,2]）', spread(QxList) < 1e-12, 'ΔQx=' + spread(QxList).toExponential(2));
+    chk('Q6 Q_y 守恒（t∈[0,2]）', spread(QyList) < 1e-12, 'ΔQy=' + spread(QyList).toExponential(2));
+    chk('Q6 p_x（规范动量）不守恒', spread(pxList) > 0.1, 'Δp_x=' + spread(pxList).toFixed(4));
+    var Xc = 0, Yc = -v0 / w;
+    chk('Q6 Q_y = mωX_c', Math.abs(QyList[0] - w * Xc) < 1e-12, 'Qy=' + QyList[0].toFixed(6));
+    chk('Q6 Q_x = −mωY_c', Math.abs(QxList[0] + w * Yc) < 1e-12, 'Qx=' + QxList[0].toFixed(6));
+    chk('Q6 回旋半径 v₀/|ω|', Math.abs(v0 / Math.abs(w) - 0.8333) < 2e-3, 'r=' + (v0 / w).toFixed(4));
+    panel.textContent = lines.join('\n') + '\n-- ' + (fails === 0 ? 'ALL PASS' : fails + ' FAIL');
+    panel.hidden = false;
+    panel.classList.toggle('fail', fails > 0);
+  }
+
+  resize();
+  var qs = /[?&]scene=(ring|cyclotron)/.exec(location.search);
+  var initial = qs ? qs[1] : 'ring';
+  $('sel-scene').value = initial;
+  setScene(initial);
+  if (/[?&]selftest=1(?:&|$)/.test(location.search)) {
+    runSelftest();
+  } else {
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
+    '11-rotation-and-field'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>有转动惯量的 Atwood 机 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:11.5px; color:var(--muted);
+       display:flex; gap:11px; flex-wrap:wrap; pointer-events:none}
+  .stage .hud{max-width:calc(100% - 200px)}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice.bad{color:#ffd7d7;border-color:rgba(255,123,123,.5);background:rgba(60,10,16,.6)}
+  .notice{position:absolute; right:16px; bottom:58px; max-width:52%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  .hint{font-size:11px; color:#6d7ba3; margin-top:4px; line-height:1.5}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent); border:2px solid #0a1020; cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35); transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{white-space:pre-wrap;position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  span.doc{cursor:default;color:var(--muted);pointer-events:none}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+    .stage .hud{left:10px; top:146px; bottom:auto; max-width:calc(100% - 20px);
+      font-size:11px; gap:7px; padding:4px 7px; border-radius:8px;
+      background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.10)}
+    .stage .hud .lg, .stage .hud .hud-extra{display:none}
+    .stage .notice{top:180px; bottom:auto; left:10px; right:auto;
+      max-width:calc(100% - 200px); font-size:11px; padding:5px 8px}
+  }
+</style>
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="brand">
+      <h1>有转动惯量的 Atwood 机</h1>
+      <p>定滑轮 · 不可伸长的绳 · 两个质量</p>
+      <p class="intro">滑轮有转动惯量 I，绳两端张力就不再相等。以 m₂ 向下的位移 s 为广义坐标，拉格朗日量只有一个动能项加一个重力项，一步就能写出加速度。</p>
+    </div>
+    <div class="hud">
+      <span>m₁ <b id="hudM1">-</b></span>
+      <span>m₂ <b id="hudM2">-</b></span>
+      <span>a <b id="hudA">-</b></span>
+      <span>T₁ <b id="hudT1">-</b></span>
+      <span>T₂ <b id="hudT2">-</b></span>
+      <span>α <b id="hudAlpha">-</b></span>
+      <span>E <b id="hudE">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="eq">
+      <div><span class="num">L =</span> ½(m₁+m₂+I/R²)ṡ² + (m₂−m₁)g s</div>
+      <div><span class="num">a =</span> (m₂−m₁)g / (m₁+m₂+I/R²)</div>
+      <div><span class="num">T₁ =</span> m₁(g+a)　<span class="num">T₂ =</span> m₂(g−a)</div>
+      <div><span class="num">T₂−T₁ =</span> I a/R²　<span class="muted">（滑轮越重，张力差越大）</span></div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="p-m1">m₁（kg）</label><span class="val" id="v-m1">1.00</span></div>
+      <input id="p-m1" type="range" min="0.2" max="5" step="0.05" value="1" aria-label="m1">
+    </div>
+    <div class="group">
+      <div class="row"><label for="p-m2">m₂（kg）</label><span class="val" id="v-m2">2.00</span></div>
+      <input id="p-m2" type="range" min="0.2" max="8" step="0.05" value="2" aria-label="m2">
+    </div>
+    <div class="group">
+      <div class="row"><label for="p-I">滑轮转动惯量 I（kg·m²）</label><span class="val" id="v-I">0.50</span></div>
+      <input id="p-I" type="range" min="0" max="4" step="0.02" value="0.5" aria-label="I">
+    </div>
+    <div class="group">
+      <div class="row"><label for="p-R">滑轮半径 R（m）</label><span class="val" id="v-R">0.20</span></div>
+      <input id="p-R" type="range" min="0.05" max="0.5" step="0.01" value="0.2" aria-label="R">
+    </div>
+    <div class="group">
+      <div class="row"><label for="p-speed">动画速度（×）</label><span class="val" id="v-speed">1.0</span></div>
+      <input id="p-speed" type="range" min="0.1" max="3" step="0.1" value="1" aria-label="速度">
+    </div>
+    <div class="btns">
+      <button id="btn-pause">暂停</button>
+      <button id="btn-reset">重置</button>
+    </div>
+    <div class="tag">SI 单位；g = 9.81 m/s²。I = 0 时 T₁ = T₂，退化为理想滑轮。<br>
+    自测：<span>index.html?selftest=1</span>（5 项断言）</div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+    <a class="doc" href="../08-kinematics/index.html">← 上一模块：运动学与非线性振动</a>
+    <a class="doc" href="../10-coupled-systems/index.html">下一模块：斜面上的滑块 →</a>
+    <details class="mapping">
+      <summary>作业映射（作业-8 Q1）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-8 Q1</td><td>拉格朗日量、转动惯量、张力差</td><td>滑块 m₁/m₂/I/R，HUD 显示 a、T₁、T₂、α</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var G = 9.81;
+  var DEFAULTS = { m1: 1, m2: 2, I: 0.5, R: 0.2, speed: 1 };
+  var P = { m1: DEFAULTS.m1, m2: DEFAULTS.m2, I: DEFAULTS.I, R: DEFAULTS.R, speed: DEFAULTS.speed };
+  var cv = $('cv'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+  var s = 0, v = 0, t = 0, playing = true, last = 0;
+  var reduced = false;
+  try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+
+  function meff() { return P.m1 + P.m2 + P.I / (P.R * P.R); }
+  function accel() { return (P.m2 - P.m1) * G / meff(); }
+  function tension() {
+    var a = accel();
+    return { a: a, T1: P.m1 * (G + a), T2: P.m2 * (G - a) };
+  }
+  function energy() {
+    return 0.5 * meff() * v * v - (P.m2 - P.m1) * G * s;
+  }
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    W = Math.max(120, Math.floor(r.width));
+    H = Math.max(120, Math.floor(r.height));
+    cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+
+  function arrow(x1, y1, x2, y2, color, label) {
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 8 * Math.cos(ang - 0.4), y2 - 8 * Math.sin(ang - 0.4));
+    ctx.lineTo(x2 - 8 * Math.cos(ang + 0.4), y2 - 8 * Math.sin(ang + 0.4));
+    ctx.closePath(); ctx.fill();
+    if (label) {
+      ctx.font = '11px ui-monospace,monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.fillText(label, (x1 + x2) / 2, Math.min(y1, y2) - 5);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    var cx = W * 0.5, cy = H * 0.34;
+    var rp = Math.min(70, Math.max(38, H * 0.09));
+    var scale = Math.min(H * 0.24, W * 0.18);
+    var box = 34;
+    var y0 = cy + 90;
+    var y1 = y0 - s * scale;
+    var y2 = y0 + s * scale;
+    var x1 = cx - rp, x2 = cx + rp;
+
+    // rope
+    ctx.strokeStyle = 'rgba(210,220,250,.72)'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1); ctx.lineTo(x1, cy);
+    ctx.moveTo(x2, y2); ctx.lineTo(x2, cy);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, rp, Math.PI, 2 * Math.PI, false); ctx.stroke();
+
+    // pulley
+    var phi = s / P.R;
+    ctx.fillStyle = 'rgba(20,28,50,.92)';
+    ctx.strokeStyle = 'rgba(120,170,255,.55)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, rp, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = 'rgba(150,180,255,.5)'; ctx.lineWidth = 1;
+    for (var k = 0; k < 6; k++) {
+      var a = phi + k * Math.PI / 3;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + rp * 0.86 * Math.cos(a), cy + rp * 0.86 * Math.sin(a));
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(150,180,255,.85)';
+    ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+
+    // masses
+    function mass(x, y, col, label, value) {
+      ctx.fillStyle = col;
+      ctx.globalAlpha = 0.85;
+      ctx.fillRect(x - box / 2, y, box, box);
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.lineWidth = 1;
+      ctx.strokeRect(x - box / 2, y, box, box);
+      ctx.fillStyle = '#06101f'; ctx.font = '600 12px ui-monospace,monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, y + box / 2 - 4);
+      ctx.font = '10px ui-monospace,monospace';
+      ctx.fillText(value, x, y + box / 2 + 8);
+    }
+    mass(x1, y1, '#7fe0ff', 'm₁', P.m1.toFixed(2));
+    mass(x2, y2, '#ffd27a', 'm₂', P.m2.toFixed(2));
+
+    // forces
+    var T = tension();
+    arrow(x1, y1, x1, y1 - 26, '#7fe0ff', 'T₁');
+    arrow(x2, y2, x2, y2 - 26, '#ffd27a', 'T₂');
+    arrow(x1, y1 + box, x1, y1 + box + 24, 'rgba(255,138,138,.9)', 'm₁g');
+    arrow(x2, y2 + box, x2, y2 + box + 24, 'rgba(255,138,138,.9)', 'm₂g');
+
+    // acceleration direction
+    var dir = T.a >= 0 ? 1 : -1;
+    arrow(cx, H - 54, cx + dir * 42, H - 54, '#7ff0cf', 'a');
+
+    // labels
+    ctx.fillStyle = 'rgba(140,155,200,.8)';
+    ctx.font = '11px ui-monospace,monospace';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('s = ' + s.toFixed(3) + ' m　t = ' + t.toFixed(2) + ' s', 20, H - 18);
+
+    $('hudM1').textContent = P.m1.toFixed(2) + ' kg';
+    $('hudM2').textContent = P.m2.toFixed(2) + ' kg';
+    $('hudA').textContent = T.a.toFixed(3) + ' m/s²';
+    $('hudT1').textContent = T.T1.toFixed(2) + ' N';
+    $('hudT2').textContent = T.T2.toFixed(2) + ' N';
+    $('hudAlpha').textContent = (T.a / P.R).toFixed(2) + ' rad/s²';
+    $('hudE').textContent = energy().toFixed(3) + ' J';
+  }
+
+  function step(dt) {
+    // 匀加速精确解，避免欧拉积分让总能量漂移
+    var a = accel();
+    t += dt;
+    s = 0.5 * a * t * t;
+    v = a * t;
+    if (s > 1.15 || s < -0.35) { s = 0; v = 0; t = 0; }
+  }
+
+  function frame(now) {
+    if (!last) last = now;
+    var dt = Math.min(0.04, (now - last) / 1000) * P.speed;
+    last = now;
+    if (playing && !reduced) step(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  function sync() {
+    P.m1 = parseFloat($('p-m1').value);
+    P.m2 = parseFloat($('p-m2').value);
+    P.I = parseFloat($('p-I').value);
+    P.R = parseFloat($('p-R').value);
+    P.speed = parseFloat($('p-speed').value);
+    $('v-m1').textContent = P.m1.toFixed(2);
+    $('v-m2').textContent = P.m2.toFixed(2);
+    $('v-I').textContent = P.I.toFixed(2);
+    $('v-R').textContent = P.R.toFixed(2);
+    $('v-speed').textContent = P.speed.toFixed(1);
+    s = 0; v = 0; t = 0;
+    draw();
+  }
+
+  ['p-m1', 'p-m2', 'p-I', 'p-R', 'p-speed'].forEach(function (id) {
+    $(id).addEventListener('input', sync);
+  });
+  $('btn-pause').addEventListener('click', function () {
+    playing = !playing;
+    this.textContent = playing ? '暂停' : '继续';
+  });
+  $('btn-reset').addEventListener('click', function () {
+    s = 0; v = 0; t = 0; playing = true;
+    $('btn-pause').textContent = '暂停';
+    draw();
+  });
+
+  function runSelftest() {
+    if (!/[?&]selftest=1(?:&|$)/.test(location.search)) return;
+    var panel = $('selftestPanel'), lines = [], fails = 0;
+    function chk(name, ok, detail) {
+      if (!ok) fails++;
+      lines.push((ok ? 'PASS' : 'FAIL') + '  ' + name + (detail ? '  ' + detail : ''));
+    }
+    function state(m1, m2, I, R) {
+      var Meff = m1 + m2 + I / (R * R);
+      var a = (m2 - m1) * G / Meff;
+      return { Meff: Meff, a: a, T1: m1 * (G + a), T2: m2 * (G - a) };
+    }
+    var cases = [
+      [1, 2, 0.5, 0.2, 0.6329],
+      [0.5, 4, 1.2, 0.3, 1.9254],
+      [2, 2, 1.0, 0.25, 0]
+    ];
+    cases.forEach(function (c, i) {
+      var r = state(c[0], c[1], c[2], c[3]);
+      chk('a case ' + (i + 1), Math.abs(r.a - c[4]) < 5e-4, 'a=' + r.a.toFixed(5));
+      chk('T2-T1 = I a/R² case ' + (i + 1),
+        Math.abs((r.T2 - r.T1) - c[2] * r.a / (c[3] * c[3])) < 1e-9,
+        'diff=' + (r.T2 - r.T1).toFixed(5));
+    });
+    chk('I=0 => T1=T2', Math.abs(state(1, 3, 0, 0.2).T1 - state(1, 3, 0, 0.2).T2) < 1e-12, '');
+    chk('m2>m1 => a>0', state(1, 2, 0.5, 0.2).a > 0, '');
+    chk('m1>m2 => a<0', state(3, 1, 0.5, 0.2).a < 0, '');
+    panel.textContent = lines.join('\n') + '\n-- ' + (fails === 0 ? 'ALL PASS' : fails + ' FAIL');
+    panel.hidden = false;
+    panel.classList.toggle('fail', fails > 0);
+  }
+
+  resize();
+  sync();
+  if (/[?&]selftest=1(?:&|$)/.test(location.search)) {
+    runSelftest();
+  } else {
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
+    '11-rotation-and-field'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+</body>
+</html>

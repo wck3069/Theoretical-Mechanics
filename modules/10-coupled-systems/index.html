@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>耦合系统与小振动 · 交互实验</title>
+<style>
+  :root{--bg:#05070f; --panel:rgba(18,24,42,.82); --line:rgba(120,160,255,.14);
+  --text:#dbe4ff; --muted:#8a98c0; --accent:#5ea2ff; --accent2:#ffcf6b; --good:#7fe3a0; --bad:#ff7b7b;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:radial-gradient(1200px 800px at 70% 10%,#0b1226 0%,#05070f 55%,#02030a 100%);
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:16px; left:20px; pointer-events:none; max-width:70%}
+  .brand h1{margin:0; font-size:18px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+  .hud{position:absolute; left:20px; bottom:16px; font-size:11.5px; color:var(--muted);
+       display:flex; gap:11px; flex-wrap:wrap; pointer-events:none}
+  .stage .hud{max-width:calc(100% - 200px)}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice.bad{color:#ffd7d7;border-color:rgba(255,123,123,.5);background:rgba(60,10,16,.6)}
+  .notice{position:absolute; right:16px; bottom:58px; max-width:52%; padding:7px 11px;
+    font-size:12px; color:var(--accent2); border:1px solid rgba(255,207,107,.4);
+    border-radius:8px; background:rgba(40,30,8,.6)}
+  .panel{width:340px; flex:none; padding:18px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{font-family:ui-monospace,monospace; font-size:12px; line-height:1.7;
+    padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:14px;}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .row label{font-size:12.5px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:12.5px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  .hint{font-size:11px; color:#6d7ba3; margin-top:4px; line-height:1.5}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(94,162,255,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent); border:2px solid #0a1020; cursor:pointer}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(94,162,255,.35);}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  button{font:inherit; font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(94,162,255,.35); transition:.15s}
+  button:hover{background:rgba(94,162,255,.28)}
+  .tag{font-size:11px; color:#6d7ba3; margin-top:8px; line-height:1.5}
+  .selftest{white-space:pre-wrap;position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(94,162,255,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  a.doc{display:inline-block; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  span.doc{cursor:default;color:var(--muted);pointer-events:none}
+  details.mapping{margin-top:10px; font-size:11.5px; color:var(--muted)}
+  details.mapping summary{cursor:pointer; color:var(--accent2); font-size:12px}
+  details.mapping table{width:100%; border-collapse:collapse; margin-top:6px; font-size:11px}
+  details.mapping th, details.mapping td{padding:4px 6px; border:1px solid var(--line); text-align:left}
+  details.mapping th{color:#cfe0ff; background:rgba(10,16,32,.5)}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+    .stage .hud{left:10px; top:146px; bottom:auto; max-width:calc(100% - 20px);
+      font-size:11px; gap:7px; padding:4px 7px; border-radius:8px;
+      background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.10)}
+    .stage .hud .lg, .stage .hud .hud-extra{display:none}
+    .stage .notice{top:180px; bottom:auto; left:10px; right:auto;
+      max-width:calc(100% - 200px); font-size:11px; padding:5px 8px}
+  }
+</style>
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+</head>
+<body>
+<style>
+  .scene-group{display:none}
+  .scene-group.on{display:block}
+  .scene-select{margin-bottom:14px}
+  .scene-select select{width:100%}
+  .eq .num{color:var(--accent2)}
+  .muted{color:var(--muted)}
+</style>
+<div class="app">
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="brand">
+      <h1>耦合系统与小振动</h1>
+      <p>斜面滑块 · 弹簧摆 · 小车单摆</p>
+      <p class="intro">三个系统都属于“两个广义坐标、一个循环坐标或一组耦合振动”。切换场景，看拉格朗日量里的交叉项如何变成可观测的加速度分配与振动频率。</p>
+    </div>
+    <div class="hud">
+      <span><span id="l1">a_rel</span> <b id="h1">-</b></span>
+      <span><span id="l2">a_X</span> <b id="h2">-</b></span>
+      <span><span id="l3">η</span> <b id="h3">-</b></span>
+      <span><span id="l4">p_X</span> <b id="h4">-</b></span>
+      <span><span id="l5">E</span> <b id="h5">-</b></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+  <aside class="panel">
+    <div class="scene-select">
+      <div class="row"><label for="sel-scene">场景</label></div>
+      <select id="sel-scene">
+        <option value="wedge">Q3 · 斜面上的滑块</option>
+        <option value="spring">Q4 · 弹簧摆</option>
+        <option value="cart">Q5 · 小车与单摆</option>
+      </select>
+    </div>
+    <div class="eq" id="eqBox"></div>
+
+    <div class="scene-group" data-scene="wedge">
+      <div class="group">
+        <div class="row"><label for="p-ratio">质量比 M/m</label><span class="val" id="v-ratio">2.00</span></div>
+        <input id="p-ratio" type="range" min="0.5" max="5" step="0.05" value="2">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-alpha">斜面倾角 α（°）</label><span class="val" id="v-alpha">30.0</span></div>
+        <input id="p-alpha" type="range" min="10" max="60" step="1" value="30">
+      </div>
+    </div>
+
+    <div class="scene-group" data-scene="spring">
+      <div class="group">
+        <div class="row"><label for="p-k">弹簧劲度 k（N/m）</label><span class="val" id="v-k">80</span></div>
+        <input id="p-k" type="range" min="20" max="200" step="1" value="80">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-l0">原长 l₀（m）</label><span class="val" id="v-l0">0.50</span></div>
+        <input id="p-l0" type="range" min="0.2" max="1.2" step="0.01" value="0.5">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-m">质量 m（kg）</label><span class="val" id="v-m">1.00</span></div>
+        <input id="p-m" type="range" min="0.2" max="2" step="0.05" value="1">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-th0">初始角 θ₀（°）</label><span class="val" id="v-th0">17.2</span></div>
+        <input id="p-th0" type="range" min="5" max="35" step="0.5" value="17.2">
+      </div>
+    </div>
+
+    <div class="scene-group" data-scene="cart">
+      <div class="group">
+        <div class="row"><label for="p-cratio">质量比 M/m</label><span class="val" id="v-cratio">3.00</span></div>
+        <input id="p-cratio" type="range" min="0.5" max="8" step="0.05" value="3">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-len">摆长 l（m）</label><span class="val" id="v-len">1.00</span></div>
+        <input id="p-len" type="range" min="0.3" max="1.6" step="0.01" value="1">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-cth0">初始角 θ₀（°）</label><span class="val" id="v-cth0">14.3</span></div>
+        <input id="p-cth0" type="range" min="3" max="30" step="0.5" value="14.3">
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="p-speed">动画速度（×）</label><span class="val" id="v-speed">1.0</span></div>
+      <input id="p-speed" type="range" min="0.1" max="3" step="0.1" value="1">
+    </div>
+    <div class="btns">
+      <button id="btn-pause">暂停</button>
+      <button id="btn-reset">重置</button>
+    </div>
+    <div class="tag">SI 单位；g = 9.81 m/s²。斜面与小车场景中 X 的位移量较小，属真实比例。<br>
+    自测：<span>index.html?selftest=1</span></div>
+    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
+    <a class="doc" href="../09-atwood-pulley/index.html">← 上一模块：Atwood 机</a>
+    <a class="doc" href="../11-rotation-and-field/index.html">下一模块：旋转与磁场 →</a>
+    <details class="mapping">
+      <summary>作业映射（作业-8 Q3、Q4、Q5 小车）</summary>
+      <table>
+        <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
+        <tr><td>作业-8 Q3</td><td>循环坐标、动能分配、约束力做功</td><td>斜面场景：a_rel、a_X、η=K_wedge/mgh</td></tr>
+        <tr><td>作业-8 Q4</td><td>弹簧摆、平衡位置、两种小振动频率</td><td>弹簧摆场景：r₀、ω_r、ω_θ</td></tr>
+        <tr><td>作业-8 Q5</td><td>小车+单摆、水平动量守恒、小振动</td><td>小车场景：p_X、ω</td></tr>
+      </table>
+    </details>
+  </aside>
+</div>
+<script>
+'use strict';
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var G = 9.81;
+  var cv = $('cv'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+  var scene = 'wedge', playing = true, speed = 1, last = 0;
+  var reduced = false;
+  try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+
+  var wedge = { ratio: 2, alpha: 30, t: 0 };
+  var spring = { k: 80, l0: 0.5, m: 1, th0: 0.3, r: 0, vr: 0, th: 0, om: 0, trail: [] };
+  var cart = { ratio: 3, l: 1, th0: 0.25, X: 0, vX: 0, th: 0, om: 0, trail: [] };
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    W = Math.max(120, Math.floor(r.width));
+    H = Math.max(120, Math.floor(r.height));
+    cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+
+  /* ---------------- Q3 斜面滑块 ---------------- */
+  function wedgeVals() {
+    var a = wedge.alpha * Math.PI / 180, r = wedge.ratio;
+    var den = r + Math.sin(a) * Math.sin(a);
+    var aRel = G * Math.sin(a) * (r + 1) / den;
+    var aX = -G * Math.sin(a) * Math.cos(a) / den;
+    var k = Math.cos(a) / (r + 1);
+    var num = r * k * k;
+    var den2 = num + (1 - 2 * k * Math.cos(a) + k * k);
+    return { aRel: aRel, aX: aX, eta: num / den2, k: k, a: a };
+  }
+  function wedgeStep(dt) {
+    var v = wedgeVals();
+    wedge.t += dt;
+    if (0.5 * v.aRel * wedge.t * wedge.t > 0.9) wedge.t = 0;
+  }
+  function drawWedge() {
+    var v = wedgeVals();
+    var gy = H * 0.76, scale = Math.min(W, H) * 0.30;
+    var wx = W * 0.46 + 0.5 * v.aX * wedge.t * wedge.t * scale;
+    var baseW = 300, Hw = baseW * Math.tan(v.a);
+    var x0 = wx - baseW / 2, x1 = wx + baseW / 2;
+    var topY = gy - Hw;
+
+    ctx.strokeStyle = 'rgba(140,160,220,.5)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, gy + 1); ctx.lineTo(W, gy + 1); ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x0, gy); ctx.lineTo(x1, gy); ctx.lineTo(x0, topY); ctx.closePath();
+    ctx.fillStyle = 'rgba(50,70,130,.55)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(127,224,255,.6)'; ctx.lineWidth = 1.6; ctx.stroke();
+
+    var s = 0.5 * v.aRel * wedge.t * wedge.t;
+    var frac = Math.min(1, s / 0.9);
+    var bx = x0 + frac * baseW, by = topY + frac * Hw;
+    var bw = 30;
+    ctx.save();
+    ctx.translate(bx, by - bw / 2);
+    ctx.rotate(v.a);
+    ctx.fillStyle = 'rgba(255,210,122,.9)';
+    ctx.fillRect(-bw / 2, -bw / 2, bw, bw);
+    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.strokeRect(-bw / 2, -bw / 2, bw, bw);
+    ctx.restore();
+
+    // 速度箭头：斜面后退 + 物块沿斜面
+    ctx.strokeStyle = '#7fe0ff'; ctx.lineWidth = 2;
+    var arrowY = gy + 22;
+    ctx.beginPath(); ctx.moveTo(wx, arrowY); ctx.lineTo(wx - 40, arrowY); ctx.stroke();
+    ctx.fillStyle = 'rgba(127,224,255,.85)'; ctx.font = '11px ui-monospace,monospace';
+    ctx.textAlign = 'center'; ctx.fillText('X', wx - 52, arrowY + 4);
+
+    setHud([
+      ['a_rel', v.aRel.toFixed(2) + ' m/s²'],
+      ['a_X', v.aX.toFixed(2) + ' m/s²'],
+      ['η = K_wedge/mgh', v.eta.toFixed(4)],
+      ['p_X', '0（守恒）'],
+      ['E', 'mgh 守恒']
+    ]);
+  }
+
+  /* ---------------- Q4 弹簧摆 ---------------- */
+  function springR0() { return spring.l0 + spring.m * G / spring.k; }
+  function springDeriv(st) {
+    var rdd = st.r * st.om * st.om - (spring.k / spring.m) * (st.r - spring.l0) + G * Math.cos(st.th);
+    var thdd = (-G * Math.sin(st.th) - 2 * st.vr * st.om) / st.r;
+    return { dr: st.vr, dvr: rdd, dth: st.om, dom: thdd };
+  }
+  function rk4Spring(st, dt) {
+    var a = springDeriv(st);
+    var b = springDeriv({ r: st.r + a.dr * dt / 2, vr: st.vr + a.dvr * dt / 2, th: st.th + a.dth * dt / 2, om: st.om + a.dom * dt / 2 });
+    var c = springDeriv({ r: st.r + b.dr * dt / 2, vr: st.vr + b.dvr * dt / 2, th: st.th + b.dth * dt / 2, om: st.om + b.dom * dt / 2 });
+    var d = springDeriv({ r: st.r + c.dr * dt, vr: st.vr + c.dvr * dt, th: st.th + c.dth * dt, om: st.om + c.dom * dt });
+    st.r += (a.dr + 2 * b.dr + 2 * c.dr + d.dr) * dt / 6;
+    st.vr += (a.dvr + 2 * b.dvr + 2 * c.dvr + d.dvr) * dt / 6;
+    st.th += (a.dth + 2 * b.dth + 2 * c.dth + d.dth) * dt / 6;
+    st.om += (a.dom + 2 * b.dom + 2 * c.dom + d.dom) * dt / 6;
+  }
+  function springStep(dt) {
+    var rem = dt;
+    while (rem > 1e-9) { var h = Math.min(0.004, rem); rk4Spring(spring, h); rem -= h; }
+    if (spring.r < spring.l0 * 0.5) { resetSpring(); }
+    spring.trail.push({ x: spring.r * Math.sin(spring.th), y: spring.r * Math.cos(spring.th) });
+    if (spring.trail.length > 220) spring.trail.shift();
+  }
+  function resetSpring() {
+    spring.r = springR0(); spring.vr = 0; spring.th = spring.th0; spring.om = 0; spring.trail = [];
+  }
+  function drawSpring() {
+    var cx = W * 0.5, cy = H * 0.2;
+    var scale = Math.min(W, H) * 0.30;
+    var bx = cx + spring.r * Math.sin(spring.th) * scale;
+    var by = cy + spring.r * Math.cos(spring.th) * scale;
+
+    ctx.strokeStyle = 'rgba(120,140,190,.18)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx - 220, cy); ctx.lineTo(cx + 220, cy); ctx.stroke();
+
+    // 弹簧折线
+    var dx = bx - cx, dy = by - cy, len = Math.sqrt(dx * dx + dy * dy), ux = dx / len, uy = dy / len;
+    var px = -uy, py = ux, n = 12;
+    ctx.strokeStyle = '#7ff0cf'; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    for (var i = 1; i <= n; i++) {
+      var f = i / n, off = (i % 2 ? 8 : -8) * (i === n ? 0 : 1);
+      ctx.lineTo(cx + dx * f + px * off, cy + dy * f + py * off);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(127,240,207,.9)';
+    ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(bx, by, 12, 0, Math.PI * 2); ctx.fill();
+
+    // 轨迹
+    ctx.strokeStyle = 'rgba(183,155,255,.35)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    spring.trail.forEach(function (p, i) {
+      var x = cx + p.x * scale, y = cy + p.y * scale;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    var r0 = springR0(), wr = Math.sqrt(spring.k / spring.m), wt = Math.sqrt(G / r0);
+    setHud([
+      ['r / r₀', spring.r.toFixed(3) + ' / ' + r0.toFixed(3) + ' m'],
+      ['θ', (spring.th * 180 / Math.PI).toFixed(1) + '°'],
+      ['ω_r = √(k/m)', wr.toFixed(2) + ' rad/s'],
+      ['ω_θ = √(g/r₀)', wt.toFixed(2) + ' rad/s'],
+      ['E', springEnergy().toFixed(3) + ' J']
+    ]);
+  }
+  function springEnergy() {
+    var T = 0.5 * spring.m * (spring.vr * spring.vr + spring.r * spring.r * spring.om * spring.om);
+    var V = 0.5 * spring.k * Math.pow(spring.r - spring.l0, 2) - spring.m * G * spring.r * Math.cos(spring.th);
+    return T + V;
+  }
+
+  /* ---------------- Q5 小车 + 单摆 ---------------- */
+  function cartOmega() { return Math.sqrt(G * (cart.ratio + 1) / (cart.ratio * cart.l)); }
+  function cartDeriv(st) {
+    var m = 1, M = cart.ratio, l = cart.l, s = Math.sin(st.th), c = Math.cos(st.th);
+    var thdd = -((M + m) * G * s + m * l * s * c * st.om * st.om) / (l * (M + m * s * s));
+    return { dth: st.om, dom: thdd };
+  }
+  function cartStep(dt) {
+    var rem = dt;
+    while (rem > 1e-9) {
+      var h = Math.min(0.004, rem); rem -= h;
+      var a = cartDeriv(cart);
+      var b = cartDeriv({ th: cart.th + a.dth * h / 2, om: cart.om + a.dom * h / 2 });
+      var c = cartDeriv({ th: cart.th + b.dth * h / 2, om: cart.om + b.dom * h / 2 });
+      var d = cartDeriv({ th: cart.th + c.dth * h, om: cart.om + c.dom * h });
+      cart.th += (a.dth + 2 * b.dth + 2 * c.dth + d.dth) * h / 6;
+      cart.om += (a.dom + 2 * b.dom + 2 * c.dom + d.dom) * h / 6;
+      cart.vX = -cart.l * Math.cos(cart.th) * cart.om / (cart.ratio + 1);
+      cart.X += cart.vX * h;
+    }
+  }
+  function resetCart() {
+    cart.th = cart.th0; cart.om = 0; cart.X = 0; cart.vX = 0;
+  }
+  function drawCart() {
+    var cx = W * 0.5, railY = H * 0.55, scale = Math.min(W, H) * 0.26;
+    var cartW = 90, cartH = 34;
+    var x = cx + cart.X * scale * 3;
+    var pivotX = x, pivotY = railY - cartH;
+    var bx = pivotX + cart.l * Math.sin(cart.th) * scale;
+    var by = pivotY + cart.l * Math.cos(cart.th) * scale;
+
+    ctx.strokeStyle = 'rgba(140,160,220,.45)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, railY); ctx.lineTo(W, railY); ctx.stroke();
+    ctx.fillStyle = 'rgba(50,70,130,.55)';
+    ctx.strokeStyle = 'rgba(127,224,255,.6)'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.rect(x - cartW / 2, railY - cartH, cartW, cartH); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x - cartW / 4, railY, 7, 0, Math.PI * 2);
+    ctx.arc(x + cartW / 4, railY, 7, 0, Math.PI * 2); ctx.fillStyle = '#1a2440'; ctx.fill();
+    ctx.strokeStyle = 'rgba(210,220,250,.7)'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(pivotX, pivotY); ctx.lineTo(bx, by); ctx.stroke();
+    ctx.fillStyle = '#ffd27a';
+    ctx.beginPath(); ctx.arc(bx, by, 13, 0, Math.PI * 2); ctx.fill();
+
+    setHud([
+      ['θ', (cart.th * 180 / Math.PI).toFixed(1) + '°'],
+      ['X（×3 显示）', (cart.X * 1000).toFixed(0) + ' mm'],
+      ['p_X', '0（守恒）'],
+      ['ω', cartOmega().toFixed(3) + ' rad/s'],
+      ['E', cartEnergy().toFixed(3) + ' J']
+    ]);
+  }
+  function cartEnergy() {
+    var m = 1, M = cart.ratio, l = cart.l, s = Math.sin(cart.th), c = Math.cos(cart.th);
+    var T = 0.5 * (M + m) * cart.vX * cart.vX + m * l * c * cart.vX * cart.om + 0.5 * m * l * l * cart.om * cart.om;
+    var V = -m * G * l * c;
+    return T + V;
+  }
+
+  /* ---------------- 公共 ---------------- */
+  function setHud(pairs) {
+    for (var i = 0; i < 5; i++) {
+      var p = pairs[i] || ['', ''];
+      $('l' + (i + 1)).textContent = p[0];
+      $('h' + (i + 1)).textContent = p[1];
+    }
+  }
+
+  function eqHtml() {
+    if (scene === 'wedge') return '' +
+      '<div><span class="num">L =</span> ½(M+m)Ẋ² + m Ẋṡ cosα + ½mṡ² + mg s sinα</div>' +
+      '<div><span class="num">p_X =</span> (M+m)Ẋ + mṡ cosα = 0</div>' +
+      '<div><span class="num">a_rel =</span> g sinα (M+m)/(M+m sin²α)</div>' +
+      '<div><span class="num">a_X =</span> −m g sinα cosα/(M+m sin²α)</div>';
+    if (scene === 'spring') return '' +
+      '<div><span class="num">L =</span> ½m(ṙ²+r²θ̇²) − ½k(r−l₀)² + mgr cosθ</div>' +
+      '<div><span class="num">r̈ =</span> rθ̇² − (k/m)(r−l₀) + g cosθ</div>' +
+      '<div><span class="num">θ̈ =</span> −(g sinθ + 2ṙθ̇)/r</div>' +
+      '<div><span class="num">r₀ =</span> l₀ + mg/k　<span class="num">ω_r =</span> √(k/m)　<span class="num">ω_θ =</span> √(g/r₀)</div>';
+    return '' +
+      '<div><span class="num">L =</span> ½(M+m)Ẋ² + ml cosθ Ẋθ̇ + ½ml²θ̇² + mgl cosθ</div>' +
+      '<div><span class="num">p_X =</span> (M+m)Ẋ + ml cosθ θ̇ = 0</div>' +
+      '<div><span class="num">θ̈ =</span> −[(M+m)g sinθ + ml sinθ cosθ θ̇²]/[l(M+m sin²θ)]</div>' +
+      '<div><span class="num">ω =</span> √(g(M+m)/(Ml))　<span class="muted">M→∞ 时 √(g/l)</span></div>';
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (scene === 'wedge') drawWedge();
+    else if (scene === 'spring') drawSpring();
+    else drawCart();
+  }
+
+  function step(dt) {
+    if (scene === 'wedge') wedgeStep(dt);
+    else if (scene === 'spring') springStep(dt);
+    else cartStep(dt);
+  }
+
+  function frame(now) {
+    if (!last) last = now;
+    var dt = Math.min(0.033, (now - last) / 1000) * speed;
+    last = now;
+    if (playing && !reduced) step(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  function sync() {
+    wedge.ratio = parseFloat($('p-ratio').value);
+    wedge.alpha = parseFloat($('p-alpha').value);
+    spring.k = parseFloat($('p-k').value);
+    spring.l0 = parseFloat($('p-l0').value);
+    spring.m = parseFloat($('p-m').value);
+    spring.th0 = parseFloat($('p-th0').value) * Math.PI / 180;
+    cart.ratio = parseFloat($('p-cratio').value);
+    cart.l = parseFloat($('p-len').value);
+    cart.th0 = parseFloat($('p-cth0').value) * Math.PI / 180;
+    speed = parseFloat($('p-speed').value);
+
+    $('v-ratio').textContent = wedge.ratio.toFixed(2);
+    $('v-alpha').textContent = wedge.alpha.toFixed(1);
+    $('v-k').textContent = spring.k.toFixed(0);
+    $('v-l0').textContent = spring.l0.toFixed(2);
+    $('v-m').textContent = spring.m.toFixed(2);
+    $('v-th0').textContent = (spring.th0 * 180 / Math.PI).toFixed(1);
+    $('v-cratio').textContent = cart.ratio.toFixed(2);
+    $('v-len').textContent = cart.l.toFixed(2);
+    $('v-cth0').textContent = (cart.th0 * 180 / Math.PI).toFixed(1);
+    $('v-speed').textContent = speed.toFixed(1);
+
+    wedge.t = 0;
+    resetSpring();
+    resetCart();
+    draw();
+  }
+
+  function setScene(s) {
+    scene = s;
+    document.querySelectorAll('.scene-group').forEach(function (g) {
+      g.classList.toggle('on', g.getAttribute('data-scene') === s);
+    });
+    $('eqBox').innerHTML = eqHtml();
+    $('l1').textContent = '—';
+    sync();
+  }
+
+  ['p-ratio', 'p-alpha', 'p-k', 'p-l0', 'p-m', 'p-th0', 'p-cratio', 'p-len', 'p-cth0', 'p-speed']
+    .forEach(function (id) { $(id).addEventListener('input', sync); });
+  $('sel-scene').addEventListener('change', function () { setScene(this.value); });
+  $('btn-pause').addEventListener('click', function () {
+    playing = !playing; this.textContent = playing ? '暂停' : '继续';
+  });
+  $('btn-reset').addEventListener('click', function () {
+    wedge.t = 0; resetSpring(); resetCart(); playing = true;
+    $('btn-pause').textContent = '暂停'; draw();
+  });
+
+  function runSelftest() {
+    if (!/[?&]selftest=1(?:&|$)/.test(location.search)) return;
+    var panel = $('selftestPanel'), lines = [], fails = 0;
+    function chk(name, ok, detail) {
+      if (!ok) fails++;
+      lines.push((ok ? 'PASS' : 'FAIL') + '  ' + name + (detail ? '  ' + detail : ''));
+    }
+    // Q3
+    var a = 30 * Math.PI / 180, r = 2, den = r + Math.sin(a) * Math.sin(a);
+    var aRel = G * Math.sin(a) * (r + 1) / den;
+    var aX = -G * Math.sin(a) * Math.cos(a) / den;
+    var k = Math.cos(a) / (r + 1);
+    var eta = r * k * k / (r * k * k + 1 - 2 * k * Math.cos(a) + k * k);
+    chk('Q3 a_rel (M=2m, α=30°)', Math.abs(aRel - 0.6666667 * G) < 1e-6, 'a=' + aRel.toFixed(5));
+    chk('Q3 a_X (M=2m, α=30°)', Math.abs(aX + 1.88793) < 5e-3, 'aX=' + aX.toFixed(5));
+    chk('Q3 η = 2/9', Math.abs(eta - 2 / 9) < 1e-12, 'η=' + eta.toFixed(6));
+    chk('Q3 水平动量 (M+m)a_X + m a_rel cosα = 0', Math.abs((1 + r) * aX + aRel * Math.cos(a)) < 1e-9, 'residual=' + ((1 + r) * aX + aRel * Math.cos(a)).toExponential(2));
+    // Q4
+    var kk = 80, mm = 1, l0 = 0.5;
+    var r0 = l0 + mm * G / kk;
+    chk('Q4 r₀ = l₀ + mg/k', Math.abs(r0 - (l0 + G / kk)) < 1e-12, 'r0=' + r0.toFixed(5));
+    chk('Q4 ω_r = √(k/m)', Math.abs(Math.sqrt(kk / mm) - Math.sqrt(80)) < 1e-12, 'ωr=' + Math.sqrt(kk / mm).toFixed(4));
+    chk('Q4 ω_θ = √(g/r₀)', Math.abs(Math.sqrt(G / r0) - 3.9689) < 2e-3, 'ωθ=' + Math.sqrt(G / r0).toFixed(4));
+    // Q5
+    var ratio = 3, l = 1;
+    var om = Math.sqrt(G * (ratio + 1) / (ratio * l));
+    chk('Q5 ω = √(g(M+m)/(Ml))', Math.abs(om - Math.sqrt(G * 4 / 3)) < 1e-12, 'ω=' + om.toFixed(4));
+    chk('Q5 M→∞ 极限 √(g/l)', Math.abs(Math.sqrt(G / l) - 3.1321) < 2e-3, '=' + Math.sqrt(G / l).toFixed(4));
+    var th = 0.2, om2 = 0.7, vX = -l * Math.cos(th) * om2 / (ratio + 1);
+    var pX = (ratio + 1) * vX + l * Math.cos(th) * om2;
+    chk('Q5 水平总动量 p_X=0', Math.abs(pX) < 1e-12, 'pX=' + pX.toExponential(2));
+    panel.textContent = lines.join('\n') + '\n-- ' + (fails === 0 ? 'ALL PASS' : fails + ' FAIL');
+    panel.hidden = false;
+    panel.classList.toggle('fail', fails > 0);
+  }
+
+  resize();
+  var qs = /[?&]scene=(wedge|spring|cart)/.exec(location.search);
+  var initial = qs ? qs[1] : 'wedge';
+  $('sel-scene').value = initial;
+  setScene(initial);
+  if (/[?&]selftest=1(?:&|$)/.test(location.search)) {
+    runSelftest();
+  } else {
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
+    '11-rotation-and-field'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+</body>
+</html>
