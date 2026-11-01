@@ -487,7 +487,7 @@ window.TMART = (function () {
     <div class="group">
       <div class="row"><label for="param-theta">梯子与地面夹角 θ (°)</label><span class="val" id="val-theta">45.0</span></div>
       <input id="param-theta" type="range" min="5" max="85" step="1" value="45" aria-label="梯子角度">
-      <div class="hint">低于红色虚线（θ_min）即打滑；滑动时 N_w、N_f、f 由方程实时解出，N_w→0 时顶部离墙。</div>
+      <div class="hint">低于红色虚线（θ_min）即打滑；也可直接上下拖动梯子改变 θ。滑动时 N_w、N_f、f 由方程实时解出，N_w→0 时顶部离墙。</div>
     </div>
     <div class="group">
       <div class="row"><label for="param-speed">动画速度（×）</label><span class="val" id="val-speed">1.0</span></div>
@@ -710,8 +710,8 @@ function advanceSlide(st, dt) {
     setNotice('N_w 降到 0：顶部离墙，梯子在地面滑行并绕底端翻转（含轻阻尼）', false);
     return;
   }
-  if (st.th <= 0.05) {
-    st.th = 0.05; st.om = 0; st.mode = 'down';
+  if (st.th <= 0) {
+    st.th = 0; st.om = 0; st.mode = 'down';
     setNotice('梯子已落地：拖动 θ 滑块或点“重置”重新抬起', false);
   }
 }
@@ -722,8 +722,8 @@ function advanceDetached(st, dt) {
   st.th = r.th; st.om = r.om; st.xB = r.xB; st.vB = r.vB;
   st.om *= (1 - 0.2 * dt);                // 轻阻尼（残余滚阻/空气），纯视觉稳定
   st.alpha = r.alpha; st.N = r.N; st.F = r.F; st.W = 0;
-  if (st.th <= 0.05) {
-    st.th = 0.05; st.om = 0; st.mode = 'down';
+  if (st.th <= 0) {
+    st.th = 0; st.om = 0; st.mode = 'down';
     setNotice('梯子已落地：拖动 θ 滑块或点“重置”重新抬起', false);
   }
 }
@@ -750,6 +750,77 @@ function resize() {
   layout();
 }
 window.addEventListener('resize', resize);
+
+// —— 鼠标/触控拖动梯子改变 θ ——
+var dragLadder = false, dragStartY = 0, dragStartTh = 0;
+cv.style.cursor = 'grab';
+cv.style.touchAction = 'none';
+
+function ladderNow() {
+  var L = ladderLenPx, th = lad.th;
+  var detached = (lad.mode === 'detached' || (lad.mode === 'down' && lad.sepBaseU > 0));
+  var baseU = detached ? lad.sepBaseU : Math.cos(th);
+  var bx = wallX - L * baseU + (detached ? lad.xB * L : 0);
+  return {bx: bx, by: groundY, topX: bx + L * Math.cos(th), topY: groundY - L * Math.sin(th)};
+}
+function segDist(px, py, x1, y1, x2, y2) {
+  var dx = x2 - x1, dy = y2 - y1;
+  var d2 = dx * dx + dy * dy;
+  var t = d2 > 1e-9 ? ((px - x1) * dx + (py - y1) * dy) / d2 : 0;
+  t = Math.max(0, Math.min(1, t));
+  var x = x1 + t * dx, y = y1 + t * dy;
+  return Math.hypot(px - x, py - y);
+}
+function setLadAngle(deg) {
+  deg = Math.min(Math.max(deg, RANGE.theta[0]), RANGE.theta[1]);
+  P.theta = deg;
+  lad.target = deg * Math.PI / 180;
+  lad.th = lad.target;
+  lad.om = 0; lad.alpha = 0; lad.mode = 'static';
+  lad.sepTh = 0; lad.sepBaseU = 0; lad.xB = 0; lad.vB = 0;
+  lad.trail.length = 0; lad.hold = 1e9;
+  readStatic();
+  $('param-theta').value = deg;
+  $('val-theta').textContent = deg.toFixed(1);
+  syncURL();
+  setNotice('', false);
+}
+cv.addEventListener('pointerdown', function (ev) {
+  var rect = cv.getBoundingClientRect();
+  var px = ev.clientX - rect.left, py = ev.clientY - rect.top;
+  var g = ladderNow();
+  if (segDist(px, py, g.bx, g.by, g.topX, g.topY) > 28) return;
+  dragLadder = true;
+  dragStartY = py;
+  dragStartTh = lad.th;
+  lad.mode = 'static';
+  lad.om = 0; lad.alpha = 0;
+  lad.hold = 1e9;
+  readStatic();
+  cv.style.cursor = 'grabbing';
+  try { cv.setPointerCapture(ev.pointerId); } catch (err) {}
+  ev.preventDefault();
+});
+cv.addEventListener('pointermove', function (ev) {
+  if (!dragLadder) return;
+  var rect = cv.getBoundingClientRect();
+  var py = ev.clientY - rect.top;
+  var sinNew = Math.sin(dragStartTh) - (py - dragStartY) / Math.max(1, ladderLenPx);
+  var s5 = Math.sin(RANGE.theta[0] * Math.PI / 180);
+  var s85 = Math.sin(RANGE.theta[1] * Math.PI / 180);
+  sinNew = Math.min(Math.max(sinNew, s5), s85);
+  setLadAngle(Math.asin(sinNew) * 180 / Math.PI);
+  ev.preventDefault();
+});
+function endLadderDrag() {
+  if (!dragLadder) return;
+  dragLadder = false;
+  lad.hold = 0.35;                 // 松开后按当前 θ 重新判断
+  cv.style.cursor = 'grab';
+}
+cv.addEventListener('pointerup', endLadderDrag);
+cv.addEventListener('pointercancel', endLadderDrag);
+
 
 function rrect(x, y, w, h, r) {
   r = Math.min(r, w * 0.5, h * 0.5);
@@ -1190,21 +1261,19 @@ if (qURL.selftest === '1') {
   stEl.textContent = txt;
 }
 
-var lastT = 0, acc = 0;
+var lastT = 0;
 function frame(ts) {
   if (!lastT) lastT = ts;
   var dt = (ts - lastT) / 1000;
   lastT = ts;
   if (!(dt > 0)) dt = 0;
   if (dt > 0.05) dt = 0.05;              // 切回标签页不跳跃
-  acc += dt * P.speed;
-  var guard = 0;
-  while (acc >= FIXED_DT && guard < 16) {
-    stepLad(FIXED_DT);
-    acc -= FIXED_DT;
-    guard++;
+  var simDt = dt * P.speed;
+  if (simDt > 0) {
+    var steps = Math.max(1, Math.ceil(simDt / FIXED_DT));
+    var h = simDt / steps;
+    for (var i = 0; i < steps; i++) stepLad(h);
   }
-  if (guard >= 16) acc = 0;
   draw();
   updateHUD();
   requestAnimationFrame(frame);
