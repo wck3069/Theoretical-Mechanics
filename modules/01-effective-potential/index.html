@@ -734,6 +734,7 @@ window.addEventListener('resize', resize);
 
 var sim = {r:P.r0, vr:0, th:0, t:0};
 var trail = [], E0 = 0, simState = 'bound';
+var orbitTMeasured = 0, lastThCross = 0, lastThT = 0;
 var eqs = [], tps = [], freq = null;
 function recompute(){
   eqs = equilibria(); tps = turningPoints();
@@ -768,9 +769,10 @@ function initState(){
     if (typeof refreshUI === 'function') refreshUI();
   }
   sim.r = P.r0; sim.th = 0; sim.t = 0;
+  orbitTMeasured = 0; lastThCross = 0; lastThT = 0;
   var kin = 2 * (P.E - Veff(sim.r));
   sim.vr = kin > 0 ? Math.sqrt(kin) : 0;
-  trail = [{r:sim.r, th:0}];
+  trail = [{r:sim.r, th:0, t:sim.t}];
   E0 = energy(sim); simState = 'bound';
   recompute();
 }
@@ -784,6 +786,14 @@ function viewR(){
 function eqsStableR(){
   for (var i = 0; i < eqs.length; i++) if (eqs[i].stable) return eqs[i].r;
   return NaN;
+}
+// 视觉轨迹衰减时长：当前轨道周期的 3.5 倍（模拟时间；与动画速度同比）
+function orbitPeriod(){
+  if (orbitTMeasured > 1e-3) return orbitTMeasured;
+  if (freq && freq.wt > 0) return 2 * Math.PI / freq.wt;
+  var r = Math.max(0.08, sim.r);
+  var wt = P.L / (r * r);
+  return wt > 1e-9 ? 2 * Math.PI / wt : 4.0;
 }
 var particlePos = {x:0, y:0};
 function drawOrbitPanel(x0, x1, y0, y1){
@@ -800,13 +810,22 @@ function drawOrbitPanel(x0, x1, y0, y1){
   ctx.fillStyle = '#ffcf6b';
   ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2 * Math.PI); ctx.fill();
   if (trail.length > 1){
-    ctx.strokeStyle = 'rgba(94,162,255,.5)'; ctx.lineWidth = 1.4; ctx.beginPath();
-    for (i = 0; i < trail.length; i++){
-      x = cx + trail[i].r * sc * Math.cos(trail[i].th);
-      y = cy - trail[i].r * sc * Math.sin(trail[i].th);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    var fadeAge = 3.5 * orbitPeriod();
+    ctx.lineWidth = 1.4;
+    for (i = 1; i < trail.length; i++){
+      var age = sim.t - trail[i].t;
+      var a = Math.max(0, 1 - age / Math.max(1e-6, fadeAge));
+      if (a <= 0.012) continue;
+      ctx.globalAlpha = a * 0.55;
+      ctx.strokeStyle = '#5ea2ff';
+      ctx.beginPath();
+      ctx.moveTo(cx + trail[i - 1].r * sc * Math.cos(trail[i - 1].th),
+                 cy - trail[i - 1].r * sc * Math.sin(trail[i - 1].th));
+      ctx.lineTo(cx + trail[i].r * sc * Math.cos(trail[i].th),
+                 cy - trail[i].r * sc * Math.sin(trail[i].th));
+      ctx.stroke();
     }
-    ctx.stroke(); ctx.lineWidth = 1;
+    ctx.globalAlpha = 1; ctx.lineWidth = 1;
   }
   x = cx + sim.r * sc * Math.cos(sim.th); y = cy - sim.r * sc * Math.sin(sim.th);
   ctx.fillStyle = '#eaf2ff';
@@ -1014,9 +1033,10 @@ function placeAt(px, py, g){
   var r = Math.sqrt(dx * dx + dy * dy) / g.sc;
   r = Math.min(Math.max(r, 0.08), 8);
   sim.r = r; sim.th = Math.atan2(-dy, dx); sim.t = 0;
+  orbitTMeasured = 0; lastThCross = Math.floor(sim.th / (2 * Math.PI)); lastThT = 0;
   var kin = 2 * (P.E - Veff(r));
   sim.vr = kin > 0 ? Math.sqrt(kin) : 0;
-  trail = [{r: sim.r, th: sim.th}];
+  trail = [{r: sim.r, th: sim.th, t: sim.t}];
   E0 = energy(sim); simState = 'bound';
   recompute();
 }
@@ -1047,6 +1067,13 @@ function frame(){
     for (i = 0; i < steps; i++){
       var tNext = sim.t + h;
       sim = rk4(sim, h); sim.t = tNext;
+      var thCross = Math.floor(sim.th / (2 * Math.PI));
+      if (thCross > lastThCross){
+        var Torb = sim.t - lastThT;
+        if (Torb > 1e-3) orbitTMeasured = Torb;
+        lastThCross = thCross;
+        lastThT = sim.t;
+      }
       if (!isFinite(sim.r) || !isFinite(sim.vr) || sim.r < 0.04){
         simState = 'singular';
         setNotice('r 趋于 0：势过强或 L 过小，请重置或增大 L。', true);
@@ -1057,9 +1084,10 @@ function frame(){
         setNotice('r 超过 14：E 高于势垒，轨道已逃逸（请减小 E 或增大 L）。', true);
         break;
       }
-      trail.push({r: sim.r, th: sim.th});
+      trail.push({r: sim.r, th: sim.th, t: sim.t});
     }
-    if (trail.length > 4500) trail = trail.slice(-4000);
+    var fadeAge = 3.5 * orbitPeriod();
+    while (trail.length > 2 && sim.t - trail[0].t > fadeAge * 1.1) trail.shift();
   }
   draw(); updateHUD();
   requestAnimationFrame(frame);
