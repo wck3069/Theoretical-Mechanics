@@ -153,38 +153,23 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 - 每页都有 `?selftest=1` 硬断言；`?scene=...` 可直接打开指定场景（M10/M11）。
 - 三份 `note.tex` 由 `tools/build_note.sh` 编译；`qa/numeric_check.py` 给出数值证据。
 
-### 手写手稿 OCR（章节资源）
+### 手写手稿（网页代码版）
 
-四份扫描手稿已转写为 LaTeX/PDF，并作为章节资源挂到对应章节：
+四份扫描手稿已转为网站内的 HTML 正文，**不再以 PDF 形式呈现**；公式与图都是代码：
 
-| 章节 | 文件 | 内容 |
+| 章节 | 页面 | 内容 |
 |---|---|---|
-| 第 1 章 | `chapters/01-particle/manuscripts/hw1-chapter1-ocr.pdf` | 作业一·第一章 26 页，28 页排版；图已用 TikZ 重绘；第 2 题速度公式已修正 |
-| 第 1 章 | `chapters/01-particle/manuscripts/intro-chapter1-ocr.pdf` | 绪论与第一章笔记 49 页，74 页排版；手绘图按原页裁剪 |
-| 第 2 章 | `chapters/02-system/manuscripts/chapter2-notes-ocr.pdf` | 第二章 质点系力学笔记 60 页，76 页排版；手绘图按原页裁剪 |
-| 第 3 章 | `chapters/03-variational/manuscripts/variational-ocr.pdf` | 变分原理笔记 27 页，28 页排版 |
+| 第 1 章 | `chapters/01-particle/manuscripts/hw1.html` | 作业一·第一章 26 页；6 张图 TikZ→SVG |
+| 第 1 章 | `chapters/01-particle/manuscripts/intro.html` | 绪论与第一章笔记 49 页 |
+| 第 2 章 | `chapters/02-system/manuscripts/chapter2.html` | 第二章笔记 59 页 |
+| 第 3 章 | `chapters/03-variational/manuscripts/variational.html` | 变分原理 27 页 |
 
-- OCR 流程：`/home/wck/Desktop/incoming/ocr/`（不在仓库），Doubao-Seed-2.0-mini 视觉模型；每页缓存可续跑。
-- 公式、编号按原页保留；无法辨认处保留 `[?]`。
-- **物理修正**：作业一手稿已逐题检查并修正 9 处（速度公式、E×B 解、单摆展开、圆柱能量、2πω、径向符号、彗星因子、r⁻³ 扰动等），详见 `chapters/01-particle/manuscripts/CORRECTIONS.md`。
-- 变分原理手稿已修正 4 处（Snell 定律、摆线参数方程、悬链线分离变量与 cosh/tanh），详见 `chapters/03-variational/manuscripts/CORRECTIONS.md`。
-- 第二章笔记已修正 8 处（角动量 ω²、径向符号、维里符号、圆盘动能、变质量笔误、角动量分解等），见 `chapters/02-system/manuscripts/CORRECTIONS.md`。
-- 绪论与第一章笔记已修正 2 处（比耐微扰展开、斥力轨道分母），见 `chapters/01-particle/manuscripts/INTRO-CORRECTIONS.md`。
-- 章节页的卡片只链接 PDF，不改变原有模块结构。
-
-### 章册（第 1–3 章）
-
-第 1–3 章各有一本「章册」PDF，作为章节页的第一入口：
-
-| 章 | 文件 | 页数 | 组成 |
-|---|---|---|---|
-| 第 1 章 | `chapters/01-particle/manuscripts/chapter-01-book.pdf` | 126 | M0 + M1 + M2 + 作业一手稿 + 绪论手稿 |
-| 第 2 章 | `chapters/02-system/manuscripts/chapter-02-book.pdf` | 90 | M3 + M6 + 第二章手稿 |
-| 第 3 章 | `chapters/03-variational/manuscripts/chapter-03-book.pdf` | 36 | M4 + 变分原理手稿 |
-
-- 每本含封面、目录（真实起始页）、PDF 书签；
-- 用 PyMuPDF (`fitz`) 合并并写入 TOC，封面由 ctexart 生成；
-- 章节页新增 `CHAPTER BOOK · PDF` 卡片，位于模块卡片之前。
+- 公式：本地 `assets/mathjax/tex-svg.js`（离线，无 CDN）；正文里的 `$...$`、`\[...\]` 由 MathJax 直接渲染。
+- 图：TikZ 图编译为 SVG；截图裁剪用 `vtracer` 转矢量 SVG。
+- **图像审核**：用可识图模型逐张审核 72 张 SVG，13 张 PASS 保留，59 张因标注不可读/截断/误检从正文移除；页面顶部有说明。
+- 交互链接：按章节在顶部与相关小节插入 M0–M11 的「交互演示」入口。
+- 样式：`assets/manuscript.css`。
+- 物理修正：作业一 9 处、变分原理 4 处、第二章 8 处、绪论 2 处；记录在同目录 `CORRECTIONS.md` / `INTRO-CORRECTIONS.md`。
 
 ## 6. 运行与部署
 
@@ -287,7 +272,8 @@ python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html mod
 
 - `index.html`：首页、七章星图、行星纹理、太阳、缩放、拖动、星空。
 - `chapters/01-particle/index.html` … `chapters/07-hamiltonian/index.html`：七章总览。
-- `chapters/0{1,2,3}-*/manuscripts/`：四份手写手稿的 OCR PDF 与三本章册。
+- `chapters/0{1,2,3}-*/manuscripts/*.html`：四份手写手稿的网页代码版；`figs/` 为 SVG 图。
+- `assets/manuscript.css`、`assets/mathjax/tex-svg.js`：手稿页样式与离线公式渲染。
 - `modules/00-binet` … `modules/08-kinematics`：M0–M8 子模块。
 - `modules/09-atwood-pulley`：M9 有转动惯量的 Atwood 机（作业-8 Q1）。
 - `modules/10-coupled-systems`：M10 斜面滑块 + 弹簧摆 + 小车单摆（作业-8 Q3/Q4/Q5）。
