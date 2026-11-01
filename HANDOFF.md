@@ -6,7 +6,7 @@
 
 ## 1. 当前状态
 
-站点结构：**七章 + 9 个可交互模块（M0–M8）**，不含氢原子。
+站点结构：**七章 + 12 个可交互模块（M0–M11）**，不含氢原子。
 
 七章与模块映射：
 
@@ -15,13 +15,13 @@
 | 1 | 质点力学 | M0 比奈、M1 有效势、M2 散射 |
 | 2 | 质点系力学 | M3 两体、M6 碰撞/变质量 |
 | 3 | 变分法 | M4 变分原理 |
-| 4 | 拉格朗日力学 | M5 虚功/拉格朗日 |
+| 4 | 拉格朗日力学 | M5 虚功、M9 Atwood、M10 耦合系统、M11 旋转/磁场 |
 | 5 | 小振动 | M8 运动学/非线性振动 |
 | 6 | 刚体力学 | M7 刚体 |
 | 7 | 哈密顿力学 | 暂无模块，章节页为导读/建设中 |
 
 - 首页星图有 **7 颗行星**，点击进入 `chapters/01-particle` … `chapters/07-hamiltonian`。
-- 原有 M0–M8 模块页保留，作为章节下的子模块。
+- M0–M11 模块页均保留，作为章节下的子模块。
 - 氢原子**不属于本站**。它已拆为独立站点：
   - 目录：`/home/wck/Quantum-Mechanics`
   - 仓库：`wck3069/Quantum-Mechanics`
@@ -31,6 +31,7 @@
 ## 2. 最近提交
 
 ```text
+c64f428 feat(M9-M11): visualize the Lagrangian problems from assignment 8
 a7f526e refactor: move hydrogen out of the theoretical-mechanics site
 8236aaa docs: update handoff for the hydrogen topic, webp textures and new structure
 d991979 feat(home): rebuild the star map around seven chapters with textured planets
@@ -47,9 +48,9 @@ a7e1a59 fix(M1): fade orbit trail over the measured orbital period
 ### 3.1 数据
 
 - `window.TM_MODULES`：7 个章节对象（C1–C7），`sim` 指向章节页。
-- `window.TM_SUBMODULES`：9 个 M0–M8 模块数据，用于兼容/来源链接。
+- `window.TM_SUBMODULES`：12 个 M0–M11 模块数据，用于兼容/来源链接。
 - 星图、星表、筛选、搜索围绕 7 个章节；行星点击直接进入章节页。
-- hero 计数：7 章 / 8 次作业 / 9 个模块。
+- hero 计数：7 章 / 8 次作业 / 12 个模块。
 - `showDetail()` 仍存在但星图基本不用；`TM_SUBMODULES` 保留。
 
 ### 3.2 行星纹理
@@ -137,6 +138,19 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 - 落地终态 θ=0 水平，删除落地前 0.03/0.003 rad 的提前吸附和回弹。
 - 慢速动画按 `dt*speed` 拆小步 RK4，避免低速抖动。
 
+### 作业-8 模块（M9–M11）
+
+`modules/09-atwood-pulley`、`modules/10-coupled-systems`、`modules/11-rotation-and-field` 是作业-8 的可视化，全部挂在第 4 章：
+
+- **M9 Atwood**：以 $m_2$ 向下位移为广义坐标，$a=(m_2-m_1)g/(m_1+m_2+I/R^2)$，
+  $T_1=m_1(g+a)$、$T_2=m_2(g-a)$；HUD 同时给出张力差与滑轮角加速度。
+- **M10 耦合系统**：页内切换三个场景——斜面滑块（$a_{\rm rel}$、$a_X$、$\eta=2/9$）、
+  弹簧摆（$r_0$、$\omega_r$、$\omega_\theta$）、小车单摆（$p_X=0$、$\omega$）。
+- **M11 旋转与磁场**：旋转圆环（$\Omega_c$、$\theta_{\rm eq}$、稳定性、雅可比积分 $\mathcal E$ 与 $E_{\rm mech}$），
+  磁场回旋（$Q_x$、$Q_y$、规范动量、回旋圆心）。
+- 每页都有 `?selftest=1` 硬断言；`?scene=...` 可直接打开指定场景（M10/M11）。
+- 三份 `note.tex` 由 `tools/build_note.sh` 编译；`qa/numeric_check.py` 给出数值证据。
+
 ## 6. 运行与部署
 
 ### 本地服务
@@ -183,7 +197,7 @@ mkdir -p "$OUT/assets"
 cp -r "$ROOT/assets/textures" "$OUT/assets/textures"
 ```
 
-导出目录约 4.5M，不含 `.jpg`，也不含氢原子。
+导出目录约 5.0M，不含 `.jpg`，也不含氢原子。
 
 ## 7. 验证命令与结果
 
@@ -194,12 +208,13 @@ python3 tools/verify_selftest.py
 python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html modules/08-kinematics/index.html chapters/01-particle/index.html
 ```
 
-本轮回退后的结果：
+本轮结果：
 
-- `check_html`：17 个页面（首页 + 9 模块 + 7 章节）全部 6/6 通过。
-- `verify_selftest`：9/9 通过（`00-binet` 无自检契约 SKIP）。
-- `layout_qa`：6/6 通过（1440×900 与 390×844）。
-- 本地链接/资源检查（一次性脚本）：136 个相对引用，0 缺失。
+- `check_html`：20 个页面（首页 + 12 模块 + 7 章节）全部 6/6 通过。
+- `verify_selftest`：12/12 通过（`00-binet` 无自检契约 SKIP）。M9 10/10、M10 11/11、M11 12/12。
+- `layout_qa`：10/10 通过（首页、第 4 章、M9–M11，各 1440×900 与 390×844）。
+- 本地链接/资源检查（一次性脚本）：157 个相对引用，0 缺失。
+- 三份 note.pdf：M9 4 页、M10 5 页、M11 4 页。
 
 ## 8. 已知问题 / 下一步建议
 
@@ -212,8 +227,8 @@ python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html mod
    - 7 个 `chapters/*/index.html` 直接写入，没有生成器；修改需直接改 HTML。
    - 后续可补 `tools/build_chapters.py` 统一导航与卡片。
 
-3. **模块页导航仍走 M0–M8 链**
-   - 9 个模块页内的 `CHAPTERS` 数组已去掉 `09-hydrogen`；`08-kinematics` 的“下一章”现在回到星图。
+3. **模块页导航仍走 M0–M11 链**
+   - 11 个模块页内的 `CHAPTERS` 数组已更新为 M0–M11；M11 的“下一章”回到星图。
    - 若要与七章统一，需要改所有模块页的 `CHAPTERS`，或引入章节级导航。
 
 4. **行星自转比例很快**
@@ -238,6 +253,9 @@ python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html mod
 - `index.html`：首页、七章星图、行星纹理、太阳、缩放、拖动、星空。
 - `chapters/01-particle/index.html` … `chapters/07-hamiltonian/index.html`：七章总览。
 - `modules/00-binet` … `modules/08-kinematics`：M0–M8 子模块。
+- `modules/09-atwood-pulley`：M9 有转动惯量的 Atwood 机（作业-8 Q1）。
+- `modules/10-coupled-systems`：M10 斜面滑块 + 弹簧摆 + 小车单摆（作业-8 Q3/Q4/Q5）。
+- `modules/11-rotation-and-field`：M11 旋转圆环 + 磁场回旋（作业-8 Q5/Q6）。
 - `modules/01-effective-potential/index.html`：M1 周期尾迹。
 - `modules/05-virtual-work/index.html`：M5 梯子拖动/落地。
 - `assets/textures/`：8 张 WebP 纹理 + `LICENSE.txt`。
@@ -246,4 +264,4 @@ python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html mod
 
 ## 10. 新对话建议开场
 
-> 读取 `/home/wck/Theoretical-Mechanics/HANDOFF.md`，先检查 `git status` 和最近提交。当前站点为七章 + 9 模块，氢原子已独立到 `../Quantum-Mechanics`。先不要改代码，告诉我你看到的未提交文件、Pages 部署状态，以及 `verify_selftest` 是否仍然通过。
+> 读取 `/home/wck/Theoretical-Mechanics/HANDOFF.md`，先检查 `git status` 和最近提交。当前站点为七章 + 12 模块，氢原子已独立到 `../Quantum-Mechanics`。先不要改代码，告诉我你看到的未提交文件、Pages 部署状态，以及 `verify_selftest` 是否仍然通过。
