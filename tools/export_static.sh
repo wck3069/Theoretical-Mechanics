@@ -9,6 +9,8 @@ cp -r "$ROOT/modules" "$OUT/modules"
 cp -r "$ROOT/chapters" "$OUT/chapters"
 mkdir -p "$OUT/assets"
 cp -r "$ROOT/assets/textures" "$OUT/assets/textures"
+cp "$ROOT/assets/manuscript.css" "$OUT/assets/manuscript.css"
+cp -r "$ROOT/assets/mathjax" "$OUT/assets/mathjax"
 find "$OUT/modules" -type d -name qa -prune -exec rm -rf {} + 2>/dev/null || true
 find "$OUT/modules" \( -name '*.aux' -o -name '*.log' -o -name '*.out' -o -name '*.toc' \
   -o -name '*.fls' -o -name '*.fdb_latexmk' -o -name '*.xdv' -o -name '*.synctex.gz' \) -delete
