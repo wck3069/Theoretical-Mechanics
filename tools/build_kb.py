@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""build_kb.py — build knowledge.json from the 9 chapter modules."""
+"""build_kb.py — build knowledge.json from the module registry."""
 from __future__ import annotations
 
 import argparse
@@ -58,6 +58,21 @@ MODULES_META = [
      "tags": ["运动学", "振动", "Lorentz", "脱离"],
      "pdf": "modules/08-kinematics/note.pdf", "tex": "modules/08-kinematics/note.tex",
      "readme": "modules/08-kinematics/README.md"},
+    {"slug": "09-atwood-pulley", "milestone": "M9", "title": "有转动惯量的 Atwood 机",
+     "src": "作业-8 Q1",
+     "tags": ["Atwood", "转动惯量", "张力差", "拉格朗日"],
+     "pdf": "modules/09-atwood-pulley/note.pdf", "tex": "modules/09-atwood-pulley/note.tex",
+     "readme": "modules/09-atwood-pulley/README.md"},
+    {"slug": "10-coupled-systems", "milestone": "M10", "title": "耦合系统与小振动",
+     "src": "作业-8 Q3–Q5",
+     "tags": ["循环坐标", "弹簧摆", "小车单摆", "小振动"],
+     "pdf": "modules/10-coupled-systems/note.pdf", "tex": "modules/10-coupled-systems/note.tex",
+     "readme": "modules/10-coupled-systems/README.md"},
+    {"slug": "11-rotation-and-field", "milestone": "M11", "title": "旋转参考系与磁场",
+     "src": "作业-8 Q5–Q6",
+     "tags": ["有效势", "稳定性", "雅可比积分", "诺特荷"],
+     "pdf": "modules/11-rotation-and-field/note.pdf", "tex": "modules/11-rotation-and-field/note.tex",
+     "readme": "modules/11-rotation-and-field/README.md"},
 ]
 
 
@@ -286,7 +301,7 @@ def main() -> int:
         data = json.loads(OUT.read_text(encoding="utf-8"))
         mods = data.get("modules", [])
         cc = data.get("chunk_count", 0)
-        ok = len(mods) == 9 and cc > 0
+        ok = len(mods) == len(MODULES_META) and cc > 0
         print(f"modules={len(mods)} chunks={cc} chars={data.get('char_count')}")
         return 0 if ok else 1
 

@@ -76,11 +76,11 @@ CHUNKS_FLAT = [(m, c) for m in MODULES for c in m["chunks"]]
 MODULE_INDEX = {m["milestone"]: i for i, m in enumerate(MODULES)}
 
 SYSTEM_PROMPT = (
-    "你是《理论力学·交互讲义》的助教，只服务本站 9 章：\n"
-    "M0 比奈方程、M1 有效势、M2 散射与俘获、M3 两体问题、M4 变分原理、\n"
-    "M5 虚功原理、M6 碰撞与变质量、M7 刚体、M8 运动学。\n"
+    "你是《理论力学·交互讲义》的助教，只服务本站 12 个模块（M0–M11）：\n"
+    "M0 比奈、M1 有效势、M2 散射与俘获、M3 两体、M4 变分原理、M5 虚功原理、\n"
+    "M6 碰撞与变质量、M7 刚体、M8 运动学、M9 Atwood 机、M10 耦合系统与小振动、M11 旋转参考系与磁场。\n"
     "必须遵守：\n"
-    "1) 只回答本站这 9 章覆盖的物理问题。\n"
+    "1) 只回答本站这 12 个模块覆盖的物理问题。\n"
     "2) 回答最多 3 句、120 字以内；不要展开推导。\n"
     "3) 若用户要求详细推导/完整过程：只给一句直觉，并说“详见 [M#] 的 note.pdf”，不要推导。\n"
     "4) 物理但不在本站范围（量子场论、统计力学、电动力学、广义相对论等）：只回复“网站未收录这个问题。”\n"
@@ -90,8 +90,9 @@ SYSTEM_PROMPT = (
     "8) 公式只用简单 LaTeX：$...$、\\frac{}{}、\\sqrt{}、_{} ^{}、希腊字母；不要用 \\begin{aligned}、\\begin{cases}、\\left、\\right、\\mathbb、\\mathcal、\\tag。\n"
     "9) 若历史中已出现过“同学请认真学习”或“你的胆子真是肥嘟嘟的”，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
     "10) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
-    "11) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；用一句话列出 9 章并问用户想看哪一章。若已指定章节，直接答该章。\n"
+    "11) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；用一句话列出 12 个模块并问用户想看哪一个。若已指定章节，直接答该章。\n"
     "12) 语气亲切、鼓励，像助教；可称呼“同学”；先回应问题，再给结论；不要生硬、不要说教（固定拒绝/提醒句除外）。\n"
+    "13) 只输出最终回答，不要输出思考过程、自我指令或字数统计。\n"
     "示例：\n"
     "用户：请详细推导有效势稳定性的完整过程\n"
     "助手：直觉：稳定由 V_eff''(r0)>0 决定。详见 [M1] 的 note.pdf。\n"
@@ -106,14 +107,14 @@ REVIEW_PROMPT = (
     "你会收到：学生问题、参考文段、本地助教草稿。\n"
     "审核标准：\n"
     "1) 事实以参考文段为准；公式或结论错误必须改正。\n"
-    "2) 只允许本站 9 章（M0-M8）的物理内容；站外物理只回复“网站未收录这个问题。”；非物理只回复“同学请认真学习。”。\n"
+    "2) 只允许本站 12 个模块（M0-M11）的物理内容；站外物理只回复“网站未收录这个问题。”；非物理只回复“同学请认真学习。”。\n"
     "3) 最多 3 句、120 字；要求详细推导时只给一句直觉 + “详见 [M#] 的 note.pdf”，不要展开。\n"
     "4) 引用 [M#] 必须对应正确章节。\n"
     "5) 若草稿已合格，可原样输出或轻微润色；不要解释审核过程。\n"
     "6) 公式只用简单 LaTeX（$...$、\\frac、\\sqrt、上下标、希腊字母）；不要用 aligned/cases/left/right。\n"
     "7) 若历史中已有无关问题提醒，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
     "8) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
-    "9) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；列出 9 章并问用户想看哪一章；已指定章节则直接答该章。\n"
+    "9) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；列出 12 个模块并问用户想看哪一个；已指定章节则直接答该章。\n"
     "10) 语气亲切、鼓励，像助教；可称呼“同学”；先回应再给结论；不要生硬。\n"
     "只输出最终中文回答。"
 )
@@ -134,6 +135,9 @@ MODULE_EQUATIONS = {
     "M6": "$e=\\frac{v_2'-v_1'}{v_1-v_2}$，$\\beta=\\arctan(2\\tan\\alpha)-\\alpha$",
     "M7": "$I=\\sum mr^2$，$L=I\\omega$",
     "M8": "$a_t=\\dot v$，$a_n=v^2/r$；$\\ddot\\theta=-(g/L)\\sin\\theta$",
+    "M9": "$a=\\frac{(m_2-m_1)g}{m_1+m_2+I/R^2}$，$T_2-T_1=\\frac{Ia}{R^2}$",
+    "M10": "$\\det(K-\\omega^2 M)=0$，$\\omega_r=\\sqrt{k/m}$，$\\omega_\\theta=\\sqrt{g/r_0}$",
+    "M11": "$\\ddot\\theta=(\\Omega^2\\cos\\theta-g/R)\\sin\\theta$，$Q_x=m\\dot x-qBy$",
 }
 
 
@@ -158,6 +162,8 @@ CHAPTER_KEYWORDS = (
     "虚功", "梯子", "碰撞", "恢复系数", "刚体", "转动惯量", "运动学", "振动",
     "洛伦兹", "Lorentz", "圆柱", "双摆", "开普勒", "轨道", "角动量", "中心力",
     "进动", "截面", "球冠", "甲虫", "球壳", "斜抛", "单摆", "简谐",
+    "Atwood", "阿特伍德", "耦合", "小振动", "弹簧摆", "小车", "旋转参考系",
+    "磁场", "雅可比", "诺特荷", "回旋",
 )
 
 MIME = {
@@ -424,7 +430,7 @@ def run_check() -> int:
     try:
         kb = json.loads(KB_PATH.read_text(encoding="utf-8"))
         kb_ok = (isinstance(kb.get("modules"), list)
-                 and len(kb["modules"]) == 9
+                 and len(kb["modules"]) >= 9
                  and kb.get("chunk_count", 0) > 0)
     except Exception as e:
         print("KB error:", e, file=sys.stderr)
@@ -795,7 +801,7 @@ class Handler(BaseHTTPRequestHandler):
         if PIPELINE in ("local_review", "local_only"):
             try:
                 t0 = time.perf_counter()
-                lmsg = call_local(messages, max(420, cap))
+                lmsg = call_local(messages, max(1024, cap))
                 draft = extract_answer(lmsg)
                 draft_ms = int((time.perf_counter() - t0) * 1000)
             except Exception:
@@ -866,8 +872,8 @@ class Handler(BaseHTTPRequestHandler):
                 top = sources[0] if sources else {}
                 answer = "直觉：请直接看 " + (top.get("milestone") or module or "对应章节") + " 的 note.pdf 的对应小节。"
                 refused = False
-        answer = re.sub(r"(详见|见|参考|查看)\s*\[?M(\d)\]?", r"\1 [M\2]", answer)
-        cited = set(re.findall(r"\[(M\d)\]", answer))
+        answer = re.sub(r"(详见|见|参考|查看)\s*\[?M(\d{1,2})\]?", r"\1 [M\2]", answer)
+        cited = set(re.findall(r"\[(M\d{1,2})\]", answer))
         if cited:
             filtered = [s for s in sources if s.get("milestone") in cited]
             have = {s.get("milestone") for s in filtered}

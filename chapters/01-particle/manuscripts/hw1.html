@@ -6,7 +6,7 @@
 <title>作业一与作业2 · 第一章手稿 · 理论力学手稿</title>
 <link rel="stylesheet" href="../../../assets/manuscript.css">
 <script>
-window.MathJax = {tex:{inlineMath:[['$','$'],['\(','\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
+window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
 </script>
 </head>
 <body>
@@ -528,7 +528,7 @@ w_r = \frac{L\sqrt{k+2}}{m r_0^2} \implies \boxed{k&gt;-2,\text{存在振动}}
 <p>$\star$ 当 $k=7$，$k=-7/4$ 等等，$\cdots\cdots$</p>
 <h3>3.</h3>
 <p>某彗星的轨道为抛物线，近日点为地球轨道半径的 $1/n$，</p>
-<p>证明：此彗星在地球轨道内停留的时间为1地球年的 $\frac{2}{3\pi}\frac{n+2}{n}\sqrt{\frac{n-1}{2n}}$，证明其最大值为 $\frac{2}{3\pi}$<span class="ms-unknown">〔原稿不清〕</span></p>
+<p>证明：此彗星在地球轨道内停留的时间为1地球年的 $\frac{2}{3\pi}\frac{n+2}{n}\sqrt{\frac{n-1}{2n}}$。原稿关于“最大值”的措辞字迹不清，以下按“证明其最大值为 $\frac{2}{3\pi}$”理解，需人工确认。</p>
 <p>解：平方反比力，彗星轨道方程</p>
 <div class="math">\[
 r = \frac{h^2/k^2}{1+\cos(\theta-\theta_0)}
@@ -541,10 +541,7 @@ h^2 = \frac{2R k^2}{n}, \quad r^2\dot{\theta}=h
 \frac{d\theta}{dt} = \frac{d\theta}{dr}\frac{dr}{dt} = \sqrt{\frac{2Rk^2}{n}}\frac{1}{r^2}
 \]</div>
 <div class="math">\[
-\frac{dr}{d\theta} = \frac{(h^2/k^2)\sin(\theta-\theta_0)}{(1+\cos(\theta-\theta_0))^2} = \frac{r}{p}\sqrt{2pr-p^2} \quad p=h^2/k^2
-\]</div>
-<div class="math">\[
-= \frac{r}{p^2}\sqrt{2pr-p^2} = r\sqrt{n\frac{R}{r}-1}
+\frac{dr}{d\theta} = \frac{(h^2/k^2)\sin(\theta-\theta_0)}{(1+\cos(\theta-\theta_0))^2} = \frac{r}{p}\sqrt{2pr-p^2} = r\sqrt{\frac{2r}{p}-1} = r\sqrt{n\frac{r}{R}-1}, \quad p=\frac{h^2}{k^2}=\frac{2R}{n}
 \]</div>
 <div class="math">\[
 \frac{dr}{dt} = \sqrt{\frac{2Rk^2}{n}}\frac{1}{r^2}\frac{dr}{d\theta} = \frac{2Rk^2}{n}\frac{1}{r^2}\frac{r}{h^4/k^4}\sqrt{\frac{h^4}{k^4} - 2\frac{h^2}{k^2}r}
@@ -664,7 +661,7 @@ r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r
 \]</div>
 <p>此式通过对径向作用量的受控展开并求导得到，避免了直接展开积分时因转向点随微扰移动而产生的端点发散。</p>
 <p><figure><img src="figs/hw1/p06-f6.svg" alt="椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。" loading="lazy"><figcaption>椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。</figcaption></figure></p></section>
-<section class="ms-page" id="p19"><h2>第 19 页</h2><div class="math">\[
+<section class="ms-page" id="p19"><h2>第 19 页</h2><p class="ms-note">以下展开把转向点 $r_{\min}$、$r_{\max}$ 视为固定，忽略其随 $\delta V$ 的一阶移动，仅作直观核对；严格推导以上一页的径向作用量求导为准。</p><div class="math">\[
 \frac{L/r^2}{\sqrt{2m(E-V)-\frac{L^2}{r^2}}} = -\frac{d}{dL}\sqrt{2m(E-V)-\frac{L^2}{r^2}}
 \]</div>
 <p>将</p>
@@ -796,7 +793,7 @@ d_2 = 0
 \end{cases}
 \]</div>
 <div class="math">\[
-\delta u = \left( f_1 + \frac{f_2}{3} \right)(1 - \cos\theta) + \frac{f_2}{6}(\cos2\theta - \cos\theta) - \frac{f_3}{2}(\cos\theta + \theta \sin\theta)
+\delta u = \left( f_1 + \frac{f_2}{3} \right)(1 - \cos\theta) + \frac{f_2}{6}(\cos2\theta - \cos\theta) + \frac{f_3}{2}\left(1 - \cos\theta - \theta \sin\theta\right)
 \]</div>
 <div class="math">\[
 \frac{du&#x27;}{d\theta} = -c_1 \sin\theta + \left( f_1 + \frac{f_2}{3} \right)\sin\theta - \frac{f_2}{6}\left( -2\sin2\theta + \sin\theta \right) - \frac{f_3}{2}\theta \cos\theta
