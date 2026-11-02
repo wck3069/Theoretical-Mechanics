@@ -10,6 +10,7 @@
 """
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -18,7 +19,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CHROME = shutil.which("google-chrome") or "/usr/bin/google-chrome"
+CHROME = os.environ.get("CHROME_BIN") or shutil.which("google-chrome") or "/usr/bin/google-chrome"
 PANEL_RE = re.compile(
     r'<div[^>]*id="selftestPanel"[^>]*>(.*?)</div>', re.IGNORECASE | re.DOTALL)
 TAG_RE = re.compile(r"<[^>]+>")
