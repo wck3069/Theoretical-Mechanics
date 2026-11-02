@@ -39,20 +39,35 @@ window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','
 <div class="ms-eyebrow">HANDWRITTEN MANUSCRIPT · CODE EDITION</div>
 <h1>变分原理手稿</h1>
 <p class="ms-lead">最速降线、欧拉–拉格朗日方程、费马原理与摆线；公式为 MathJax。</p>
-<div class="ms-links"><a href="../../../modules/04-variational/index.html">M4 变分原理与等时摆</a></div>
+<div class="ms-links"><b>相关交互</b> <a href="../../../modules/04-variational/index.html">M4 变分原理</a></div>
 </div>
-<div class="ms-toc"><b>页内导航</b> <a href="#p1">第 1 页</a> <a href="#p2">第 2 页</a> <a href="#p3">第 3 页</a> <a href="#p4">第 4 页</a> <a href="#p5">第 5 页</a> <a href="#p6">第 6 页</a> <a href="#p7">第 7 页</a> <a href="#p8">第 8 页</a> <a href="#p9">第 9 页</a> <a href="#p10">第 10 页</a> <a href="#p11">第 11 页</a> <a href="#p12">第 12 页</a> <a href="#p13">第 13 页</a> <a href="#p14">第 14 页</a> <a href="#p15">第 15 页</a> <a href="#p16">第 16 页</a> <a href="#p17">第 17 页</a> <a href="#p18">第 18 页</a> <a href="#p19">第 19 页</a> <a href="#p20">第 20 页</a> <a href="#p21">第 21 页</a> <a href="#p22">第 22 页</a> <a href="#p23">第 23 页</a> <a href="#p24">第 24 页</a> <a href="#p25">第 25 页</a> <a href="#p26">第 26 页</a> <a href="#p27">第 27 页</a></div>
+<div class="ms-shell">
+<!-- MS-TOC:START -->
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l3"><a href="#p1-h3-1" title="变分原理">变分原理</a></li>
+<li class="l3"><a href="#p2-h3-1" title="History">History</a></li>
+<li class="l4"><a href="#p4-h3-1" title="3.1 费马原理（1662年，法国科学家提出）">3.1 费马原理（1662年，法国科学家提出）</a></li>
+<li class="l4"><a href="#p4-h3-2" title="3.2 变分法计算">3.2 变分法计算</a></li>
+<li class="l4"><a href="#p10-h3-1" title="3.3 测地线（曲面上两点之间距离最短的一条线）">3.3 测地线（曲面上两点之间距离最短的一条线）</a></li>
+<li class="l4"><a href="#p14-h3-1" title="3.4 最速降线">3.4 最速降线</a></li>
+</ul>
+</details>
+</nav>
+<!-- MS-TOC:END -->
+
 <article class="ms-body">
-<section class="ms-page" id="p1"><h2>第 1 页</h2><h3>变分原理 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
-<p>参考：&lt;em&gt;Modern Classical Mechanics&lt;/em&gt;</p>
+<section class="ms-page" id="p1"><h2><span class="ms-pn">p.1</span></h2><h3 id="p1-h3-1">变分原理</h3>
+<p>参考：<em>Modern Classical Mechanics</em></p>
 <p>T. M. Helliwell</p>
 <p>V. U. Sahakian</p>
 <h4>3.</h4>
 <p>The variational Principle.</p></section>
-<section class="ms-page" id="p2"><h2>第 2 页</h2><h3>History</h3>
+<section class="ms-page" id="p2"><h2><span class="ms-pn">p.2</span></h2><h3 id="p2-h3-1">History</h3>
 <p>变分法，又称为泛函的极值问题，通俗讲“函数的函数”</p>
 <p>光学费马原理，法国数学家费马1662年提出，路径极值问题：根据未发表的工作 据说1684年牛顿几乎已发明变分法。</p>
-<p>&lt;em&gt;待考证&lt;/em&gt;</p>
+<p><em>待考证</em></p>
 <p>真正开始，引起广泛关注，自1696年，由Johan伯努利发起的挑战，最速降线挑战。</p>
 <p>1696年6月   为期6个月</p>
 <p>I. Johan Bernouli. address the most brilliant mathematicians in the world. Nothing is more attractive to intelligent people than an honest, challenging problem, whose possible solution will bestow fame and remain as a lasting monument. ------ from wiki</p>
@@ -61,8 +76,8 @@ window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','
 <p>在Leibniz建议下，$^{12}$月伯努利因未收到答案而将挑战延长至一年半。</p>
 <p>1697年1月，伯努利给牛顿写信，将上述内容给牛顿，牛顿1月29日下午4点收到，到第二天早晨4点写解答后寄出匿名，牛顿说：</p>
 <p>``I do not love to be dunned and teased by foreigners about mathematic Thyrs…&#x27;&#x27;</p></section>
-<section class="ms-page" id="p3"><h2>第 3 页</h2><p>Euler（欧拉）1733年建立起这个学科。Lagrange在Euler影响下开始研究这个问题。1755年欧拉开始采用时年19岁Lagrange的$\textit{purely analytic approach}$，在1756年Euler正式提出“$\textit{calculus of variations}$”。Lagrange首个将其方法用于力学，伯努利挑战137年之后，哈密顿正式提出最小作用量原理。</p></section>
-<section class="ms-page" id="p4"><h2>第 4 页</h2><h3>3.1 费马原理（1662年，法国科学家提出） <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
+<section class="ms-page" id="p3"><h2><span class="ms-pn">p.3</span></h2><p>Euler（欧拉）1733年建立起这个学科。Lagrange在Euler影响下开始研究这个问题。1755年欧拉开始采用时年19岁Lagrange的$\textit{purely analytic approach}$，在1756年Euler正式提出“$\textit{calculus of variations}$”。Lagrange首个将其方法用于力学，伯努利挑战137年之后，哈密顿正式提出最小作用量原理。</p></section>
+<section class="ms-page" id="p4"><h2><span class="ms-pn">p.4</span></h2><h3 id="p4-h3-1">3.1 费马原理（1662年，法国科学家提出） <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
 <p>费马原理指出，光沿着两点之间所需光程取驻值的路径前进。也就是说，光从$a$到$b$选择走一条光程为极值（通常为极小值，但也可能为极大值或鞍点）的路径，局部最短结论需满足特定条件。</p>
 <p>光在折射率为 $n(x,y,z) = n(\vec{r})$ 的介质中运行，光传播$ds$路程所需的时间为</p>
 <div class="math">\[ dt = \frac{ds}{c/n(\vec{r})} \]</div>
@@ -70,7 +85,7 @@ window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','
 <div class="math">\[ t = \int dt = \frac{1}{c}\int_a^b n(\vec{r}) ds, \]</div>
 <p>最终光程所需的时间依赖于路径的选取，原则上光传播有无穷个路径，但物理发生的过程必定是由$a$到$b$，所耗用的时间取驻值。</p>
 <p>这就引入一个问题，怎么求 $t$ 的驻值，求解这一问题可用变分法或泛函数分析。</p>
-<h3>3.2 变分法计算 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
+<h3 id="p4-h3-2">3.2 变分法计算 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
 <p>一般的变分法，是1750年代法国数学家拉格朗日（Lagrange）和瑞士数学家欧拉（Euler）首先发展完善的，比费马原理的提出，晚了一个世纪。</p>
 <p>在直角坐标系中 $ds = \sqrt{dx^2 + dy^2}$</p>
 <p>所以</p>
@@ -80,7 +95,7 @@ t &amp;= \frac{1}{c}\int n(x) \sqrt{dx^2 + dy^2} = \frac{1}{c}\int n(x) \sqrt{1 
 &amp;= \frac{1}{c} \int n(x) \sqrt{1+(y&#x27;)^2} dx
 \end{aligned}
 \]</div></section>
-<section class="ms-page" id="p5"><h2>第 5 页</h2><p>在这里, 我们看到 $t$ 的值依赖于 $x$, 和 $y'(x)$. 当然 $n(x)$, 有可能也依赖 $y$. 所以我们写为</p>
+<section class="ms-page" id="p5"><h2><span class="ms-pn">p.5</span></h2><p>在这里, 我们看到 $t$ 的值依赖于 $x$, 和 $y'(x)$. 当然 $n(x)$, 有可能也依赖 $y$. 所以我们写为</p>
 <div class="math">\[
 t = \frac{1}{c} \int n(x,y) \sqrt{1+(y&#x27;)^2} dx = \int F(x, y(x), y&#x27;(x)) dx
 \]</div>
@@ -101,7 +116,7 @@ f(x_1, x_2) \longrightarrow f(x_1+\delta x_1, x_2+\delta x_2)
 \]</div>
 <p>极值要求 $\frac{\partial f}{\partial x_1} = 0$ 和 $\frac{\partial f}{\partial x_2} = 0$.</p>
 <p>以此类推至更多自变量的情况.</p></section>
-<section class="ms-page" id="p6"><h2>第 6 页</h2><p>总结：当我们要 $f(x)$ 极值时</p>
+<section class="ms-page" id="p6"><h2><span class="ms-pn">p.6</span></h2><p>总结：当我们要 $f(x)$ 极值时</p>
 <div class="math">\[
 \delta f = f(x_i + \delta x_i) - f(x_i) = 0 \quad \text{保留到} \ \delta x_i: \text{第一阶}
 \]</div>
@@ -124,7 +139,7 @@ I\left[ y(x) \right] = \int_{a}^{b} F\left(x, y(x), y&#x27;(x)\right) dx
 \]</div>
 <p>泛函 $I$ 取极值对应于：泛函的一阶变分为零（$\delta y(x)$ 的第一阶），并非所有有限扰动都不改变积分；在固定端点变分中，$x$ 通常作为不变的积分自变量。</p>
 <p>怎么计算 $I\left[ y(x) + \delta y(x) \right]$？</p></section>
-<section class="ms-page" id="p7"><h2>第 7 页</h2><p>我们把对 $x$ 的连续积分离散化。</p>
+<section class="ms-page" id="p7"><h2><span class="ms-pn">p.7</span></h2><p>我们把对 $x$ 的连续积分离散化。</p>
 <div class="math">\[
 a &lt; x &lt; b \implies x_n = a + n\varepsilon, \quad \varepsilon \geq 0, \quad 0 &lt; n &lt; \frac{b-a}{\varepsilon}
 \]</div>
@@ -161,7 +176,7 @@ y&#x27; = \frac{dy}{dx} = \frac{y(x_n) - y(x_{n-1})}{\varepsilon}
 \int_a^b d\left[ \frac{\partial F}{\partial y&#x27;(x)} \delta y(x) \right] = \left. \frac{\partial F}{\partial y&#x27;(x)} \delta y(x) \right|_a^b = 0
 \]</div>
 <p>因为在边界点没有扰动</p></section>
-<section class="ms-page" id="p8"><h2>第 8 页</h2><p>所以我们有</p>
+<section class="ms-page" id="p8"><h2><span class="ms-pn">p.8</span></h2><p>所以我们有</p>
 <div class="math">\[
 \delta I[y(x)] = \int_a^b \left( \frac{\partial F}{\partial y(x)} - \frac{d}{dx}\left[ \frac{\partial F}{\partial y&#x27;(x)} \right] \right) \delta y(x) dx = 0
 \]</div>
@@ -188,7 +203,7 @@ S = \int_a^b ds = \int_a^b \sqrt{dx^2 + dy^2} = \int_a^b \sqrt{1 + (y&#x27;)^2} 
 \]</div>
 <p>其中 $(C, d)$ 可由初末两点定出，$C$ 为常数，$d$ 为常数。</p>
 <p>即由费马原理推导出了光沿直线传播。</p></section>
-<section class="ms-page" id="p9"><h2>第 9 页</h2><h4>1.</h4>
+<section class="ms-page" id="p9"><h2><span class="ms-pn">p.9</span></h2><h4>1.</h4>
 <p>假设介质折射率为 $n = \frac{y_0}{y}$，求光在介质中传播的轨迹。</p>
 <p>解：根据费马原理，</p>
 <div class="math">\[
@@ -232,7 +247,7 @@ x - x_0 = \pm \frac{1}{k} \cos\theta
 k^2 (x - x_0)^2 + k^2 y^2 = 1
 \]</div>
 <p>所以轨迹为一个圆，形状和大小与初始条件有关。另外，当 $k = 0$ 时，由 $\frac{\partial F}{\partial x'} = 0$ 得 $x' = 0$，即轨迹为竖直直线 $x = \text{常数}$。</p></section>
-<section class="ms-page" id="p10"><h2>第 10 页</h2><p>例</p>
+<section class="ms-page" id="p10"><h2><span class="ms-pn">p.10</span></h2><p>例</p>
 <p>在Euler方程中，对$y$和$y'$求的是偏导数，为对$x$求的导数。</p>
 <p>比如，$F(x,y,y') = x y (y')^2$</p>
 <div class="math">\[
@@ -243,7 +258,7 @@ k^2 (x - x_0)^2 + k^2 y^2 = 1
 x (y&#x27;)^2 - \left(2y y&#x27; + 2x (y&#x27;)^2 + 2x y y&#x27;&#x27;\right) = 0
 \]</div>
 <p>在运用变分法计算后，Euler方程把求解路径的问题变成了求解微分方程的问题。</p>
-<h3>3.3 测地线（曲面上两点之间距离最短的一条线）</h3>
+<h3 id="p10-h3-1">3.3 测地线（曲面上两点之间距离最短的一条线）</h3>
 <p>我们现在寻找一个球面上两点之间最短距离，球半径为$R$。</p>
 <p>球坐标下，无穷小位移路程 $ds_\theta = R d\theta$</p>
 <p>若改变$\varphi$，则 $ds_\varphi = R \sin\theta d\varphi$，在方向上，$ds_\theta, ds_\varphi$互相垂直，所以</p>
@@ -258,7 +273,7 @@ S = R \int_a^b \sqrt{(\theta&#x27;)^2 + \sin^2\theta} \, d\varphi
 <div class="math">\[
 \theta&#x27; = \frac{d\theta}{d\varphi}
 \]</div></section>
-<section class="ms-page" id="p11"><h2>第 11 页</h2><p>(1)情况下，根据欧拉方程</p>
+<section class="ms-page" id="p11"><h2><span class="ms-pn">p.11</span></h2><p>(1)情况下，根据欧拉方程</p>
 <div class="math">\[
 \frac{\partial F}{\partial \theta} - \frac{d}{d\varphi} \frac{\partial F}{\partial \theta&#x27;} = 0 \quad \text{其中} \quad F = \sqrt{(\theta&#x27;)^2 + \sin^2 \theta}
 \]</div>
@@ -296,7 +311,7 @@ S = R \int_a^b \sqrt{(\theta&#x27;)^2 + \sin^2\theta} \, d\varphi
 \cos\theta = A \sin\theta \sin\varphi + B \sin\theta \cos\varphi
 \]</div>
 <p>两边乘 \( r \) 得 \( z = A x + B y \)，即此限制必过球心。</p></section>
-<section class="ms-page" id="p12"><h2>第 12 页</h2><p>所以在球面上，两点之间距离的极大或极小值必是在大圆线上。</p>
+<section class="ms-page" id="p12"><h2><span class="ms-pn">p.12</span></h2><p>所以在球面上，两点之间距离的极大或极小值必是在大圆线上。</p>
 <h4>(2)</h4>
 <p>我们重新把 $S$ 写为</p>
 <div class="math">\[
@@ -324,7 +339,7 @@ y \cos\beta - x \sin\beta = \alpha z,
 \]</div>
 <p>曲线为过球心的平面与球面的切割线，即为大圆。</p>
 <p>$\varphi$ 和 $q$ 得 $\frac{d\varphi}{dq}$ 的表达式见下一页推导过程。</p></section>
-<section class="ms-page" id="p13"><h2>第 13 页</h2><div class="math">\[
+<section class="ms-page" id="p13"><h2><span class="ms-pn">p.13</span></h2><div class="math">\[
 \frac{d\varphi}{d\theta} = \varphi&#x27; = \pm \frac{k \csc^2 \theta}{\sqrt{1 - k^2 \csc^2 \theta}}
 \]</div>
 <div class="math">\[
@@ -357,7 +372,7 @@ a z = y \cos \beta - x \sin \beta
 a z = -x \sin \beta + y \cos \beta
 \]</div>
 <p>\(\textcircled{7} - 2\)</p></section>
-<section class="ms-page" id="p14"><h2>第 14 页</h2><h3>3.4 最速降线 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
+<section class="ms-page" id="p14"><h2><span class="ms-pn">p.14</span></h2><h3 id="p14-h3-1">3.4 最速降线 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
 <p>这是Johan. Bernoulli在1696年提出的问题.</p>
 <p>给定在竖直平面的两点 $a$ 和 $b$. 在仅有重力作用下,</p>
 <p>哪条路径用时最短?</p>
@@ -371,7 +386,7 @@ a z = -x \sin \beta + y \cos \beta
 <p><strong>此解为摆线的一段</strong></p>
 <figure><img src="figs/variational/p14-paths.svg" alt="四条候选路径的比较示意图：1 摆线，4 直线，2 与 3 为中间路径。" loading="lazy"><figcaption>四条候选路径：1 为摆线，4 为直线，2、3 为中间路径；y 轴向下。</figcaption></figure>
 <p>图中, 路径4中, 质点加速较慢, 最终耗时长. 路径2中, 最开始, 质点的速度比路径3中的快, 但路径2的路程长, 两个因素共同影响下, 它用的时间可能比路径3中短, 也可能长.</p></section>
-<section class="ms-page" id="p15"><h2>第 15 页</h2><p>从a到b的用时为</p>
+<section class="ms-page" id="p15"><h2><span class="ms-pn">p.15</span></h2><p>从a到b的用时为</p>
 <div class="math">\[
 t = \int \frac{ds}{V}
 \]</div>
@@ -424,7 +439,7 @@ y = \frac{a}{2} (1 - \cos \theta)
 \left( x - \frac{a}{2} \theta \right)^2 + \left( y - \frac{a}{2} \right)^2 = \frac{a^2}{4}
 \]</div>
 <p>摆线：滚动圆上固定点的轨迹.</p></section>
-<section class="ms-page" id="p16"><h2>第 16 页</h2><p>此时 $t = \sqrt{\frac{a}{2g}} \int_{0}^{\theta_f} d\theta = \sqrt{\frac{a}{2g}} \theta_f$</p>
+<section class="ms-page" id="p16"><h2><span class="ms-pn">p.16</span></h2><p>此时 $t = \sqrt{\frac{a}{2g}} \int_{0}^{\theta_f} d\theta = \sqrt{\frac{a}{2g}} \theta_f$</p>
 <p>当 $(x_b, y_b) = \left( \frac{\pi}{2} a, a \right)$ 时 $\theta_f = \pi$，$t = \pi \sqrt{\frac{a}{2g}}$</p>
 <h4>例：</h4>
 <p>现在我们回头看费马原理中，时间极值的问题.</p>
@@ -449,7 +464,7 @@ x&#x27; = \frac{dx}{dy} = \tan\theta \quad \text{如图所示}
 <div class="math">\[
 n_1 \sin\theta_1 = n_2 \sin\theta_2 \quad \text{即} \quad \frac{\sin\theta_1}{\sin\theta_2} = \frac{n_2}{n_1}
 \]</div></section>
-<section class="ms-page" id="p17"><h2>第 17 页</h2><p>伯努利解法</p>
+<section class="ms-page" id="p17"><h2><span class="ms-pn">p.17</span></h2><p>伯努利解法</p>
 <p>机械能守恒：$\frac{1}{2}mv^2 + mgy = mgh$</p>
 <p>得 $v = \sqrt{2g(h-y)}$</p>
 <p>最速降线问题理解成光在多个不同介质下的传播问题。根据费马原理，光线是沿着耗时最短的路径向前走，这样求解所得路径，耗时最短。</p>
@@ -472,7 +487,7 @@ y = h - \frac{\sin^2 \alpha}{2gC^2}
 \frac{dx}{dy} = \tan \alpha, \quad \frac{dx}{d\alpha} = \frac{dx}{dy} \cdot \frac{dy}{d\alpha} = - \tan \alpha \cdot \frac{\sin \alpha \cos \alpha}{gC^2} = -\frac{\sin^2 \alpha}{gC^2}
 \]</div>
 <p>\(\textcircled{12}\)</p></section>
-<section class="ms-page" id="p18"><h2>第 18 页</h2><p>积分可得</p>
+<section class="ms-page" id="p18"><h2><span class="ms-pn">p.18</span></h2><p>积分可得</p>
 <div class="math">\[
 x = -\frac{1}{g C^2} \int \sin^2 \alpha \, d\alpha = -\frac{1}{4 g C^2} (2\alpha - \sin 2\alpha) + x_0
 \]</div>
@@ -484,7 +499,7 @@ x = x_1 - \frac{1}{4 g C^2} (\theta - \sin\theta)
 \end{cases}
 \]</div>
 <p>此即为摆线</p></section>
-<section class="ms-page" id="p19"><h2>第 19 页</h2><h4>注意</h4>
+<section class="ms-page" id="p19"><h2><span class="ms-pn">p.19</span></h2><h4>注意</h4>
 <h4>(1)</h4>
 <div class="math">\[
 \delta y'(x) = \delta \lim_{\varepsilon \to 0} \frac{y(x+\varepsilon) - y(x)}{\varepsilon} = \lim_{\varepsilon \to 0} \frac{\delta y(x+\varepsilon) - \delta y(x)}{\varepsilon} = \frac{d}{dx} \delta y(x)
@@ -497,12 +512,12 @@ F\left( x, y_1(x), y_2(x), \dots, y_n(x), y_1&#x27;(x), y_2&#x27;(x), \dots, y_n
 <div class="math">\[
 \frac{\partial F}{\partial y_i} - \frac{d}{dx} \frac{\partial F}{\partial y_i&#x27;} = 0 \quad i=1,2,\dots,n
 \]</div></section>
-<section class="ms-page" id="p20"><h2>第 20 页</h2><p>假设有一连续函数 $y(x)$，在区间 $[a,b]$ 内积分</p>
+<section class="ms-page" id="p20"><h2><span class="ms-pn">p.20</span></h2><p>假设有一连续函数 $y(x)$，在区间 $[a,b]$ 内积分</p>
 <div class="math">\[
 \int_{a}^{b} y(x) \eta(x) \, dx = 0
 \]</div>
 <p>其中 $\eta(x)$ 为任一可导函数，左式成立，在 $x \in [a,b]$ 区间内 $y(x)=0$</p></section>
-<section class="ms-page" id="p21"><h2>第 21 页</h2><h4>0</h4>
+<section class="ms-page" id="p21"><h2><span class="ms-pn">p.21</span></h2><h4>0</h4>
 <p>给定两点之间，悬挂一段匀质细绳，求绳在势能最低处的形状。</p>
 <figure><img src="figs/variational/p21-catenary.svg" alt="悬链线示意图：两端 a、b 固定，最低点 C，y 轴向下。" loading="lazy"><figcaption>悬链线：两端 a、b 固定，最低点 C；y 轴向下。</figcaption></figure>
 <p>解：设细绳密度为$\rho$，重力加速度为$g$，则</p>
@@ -526,7 +541,7 @@ F\left( x, y_1(x), y_2(x), \dots, y_n(x), y_1&#x27;(x), y_2&#x27;(x), \dots, y_n
 <p>当取绳的最低点位于$x=0$且$y=0$时，有$\lambda = -k$，故</p>
 <div class="math">\[ y = k \left( \cosh \frac{x}{k} - 1 \right) \]</div>
 <p>绳长$l$与$k$的关系由定长条件确定。</p></section>
-<section class="ms-page" id="p22"><h2>第 22 页</h2><h4>4</h4>
+<section class="ms-page" id="p22"><h2><span class="ms-pn">p.22</span></h2><h4>4</h4>
 <p>抛物面方程为 $z = A(x^2 + y^2)$，其中 $A$ 为常数，求测地线方程，设已知该测地线过点 $(x,y)_0=(x_0,0)$，且满足 $\left(\frac{dy}{dx}\right)_0 = 0$，该测地线能否回到原点相同点？</p>
 <p>解：$x$-$y$平面用极坐标，令 $x = r\cos\theta$，$y = r\sin\theta$，则 $z = A r^2$，故 $dz = 2A r dr$。</p>
 <p>弧长元素：</p>
@@ -554,7 +569,7 @@ F(r, \theta, \theta&#x27;) = \sqrt{1 + 4A^2 r^2 + r^2 (\theta&#x27;)^2}
 \frac{dy}{dx} = \frac{(dr)\sin\theta + r\cos\theta d\theta}{(dr)\cos\theta - r\sin\theta d\theta} = \frac{\sin\theta + r\cos\theta \theta&#x27;}{\cos\theta - r\sin\theta \theta&#x27;}
 \]</div>
 <p>已知 $(x,y)_0$ 为 $(x_0,0)$，得 $\theta_0 = 0$，$\left(\frac{dy}{dx}\right)_0 = \left(r \frac{d\theta}{dr}\right)_0 = 0$，即 $\left(\frac{d\theta}{dr}\right)_0 = 0$，代入测地线方程得 $k=0$，故测地线 $\theta=0$，$z=A r^2$，为 $x$-$z$ 平面内沿着抛物线开口向上的线。</p></section>
-<section class="ms-page" id="p23"><h2>第 23 页</h2><h4>3.</h4>
+<section class="ms-page" id="p23"><h2><span class="ms-pn">p.23</span></h2><h4>3.</h4>
 <p>在2维平面内，运用极坐标，证明直线距离最短</p>
 <h4>解:</h4>
 <p>距离与路径关系为</p>
@@ -590,7 +605,7 @@ dr = \frac{-C \cos\varphi}{\sin^2 \varphi} d\varphi, \quad r \sqrt{r^2 - C^2} = 
 \]</div>
 <p>所以 $r = \frac{C}{\sin\varphi} = \frac{C}{\sin(\theta - \theta_0)}$，得 $r \sin(\theta - \theta_0) = C$</p>
 <p>展开得：$r \sin\theta \cos\theta_0 - r \cos\theta \sin\theta_0 = C$，即 $y \cos\theta_0 - x \sin\theta_0 = C$，这是直线方程。</p></section>
-<section class="ms-page" id="p24"><h2>第 24 页</h2><p>Revisit 变分法</p>
+<section class="ms-page" id="p24"><h2><span class="ms-pn">p.24</span></h2><p>Revisit 变分法</p>
 <div class="math">\[
 I[y] = \int_a^b F(x, y, y&#x27;) dx
 \]</div>
@@ -611,7 +626,7 @@ I[y + \alpha \eta] = \int_a^b F(x, y + \alpha \eta, y&#x27; + \alpha \eta&#x27;)
 <div class="math">\[
 \frac{\partial}{\partial y} F(x, y, y&#x27;) - \frac{d}{dx} \frac{\partial F(x, y, y&#x27;)}{\partial y&#x27;} = 0
 \]</div></section>
-<section class="ms-page" id="p25"><h2>第 25 页</h2><p>针对多变量系统</p>
+<section class="ms-page" id="p25"><h2><span class="ms-pn">p.25</span></h2><p>针对多变量系统</p>
 <div class="math">\[
 I[q_1, \dots, q_n] = \int_a^b F(t, q_1, \dots, q_n, \dot{q}_1, \dots, \dot{q}_n) dt
 \]</div>
@@ -633,7 +648,7 @@ q_i(t) \to q_i(t) + \alpha \eta_i(t)
 <div class="math">\[
 \frac{d}{dt} \frac{\partial F}{\partial \dot{q}_i} - \frac{\partial F}{\partial q_i} = 0
 \]</div></section>
-<section class="ms-page" id="p26"><h2>第 26 页</h2><p>Two-fold integration</p>
+<section class="ms-page" id="p26"><h2><span class="ms-pn">p.26</span></h2><p>Two-fold integration</p>
 <div class="math">\[
 I[z] = \iint_R F\left(x, y, z, \frac{\partial z}{\partial x}, \frac{\partial z}{\partial y}\right) dx dy
 \]</div>
@@ -654,7 +669,7 @@ z_x = \frac{\partial z}{\partial x}, \quad z_y = \frac{\partial z}{\partial y}, 
 <div class="math">\[
 \frac{\partial F}{\partial z} - \frac{\partial}{\partial x} \frac{\partial F}{\partial z_x} - \frac{\partial}{\partial y} \frac{\partial F}{\partial z_y} = 0
 \]</div></section>
-<section class="ms-page" id="p27"><h2>第 27 页</h2><p>设 函数 动能 势能</p>
+<section class="ms-page" id="p27"><h2><span class="ms-pn">p.27</span></h2><p>设 函数 动能 势能</p>
 <div class="math">\[ L = \frac{1}{2} m \dot{x}^2 - V(x) \]</div>
 <p>定义 \( S = \int_{t_1}^{t_2} L \, dt \) 作用量</p>
 <p>求 \( S \) 取极值时 对应的运动方程</p>
@@ -664,8 +679,10 @@ z_x = \frac{\partial z}{\partial x}, \quad z_y = \frac{\partial z}{\partial y}, 
 <div class="math">\[ \frac{d}{dt} m \dot{x} = -\frac{dV}{dx} \]</div></section>
 <p class="ms-note">本页由手写扫描 OCR 后重排；公式用 MathJax 本地渲染，图为 TikZ/矢量 SVG。原扫描仅作校对底稿，不再作为站点阅读形式。</p>
 </article>
+</div>
 </main>
 <footer class="ms-footer"><span>理论力学 · 手稿代码版</span><span><a href="../index.html">返回第 3 章 变分法</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
 <script src="../../../assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

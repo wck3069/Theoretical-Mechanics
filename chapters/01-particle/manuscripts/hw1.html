@@ -39,11 +39,31 @@ window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','
 <div class="ms-eyebrow">HANDWRITTEN MANUSCRIPT · CODE EDITION</div>
 <h1>作业一与作业2 · 第一章手稿</h1>
 <p class="ms-lead">26 页手写题解的代码化转写；公式随页面渲染，图为 SVG。</p>
-<div class="ms-links"><a href="../../../modules/00-binet/index.html">M0 比奈方程</a> <a href="../../../modules/01-effective-potential/index.html">M1 有效势</a> <a href="../../../modules/02-scattering/index.html">M2 散射</a></div>
+<div class="ms-links"><b>相关交互</b> <a href="../../../modules/00-binet/index.html">M0 比奈</a> <a href="../../../modules/01-effective-potential/index.html">M1 有效势</a> <a href="../../../modules/03-two-body/index.html">M3 两体</a></div>
 </div>
-<div class="ms-toc"><b>页内导航</b> <a href="#p1">第 1 页</a> <a href="#p2">第 2 页</a> <a href="#p3">第 3 页</a> <a href="#p4">第 4 页</a> <a href="#p5">第 5 页</a> <a href="#p6">第 6 页</a> <a href="#p7">第 7 页</a> <a href="#p8">第 8 页</a> <a href="#p9">第 9 页</a> <a href="#p10">第 10 页</a> <a href="#p11">第 11 页</a> <a href="#p12">第 12 页</a> <a href="#p13">第 13 页</a> <a href="#p14">第 14 页</a> <a href="#p15">第 15 页</a> <a href="#p16">第 16 页</a> <a href="#p17">第 17 页</a> <a href="#p18">第 18 页</a> <a href="#p19">第 19 页</a> <a href="#p20">第 20 页</a> <a href="#p21">第 21 页</a> <a href="#p22">第 22 页</a> <a href="#p23">第 23 页</a> <a href="#p24">第 24 页</a> <a href="#p25">第 25 页</a> <a href="#p26">第 26 页</a></div>
+<div class="ms-shell">
+<!-- MS-TOC:START -->
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l3"><a href="#p1-h3-1" title="作业一 第一章">作业一 第一章</a></li>
+<li class="l4"><a href="#p6-h4-1" title="(1) 极坐标">(1) 极坐标</a></li>
+<li class="l4"><a href="#p8-h4-1" title="不滑向中心的条件">不滑向中心的条件</a></li>
+<li class="l3"><a href="#p9-h3-1" title="作业1">作业1</a></li>
+<li class="l3"><a href="#p11-h3-1" title="作业2 第一章">作业2 第一章</a></li>
+<li class="l3"><a href="#p12-h3-1" title="作业2">作业2</a></li>
+<li class="l3"><a href="#p18-h3-1" title="作业-2 第5题">作业-2 第5题</a></li>
+<li class="l3"><a href="#p20-h3-1" title="第二种解法">第二种解法</a></li>
+<li class="l4"><a href="#p23-h4-1" title="a) 当 δ V = β/r² 时">a) 当 δ V = β/r² 时</a></li>
+<li class="l4"><a href="#p24-h3-1" title="1.9 有心力场，椭圆方程简单分析">1.9 有心力场，椭圆方程简单分析</a></li>
+<li class="l3"><a href="#p26-h3-1" title="Green 积分公式">Green 积分公式</a></li>
+</ul>
+</details>
+</nav>
+<!-- MS-TOC:END -->
+
 <article class="ms-body">
-<section class="ms-page" id="p1"><h2>第 1 页</h2><h3>作业一 第一章</h3>
+<section class="ms-page" id="p1"><h2><span class="ms-pn">p.1</span></h2><h3 id="p1-h3-1">作业一 第一章</h3>
 <h4>1.</h4>
 <p>如果 $\vec{F}(\vec{r}) = F(r) \vec{e}_r$，求证此力为保守力。</p>
 <p>解：若 $\nabla \times \vec{F}(r) = 0$，即 $\vec{F}(\vec{r})$ 为保守力。</p>
@@ -79,7 +99,7 @@ r = \frac{a(1-e^2)}{1+e\cos\theta}
 <div class="math">\[
 |\vec{v}| = \sqrt{\dot{r}^2 + r^2 \dot{\theta}^2}
 \]</div></section>
-<section class="ms-page" id="p2"><h2>第 2 页</h2><div class="math">\[
+<section class="ms-page" id="p2"><h2><span class="ms-pn">p.2</span></h2><div class="math">\[
 \dot{r} = \frac{a(1-e^2) e \dot{\theta} \sin\theta}{(1+e\cos\theta)^2} = \frac{r^2}{a(1-e^2)} e \dot{\theta} \sin\theta
 \]</div>
 <div class="math">\[
@@ -127,8 +147,8 @@ v = \frac{r v_0}{r - t \cot\alpha \cdot v_0}
 <div class="math">\[
 \frac{1}{v} - \frac{1}{v_0} = -\frac{\cot\alpha}{r} t \implies v = \frac{r v_0}{r - t \cot\alpha \cdot v_0}
 \]</div>
-<p><figure><img src="figs/hw1/p01-f1.svg" alt="圆周运动：法向加速度 $a_n$、切向加速度 $a_t$ 与速度 $\vec v$ 的分解。" loading="lazy"><figcaption>圆周运动：法向加速度 $a_n$、切向加速度 $a_t$ 与速度 $\vec v$ 的分解。</figcaption></figure></p></section>
-<section class="ms-page" id="p3"><h2>第 3 页</h2><h4>4.</h4>
+<figure><img src="figs/hw1/p01-f1.svg" alt="圆周运动：法向加速度 $a_n$、切向加速度 $a_t$ 与速度 $\vec v$ 的分解。" loading="lazy"><figcaption>圆周运动：法向加速度 $a_n$、切向加速度 $a_t$ 与速度 $\vec v$ 的分解。</figcaption></figure></section>
+<section class="ms-page" id="p3"><h2><span class="ms-pn">p.3</span></h2><h4>4.</h4>
 <p>小船$M$被水冲走后，由一荡桨人以不变的相对速度$v_2$朝岸上$A$点划回，假定河流速度$v_1$沿河宽不变，且小船可以看作一个质点，求船的轨迹。</p>
 <p>解：极坐标以$A$点为原点</p>
 <div class="math">\[
@@ -166,8 +186,8 @@ r\dot{\theta} = -v_1 \sin\theta
 <div class="math">\[
 r = r_0 \left( \frac{\tan \frac{\theta}{2}}{\tan \frac{\theta_0}{2}} \right)^{\frac{v_2}{v_1}} \cdot \frac{\sin\theta_0}{\sin\theta}
 \]</div>
-<p><figure><img src="figs/hw1/p02-f2.svg" alt="小船渡河：河水流速 $v_1$、相对速度 $v_2$ 与极角 $\theta$。" loading="lazy"><figcaption>小船渡河：河水流速 $v_1$、相对速度 $v_2$ 与极角 $\theta$。</figcaption></figure></p></section>
-<section class="ms-page" id="p4"><h2>第 4 页</h2><h4>5</h4>
+<figure><img src="figs/hw1/p02-f2.svg" alt="小船渡河：河水流速 $v_1$、相对速度 $v_2$ 与极角 $\theta$。" loading="lazy"><figcaption>小船渡河：河水流速 $v_1$、相对速度 $v_2$ 与极角 $\theta$。</figcaption></figure></section>
+<section class="ms-page" id="p4"><h2><span class="ms-pn">p.4</span></h2><h4>5</h4>
 <p>如果向互相垂直的匀强电场$\vec{E}$、$\vec{B}$中发射一个电子，初速度为$\vec{v}$，与$\vec{E}$和$\vec{B}$垂直，求电子的运动规律，已知电子所受力为 $-e(\vec{E}+\vec{v}\times\vec{B})$。</p>
 <p>解 设初速度与$\vec{B}$垂直，设$y$轴，$\vec{E}$与$\vec{B}$和$\vec{v}$垂直沿$x$轴，$\vec{B}$沿$z$轴，</p>
 <div class="math">\[
@@ -203,7 +223,7 @@ x = -\left(\frac{mE}{eB^2}+\frac{mv_0}{eB}\right)\left(1-\cos\frac{eB}{m}t\right
 <div class="math">\[
 y = \left(\frac{mE}{eB^2}+\frac{mv_0}{eB}\right)\sin\frac{eB}{m}t - \frac{E}{B}t
 \]</div></section>
-<section class="ms-page" id="p5"><h2>第 5 页</h2><h3>6.</h3>
+<section class="ms-page" id="p5"><h2><span class="ms-pn">p.5</span></h2><h3>6.</h3>
 <h4>解：</h4>
 <p>切向动力学分析：</p>
 <div class="math">\[ ml\ddot{\theta} = -mg\sin\theta \]</div>
@@ -236,8 +256,8 @@ y = \left(\frac{mE}{eB^2}+\frac{mv_0}{eB}\right)\sin\frac{eB}{m}t - \frac{E}{B}t
 <p>开根号后取小量近似$\frac{1}{\sqrt{1-\varepsilon}} \approx 1+\frac{\varepsilon}{2}$：</p>
 <div class="math">\[ \sqrt{\cos\theta - \cos\theta_0} = \sqrt{\frac{1}{2}(1-\alpha^2)\theta_0^2\left(1 - \frac{1}{12}\theta_0^2(1+\alpha^2)\right)} \]</div>
 <div class="math">\[ \frac{\theta_0}{\sqrt{2}} \cdot \frac{1}{\sqrt{\cos\theta - \cos\theta_0}} = \frac{1}{\sqrt{1-\alpha^2}}\left(1 + \frac{1}{24}\theta_0^2(1+\alpha^2)\right) \]</div>
-<p><figure><img src="figs/hw1/p03-f3.svg" alt="单摆：摆长 $L$、摆角 $\theta$ 与重力 $mg$。" loading="lazy"><figcaption>单摆：摆长 $L$、摆角 $\theta$ 与重力 $mg$。</figcaption></figure></p></section>
-<section class="ms-page" id="p6"><h2>第 6 页</h2><div class="math">\[
+<figure><img src="figs/hw1/p03-f3.svg" alt="单摆：摆长 $L$、摆角 $\theta$ 与重力 $mg$。" loading="lazy"><figcaption>单摆：摆长 $L$、摆角 $\theta$ 与重力 $mg$。</figcaption></figure></section>
+<section class="ms-page" id="p6"><h2><span class="ms-pn">p.6</span></h2><div class="math">\[
 \int_{0}^{\theta_0} \frac{\mathrm{d}\theta}{\sqrt{\cos\theta - \cos\theta_0}} = \sqrt{2}\int_{0}^{1} \mathrm{d}\alpha \left[ \frac{1}{\sqrt{1-\alpha^2}} + \frac{\theta_0^2}{24}\left(1+\alpha^2\right)\frac{1}{\sqrt{1-\alpha^2}} \right] = \frac{\pi}{\sqrt{2}} \left( 1 + \frac{\theta_0^2}{16} \right)
 \]</div>
 <p>周期：</p>
@@ -247,7 +267,7 @@ T = 2\pi\sqrt{\frac{l}{g}} \left( 1 + \frac{\theta_0^2}{16} \right)
 <h3>7.</h3>
 <p>一质点自水平放置的光滑圆柱体凸面的最高点滑下，问滑至何处，此质点将离开柱面？</p>
 <p>解：极坐标系下，或自然坐标系均可解题。</p>
-<h4>(1) 极坐标</h4>
+<h4 id="p6-h4-1">(1) 极坐标</h4>
 <p>$\vec{v} = r\dot{\theta}\vec{j}$，$\vec{a} = -r\dot{\theta}^2\vec{i} + r\ddot{\theta}\vec{j}$</p>
 <div class="math">\[
 \begin{cases}
@@ -291,7 +311,7 @@ a_n = \frac{v^2}{r} = -\frac{N}{m} + g\cos\theta
 <div class="math">\[
 \Rightarrow \cos\theta = \frac{2}{3}
 \]</div></section>
-<section class="ms-page" id="p7"><h2>第 7 页</h2><h4>8.</h4>
+<section class="ms-page" id="p7"><h2><span class="ms-pn">p.7</span></h2><h4>8.</h4>
 <p>已知作用在质点上的力为</p>
 <div class="math">\[
 \begin{pmatrix} F_x \\ F_y \\ F_z \end{pmatrix} = \begin{pmatrix} a_{11} &amp; a_{12} &amp; a_{13} \\ a_{21} &amp; a_{22} &amp; a_{23} \\ a_{31} &amp; a_{32} &amp; a_{33} \end{pmatrix} \begin{pmatrix} x \\ y \\ z \end{pmatrix}
@@ -319,14 +339,14 @@ V &amp;= -\int F_x \mathrm{d}x + F_y \mathrm{d}y + F_z \mathrm{d}z \\
 <div class="math">\[
 \omega^2 r \left( \cos\theta - \mu \sin\theta \right) \le g\left( \sin\theta + \mu \cos\theta \right)
 \]</div>
-<p><figure><img src="figs/hw1/p04-f4.svg" alt="旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。" loading="lazy"><figcaption>旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。</figcaption></figure></p></section>
-<section class="ms-page" id="p8"><h2>第 8 页</h2><p>当 $\cos\theta - \mu\sin\theta \neq 0$ 时，$\mu &gt; \cot\theta$ 时，</p>
+<figure><img src="figs/hw1/p04-f4.svg" alt="旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。" loading="lazy"><figcaption>旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。</figcaption></figure></section>
+<section class="ms-page" id="p8"><h2><span class="ms-pn">p.8</span></h2><p>当 $\cos\theta - \mu\sin\theta \neq 0$ 时，$\mu &gt; \cot\theta$ 时，</p>
 <p>左端系数为负，不再给出有限的正角速度上界。</p>
 <p>当 $\mu &lt; \cot\theta$ 时</p>
 <div class="math">\[
 \omega^2 \leq \frac{g(\sin\theta + \mu\cos\theta)}{r(\cos\theta - \mu\sin\theta)} = \omega_{\text{max}}^2
 \]</div>
-<h4>不滑向中心的条件</h4>
+<h4 id="p8-h4-1">不滑向中心的条件</h4>
 <div class="math">\[
 \begin{cases}
 F_N - mg\cos\theta - m\omega^2 r\sin\theta = 0 \\
@@ -342,7 +362,7 @@ mg\sin\theta - m\omega^2 r\cos\theta - F_f = 0
 <div class="math">\[
 \omega^2 \geq \frac{g(\sin\theta - \mu\cos\theta)}{r(\cos\theta + \mu\sin\theta)} = \omega_{\text{min}}^2
 \]</div></section>
-<section class="ms-page" id="p9"><h2>第 9 页</h2><h3>作业1</h3>
+<section class="ms-page" id="p9"><h2><span class="ms-pn">p.9</span></h2><h3 id="p9-h3-1">作业1</h3>
 <h4>6.</h4>
 <p>求周期，$\theta_0$是小量，要求精确至$\theta_0^2$阶。</p>
 <p>解：切向加速度 $ml\ddot{\theta}$，切向力 $-mg\sin\theta$，</p>
@@ -371,8 +391,8 @@ T &amp;= \int dt = 4\int_{0}^{\theta_0} d\theta \sqrt{\frac{l}{2g}} \frac{1}{\sq
 <div class="math">\[
 \cos y = 1 - \frac{y^2}{2} + \frac{y^4}{24}
 \]</div>
-<p><figure><img src="figs/hw1/p05-f5.svg" alt="单摆大角振动：初始角 $\theta_0$、摆长 $L$。" loading="lazy"><figcaption>单摆大角振动：初始角 $\theta_0$、摆长 $L$。</figcaption></figure></p></section>
-<section class="ms-page" id="p10"><h2>第 10 页</h2><div class="math">\[
+<figure><img src="figs/hw1/p05-f5.svg" alt="单摆大角振动：初始角 $\theta_0$、摆长 $L$。" loading="lazy"><figcaption>单摆大角振动：初始角 $\theta_0$、摆长 $L$。</figcaption></figure></section>
+<section class="ms-page" id="p10"><h2><span class="ms-pn">p.10</span></h2><div class="math">\[
 \cos\theta_0 x - \cos\theta_0 = 1 - \frac{(\theta_0 x)^2}{2} + \frac{(\theta_0 x)^4}{24} - 1 + \frac{\theta_0^2}{2} - \frac{\theta_0^4}{24}
 \]</div>
 <div class="math">\[
@@ -396,7 +416,7 @@ T = 4\sqrt{\frac{l}{g}} \left( \int_0^1 \frac{dx}{\sqrt{1 - x^2}} + \frac{\theta
 <div class="math">\[
 = 2\pi\sqrt{\frac{l}{g}} \left( 1 + \frac{\theta_0^2}{16} \right) + O\left(\theta_0^4\right)
 \]</div></section>
-<section class="ms-page" id="p11"><h2>第 11 页</h2><h3>作业2 第一章</h3>
+<section class="ms-page" id="p11"><h2><span class="ms-pn">p.11</span></h2><h3 id="p11-h3-1">作业2 第一章</h3>
 <h3>1.</h3>
 <p>质点在势场 $V(r) = -V_0 e^{-\lambda^2 r^2}$ 中运动</p>
 <h4>(a)</h4>
@@ -429,7 +449,7 @@ L_{\text{max}}^2 = \frac{8 m V_0}{\lambda^2 e^2}
 V_{\text{eff}}(r_0) = \frac{V_0}{e^2}
 \]</div>
 <p>当 $L = L_{\text{max}}$，有效势几乎无最小值，且二阶导数为零，轨道临界稳定；当 $L > L_{\text{max}}$ 时，不存在圆形轨道。</p></section>
-<section class="ms-page" id="p12"><h2>第 12 页</h2><h3>作业2</h3>
+<section class="ms-page" id="p12"><h2><span class="ms-pn">p.12</span></h2><h3 id="p12-h3-1">作业2</h3>
 <h4>2.</h4>
 <p>质量为$m$的质点，在势场 $V(r)=\beta r^k$ 中运动，其角动量为$L$。</p>
 <h4>(a)</h4>
@@ -467,7 +487,7 @@ m\ddot{r} = m(\ddot{r_0} + \ddot{d}) = m\ddot{d}
 <div class="math">\[
 \beta k r^{k-1} = \beta k (r_0 + d)^{k-1} = \beta k r_0^{k-1} \left(1 + (k-1)\frac{d}{r_0}\right)
 \]</div></section>
-<section class="ms-page" id="p13"><h2>第 13 页</h2><div class="math">\[ m\ddot{r} = -V'_{\text{eff}}(r) \]</div>
+<section class="ms-page" id="p13"><h2><span class="ms-pn">p.13</span></h2><div class="math">\[ m\ddot{r} = -V'_{\text{eff}}(r) \]</div>
 <div class="math">\[ \Downarrow \]</div>
 <div class="math">\[ m\ddot{d} = \underbrace{\frac{L^2}{m r_0^3} - \beta k r_0^{k-1}}_{\text{为}0} - \frac{3L^2}{m r_0^4} d - \beta k (k-1) r_0^{k-2} d \]</div>
 <div class="math">\[ m\ddot{d} + \left( \frac{3L^2}{m r_0^4} + \beta k(k-1) r_0^{k-2} \right) d = 0 \]</div>
@@ -490,7 +510,7 @@ m\ddot{r} = m(\ddot{r_0} + \ddot{d}) = m\ddot{d}
 <p>当 $k=2$ 时 $\alpha=2$</p>
 <p>当 $k=7$ 时 $\alpha=3$</p>
 <p>当 $k=-\frac{7}{4}$ 时 $\alpha=\frac{1}{2}$</p></section>
-<section class="ms-page" id="p14"><h2>第 14 页</h2><h3>2.</h3>
+<section class="ms-page" id="p14"><h2><span class="ms-pn">p.14</span></h2><h3>2.</h3>
 <h4>(a)</h4>
 <p>求圆形轨道对应的半径$r_0$。</p>
 <h4>(b)</h4>
@@ -538,7 +558,7 @@ V_{\text{eff}}&#x27;&#x27;(r_0) &amp;= \left. \frac{3L^2}{mr^4} + \beta k(k-1) r
 <div class="math">\[
 w_r = \frac{L\sqrt{k+2}}{m r_0^2} \implies \boxed{k&gt;-2,\text{存在振动}}
 \]</div></section>
-<section class="ms-page" id="p15"><h2>第 15 页</h2><h4>(c)</h4>
+<section class="ms-page" id="p15"><h2><span class="ms-pn">p.15</span></h2><h4>(c)</h4>
 <p>$L = mr_0^2 \dot{\theta}$，圆周运动角速度 $\omega = \frac{L}{mr_0^2}$</p>
 <div class="math">\[
 \frac{\omega_r}{\omega_0} = \sqrt{k+2}
@@ -569,7 +589,7 @@ h^2 = \frac{2R k^2}{n}, \quad r^2\dot{\theta}=h
 <div class="math">\[
 = \frac{2kR}{rn}\sqrt{n\frac{r}{R}-1}
 \]</div></section>
-<section class="ms-page" id="p16"><h2>第 16 页</h2><div class="math">\[
+<section class="ms-page" id="p16"><h2><span class="ms-pn">p.16</span></h2><div class="math">\[
 \frac{dr}{dt} = \frac{dr}{d\theta} \frac{d\theta}{dt}
 \]</div>
 <div class="math">\[
@@ -607,7 +627,7 @@ T = \frac{\pi R^2}{h/2} = \frac{2\pi R^{3/2}}{K}
 <div class="math">\[
 \left( \frac{\Delta t}{T} \right)_{\text{max}} = \frac{2}{3\pi} \cdot \frac{2+2}{2} \sqrt{\frac{1}{4}} = \frac{2}{3\pi}
 \]</div></section>
-<section class="ms-page" id="p17"><h2>第 17 页</h2><h4>4.</h4>
+<section class="ms-page" id="p17"><h2><span class="ms-pn">p.17</span></h2><h4>4.</h4>
 <p>质点在平方反比引力场中沿椭圆轨道运动，如质点最大角速度和最小角速度之比为$n$，试证明轨道的离心率为$\frac{\sqrt{n}-1}{\sqrt{n}+1}$。</p>
 <p>解：角动量守恒可得 $r^2\dot{\theta}=h$</p>
 <div class="math">\[
@@ -638,7 +658,7 @@ r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r
 <div class="math">\[
 = \sqrt{\frac{2(E-V)}{m} - \frac{L^2}{m^2r^2}} \times \frac{mr^2}{L} = \sqrt{2m(E-V)-L^2/r^2} \cdot \frac{r^2}{L}
 \]</div></section>
-<section class="ms-page" id="p18"><h2>第 18 页</h2><h3>作业-2 第5题</h3>
+<section class="ms-page" id="p18"><h2><span class="ms-pn">p.18</span></h2><h3 id="p18-h3-1">作业-2 第5题</h3>
 <p>势能 $V=-\frac{\alpha}{r}$ 上增加一个小的 $\delta V$，计算一圈之后从一个近心点到下次近心点，角度的改变 $\delta\theta$。</p>
 <ol>
 <li><span class="label">(a)</span>  $\delta V = \frac{\beta}{r^2}$</li>
@@ -680,8 +700,8 @@ r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r
 \delta\theta = -\frac{\partial}{\partial L} \left( \frac{2m}{L} \int_{r_{\text{min}}}^{r_{\text{max}}} \frac{r^2 \, \delta V(r) \, dr}{\sqrt{2m(E-V) - L^2/r^2}} \right)
 \]</div>
 <p>此式通过对径向作用量的受控展开并求导得到，避免了直接展开积分时因转向点随微扰移动而产生的端点发散。</p>
-<p><figure><img src="figs/hw1/p06-f6.svg" alt="椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。" loading="lazy"><figcaption>椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。</figcaption></figure></p></section>
-<section class="ms-page" id="p19"><h2>第 19 页</h2><p class="ms-note">以下展开把转向点 $r_{\min}$、$r_{\max}$ 视为固定，忽略其随 $\delta V$ 的一阶移动，仅作直观核对；严格推导以上一页的径向作用量求导为准。</p><div class="math">\[
+<figure><img src="figs/hw1/p06-f6.svg" alt="椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。" loading="lazy"><figcaption>椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。</figcaption></figure></section>
+<section class="ms-page" id="p19"><h2><span class="ms-pn">p.19</span></h2><p class="ms-note">以下展开把转向点 $r_{\min}$、$r_{\max}$ 视为固定，忽略其随 $\delta V$ 的一阶移动，仅作直观核对；严格推导以上一页的径向作用量求导为准。</p><div class="math">\[
 \frac{L/r^2}{\sqrt{2m(E-V)-\frac{L^2}{r^2}}} = -\frac{d}{dL}\sqrt{2m(E-V)-\frac{L^2}{r^2}}
 \]</div>
 <p>将</p>
@@ -721,7 +741,7 @@ r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r
 \]</div>
 <p>注：上述推导未考虑转向点随微扰的移动，严格处理需采用比耐方程或对径向作用量作受控展开后求导，并明确近似阶数。</p>
 <p>注：σ/r³ 微扰的最终进动符号应与“每个径向周期相对2π的增量”约定一致，此处结果符号需对照报告推导附录确认。</p></section>
-<section class="ms-page" id="p20"><h2>第 20 页</h2><h3>第二种解法</h3>
+<section class="ms-page" id="p20"><h2><span class="ms-pn">p.20</span></h2><h3 id="p20-h3-1">第二种解法</h3>
 <p>从比耐公式出发，原始情况</p>
 <div class="math">\[
 h^2 u^2 \left( \frac{\mathrm{d}^2 u}{\mathrm{d}\theta^2} + u \right) = -\frac{F}{m} = \frac{1}{m} \frac{\mathrm{d}V}{\mathrm{d}r} = \frac{\alpha}{m} \frac{1}{r^2}
@@ -762,7 +782,7 @@ u = C_1 \cos\left( \sqrt{1+\frac{2\beta}{h^2 m}} \cdot \theta \right) + \frac{\a
 <div class="math">\[
 \delta\theta = -\frac{2\pi \beta}{h^2 m}
 \]</div></section>
-<section class="ms-page" id="p21"><h2>第 21 页</h2><p>或可微扰求解：</p>
+<section class="ms-page" id="p21"><h2><span class="ms-pn">p.21</span></h2><p>或可微扰求解：</p>
 <p>令 $u' = u + \delta u$，其中</p>
 <div class="math">\[ u = \frac{\alpha}{h^2 m} + C_1 \cos\theta \]</div>
 <p>代入比耐公式：</p>
@@ -782,7 +802,7 @@ u = C_1 \cos\left( \sqrt{1+\frac{2\beta}{h^2 m}} \cdot \theta \right) + \frac{\a
 <div class="math">\[ -C_1 \delta\theta - \frac{\beta C_1}{h^2 m} \cdot 2\pi = 0 \]</div>
 <p>即</p>
 <div class="math">\[ \delta\theta = -\frac{2\pi \beta}{h^2 m} = -\frac{2\pi m \beta}{L^2} \]</div></section>
-<section class="ms-page" id="p22"><h2>第 22 页</h2><h4>b)</h4>
+<section class="ms-page" id="p22"><h2><span class="ms-pn">p.22</span></h2><h4>b)</h4>
 <p>$\delta V = \frac{\sigma}{r^3}$</p>
 <div class="math">\[
 \frac{d\delta V}{dr} = -\frac{3\sigma}{r^4} = -3\sigma u^4
@@ -823,7 +843,7 @@ d_2 = 0
 c_1 \delta\theta + \pi f_3 = 0 \implies \delta\theta = -\frac{\pi f_3}{c_1} = -\frac{6\pi\alpha\sigma}{h^4 m^2}
 \]</div>
 <p><em>注：若采用半通径 $p=mh^2/\alpha$，则 $\delta\theta=-6\pi\sigma/(\alpha p^2)$。</em></p></section>
-<section class="ms-page" id="p23"><h2>第 23 页</h2><p>轨道 $r = \frac{p}{1+e\cos\theta}$</p>
+<section class="ms-page" id="p23"><h2><span class="ms-pn">p.23</span></h2><p>轨道 $r = \frac{p}{1+e\cos\theta}$</p>
 <div class="math">\[
 d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
 \]</div>
@@ -848,7 +868,7 @@ d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
 \end{aligned}
 \]</div>
 <p>旁注：势能 $\frac{\partial V}{\partial r} = \frac{km}{r}$，$L^2 = m^2 h^2$，$p = \frac{L^2}{m\alpha}$，$p = m h^2 / \alpha$</p>
-<h4>a) 当 $\delta V = \beta/r^2$ 时</h4>
+<h4 id="p23-h4-1">a) 当 $\delta V = \beta/r^2$ 时</h4>
 <div class="math">\[
 \begin{aligned}
 \delta\theta &amp;= -\frac{2m}{L^2} \pi \beta \\
@@ -862,7 +882,7 @@ d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
 &amp;= 2 \frac{d}{dL} \frac{m \gamma \pi}{L^3} \cdot m\alpha = -\frac{6\pi m^2 \alpha \gamma}{L^4} = -\frac{6\pi \gamma}{\alpha p^2}
 \end{aligned}
 \]</div></section>
-<section class="ms-page" id="p24"><h2>第 24 页</h2><h3>1.9 有心力场，椭圆方程简单分析</h3>
+<section class="ms-page" id="p24"><h2><span class="ms-pn">p.24</span></h2><h3 id="p24-h3-1">1.9 有心力场，椭圆方程简单分析 <a class="ms-demo" href="../../../modules/00-binet/index.html">M0 比奈</a> <a class="ms-demo" href="../../../modules/01-effective-potential/index.html">M1 有效势</a></h3>
 <p>以中心力场轨道方程 $r=\dfrac{P}{1+e\cos\theta}$ 为例。</p>
 <h4>(1)</h4>
 <p>当 $e=0$ 时：</p>
@@ -893,7 +913,7 @@ a = \frac{P}{1-e^2}
 <div class="math">\[
 b = \frac{P}{\sqrt{1-e^2}}
 \]</div></section>
-<section class="ms-page" id="p25"><h2>第 25 页</h2><h4>(3)</h4>
+<section class="ms-page" id="p25"><h2><span class="ms-pn">p.25</span></h2><h4>(3)</h4>
 <p>$e=1$</p>
 <div class="math">\[
 r = \frac{p}{1+\cos\theta} \to \sqrt{x^2+y^2} + x = p \to y^2 = p^2 - 2xp
@@ -911,7 +931,7 @@ y^2 &amp;= (e^2-1)x^2 - 2epx + p^2 \\
 &amp;= (e^2-1)\left[ x - \frac{ep}{e^2-1} \right]^2 - \frac{p^2}{e^2-1}
 \end{aligned}
 \]</div></section>
-<section class="ms-page" id="p26"><h2>第 26 页</h2><h3>Green 积分公式</h3>
+<section class="ms-page" id="p26"><h2><span class="ms-pn">p.26</span></h2><h3 id="p26-h3-1">Green 积分公式</h3>
 <div class="math">\[
 \oint_{\partial D} P \,\mathrm{d}x + Q \,\mathrm{d}y = \iint_{D} \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) \,\mathrm{d}x\mathrm{d}y
 \]</div>
@@ -924,8 +944,10 @@ W &amp;= \oint_{\partial D} \vec{F} \cdot \mathrm{d}\vec{r} = \oint_{\partial D}
 \]</div></section>
 <p class="ms-note">本页由手写扫描 OCR 后重排；公式用 MathJax 本地渲染，图为 TikZ/矢量 SVG。原扫描仅作校对底稿，不再作为站点阅读形式。</p>
 </article>
+</div>
 </main>
 <footer class="ms-footer"><span>理论力学 · 手稿代码版</span><span><a href="../index.html">返回第 1 章 质点力学</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
 <script src="../../../assets/mathjax/tex-svg.js"></script>
 </body>
 </html>
