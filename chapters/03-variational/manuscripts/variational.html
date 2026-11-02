@@ -77,7 +77,7 @@ I = \int F(x, y(x), y&#x27;(x)) dx
 <p>对于一个多变量函数</p>
 <div class="math">\[
 f(x_1, x_2) \longrightarrow f(x_1+\delta x_1, x_2+\delta x_2)
-= f(x_1, x_2) + \sum_{i=1}^2 \frac{\partial f}{\partial x_i} \delta x_i + \sum_{i=1}^2 \sum_{j=1}^2 \frac{\partial^2 f}{\partial x_i \partial x_j} \delta x_i \delta x_j + \cdots
+= f(x_1, x_2) + \sum_{i=1}^2 \frac{\partial f}{\partial x_i} \delta x_i + \frac{1}{2!}\sum_{i=1}^2 \sum_{j=1}^2 \frac{\partial^2 f}{\partial x_i \partial x_j} \delta x_i \delta x_j + \cdots
 \]</div>
 <p>极值要求 $\frac{\partial f}{\partial x_1} = 0$ 和 $\frac{\partial f}{\partial x_2} = 0$.</p>
 <p>以此类推至更多自变量的情况.</p></section>
@@ -263,7 +263,7 @@ S = R \int_a^b \sqrt{(\theta&#x27;)^2 + \sin^2\theta} \, d\varphi
 \]</div>
 <p>令 \( f(\theta) = \cot\theta \implies \theta' = -f' \sin^2 \theta \)</p>
 <div class="math">\[
-\theta&#x27;&#x27; = -f&#x27; \sin^2 \theta + 2(f&#x27;)^2 \sin\theta \cos\theta
+\theta&#x27;&#x27; = -f&#x27;&#x27; \sin^2 \theta + 2(f&#x27;)^2 \sin^3\theta \cos\theta
 \]</div>
 <div class="math">\[
 \sin^4 \theta \left( f + f&#x27;&#x27; \right) = 0
@@ -568,7 +568,7 @@ dr = \frac{-C \cos\varphi}{\sin^2 \varphi} d\varphi, \quad r \sqrt{r^2 - C^2} = 
 \theta - \theta_0 = \pm \int \frac{ - \frac{C^2 \cos\varphi}{\sin^2 \varphi} }{ \frac{C^2 \cos\varphi}{\sin^2 \varphi} } d\varphi = \pm \int d\varphi = \varphi - \varphi_0
 \]</div>
 <p>所以 $r = \frac{C}{\sin\varphi} = \frac{C}{\sin(\theta - \theta_0)}$，得 $r \sin(\theta - \theta_0) = C$</p>
-<p>展开得：$r \sin\theta \cos\theta_0 - r \cos\theta \sin\theta_0 = C$，即 $x \cos\theta_0 - y \sin\theta_0 = C$，这是直线方程。</p></section>
+<p>展开得：$r \sin\theta \cos\theta_0 - r \cos\theta \sin\theta_0 = C$，即 $y \cos\theta_0 - x \sin\theta_0 = C$，这是直线方程。</p></section>
 <section class="ms-page" id="p24"><h2>第 24 页</h2><p>Revisit 变分法</p>
 <div class="math">\[
 I[y] = \int_a^b F(x, y, y&#x27;) dx
@@ -600,7 +600,7 @@ I[q_1, \dots, q_n] = \int_a^b F(t, q_1, \dots, q_n, \dot{q}_1, \dots, \dot{q}_n)
 q_i(t) \to q_i(t) + \alpha \eta_i(t)
 \]</div>
 <div class="math">\[
-\left. \frac{dI}{d\alpha} \right|_{\alpha=0} = \int_a^b \sum_{i=1}^n \eta_i \left( \frac{\partial F}{\partial q_i} + \dot{\eta}_i \frac{\partial F}{\partial \dot{q}_i} \right) dt
+\left. \frac{dI}{d\alpha} \right|_{\alpha=0} = \int_a^b \sum_{i=1}^n \left( \eta_i \frac{\partial F}{\partial q_i} + \dot{\eta}_i \frac{\partial F}{\partial \dot{q}_i} \right) dt
 \]</div>
 <div class="math">\[
 = \sum_{i=1}^n \left[ \eta_i \frac{\partial F}{\partial \dot{q}_i} \right]_a^b + \int_a^b \sum_{i=1}^n \eta_i \left( \frac{\partial F}{\partial q_i} - \frac{d}{dt} \frac{\partial F}{\partial \dot{q}_i} \right) dt

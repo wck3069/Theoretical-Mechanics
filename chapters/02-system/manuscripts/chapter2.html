@@ -210,7 +210,7 @@ T_i = \frac{1}{2} m v_i^2 = \frac{1}{2} m (\vec{v}_i + \vec{v}_c)^2 = \frac{1}{2
 <p>柯尼希定理：质点系的动能 = 质心的动能 + 相对质心的动能。</p></section>
 <section class="ms-page" id="p8"><h2>第 8 页</h2><p>相对质心的动能。</p>
 <div class="math">\[
-m_i \frac{d \vec{r}_i}{dt} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
+m_i \frac{d^2 \vec{r}_i}{dt^2} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
 \]</div>
 <div class="math">\[
 m_i \frac{d \dot{\vec{r}}_c}{dt} + m_i \frac{d \dot{\vec{R}}_i}{dt}
@@ -1317,7 +1317,7 @@ m_i \frac{d^2 \vec{r}_i}{dt^2} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
 \]</div>
 <h4>在直角坐标系</h4>
 <div class="math">\[
-\frac{d}{dt} \sum_{i=1}^n m_i (y_i \dot{z}_i - z_i \dot{y}_i) = \sum_{i=1}^n (y_i F_{ix}^{(e)} - z_i F_{iy}^{(e)})
+\frac{d}{dt} \sum_{i=1}^n m_i (y_i \dot{z}_i - z_i \dot{y}_i) = \sum_{i=1}^n (y_i F_{iz}^{(e)} - z_i F_{iy}^{(e)})
 \]</div>
 <h4>2. 角动量守恒定律 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
 <p>若所有作用在质点系上的外力对某一固定点$O$的合力矩为零。</p>
@@ -1457,7 +1457,7 @@ F = 2\pi G m \sigma R^2 \int_{0}^{\pi} \dfrac{(r - R\cos\theta)\sin\theta}{(R^2 
 <li><span class="label"></span>  $r &gt; R$ 时，方括号内为 $\dfrac{2}{r} + \dfrac{2}{r} = \dfrac{4}{r}$，代入得 $F = 4\pi G m \sigma R^2 / r^2 = G M m / r^2$；</li>
 <li><span class="label"></span>  $r &lt; R$ 时，方括号内为 $-\dfrac{2}{R} + \dfrac{2}{R} = 0$，故 $F = 0$。</li>
 </ul></section>
-<section class="ms-page" id="p43"><h2>第 43 页</h2><p>取 $\phi(\infty)=0$，由径向场强 $g_r = \frac{\mathrm{d}\phi}{\mathrm{d}r} = -\frac{F}{m}$ 积分得势函数</p>
+<section class="ms-page" id="p43"><h2>第 43 页</h2><p>取 $\phi(\infty)=0$，由径向场强 $g_r = -\frac{\mathrm{d}\phi}{\mathrm{d}r} = -\frac{F}{m}$ 积分得势函数</p>
 <div class="math">\[
 \phi(r) = \begin{cases} 
 -\dfrac{GM}{r}, &amp; r \geq R, \\
