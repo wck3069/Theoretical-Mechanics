@@ -30,7 +30,7 @@ window.MathJax = {tex:{inlineMath:[['$','$'],['\(','\)']],displayMath:[['$$','$$
 <h4>3.</h4>
 <p>The variational Principle.</p></section>
 <section class="ms-page" id="p2"><h2>第 2 页</h2><h3>History</h3>
-<p>变分法，又称为泛函分析，通俗讲“函数的函数”</p>
+<p>变分法，又称为泛函的极值问题，通俗讲“函数的函数”</p>
 <p>光学费马原理，法国数学家费马1662年提出，路径极值问题：根据未发表的工作 据说1684年牛顿几乎已发明变分法。</p>
 <p>&lt;em&gt;待考证&lt;/em&gt;</p>
 <p>真正开始，引起广泛关注，自1696年，由Johan伯努利发起的挑战，最速降线挑战。</p>
@@ -43,13 +43,13 @@ window.MathJax = {tex:{inlineMath:[['$','$'],['\(','\)']],displayMath:[['$$','$$
 <p>``I do not love to be dunned and teased by foreigners about mathematic Thyrs<span class="ms-unknown">〔原稿不清〕</span>&#x27;&#x27;</p></section>
 <section class="ms-page" id="p3"><h2>第 3 页</h2><p>Euler（欧拉）1733年建立起这个学科。Lagrange在Euler影响下开始研究这个问题。1755年欧拉开始采用时年19岁Lagrange的$\textit{purely analytic approach}$，在1756年Euler正式提出“$\textit{calculus of variations}$”。Lagrange首个将其方法用于力学，伯努利挑战137年之后，哈密顿正式提出最小作用量原理。</p></section>
 <section class="ms-page" id="p4"><h2>第 4 页</h2><h3>3.1 费马原理（1662年，法国科学家提出） <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
-<p>费马原理指出，光沿着两点之间所需光程最短的路径前进。也就是说，光从$a$到$b$选择走一条用时最短（或最长）的路径。</p>
+<p>费马原理指出，光沿着两点之间所需光程取驻值的路径前进。也就是说，光从$a$到$b$选择走一条光程为极值（通常为极小值，但也可能为极大值或鞍点）的路径，局部最短结论需满足特定条件。</p>
 <p>光在折射率为 $n(x,y,z) = n(\vec{r})$ 的介质中运行，光传播$ds$路程所需的时间为</p>
 <div class="math">\[ dt = \frac{ds}{c/n(\vec{r})} \]</div>
 <p>从$a$点到$b$点，传播的路径 $S = \int_a^b ds$</p>
 <div class="math">\[ t = \int dt = \frac{1}{c}\int_a^b n(\vec{r}) ds, \]</div>
-<p>最终光程所需的时间依赖于路径的选取，原则上光传播有无穷个路径，但物理发生的过程必定是由$a$到$b$，所耗用的时间最小。</p>
-<p>这就引入一个问题，怎么求 $t$ 的最小值，求解这一问题可用变分法或泛函数分析。</p>
+<p>最终光程所需的时间依赖于路径的选取，原则上光传播有无穷个路径，但物理发生的过程必定是由$a$到$b$，所耗用的时间取驻值。</p>
+<p>这就引入一个问题，怎么求 $t$ 的驻值，求解这一问题可用变分法或泛函数分析。</p>
 <h3>3.2 变分法计算 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
 <p>一般的变分法，是1750年代法国数学家拉格朗日（Lagrange）和瑞士数学家欧拉（Euler）首先发展完善的，比费马原理的提出，晚了一个世纪。</p>
 <p>在直角坐标系中 $ds = \sqrt{dx^2 + dy^2}$</p>
@@ -71,13 +71,13 @@ t = \frac{1}{c} \int n(x,y) \sqrt{1+(y&#x27;)^2} dx = \int F(x, y(x), y&#x27;(x)
 I = \int F(x, y(x), y&#x27;(x)) dx
 \]</div>
 <p>$I$ 的极值, 以及对应的 $y(x)$</p>
-<p>所谓的极值, 是指积分值 $I$ 是一个稳定点. 当我们改变 $x, y(x), y'(x)$ 时, 积分值 $I$ 不变. 我们看当 $x$ 有一个无穷小变化 $x \to x+\delta x$</p>
+<p>所谓的极值, 是指积分值 $I$ 的一阶变分为零. 当我们对 $y(x)$ 施加一个无穷小扰动时, 积分值 $I$ 的一阶变化为零. 我们看当 $x$ 有一个无穷小变化 $x \to x+\delta x$</p>
 <p>$x$ 的函数 $f(x) \to f(x+\delta x) = f(x) + \frac{\partial f}{\partial x} \cdot \delta x + \frac{1}{2!} \frac{\partial^2 f}{\partial x^2} (\delta x)^2$</p>
 <p>稳定点的意义是指 $\frac{\partial f}{\partial x} = 0$</p>
 <p>对于一个多变量函数</p>
 <div class="math">\[
 f(x_1, x_2) \longrightarrow f(x_1+\delta x_1, x_2+\delta x_2)
-= f(x_1, x_2) + \sum_{i=1}^2 \frac{\partial f}{\partial x_i} \delta x_i + \frac{1}{2!}\sum_{i=1}^2 \sum_{j=1}^2 \frac{\partial^2 f}{\partial x_i \partial x_j} \delta x_i \delta x_j + \cdots
+= f(x_1, x_2) + \sum_{i=1}^2 \frac{\partial f}{\partial x_i} \delta x_i + \frac{1}{2}\sum_{i=1}^2 \sum_{j=1}^2 \frac{\partial^2 f}{\partial x_i \partial x_j} \delta x_i \delta x_j + \cdots
 \]</div>
 <p>极值要求 $\frac{\partial f}{\partial x_1} = 0$ 和 $\frac{\partial f}{\partial x_2} = 0$.</p>
 <p>以此类推至更多自变量的情况.</p></section>
@@ -102,7 +102,7 @@ I\left[ y(x) \right] = \int_{a}^{b} F\left(x, y(x), y&#x27;(x)\right) dx
 <div class="math">\[
 \delta I\left[ y(x) \right] = I\left[ y(x) + \delta y(x) \right] - I\left[ y(x) \right] = 0
 \]</div>
-<p>泛函 $I$ 取极值对应于：泛函的微扰变化为0（$\delta y(x)$ 的第一阶）</p>
+<p>泛函 $I$ 取极值对应于：泛函的一阶变分为零（$\delta y(x)$ 的第一阶），并非所有有限扰动都不改变积分；在固定端点变分中，$x$ 通常作为不变的积分自变量。</p>
 <p>怎么计算 $I\left[ y(x) + \delta y(x) \right]$？</p></section>
 <section class="ms-page" id="p7"><h2>第 7 页</h2><p>我们把对 $x$ 的连续积分离散化。</p>
 <div class="math">\[
@@ -197,9 +197,9 @@ k^2 (x - x_0)^2 + k^2 y^2 = 1
 \]</div>
 <p>设 $y = \frac{1}{k} \sin\theta$，则 $dy = \frac{1}{k} \cos\theta d\theta$，</p>
 <div class="math">\[
-\frac{dx}{dy} = \frac{dx}{d\theta} \cdot \frac{d\theta}{dy} = \frac{dx}{d\theta} \cdot \frac{k}{\cos\theta} = \pm \frac{k \sin\theta}{\sqrt{1 - \sin^2\theta}} = \pm \frac{\sin\theta}{\cos\theta}
+\frac{dx}{dy} = \frac{dx}{d\theta} \cdot \frac{d\theta}{dy} = \frac{dx}{d\theta} \cdot \frac{k}{\cos\theta} = \pm \frac{k \cdot \frac{1}{k}\sin\theta}{\sqrt{1 - \sin^2\theta}} = \pm \frac{\sin\theta}{|\cos\theta|}
 \]</div>
-<p>故</p>
+<p>选取 $\cos\theta \ge 0$ 的分支，则 $|\cos\theta| = \cos\theta$，故</p>
 <div class="math">\[
 \frac{dx}{d\theta} = \pm \frac{1}{k} \sin\theta
 \]</div>
@@ -211,7 +211,7 @@ x - x_0 = \pm \frac{1}{k} \cos\theta
 <div class="math">\[
 k^2 (x - x_0)^2 + k^2 y^2 = 1
 \]</div>
-<p>所以轨迹为一个圆，形状和大小与初始条件有关。</p></section>
+<p>所以轨迹为一个圆，形状和大小与初始条件有关。另外，当 $k = 0$ 时，由 $\frac{\partial F}{\partial x'} = 0$ 得 $x' = 0$，即轨迹为竖直直线 $x = \text{常数}$。</p></section>
 <section class="ms-page" id="p10"><h2>第 10 页</h2><p>例</p>
 <p>在Euler方程中，对$y$和$y'$求的是偏导数，为对$x$求的导数。</p>
 <p>比如，$F(x,y,y') = x y (y')^2$</p>
@@ -290,11 +290,11 @@ S = R \int_{a}^{b} \sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2} \, d\theta
 F = \sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2} \implies \frac{\partial F}{\partial \varphi&#x27;} = \frac{\sin^2\theta \, \varphi&#x27;}{\sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2}} = k
 \]</div>
 <div class="math">\[
-\implies \varphi&#x27; = \pm \frac{k^2 \csc^2\theta}{\sqrt{1 - k^2 \csc^2\theta}} \implies \varphi = \alpha \sin^{-1} <span class="ms-unknown">〔原稿不清〕</span> + \beta \quad q = \alpha \cot\theta, \quad \alpha^{-1} = \pm \frac{\sqrt{1 - k^2}}{k}
+\implies \varphi&#x27; = \frac{k \csc^2\theta}{\sqrt{1 - k^2 \csc^2\theta}} \implies \varphi = \alpha \sin^{-1} \left( \frac{\alpha \cot\theta}{\sqrt{1 + \alpha^2}} \right) + \beta
 \]</div>
 <p>即</p>
 <div class="math">\[
-\sin(\varphi - \beta) = q = \alpha \cot\theta
+\sin(\varphi - \beta) = \alpha \cot\theta
 \]</div>
 <div class="math">\[
 \sin\varphi \cos\beta - \cos\varphi \sin\beta = \alpha \cos\theta
@@ -391,7 +391,7 @@ x = \int dx = \int dy \sqrt{\frac{y}{a - y}}
 dy = a \sin \frac{\theta}{2} \cos \frac{\theta}{2} d\theta = \frac{a}{2} \sin \theta d\theta, \quad \sqrt{\frac{y}{a - y}} = \sqrt{\frac{a \sin^2 \frac{\theta}{2}}{a - a \sin^2 \frac{\theta}{2}}} = \frac{\sin \frac{\theta}{2}}{\cos \frac{\theta}{2}}
 \]</div>
 <div class="math">\[
-x = a \int d\theta \frac{\sin^2 \frac{\theta}{2}}{1 - \cos \theta}
+x = a \int \sin^2 \frac{\theta}{2} d\theta
 \]</div>
 <div class="math">\[
 \begin{cases}
@@ -408,7 +408,7 @@ y = \frac{a}{2} (1 - \cos \theta)
 <h4>例：</h4>
 <p>现在我们回头看费马原理中，时间极值的问题.</p>
 <div class="math">\[
-t = \frac{1}{c} \int n(y) \sqrt{1 + (y&#x27;)^2} dx = \frac{\frac{1}{c} \int n(y) \sqrt{1 + (x&#x27;)^2} dy}{\text{与} \ x \ \text{无关}}
+t = \frac{1}{c} \int n(y) \sqrt{1 + (y&#x27;)^2} dx = \frac{1}{c} \int n(y) \sqrt{1 + (x&#x27;)^2} dy \quad \text{（与} \ x \ \text{无关）}
 \]</div>
 <p>代入Euler方程：</p>
 <div class="math">\[
@@ -453,7 +453,7 @@ y = h - \frac{\sin^2 \alpha}{2gC^2}
 <p>\(\textcircled{12}\)</p></section>
 <section class="ms-page" id="p18"><h2>第 18 页</h2><p>积分可得</p>
 <div class="math">\[
-x = -\frac{1}{g c^2} \int \sin^2 \alpha \, d\alpha = -\frac{1}{4 g c^2} (2\alpha - \sin 2\alpha) + x_0
+x = -\frac{1}{g C^2} \int \sin^2 \alpha \, d\alpha = -\frac{1}{4 g C^2} (2\alpha - \sin 2\alpha) + x_0
 \]</div>
 <p>令 $\theta = 2\alpha$ 可得</p>
 <div class="math">\[
@@ -466,7 +466,7 @@ x = x_1 - \frac{1}{4 g C^2} (\theta - \sin\theta)
 <section class="ms-page" id="p19"><h2>第 19 页</h2><h4>注意</h4>
 <h4>(1)</h4>
 <div class="math">\[
-\delta y(x) = \delta \lim_{\varepsilon \to 0} \frac{y(x) - y(x+\varepsilon)}{\varepsilon} = \lim_{\varepsilon \to 0} \frac{\delta y(x) - \delta y(x-\varepsilon)}{\varepsilon} = \frac{d}{dx} \delta y(x)
+\delta y'(x) = \delta \lim_{\varepsilon \to 0} \frac{y(x+\varepsilon) - y(x)}{\varepsilon} = \lim_{\varepsilon \to 0} \frac{\delta y(x+\varepsilon) - \delta y(x)}{\varepsilon} = \frac{d}{dx} \delta y(x)
 \]</div>
 <h4>(2)</h4>
 <div class="math">\[
@@ -483,28 +483,27 @@ F\left( x, y_1(x), y_2(x), \dots, y_n(x), y_1&#x27;(x), y_2&#x27;(x), \dots, y_n
 <p>其中 $\eta(x)$ 为任一可导函数，左式成立，在 $x \in [a,b]$ 区间内 $y(x)=0$</p></section>
 <section class="ms-page" id="p21"><h2>第 21 页</h2><h4>0</h4>
 <p>给定两点之间，悬挂一段匀质细绳，求绳在势能最低处的形状。</p>
-<p>解：设细绳密度为$\rho$，则</p>
+<p>解：设细绳密度为$\rho$，重力加速度为$g$，则</p>
 <div class="math">\[ dm = \rho \, ds \]</div>
 <p>势能</p>
-<div class="math">\[ V = -\int y \, dm = -\rho \int y \sqrt{(dx)^2 + (dy)^2} = -\rho \int y \sqrt{1 + (x&#x27;)^2} \, dy \]</div>
-<p>由变分法可知，拉格朗日函数为</p>
-<div class="math">\[ F(y, x, x&#x27;) = y \sqrt{1 + (x&#x27;)^2} \]</div>
+<div class="math">\[ V = -\int g y \, dm = -\rho g \int y \sqrt{(dx)^2 + (dy)^2} = -\rho g \int y \sqrt{1 + (x&#x27;)^2} \, dy \]</div>
+<p>由变分法可知，考虑绳长$l$为定长约束，引入拉格朗日乘子$\lambda$，拉格朗日函数为</p>
+<div class="math">\[ F(y, x, x&#x27;) = y \sqrt{1 + (x&#x27;)^2} + \lambda \sqrt{1 + (x&#x27;)^2} \]</div>
 <p>因 $\frac{\partial F}{\partial x} = 0$，故得</p>
 <div class="math">\[ \frac{d}{dy} \frac{\partial F}{\partial x&#x27;} = 0 \]</div>
 <p>计算偏导数：</p>
-<div class="math">\[ \frac{\partial F}{\partial x&#x27;} = \frac{x&#x27; y}{\sqrt{1 + (x&#x27;)^2}} = k \]</div>
+<div class="math">\[ \frac{\partial F}{\partial x&#x27;} = \frac{x&#x27; (y + \lambda)}{\sqrt{1 + (x&#x27;)^2}} = k \]</div>
 <p>由此得</p>
-<div class="math">\[ dx = \pm \frac{k\,dy}{\sqrt{y^2 - k^2}} \]</div>
+<div class="math">\[ dx = \pm \frac{k\,dy}{\sqrt{(y + \lambda)^2 - k^2}} \]</div>
 <p>且</p>
-<div class="math">\[ x&#x27; = \sqrt{\frac{k^2}{y^2 - k^2}} \]</div>
-<p>另有</p>
-<div class="math">\[ -\frac{dx}{dy} = k^2 \left( \frac{1}{y - k} - \frac{1}{y + k} \right) \cdot \frac{1}{2k} \]</div>
+<div class="math">\[ x&#x27; = \sqrt{\frac{k^2}{(y + \lambda)^2 - k^2}} \]</div>
 <p>解此微分方程可得</p>
-<div class="math">\[ x = -\frac{k}{2} \ln \frac{k - y}{k + y} + x_0 \]</div>
-<p>当 $y=0$ 时，$x=0$，故 $x_0 = 0$。</p>
-<p>绳长为 $l$，进一步化简得</p>
-<div class="math">\[ y = k \cosh \frac{x - x_0}{k} \]</div>
-<div class="math">\[ y = k \cdot \frac{e^{\frac{1}{k}(x - x_0)} + e^{-\frac{1}{k}(x - x_0)}}{e^{\frac{1}{k}(x - x_0)} + e^{-\frac{1}{k}(x - x_0)}} = k \cosh \frac{x - x_0}{k} \]</div></section>
+<div class="math">\[ x = k \ln \left( \frac{y + \lambda}{k} + \sqrt{\left( \frac{y + \lambda}{k} \right)^2 - 1} \right) + x_0 \]</div>
+<p>即</p>
+<div class="math">\[ y + \lambda = k \cosh \frac{x - x_0}{k} \]</div>
+<p>当取绳的最低点位于$x=0$且$y=0$时，有$\lambda = -k$，故</p>
+<div class="math">\[ y = k \left( \cosh \frac{x}{k} - 1 \right) \]</div>
+<p>绳长$l$与$k$的关系由定长条件确定。</p></section>
 <section class="ms-page" id="p22"><h2>第 22 页</h2><h4>4</h4>
 <p>抛物面方程为 $z = A(x^2 + y^2)$，其中 $A$ 为常数，求测地线方程，设已知该测地线过点 $(x,y)_0=(x_0,0)$，且满足 $\left(\frac{dy}{dx}\right)_0 = 0$，该测地线能否回到原点相同点？</p>
 <p>解：$x$-$y$平面用极坐标，令 $x = r\cos\theta$，$y = r\sin\theta$，则 $z = A r^2$，故 $dz = 2A r dr$。</p>
@@ -627,7 +626,7 @@ z_x = \frac{\partial z}{\partial x}, \quad z_y = \frac{\partial z}{\partial y}, 
 \]</div>
 <p>在积分区域边界上 $\eta(x, y) = 0$</p>
 <div class="math">\[
-\left. \frac{dI}{d\alpha} \right|_{\alpha=0} = \iint_R \eta \left( \frac{\partial F}{\partial z} - \frac{\partial}{\partial x} \frac{\partial F}{\partial z_x} - \frac{\partial}{\partial y} \frac{\partial F}{\partial z_y} \right) = 0
+\left. \frac{dI}{d\alpha} \right|_{\alpha=0} = \iint_R \eta \left( \frac{\partial F}{\partial z} - \frac{\partial}{\partial x} \frac{\partial F}{\partial z_x} - \frac{\partial}{\partial y} \frac{\partial F}{\partial z_y} \right) dx dy = 0
 \]</div>
 <p>可得欧拉方程</p>
 <div class="math">\[

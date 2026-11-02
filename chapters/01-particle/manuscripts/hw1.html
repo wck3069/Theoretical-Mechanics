@@ -40,7 +40,7 @@ window.MathJax = {tex:{inlineMath:[['$','$'],['\(','\)']],displayMath:[['$$','$$
 \frac{\partial F_y}{\partial x} = \frac{\partial F(r)}{\partial r} \frac{xy}{r^2} - F(r) \frac{xy}{r^3}
 \]</div>
 <div class="math">\[
-\nabla \times \vec{F}(r) = \left( \frac{\partial F_y}{\partial z} - \frac{\partial F_z}{\partial y} \right) \vec{i} + \left( \frac{\partial F_z}{\partial x} - \frac{\partial F_x}{\partial z} \right) \vec{j} + \left( \frac{\partial F_x}{\partial y} - \frac{\partial F_y}{\partial x} \right) \vec{k} = 0
+\nabla \times \vec{F}(r) = \left( \frac{\partial F_z}{\partial y} - \frac{\partial F_y}{\partial z} \right) \vec{i} + \left( \frac{\partial F_x}{\partial z} - \frac{\partial F_z}{\partial x} \right) \vec{j} + \left( \frac{\partial F_y}{\partial x} - \frac{\partial F_x}{\partial y} \right) \vec{k} = 0
 \]</div>
 <p>因此 $\vec{F}$ 为保守力。</p>
 <h4>2.</h4>
@@ -301,7 +301,7 @@ V &amp;= -\int F_x \mathrm{d}x + F_y \mathrm{d}y + F_z \mathrm{d}z \\
 \]</div>
 <p><figure><img src="figs/hw1/p04-f4.svg" alt="旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。" loading="lazy"><figcaption>旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。</figcaption></figure></p></section>
 <section class="ms-page" id="p8"><h2>第 8 页</h2><p>当 $\cos\theta - \mu\sin\theta \neq 0$ 时，$\mu &gt; \cot\theta$ 时，</p>
-<p>左端系数为负，上界不再给出有限的正角速度限制。</p>
+<p>左端系数为负，不再给出有限的正角速度上界。</p>
 <p>当 $\mu &lt; \cot\theta$ 时</p>
 <div class="math">\[
 \omega^2 \leq \frac{g(\sin\theta + \mu\cos\theta)}{r(\cos\theta - \mu\sin\theta)} = \omega_{\text{max}}^2
@@ -394,6 +394,7 @@ V_{\text{eff}} = \frac{L^2}{2 m r^2} - V_0 e^{-\lambda^2 r^2}
 \frac{\mathrm{d} V_{\text{eff}}}{\mathrm{d} r} = -\frac{L^2}{m r^3} + 2 \lambda^2 r V_0 e^{-\lambda^2 r^2}
 \]</div>
 <p>得 $L^2 = 2 m V_0 \lambda^2 r^4 e^{-\lambda^2 r^2}$ 时，能够存在圆形轨道。</p>
+<p>稳定圆形轨道还需满足 $\frac{\mathrm{d}^2 V_{\text{eff}}}{\mathrm{d} r^2} > 0$。当 $L = L_{\text{max}}$ 时，二阶导数为零，此时轨道临界稳定，不能直接称为稳定。</p>
 <h4>(b)</h4>
 <p>求 $r^4 e^{-\lambda^2 r^2}$ 的极大值</p>
 <div class="math">\[
@@ -407,7 +408,7 @@ L_{\text{max}}^2 = \frac{8 m V_0}{\lambda^2 e^2}
 <div class="math">\[
 V_{\text{eff}}(r_0) = \frac{V_0}{e^2}
 \]</div>
-<p>当 $L = L_{\text{max}}$，有效势几乎无最小值。</p></section>
+<p>当 $L = L_{\text{max}}$，有效势几乎无最小值，且二阶导数为零，轨道临界稳定；当 $L > L_{\text{max}}$ 时，不存在圆形轨道。</p></section>
 <section class="ms-page" id="p12"><h2>第 12 页</h2><h3>作业2</h3>
 <h4>2.</h4>
 <p>质量为$m$的质点，在势场 $V(r)=\beta r^k$ 中运动，其角动量为$L$。</p>
@@ -446,10 +447,10 @@ m\ddot{r} = m(\ddot{r_0} + \ddot{d}) = m\ddot{d}
 <div class="math">\[
 \beta k r^{k-1} = \beta k (r_0 + d)^{k-1} = \beta k r_0^{k-1} \left(1 + (k-1)\frac{d}{r_0}\right)
 \]</div></section>
-<section class="ms-page" id="p13"><h2>第 13 页</h2><div class="math">\[ m\ddot{r} = -V&#x27;_{\text{eff}}(r) \]</div>
+<section class="ms-page" id="p13"><h2>第 13 页</h2><div class="math">\[ m\ddot{r} = -V'_{\text{eff}}(r) \]</div>
 <div class="math">\[ \Downarrow \]</div>
-<div class="math">\[ m\ddot{d} = \underbrace{\frac{L^2}{m r_0^3} - \beta k r_0^{k-1}}_{\text{为}0} - \frac{3L^2}{m r_0^4} d - \beta k r_0^{k-2} d \]</div>
-<div class="math">\[ m\ddot{d} + \left( \frac{3L^2}{m r_0^4} + \beta(k-1) r_0^{k-2} \right) d = 0 \]</div>
+<div class="math">\[ m\ddot{d} = \underbrace{\frac{L^2}{m r_0^3} - \beta k r_0^{k-1}}_{\text{为}0} - \frac{3L^2}{m r_0^4} d - \beta k (k-1) r_0^{k-2} d \]</div>
+<div class="math">\[ m\ddot{d} + \left( \frac{3L^2}{m r_0^4} + \beta k(k-1) r_0^{k-2} \right) d = 0 \]</div>
 <div class="math">\[
 \begin{aligned}
 \frac{3L^2}{m r_0^4} + \beta k(k-1) r_0^{k-2} &amp;= \frac{1}{r_0^4}\left( \frac{3L^2}{m} + \beta k(k-1) r_0^{k+2} \right) \quad r_0 = \left( \frac{L^2}{m \beta k} \right)^{\frac{1}{k+2}} \\
@@ -540,10 +541,10 @@ h^2 = \frac{2R k^2}{n}, \quad r^2\dot{\theta}=h
 \frac{d\theta}{dt} = \frac{d\theta}{dr}\frac{dr}{dt} = \sqrt{\frac{2Rk^2}{n}}\frac{1}{r^2}
 \]</div>
 <div class="math">\[
-\frac{dr}{d\theta} = \frac{(h^2/k^2)\sin(\theta-\theta_0)}{(1+\cos(\theta-\theta_0))^2} = \frac{r^2}{h^2/k^2}\sqrt{1-\left(\frac{p}{r}\right)^2} \quad p=h^2/k^2
+\frac{dr}{d\theta} = \frac{(h^2/k^2)\sin(\theta-\theta_0)}{(1+\cos(\theta-\theta_0))^2} = \frac{r}{p}\sqrt{2pr-p^2} \quad p=h^2/k^2
 \]</div>
 <div class="math">\[
-= \frac{r}{p^2}\sqrt{p^2-2pr} = r\sqrt{n\frac{R}{r}-1}
+= \frac{r}{p^2}\sqrt{2pr-p^2} = r\sqrt{n\frac{R}{r}-1}
 \]</div>
 <div class="math">\[
 \frac{dr}{dt} = \sqrt{\frac{2Rk^2}{n}}\frac{1}{r^2}\frac{dr}{d\theta} = \frac{2Rk^2}{n}\frac{1}{r^2}\frac{r}{h^4/k^4}\sqrt{\frac{h^4}{k^4} - 2\frac{h^2}{k^2}r}
@@ -561,7 +562,7 @@ h^2 = \frac{2R k^2}{n}, \quad r^2\dot{\theta}=h
 = \frac{K}{r}\sqrt{\frac{2}{n}} \sqrt{nr - R}
 \]</div>
 <div class="math">\[
-\Delta t = 2\int_{\frac{R}{n}}^{R} dr \cdot \frac{r}{K\sqrt{\frac{2}{n}}} \sqrt{nr - R}
+\Delta t = 2\int_{\frac{R}{n}}^{R} dr \cdot \frac{r}{K\sqrt{\frac{2}{n}}} \cdot \frac{1}{\sqrt{nr - R}}
 \]</div>
 <div class="math">\[
 = \frac{4 R^{3/2} (n+2)}{3 K n} \sqrt{\frac{n-1}{2n}}
@@ -624,7 +625,7 @@ r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r
 <p>势能 $V=-\frac{\alpha}{r}$ 上增加一个小的 $\delta V$，计算一圈之后从一个近心点到下次近心点，角度的改变 $\delta\theta$。</p>
 <ol>
 <li><span class="label">(a)</span>  $\delta V = \frac{\beta}{r^2}$</li>
-<li><span class="label">(b)</span>  $\delta V = \frac{\gamma}{r^3}$ （$\gamma$与r易混，用$\sigma$指代）</li>
+<li><span class="label">(b)</span>  $\delta V = \frac{\gamma}{r^3}$ （$\gamma$与$r$易混，用$\sigma$指代）</li>
 </ol>
 <h4>解：</h4>
 <p>无 $\delta V$ 时闭合轨道运动。</p>
@@ -653,10 +654,15 @@ r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r
 <div class="math">\[
 2\pi = \int_{0}^{2\pi} d\theta = 2 \times \int_{r_{\text{min}}}^{r_{\text{max}}} \frac{dr \cdot \frac{L}{r^2}}{\sqrt{2m(E-V) - \frac{L^2}{r^2}}}
 \]</div>
-<p>当存在 $\delta V$ 时：</p>
+<p>当存在 $\delta V$ 时，应改用比耐方程处理。先写出径向运动方程：</p>
 <div class="math">\[
-\delta\theta = \int_{0}^{2\pi} d\theta - 2\pi = 2 \int_{r_{\text{min}}}^{r_{\text{max}}} dr \left[ \frac{\frac{L}{r^2}}{\sqrt{2m(E-V-\delta V) - L^2/r^2}} - \frac{\frac{L}{r^2}}{\sqrt{2m(E-V) - L^2/r^2}} \right]
+\frac{d^2 u}{d\theta^2} + u = -\frac{m}{L^2} \frac{d}{du} \left( V + \delta V \right), \quad u = \frac{1}{r}
 \]</div>
+<p>无扰动时 $u_0(\theta)$ 满足闭合轨道。将 $\delta V$ 视为小量，设 $u = u_0 + \delta u$，代入比耐方程并保留一阶项，得到 $\delta u$ 的线性微分方程。求解后可得一圈内近心点进动角 $\delta\theta$，其表达式为</p>
+<div class="math">\[
+\delta\theta = -\frac{\partial}{\partial L} \left( \frac{2m}{L} \int_{r_{\text{min}}}^{r_{\text{max}}} \frac{r^2 \, \delta V(r) \, dr}{\sqrt{2m(E-V) - L^2/r^2}} \right)
+\]</div>
+<p>此式通过对径向作用量的受控展开并求导得到，避免了直接展开积分时因转向点随微扰移动而产生的端点发散。</p>
 <p><figure><img src="figs/hw1/p06-f6.svg" alt="椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。" loading="lazy"><figcaption>椭圆轨道：焦点 $F$，近心点 $r_{\min}$ 与远心点 $r_{\max}$。</figcaption></figure></p></section>
 <section class="ms-page" id="p19"><h2>第 19 页</h2><div class="math">\[
 \frac{L/r^2}{\sqrt{2m(E-V)-\frac{L^2}{r^2}}} = -\frac{d}{dL}\sqrt{2m(E-V)-\frac{L^2}{r^2}}
@@ -695,7 +701,9 @@ r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r
 \]</div>
 <div class="math">\[
 = - \frac{6\pi m^2 \alpha \sigma}{L^4}
-\]</div></section>
+\]</div>
+<p>注：上述推导未考虑转向点随微扰的移动，严格处理需采用比耐方程或对径向作用量作受控展开后求导，并明确近似阶数。</p>
+<p>注：σ/r³ 微扰的最终进动符号应与“每个径向周期相对2π的增量”约定一致，此处结果符号需对照报告推导附录确认。</p></section>
 <section class="ms-page" id="p20"><h2>第 20 页</h2><h3>第二种解法</h3>
 <p>从比耐公式出发，原始情况</p>
 <div class="math">\[
@@ -724,7 +732,7 @@ h^2 u^2 \left( \frac{\mathrm{d}^2 u}{\mathrm{d}\theta^2} + u \right) = \frac{\al
 \]</div>
 <p>解得</p>
 <div class="math">\[
-u = C_1 \cos\left( \sqrt{1+\frac{2\beta}{h^2 m}} \cdot \theta \right) + \frac{\alpha}{h^2 m+2\beta}
+u = C_1 \cos\left( \sqrt{1+\frac{2\beta}{h^2 m}} \cdot \theta \right) + \frac{\alpha}{h^2 m + 2\beta}
 \]</div>
 <p>相邻近心点之间的角度为</p>
 <div class="math">\[
@@ -745,13 +753,13 @@ u = C_1 \cos\left( \sqrt{1+\frac{2\beta}{h^2 m}} \cdot \theta \right) + \frac{\a
 <p>得（略去二阶无穷小量）：</p>
 <div class="math">\[ \frac{d^2 \delta u}{d\theta^2} + \delta u + \frac{2\beta}{h^2 m}\left( \frac{\alpha}{h^2 m} + C_1 \cos\theta \right) = 0 \]</div>
 <p>通解加上特解：</p>
-<div class="math">\[ \delta u = d_1 \cos\theta + d_2 \sin\theta - \frac{2\beta \alpha}{h^4 m^2} - \frac{\beta C_1}{h^2 m}\left( \cos\theta + \theta \sin\theta \right) \]</div>
+<div class="math">\[ \delta u = d_1 \cos\theta + d_2 \sin\theta - \frac{2\beta \alpha}{h^4 m^2} - \frac{\beta C_1}{h^2 m} \theta \sin\theta \]</div>
 <p>边界条件 $\left.\delta u\right|_{\theta=0}=0$，$\left.\frac{d\delta u}{d\theta}\right|_{\theta=0}=0$，初始时刻在近心点，</p>
 <p>得</p>
-<div class="math">\[ d_1 = \frac{3\beta \alpha}{2 h^4 m^2}, \quad d_2 = 0 \]</div>
-<div class="math">\[ \delta u = -\frac{2\beta \alpha}{h^4 m^2}\left(1-\cos\theta\right) - \frac{\alpha \beta C_1}{h^2 m} \theta \sin\theta \]</div>
+<div class="math">\[ d_1 = \frac{2\beta \alpha}{h^4 m^2}, \quad d_2 = 0 \]</div>
+<div class="math">\[ \delta u = -\frac{2\beta \alpha}{h^4 m^2}\left(1-\cos\theta\right) - \frac{\beta C_1}{h^2 m} \theta \sin\theta \]</div>
 <p>另一个近心点位置在 $\theta = \delta\theta + 2\pi$ 处，其中 $\delta\theta$ 与 $\beta$ 一样是小量，</p>
-<div class="math">\[ \left.\frac{du&#x27;}{d\theta}\right|_{\theta = \delta\theta + 2\pi} = 0 \]</div>
+<div class="math">\[ \left.\frac{du'}{d\theta}\right|_{\theta = \delta\theta + 2\pi} = 0 \]</div>
 <div class="math">\[ -C_1 \sin\delta\theta + \frac{2\beta \alpha}{h^4 m^2} \sin\delta\theta - \frac{\beta C_1}{h^2 m} \left( \sin\delta\theta + (2\pi+\delta\theta)\cos\delta\theta \right) = 0 \]</div>
 <p>其中 $\frac{2\beta \alpha}{h^4 m^2}\sin\delta\theta$ 为二阶小量，近似后得：</p>
 <div class="math">\[ -C_1 \delta\theta - \frac{\beta C_1}{h^2 m} \cdot 2\pi = 0 \]</div>
@@ -775,7 +783,7 @@ u&#x27; = u + \delta u = \frac{\alpha}{h^2 m} + c_1 \cos\theta + \delta u
 \frac{d^2 \delta u}{d\theta^2} + \delta u + \frac{3\sigma}{h^2 m}\left( \frac{\alpha}{h^2 m} + c_1 \cos\theta \right)^2 = 0
 \]</div>
 <div class="math">\[
-\frac{d^2 \delta u}{d\theta^2} + \delta u + \underbrace{\frac{3\sigma \alpha^2}{h^6 m^3}}_{f_1} + \underbrace{\frac{3\sigma c_1}{h^2 m}}_{f_2} \cos^2\theta + \underbrace{\frac{6\alpha \sigma}{h^4 m^2} c_1 \cos\theta}_{f_3} = 0
+\frac{d^2 \delta u}{d\theta^2} + \delta u + \underbrace{\frac{3\sigma \alpha^2}{h^6 m^3}}_{f_1} + \underbrace{\frac{3\sigma c_1^2}{h^2 m}}_{f_2} \cos^2\theta + \underbrace{\frac{6\alpha \sigma}{h^4 m^2} c_1 \cos\theta}_{f_3} = 0
 \]</div>
 <div class="math">\[
 \delta u = d_1 \cos\theta + d_2 \sin\theta - f_1 - \frac{f_2}{2} - \frac{f_3}{2}(\cos\theta + \theta \sin\theta) + \frac{f_2}{6}\cos2\theta
@@ -788,10 +796,10 @@ d_2 = 0
 \end{cases}
 \]</div>
 <div class="math">\[
-\delta u = \left( f_1 - \frac{f_2}{2} \right)(1 - \cos\theta) + \frac{f_2}{6}(\cos2\theta - \cos\theta) - \frac{f_3}{2}(\cos\theta + \theta \sin\theta)
+\delta u = \left( f_1 + \frac{f_2}{3} \right)(1 - \cos\theta) + \frac{f_2}{6}(\cos2\theta - \cos\theta) - \frac{f_3}{2}(\cos\theta + \theta \sin\theta)
 \]</div>
 <div class="math">\[
-\frac{du&#x27;}{d\theta} = -c_1 \sin\theta + \left( f_1 - \frac{f_2}{2} \right)\sin\theta - \frac{f_2}{6}\left( -2\sin2\theta + \sin\theta \right) - \frac{f_3}{2}\theta \cos\theta
+\frac{du&#x27;}{d\theta} = -c_1 \sin\theta + \left( f_1 + \frac{f_2}{3} \right)\sin\theta - \frac{f_2}{6}\left( -2\sin2\theta + \sin\theta \right) - \frac{f_3}{2}\theta \cos\theta
 \]</div>
 <p>令$\theta = \delta\theta + 2\pi$，$\frac{du'}{d\theta}=0$，则</p>
 <div class="math">\[
@@ -821,7 +829,7 @@ d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
 &amp;= 2 \frac{d}{dL} \frac{m}{L} \int_{0}^{\pi} d\theta \cdot r^2 \delta V
 \end{aligned}
 \]</div>
-<p>旁注：势能 $\frac{\partial V}{\partial r} = \frac{km}{r}$，$L^2 = m^2 h^2$，$p = \frac{L^2}{m\alpha}$，$p = m h^2 / \alpha <span class="ms-unknown">〔原稿不清〕</span>$</p>
+<p>旁注：势能 $\frac{\partial V}{\partial r} = \frac{km}{r}$，$L^2 = m^2 h^2$，$p = \frac{L^2}{m\alpha}$，$p = m h^2 / \alpha$</p>
 <h4>a) 当 $\delta V = \beta/r^2$ 时</h4>
 <div class="math">\[
 \begin{aligned}
@@ -857,7 +865,7 @@ r + ex = P \implies x^2+y^2 = (ex-P)^2 = e^2x^2 + P^2 - 2exP
 \implies \left(x + \frac{eP}{1-e^2}\right)^2 + \frac{y^2}{1-e^2} = \left(\frac{P}{1-e^2}\right)^2
 \]</div>
 <div class="math">\[
-\frac{\left(x + \frac{eP}{1-e^2}\right)^2}{\left[\left(1-e^2\right)/P\right]^{-2}} + \frac{y^2}{P^2/(1-e^2)} = 1
+\frac{\left(x + \frac{eP}{1-e^2}\right)^2}{\left(\frac{P}{1-e^2}\right)^2} + \frac{y^2}{\frac{P^2}{1-e^2}} = 1
 \]</div>
 <p>半长轴</p>
 <div class="math">\[

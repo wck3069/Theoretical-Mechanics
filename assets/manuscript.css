@@ -65,3 +65,5 @@ mjx-container svg{max-width:100%;height:auto}
 .ms-code,.ms-code code{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
 .ms-body p,.ms-body li{overflow-wrap:anywhere;word-break:break-word}
 mjx-container{max-width:100%!important;overflow-x:auto!important}
+mjx-assistive-mml{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}
+.ms-wrap,.ms-body{overflow-x:hidden}
