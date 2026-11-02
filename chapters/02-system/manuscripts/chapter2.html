@@ -70,11 +70,11 @@ y_c = \frac{1}{m} \int y dm = \frac{\int R\cos\theta \cdot \sigma 2\pi R^2 \sin\
 <h4>1. 动量定理 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
 <p>$n$个质点系统，质点$i$质量为$m_i$，内力$\vec{F}_i^{(i)}$和外力$\vec{F}_i^{(e)}$</p>
 <div class="math">\[
-\frac{d m \vec{v}_i}{dt} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
+\frac{d(m_i \vec{v}_i)}{dt} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
 \]</div>
 <p>求和</p>
 <div class="math">\[
-\sum_{i=1}^n \frac{d m \vec{v}_i}{dt} = \sum_{i=1}^n \vec{F}_i^{(i)} + \sum_{i=1}^n \vec{F}_i^{(e)} = \sum_{i=1}^n \vec{F}_i^{(e)}
+\sum_{i=1}^n \frac{d(m_i \vec{v}_i)}{dt} = \sum_{i=1}^n \vec{F}_i^{(i)} + \sum_{i=1}^n \vec{F}_i^{(e)} = \sum_{i=1}^n \vec{F}_i^{(e)}
 \]</div>
 <div class="math">\[
 \sum_{i=1}^n \sum_{j=1}^n \vec{F}_{i \leftarrow j}^{(i)} = \sum_{(i,j)} \left( \vec{F}_{i \leftarrow j}^{(i)} + \vec{F}_{j \leftarrow i}^{(i)} \right) = 0
@@ -148,7 +148,7 @@ d\left( \sum_i m_i \vec{v}_i \right) = \vec{F}^{(e)} dt
 \]</div>
 <p>即角动量可以写为质心的角动量与相对质心角动量之和</p>
 <div class="math">\[
-\frac{d\vec{J}}{dt} = \sum_i \vec{r}_i \times \sum_i \vec{F}_i^{(e)}
+\frac{d\vec{J}}{dt} = \sum_i \vec{r}_i \times \vec{F}_i^{(e)}
 \]</div>
 <div class="math">\[
 \frac{d\vec{J}&#x27;}{dt} = \sum_i m_i \frac{d\vec{R}_i}{dt} \times \vec{V}_i + \sum_i m_i \vec{R}_i \times \frac{d\vec{v}_c}{dt} = \sum_i \vec{R}_i \times \vec{F}^{(e&#x27;)} = \vec{M}&#x27;
