@@ -783,25 +783,26 @@ u&#x27; = u + \delta u = \frac{\alpha}{h^2 m} + c_1 \cos\theta + \delta u
 \frac{d^2 \delta u}{d\theta^2} + \delta u + \underbrace{\frac{3\sigma \alpha^2}{h^6 m^3}}_{f_1} + \underbrace{\frac{3\sigma c_1^2}{h^2 m}}_{f_2} \cos^2\theta + \underbrace{\frac{6\alpha \sigma}{h^4 m^2} c_1 \cos\theta}_{f_3} = 0
 \]</div>
 <div class="math">\[
-\delta u = d_1 \cos\theta + d_2 \sin\theta - f_1 - \frac{f_2}{2} - \frac{f_3}{2}(\cos\theta + \theta \sin\theta) + \frac{f_2}{6}\cos2\theta
+\delta u = d_1 \cos\theta + d_2 \sin\theta - f_1 - \frac{f_2}{2} + \frac{f_2}{6}\cos2\theta - \frac{f_3}{2}\theta \sin\theta
 \]</div>
 <p>边界条件：$\left.u'\right|_{\theta=0} = \frac{\alpha}{h^2 m}$，$\left.\delta u\right|_{\theta=0}=0$，$\left.\frac{d\delta u}{d\theta}\right|_{\theta=0}=0$，得</p>
 <div class="math">\[
 \begin{cases}
-d_1 - f_1 - \frac{f_2}{2} - \frac{f_3}{2} + \frac{f_2}{6} = 0 \\
+d_1 - f_1 - \frac{f_2}{2} + \frac{f_2}{6} = 0 \\
 d_2 = 0
 \end{cases}
 \]</div>
 <div class="math">\[
-\delta u = \left( f_1 + \frac{f_2}{3} \right)(1 - \cos\theta) + \frac{f_2}{6}(\cos2\theta - \cos\theta) + \frac{f_3}{2}\left(1 - \cos\theta - \theta \sin\theta\right)
+\delta u = \left( f_1 + \frac{f_2}{3} \right)(\cos\theta - 1) + \frac{f_2}{6}(\cos2\theta - 1) - \frac{f_3}{2}\theta \sin\theta
 \]</div>
 <div class="math">\[
-\frac{du&#x27;}{d\theta} = -c_1 \sin\theta + \left( f_1 + \frac{f_2}{3} \right)\sin\theta - \frac{f_2}{6}\left( -2\sin2\theta + \sin\theta \right) - \frac{f_3}{2}\theta \cos\theta
+\frac{du}{d\theta} = -c_1 \sin\theta - \left( f_1 + \frac{f_2}{3} \right)\sin\theta - \frac{f_2}{3}\sin2\theta - \frac{f_3}{2}\left( \sin\theta + \theta \cos\theta \right)
 \]</div>
-<p>令$\theta = \delta\theta + 2\pi$，$\frac{du'}{d\theta}=0$，则</p>
+<p>令$\theta = \delta\theta + 2\pi$，$\frac{du}{d\theta}=0$，则</p>
 <div class="math">\[
-c_1 \delta\theta + \frac{f_3}{2} \times 2\pi = 0 \implies \delta\theta = -\frac{6\pi\sigma}{\alpha p^2}
-\]</div></section>
+c_1 \delta\theta + \pi f_3 = 0 \implies \delta\theta = -\frac{\pi f_3}{c_1} = -\frac{6\pi\alpha\sigma}{h^4 m^2}
+\]</div>
+<p><em>注：若采用半通径 $p=mh^2/\alpha$，则 $\delta\theta=-6\pi\sigma/(\alpha p^2)$。</em></p></section>
 <section class="ms-page" id="p23"><h2>第 23 页</h2><p>轨道 $r = \frac{p}{1+e\cos\theta}$</p>
 <div class="math">\[
 d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
