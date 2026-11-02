@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二章 质点系力学手稿 · 理论力学手稿</title>
+<link rel="stylesheet" href="../../../assets/manuscript.css">
+<script>
+window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
+</script>
+<!-- TM-SEO:START -->
+<meta name="description" content="第二章 质点系力学手稿 · 理论力学手稿：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/chapters/02-system/manuscripts/chapter2.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="第二章 质点系力学手稿 · 理论力学手稿">
+<meta property="og:description" content="第二章 质点系力学手稿 · 理论力学手稿：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/chapters/02-system/manuscripts/chapter2.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="第二章 质点系力学手稿 · 理论力学手稿">
+<meta name="twitter:description" content="第二章 质点系力学手稿 · 理论力学手稿：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+</head>
+<body>
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="../index.html">← 第 2 章 质点系力学</a><a href="../../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">HANDWRITTEN MANUSCRIPT · CODE EDITION</div>
+<h1>第二章 质点系力学手稿</h1>
+<p class="ms-lead">质心、动量、角动量、碰撞与变质量；图为代码化 SVG。</p>
+<div class="ms-links"><b>相关交互</b> <a href="../../../modules/03-two-body/index.html">M3 两体</a> <a href="../../../modules/06-collisions/index.html">M6 碰撞与变质量</a> <a href="../../../modules/07-rigid-body/index.html">M7 刚体</a></div>
+</div>
+<div class="ms-shell">
+<!-- MS-TOC:START -->
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l3"><a href="#p1-h3-1" title="第二章">第二章</a></li>
+<li class="l3"><a href="#p1-h3-2" title="第2章 质点系力学">第2章 质点系力学</a></li>
+<li class="l4"><a href="#p1-h4-1" title="2.1 质点系">2.1 质点系</a></li>
+<li class="l4"><a href="#p3-h4-1" title="例 求半径为R匀质半球薄壳的质心">例 求半径为R匀质半球薄壳的质心</a></li>
+<li class="l4"><a href="#p3-h4-2" title="2.2 质点系 动量定理与动量守恒">2.2 质点系 动量定理与动量守恒</a></li>
+<li class="l4"><a href="#p4-h4-1" title="(1) 质点系运动">(1) 质点系运动</a></li>
+<li class="l4"><a href="#p7-h4-1" title="(3) 动能">(3) 动能</a></li>
+<li class="l4"><a href="#p15-h3-1" title="2.7 变质量物体的运动">2.7 变质量物体的运动</a></li>
+<li class="l4"><a href="#p17-h3-1" title="2.8 位力定理">2.8 位力定理</a></li>
+<li class="l4"><a href="#p18-h4-1" title="例 巨大物体的引力场">例 巨大物体的引力场</a></li>
+<li class="l4"><a href="#p19-h4-1" title="球壳势能 解2">球壳势能 解2</a></li>
+<li class="l4"><a href="#p23-h4-1" title="3. 机械能守恒">3. 机械能守恒</a></li>
+<li class="l4"><a href="#p24-h4-1" title="1. 火箭运动">1. 火箭运动</a></li>
+<li class="l4"><a href="#p25-h4-1" title="3. 两球对撞">3. 两球对撞</a></li>
+<li class="l3"><a href="#p30-h3-1" title="两体问题">两体问题</a></li>
+<li class="l3"><a href="#p30-h3-2" title="一般讨论">一般讨论</a></li>
+<li class="l3"><a href="#p30-h3-3" title="守恒量">守恒量</a></li>
+<li class="l4"><a href="#p31-h4-1" title="2.2 有效势">2.2 有效势</a></li>
+<li class="l4"><a href="#p31-h4-2" title="2.3 时间依赖">2.3 时间依赖</a></li>
+<li class="l3"><a href="#p33-h3-1" title="2. 如下图所示，开始时一个半径为R的球沿着水平面滑动（无滚动），初始速度为v，球的转动惯量为I = β m R²，（25分）">2. 球沿水平面滑动（例题）</a></li>
+<li class="l4"><a href="#p37-h4-1" title="质心位矢">质心位矢</a></li>
+<li class="l4"><a href="#p37-h4-2" title="2.3 角动量定理与角动量守恒定律">2.3 角动量定理与角动量守恒定律</a></li>
+<li class="l4"><a href="#p38-h4-1" title="在直角坐标系">在直角坐标系</a></li>
+<li class="l4"><a href="#p40-h3-1" title="2.4 动能定理与机械能守恒定律">2.4 动能定理与机械能守恒定律</a></li>
+<li class="l4"><a href="#p41-h4-1" title="3. 柯尼希定理">3. 柯尼希定理</a></li>
+<li class="l3"><a href="#p42-h3-1" title="质点系引力、球体引力场与潮汐力——理论力学练习题">质点系引力、球体引力场与潮汐力——理论力学练习题</a></li>
+<li class="l3"><a href="#p42-h3-2" title="1 例题：球壳定理的积分证明">1 例题：球壳定理的积分证明</a></li>
+<li class="l3"><a href="#p43-h3-1" title="练习题">练习题</a></li>
+<li class="l4"><a href="#p44-h4-1" title="2 练习题">2 练习题</a></li>
+<li class="l4"><a href="#p45-h3-1" title="3.1 差动引力与潮汐加速度">3.1 差动引力与潮汐加速度</a></li>
+<li class="l3"><a href="#p46-h3-1" title="3 潮汐力计算">3 潮汐力计算</a></li>
+<li class="l3"><a href="#p47-h3-1" title="4 编程题: 数值验证球壳定理">4 编程题: 数值验证球壳定理</a></li>
+<li class="l3"><a href="#p50-h3-1" title="10 变质量运动">10 变质量运动</a></li>
+<li class="l4"><a href="#p50-h3-2" title="10.1 从常质量到变质量：问题的提出">10.1 从常质量到变质量：问题的提出</a></li>
+<li class="l4"><a href="#p50-h3-3" title="10.2 基本方程（密歇尔斯基方程）">10.2 基本方程（密歇尔斯基方程）</a></li>
+<li class="l4"><a href="#p51-h3-1" title="10.3 齐奥尔科夫斯基火箭方程">10.3 齐奥尔科夫斯基火箭方程</a></li>
+<li class="l4"><a href="#p52-h3-2" title="10.4 现代应用实例（一）：电推进与低推力轨道">10.4 现代应用实例（一）：电推进与低推力轨道</a></li>
+<li class="l4"><a href="#p53-h4-2" title="10.5 现代应用实例（二）：天体物理中的质量交换">10.5 现代应用实例（二）：天体物理中的质量交换</a></li>
+<li class="l4"><a href="#p54-h4-1" title="10 变质量运动">10 变质量运动</a></li>
+<li class="l4"><a href="#p54-h4-2" title="10.6 经典变质量问题">10.6 经典变质量问题</a></li>
+<li class="l4"><a href="#p55-h4-1" title="10.7 含重力的竖直发射（例题）">10.7 含重力的竖直发射（例题）</a></li>
+<li class="l3"><a href="#p55-h3-1" title="11 位力定理">11 位力定理</a></li>
+<li class="l4"><a href="#p55-h4-2" title="11.1 定义与基本推导">11.1 定义与基本推导</a></li>
+<li class="l4"><a href="#p56-h4-2" title="11.2 连续系统、张量形式与负热容">11.2 连续系统、张量形式与负热容</a></li>
+<li class="l4"><a href="#p57-h3-1" title="11.3 引力系统：恒星、星系团与宇宙学">11.3 引力系统：恒星、星系团与宇宙学</a></li>
+<li class="l4"><a href="#p58-h3-1" title="11.4 量子与统计物理中的位力定理">11.4 量子与统计物理中的位力定理</a></li>
+<li class="l4"><a href="#p58-h3-2" title="11.5 解析验证：开普勒轨道的时间平均">11.5 解析验证：开普勒轨道的时间平均</a></li>
+<li class="l3"><a href="#p59-h3-1" title="12 习题与思考题">12 习题与思考题</a></li>
+<li class="l4"><a href="#p59-h3-2" title="12.1 基础题">12.1 基础题</a></li>
+<li class="l4"><a href="#p60-h3-2" title="12.2 提高题">12.2 提高题</a></li>
+<li class="l4"><a href="#p60-h3-3" title="12.3 编程题">12.3 编程题</a></li>
+</ul>
+</details>
+</nav>
+<!-- MS-TOC:END -->
+
+<article class="ms-body">
+<section class="ms-page" id="p1"><h2><span class="ms-pn">p.1</span></h2><h3 id="p1-h3-1">第二章</h3>
+<h3 id="p1-h3-2">第2章 质点系力学</h3>
+<h4 id="p1-h4-1">2.1 质点系</h4>
+<p>n个质点构成的系统，第$i$个质点质量为$m_i$。质点$i$受力分别为内力$\vec{F}_i^{(i)}$，外力$\vec{F}_i^{(e)}$。牛顿第三定律</p>
+<div class="math">\[
+\vec{F}_{1\leftarrow2}^{(i)} + \vec{F}_{2\leftarrow1}^{(i)} = 0
+\]</div>
+<p>当考虑质点系整体运动时，内力之和$\vec{F}^{(i)} = \sum_{i=1}^n \sum_{j=1}^n \vec{F}_{i\leftarrow j}^{(i)} = 0$。</p>
+<p>质点系质量分布的平均位置，称为质点系的质量中心，简称质心。</p>
+<p>n个质点构成的质点系，每个质点质量为$m_i$，位矢$\vec{r}_i$。质心：</p>
+<div class="math">\[
+\vec{r}_c = \frac{m_1 \vec{r}_1 + m_2 \vec{r}_2 + \dots + m_n \vec{r}_n}{m_1 + m_2 + \dots + m_n} = \frac{\sum m_i \vec{r}_i}{m}
+\]</div>
+<p>连续介质</p>
+<div class="math">\[
+\vec{r}_c = \frac{1}{\int dm} \int \vec{r} dm
+\]</div>
+<p>若选取一个方向</p>
+<div class="math">\[
+x_c = \frac{\sum m_i x_i}{\sum m_i} \quad \text{或} \quad \frac{\int x dm}{\int dm}
+\]</div></section>
+<section class="ms-page" id="p3"><h2><span class="ms-pn">p.3</span></h2><h4 id="p3-h4-1">例 求半径为$R$匀质半球薄壳的质心. <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<p>解:</p>
+<div class="math">\[
+dm = \sigma \underline{ds}
+\]</div>
+<p>$\sigma$为单位面积球壳质量</p>
+<div class="math">\[
+= \sigma R^2 d\varphi \sin\theta d\theta \quad (ds\text{为面积元})
+\]</div>
+<div class="math">\[
+= \sigma 2\pi R^2 \sin\theta d\theta
+\]</div>
+<p>质量分布对$x,z$轴对称，故</p>
+<div class="math">\[
+x_c = 0, \quad z_c = 0
+\]</div>
+<div class="math">\[
+y_c = \frac{1}{m} \int y dm = \frac{\int R\cos\theta \cdot \sigma 2\pi R^2 \sin\theta d\theta}{2\pi R^2 \sigma}
+\]</div>
+<div class="math">\[
+= R \int_{0}^{\frac{\pi}{2}} \cos\theta \sin\theta d\theta = \frac{R}{2}
+\]</div>
+<h4 id="p3-h4-2">2.2 质点系 动量定理与动量守恒 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<h4>1. 动量定理</h4>
+<p>$n$个质点系统，质点$i$质量为$m_i$，内力$\vec{F}_i^{(i)}$和外力$\vec{F}_i^{(e)}$</p>
+<div class="math">\[
+\frac{d(m_i \vec{v}_i)}{dt} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
+\]</div>
+<p>求和</p>
+<div class="math">\[
+\sum_{i=1}^n \frac{d(m_i \vec{v}_i)}{dt} = \sum_{i=1}^n \vec{F}_i^{(i)} + \sum_{i=1}^n \vec{F}_i^{(e)} = \sum_{i=1}^n \vec{F}_i^{(e)}
+\]</div>
+<div class="math">\[
+\sum_{i=1}^n \sum_{j=1}^n \vec{F}_{i \leftarrow j}^{(i)} = \sum_{(i,j)} \left( \vec{F}_{i \leftarrow j}^{(i)} + \vec{F}_{j \leftarrow i}^{(i)} \right) = 0
+\]</div>
+<p>质点系的总动量</p>
+<div class="math">\[
+\vec{P} = \sum_{i=1}^n m_i \vec{v}_i
+\]</div>
+<div class="math">\[
+\frac{d \vec{P}}{dt} = \vec{F}^{(e)}
+\]</div>
+<div class="math">\[
+\vec{P}(t_2) - \vec{P}(t_1) = \int_{t_1}^{t_2} \vec{F}^e dt
+\]</div>
+<p>质点系动量定理：质点系的动量对时间的微商等于作用于质点系外力之和。</p>
+<figure><img src="figs/chapter2/p01-f1.svg" alt="半径为R的匀质半球壳的几何示意图，附带x、y坐标轴" loading="lazy"><figcaption>半径为R的匀质半球壳的几何示意图，附带x、y坐标轴</figcaption></figure></section>
+<section class="ms-page" id="p4"><h2><span class="ms-pn">p.4</span></h2><h4 id="p4-h4-1">(1) 质点系运动</h4>
+<div class="math">\[
+\frac{d m_i \vec{v}_i}{dt} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
+\]</div>
+<div class="math">\[
+\sum_i \frac{d m_i \vec{v}_i}{dt} = \sum_i \vec{F}_i^{(e)} = \vec{F}^{(e)}
+\]</div>
+<p>即当合外力为0时，</p>
+<div class="math">\[
+d\left( \sum_i m_i \vec{v}_i \right) = \vec{F}^{(e)} dt
+\]</div>
+<p>总动量守恒。</p>
+<p>动量定理</p>
+<div class="math">\[
+\vec{P}(t_2) - \vec{P}(t_1) = \int_{t_1}^{t_2} \vec{F}^{(e)} dt
+\]</div>
+<h4>(2) 角动量 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<p>总角动量为 $\sum_i (\vec{r}_i \times m_i \vec{v}_i)$。</p>
+<p>对单个质点：</p>
+<div class="math">\[
+\vec{r}_i \times \left( \vec{F}_i^{(e)} + \vec{F}_i^{(i)} \right) = \vec{r}_i \times \frac{d m_i \dot{\vec{r}}_i}{dt} = \frac{d\left( \vec{r}_i \times m_i \dot{\vec{r}}_i \right)}{dt}
+\]</div>
+<p>对所有质点求和，内力成对且沿连心线，内力矩相消，</p>
+<div class="math">\[
+\sum_i \vec{r}_i \times \vec{F}_i^{(e)} = \frac{d \sum_i \vec{r}_i \times m_i \dot{\vec{r}}_i}{dt}
+\]</div>
+<p>即总角动量为每个质点角动量矢量和：</p>
+<div class="math">\[
+\vec{J} = \sum_i \vec{r}_i \times m_i \dot{\vec{r}}_i
+\]</div>
+<p>总力矩为作用在每个质点上的力矩之和：</p>
+<div class="math">\[
+\vec{M} = \sum_i \vec{r}_i \times \vec{F}_i^{(e)}
+\]</div>
+<p>角动量定理成立。假定外力对某定点合力矩为0，则$\vec{J}$守恒。</p></section>
+<section class="ms-page" id="p5"><h2><span class="ms-pn">p.5</span></h2><p>角动量与质心的关系</p>
+<p>$\vec{r}_c$ 为质心，$\vec{r}_i$ 为质点 $i$ 的位矢，$\vec{R}_i$ 为质点 $i$ 相对 $\vec{r}_c$ 位置</p>
+<p>即 $\vec{R}_i = \vec{r}_i - \vec{r}_c$，$\vec{V}_i = \vec{v}_i - \vec{v}_c$</p>
+<p>相对质心的总动量 $\sum_i \vec{P}_i = \sum_i m_i \dot{\vec{R}}_i = \sum_i m_i \dot{\vec{r}}_i - (\sum_i m_i) \dot{\vec{r}}_c = 0$</p>
+<p>角动量</p>
+<div class="math">\[
+\vec{J} = \sum_i m_i (\vec{r}_i \times \vec{v}_i) = \sum_i m_i (\vec{R}_i + \vec{r}_c) \times (\vec{V}_i + \vec{v}_c)
+\]</div>
+<div class="math">\[
+= \sum_i m_i \vec{R}_i \times \vec{V}_i + \sum_i m_i \vec{r}_c \times \vec{v}_c \quad \sum_i m_i \vec{R}_i = 0
+\]</div>
+<div class="math">\[
++ \sum_i m_i \vec{R}_i \times \vec{v}_c + \sum_i m_i \vec{r}_c \times \vec{V}_i \quad \sum_i m_i \vec{V}_i = 0
+\]</div>
+<div class="math">\[
+= \sum_i m_i \vec{R}_i \times \vec{V}_i + \sum_i m_i \vec{r}_c \times \vec{v}_c
+\]</div>
+<div class="math">\[
+= \vec{J}_c + \vec{J}' \quad \vec{J}' = \sum_i m_i \vec{R}_i \times \vec{V}_i \quad \vec{J}_c = m \vec{r}_c \times \vec{v}_c
+\]</div>
+<p>即角动量可以写为质心的角动量与相对质心角动量之和</p>
+<div class="math">\[
+\frac{d\vec{J}}{dt} = \sum_i \vec{r}_i \times \vec{F}_i^{(e)}
+\]</div>
+<div class="math">\[
+\frac{d\vec{J}'}{dt} = \sum_i m_i \vec{R}_i \times \frac{d\vec{V}_i}{dt} = \sum_i \vec{R}_i \times \vec{F}_i^{(e)} = \vec{M}'
+\]</div>
+<p>质点系对质心的角动量对时间的微商是诸外力对质心的力矩之和</p>
+<p>即质点系相对质心的角动量定理</p></section>
+<section class="ms-page" id="p6"><h2><span class="ms-pn">p.6</span></h2><p>质点运动的定理</p>
+<div class="math">\[
+\vec{F} = m \vec{a}
+\]</div>
+<h4>(1)</h4>
+<div class="math">\[
+\vec{F} dt = m \frac{d\vec{v}}{dt} dt = d(m\vec{v})
+\]</div>
+<p>当 $\vec{F} dt = 0$ 时，$m\vec{v} = \vec{C}$ 守恒。</p>
+<h4>(2)</h4>
+<div class="math">\[
+\vec{r} \times \vec{F} = \vec{r} \times m \frac{d\dot{\vec{r}}}{dt} = m \frac{d}{dt}\left( \vec{r} \times \frac{d\dot{\vec{r}}}{dt} \right) - m \frac{d}{dt}\vec{r} \times \frac{d\vec{r}}{dt}
+\]</div>
+<div class="math">\[
+= \frac{d}{dt}\left( \vec{r} \times m \frac{d\vec{r}}{dt} \right) = \frac{d\vec{J}}{dt}
+\]</div>
+<p>$\vec{J} = \vec{r} \times m\vec{v}$，当 $\vec{r} \times \vec{F} = 0$ 时，$\vec{J} = \vec{C}$ 守恒。</p>
+<h4>(3)</h4>
+<div class="math">\[
+\vec{F} \cdot d\vec{r} = m \frac{d\dot{\vec{r}}}{dt} \cdot d\vec{r} = m (d\dot{\vec{r}}) \cdot \dot{\vec{r}} = d\left( \frac{1}{2} m \dot{r}^2 \right)
+\]</div>
+<p>当 $\vec{F} \cdot d\vec{r} = -\vec{\nabla} V \cdot d\vec{r} = -dV$ 时，</p>
+<div class="math">\[
+d\left( \frac{1}{2} m v^2 + V \right) = 0 \quad \text{即机械能守恒}
+\]</div></section>
+<section class="ms-page" id="p7"><h2><span class="ms-pn">p.7</span></h2><h4 id="p7-h4-1">(3) 动能</h4>
+<p>单个质点：</p>
+<div class="math">\[
+dW_i = (\vec{F}_i^{(e)} + \vec{F}_i^{(i)}) \cdot d\vec{r}_i = dT_i = d\left(\frac{1}{2} m_i v_i^2\right)
+\]</div>
+<p>对$i$求和：</p>
+<div class="math">\[
+dT = \sum_i dT_i = \sum_{i=1}^n (\vec{F}_i^{(e)} \cdot d\vec{r}_i) + \sum_{i=1}^n \vec{F}_i^{(i)} \cdot d\vec{r}_i
+\]</div>
+<p>动能的微分，等于诸内力及外力所作元功之和。</p>
+<p>若我们只看内力作功，由质点1和2构成的系统：</p>
+<div class="math">\[
+dA^{(i)} = dA_1 + dA_2 = \vec{F}_{1\leftarrow2} \cdot d\vec{r}_1 + \vec{F}_{2\leftarrow1} \cdot d\vec{r}_2
+\]</div>
+<div class="math">\[
+= \vec{F}_{1\leftarrow2} \cdot (d\vec{r}_1 - d\vec{r}_2) = \vec{F}_{1\leftarrow2} \cdot d\vec{r}_{12}
+\]</div>
+<p>只有当 $\hat{r}_{12} \cdot d\vec{r}_{12}=0$ 时，内力作功为0。</p>
+<p>当系统只有保守力作功时，则总机械能保持不变。</p>
+<p>动能与质心关系：</p>
+<div class="math">\[
+T_i = \frac{1}{2} m_i v_i^2 = \frac{1}{2} m_i (\vec{V}_i + \vec{v}_c)^2 = \frac{1}{2} m_i \vec{V}_i^2 + \frac{1}{2} m_i \vec{v}_c^2 + m_i \vec{V}_i \cdot \vec{v}_c
+\]</div>
+<div class="math">\[
+\sum_i T_i = \sum_i \frac{1}{2} m_i \vec{V}_i^2 + \frac{1}{2} \left( \sum_i m_i \right) v_c^2 + \left( \sum_i m_i \vec{V}_i \right) \cdot \vec{v}_c
+\]</div>
+<p>其中第三项为0，前两项分别为相对质心的动能和质心的动能。</p>
+<p>柯尼希定理：质点系的动能 = 质心的动能 + 相对质心的动能。</p></section>
+<section class="ms-page" id="p8"><h2><span class="ms-pn">p.8</span></h2><p>相对质心的动能。</p>
+<div class="math">\[
+m_i \frac{d^2 \vec{r}_i}{dt^2} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
+\]</div>
+<div class="math">\[
+m_i \frac{d \dot{\vec{r}}_c}{dt} + m_i \frac{d \dot{\vec{R}}_i}{dt}
+\]</div>
+<p>对$i$求和</p>
+<div class="math">\[
+\sum_i m_i \frac{d \dot{\vec{r}}_c}{dt} = m \frac{d \dot{\vec{r}}_c}{dt} = \sum_i \vec{F}_i^{(e)}
+\]</div>
+<div class="math">\[
+\sum_i m_i \frac{d \dot{\vec{R}}_i}{dt} = \frac{d}{dt} \sum_i m_i \dot{\vec{R}}_i = 0
+\]</div>
+<p>动能项</p>
+<div class="math">\[
+d \vec{R}_i \cdot m_i \frac{d \dot{\vec{R}}_i}{dt} = d \vec{R}_i \cdot \left( \vec{F}_i^{(i)} + \vec{F}_i^{(e)} \right) - \left( m_i \frac{d \dot{\vec{r}}_c}{dt} \right) \cdot d \vec{R}_i
+\]</div>
+<p>左边为$d \frac{1}{2} m_i \dot{\vec{R}}_i^2$</p>
+<p>对$i$求和</p>
+<div class="math">\[
+d\left( \sum_i \frac{1}{2} m_i \dot{\vec{R}}_i^2 \right) = \sum_i d \vec{R}_i \cdot \vec{F}_i^{(i)} + \sum_i d \vec{R}_i \cdot \vec{F}_i^{(e)} - \left( \sum_i m_i d \vec{R}_i \right) \cdot \frac{d \dot{\vec{r}}_c}{dt}
+\]</div>
+<p>其中$\left( \sum_i m_i d \vec{R}_i \right) \cdot \frac{d \dot{\vec{r}}_c}{dt} = 0$</p>
+<p>即：质点系对质心的动能的微分等于质点系相对质心系位移时内力与外力所做功之和。</p></section>
+<section class="ms-page" id="p9"><h2><span class="ms-pn">p.9</span></h2><p>例 质量为$m$的两个质点$A,B$，由不可伸长的轻杆相连。静止放在光滑桌面上，杆长为$a$，质点$B$受到与$AB$连线正交水平冲力，冲量为$\vec{I}$，求此后两质点的运动情况。</p>
+<p>解：</p>
+<p>$A,B$的位矢为</p>
+<div class="math">\[
+\vec{r}_A = x_A \vec{i} + y_A \vec{j}
+\]</div>
+<div class="math">\[
+\vec{r}_B = x_B \vec{i} + y_B \vec{j}
+\]</div>
+<p>质心坐标</p>
+<div class="math">\[
+\vec{r}_c = \frac{\vec{r}_A}{2} + \frac{\vec{r}_B}{2}
+\]</div>
+<p>根据动量定理</p>
+<div class="math">\[
+2m \frac{d\vec{r}_c}{dt} = \vec{I} = I \vec{i}
+\]</div>
+<div class="math">\[
+\vec{r}_c(t=0) = \frac{a}{2} \vec{j}
+\]</div>
+<p>得</p>
+<div class="math">\[
+\vec{r}_c = \frac{I}{2m} t \vec{i} + \frac{a}{2} \vec{j}
+\]</div>
+<p>冲击力作用在$B$上，$t=0$时刻</p>
+<div class="math">\[
+\vec{v}_A(t=0) = 0 \vec{i} + 0 \vec{j}
+\]</div>
+<div class="math">\[
+\vec{v}_c(t=0) = \frac{I}{2m} \vec{i}
+\]</div>
+<p>可得</p>
+<div class="math">\[
+\vec{v}_B(t=0) = 2 \vec{v}_c = \frac{I}{m} \vec{i}
+\]</div>
+<p>相对质心的角动量</p>
+<div class="math">\[
+\vec{R}_A = \vec{r}_A - \vec{r}_c, \quad \vec{R}_B = \vec{r}_B - \vec{r}_c
+\]</div>
+<div class="math">\[
+\vec{L}' = m \vec{R}_A \times \dot{\vec{R}}_A + m \vec{R}_B \times \dot{\vec{R}}_B
+\]</div>
+<p>无外力作用，角动量守恒。</p>
+<p>$t=0$时</p>
+<div class="math">\[
+\dot{\vec{R}}_A = -\dot{\vec{r}}_c, \quad \dot{\vec{R}}_B = \dot{\vec{r}}_c
+\]</div>
+<div class="math">\[
+\vec{L}'(t=0) = -\frac{a I}{2} \vec{k}
+\]</div>
+<p>杆相对质心以角速度$\omega$自转</p>
+<div class="math">\[
+\vec{L}(t) = -m \frac{a^2}{4} \omega \cdot 2 \vec{k} = -\frac{m}{2} a^2 \omega \vec{k} = \vec{L}'(t=0)
+\]</div>
+<div class="math">\[
+\omega = \frac{I}{m a}
+\]</div>
+<p>$\vec{R}_A$和$\vec{R}_B$相对质心作匀速圆周运动</p>
+<div class="math">\[
+\vec{R}_A = -\frac{a}{2} \sin \omega t \vec{i} - \frac{a}{2} \cos \omega t \vec{j}
+\]</div>
+<div class="math">\[
+\vec{R}_B = \frac{a}{2} \sin \omega t \vec{i} + \frac{a}{2} \cos \omega t \vec{j}
+\]</div>
+<p>\hfill (6)</p>
+<figure><img src="figs/chapter2/p02-f2.svg" alt="包含x、y坐标系，质点A、B，作用在B点的水平冲量I，以及杆AB的示意图" loading="lazy"><figcaption>包含x、y坐标系，质点A、B，作用在B点的水平冲量I，以及杆AB的示意图</figcaption></figure></section>
+<section class="ms-page" id="p10"><h2><span class="ms-pn">p.10</span></h2><h4>例</h4>
+<p>带质量滑轮，匀质，悬挂两质点$m$和$2m$，悬挂绳不滑动，求质点加速度。设滑轮质量为$m$，半径为$R$，转动惯量为$I = \frac{1}{2}mR^2$。</p>
+<h4>解</h4>
+<p>系统由3个物体构成，动能为</p>
+<div class="math">\[
+T = \frac{1}{2}mv^2 + \frac{1}{2}(2m)v^2 + \frac{1}{2}I\omega^2
+\]</div>
+<p>其中转动惯量和角速度满足</p>
+<div class="math">\[
+I = \frac{1}{2}mR^2, \quad \omega = \frac{v}{R}
+\]</div>
+<p>代入动能表达式化简：</p>
+<div class="math">\[
+T = \frac{1}{2}mv^2 + mv^2 + \frac{1}{4}mv^2 = \frac{7}{4}mv^2
+\]</div>
+<p>系统的势能为</p>
+<div class="math">\[
+-2mgd + mgd = -mgd
+\]</div>
+<p>由能量守恒定律：</p>
+<div class="math">\[
+\frac{7}{4}mv^2 - mgd = 0 \implies v = \sqrt{\frac{4}{7}gd}
+\]</div>
+<p>对时间求导得加速度：</p>
+<div class="math">\[
+\frac{7}{4}m \cdot 2v \dot{v} - mg \dot{d} = 0
+\]</div>
+<p>注意到$\dot{d} = v$，代入化简得：</p>
+<div class="math">\[
+\dot{v} = \frac{2}{7}g
+\]</div>
+<figure><img src="figs/chapter2/p03-f3.svg" alt="带质量的定滑轮悬挂两个质量分别为m和2m的质点的示意图" loading="lazy"><figcaption>带质量的定滑轮悬挂两个质量分别为m和2m的质点的示意图</figcaption></figure></section>
+<section class="ms-page" id="p11"><h2><span class="ms-pn">p.11</span></h2><h4>例</h4>
+<p>一个质心以速度 $v_c$ 运动的匀质圆盘，圆盘质量为 $m$，半径为 $a$。圆盘以角速度 $\omega$ 绕过中心点的垂线转动，求圆盘的动能。</p>
+<h4>解</h4>
+<p>圆盘密度为 $\rho$，其质量为</p>
+<div class="math">\[
+m = \int_0^a \int_0^{2\pi} r\rho \, dr d\varphi = \pi a^2 \rho
+\]</div>
+<p>动能可写为 $T = \underbrace{T_c}_{\text{质心动能}} + \underbrace{T'}_{\text{相对质心转动动能}}$，其中</p>
+<div class="math">\[
+T_c = \frac{1}{2} m v_c^2
+\]</div>
+<p>质元质量 $dm = \rho r d\varphi dr$，质元的线速度 $v = \omega \cdot r$，故质元的转动动能为</p>
+<div class="math">\[
+dT&#x27; = \frac{1}{2} \omega^2 r^2 dm
+\]</div>
+<p>因此</p>
+<div class="math">\[
+T&#x27; = \int dT&#x27; = \int_0^a dr \int_0^{2\pi} \rho r \cdot \frac{1}{2} \omega^2 r^2 d\varphi = \frac{\pi \rho a^4 \omega^2}{4}
+\]</div>
+<p>代入 $\rho = \frac{m}{\pi a^2}$，得</p>
+<div class="math">\[
+T&#x27; = \frac{m a^2 \omega^2}{4}
+\]</div>
+<p>总动能为</p>
+<div class="math">\[
+T = \frac{1}{2} m v_c^2 + \frac{1}{4} m a^2 \omega^2
+\]</div>
+<p></p></section>
+<section class="ms-page" id="p12"><h2><span class="ms-pn">p.12</span></h2><p>2.5 两体问题</p>
+<p>在惯性系中，太阳坐标 $\vec{r}_s$，行星坐标 $\vec{r}_p$，$\vec{r} = \vec{r}_p - \vec{r}_s$</p>
+<p>仅受内力，太阳与行星之间的引力</p>
+<div class="math">\[
+\left\{
+\begin{aligned}
+M \ddot{\vec{r}}_s &amp;= \frac{G M m}{r^2} \frac{\vec{r}}{r} \\
+m \ddot{\vec{r}}_p &amp;= -\frac{G M m}{r^2} \frac{\vec{r}}{r}
+\end{aligned}
+\right.
+\]</div>
+<div class="math">\[
+\ddot{\vec{r}} = \ddot{\vec{r}}_p - \ddot{\vec{r}}_s = -\frac{G(M+m)}{r^2} \frac{\vec{r}}{r}
+\]</div>
+<p>即 $m \ddot{\vec{r}} = -\frac{G(M+m) m}{r^2} \frac{\vec{r}}{r}$</p>
+<p>若认为太阳不动，其质量由 $M \to M+m$，此时 $k^2 = G(M+m)$ 对不同行星，值不同，所以开普勒第三定律得</p>
+<div class="math">\[
+\frac{\tau^2}{a^3} = \frac{4\pi^2}{G(M+m)}, \quad \frac{a_1^3}{\tau_1^2} : \frac{a_2^3}{\tau_2^2} = (M+m_1) : (M+m_2)
+\]</div>
+<p>质量最大行星为木星，$\frac{m_J}{M} \approx \frac{1}{1047}$，其修正约为 $0.0955\%$。</p>
+<p>若我们改写</p>
+<div class="math">\[
+\mu \ddot{\vec{r}} = -\frac{G M m}{r^2} \frac{\vec{r}}{r}, \quad \frac{1}{\mu} = \frac{1}{M} + \frac{1}{m}
+\]</div>
+<p>$\mu$ 为折合质量，此时可以看做太阳不动，行星绕太阳运动。</p></section>
+<section class="ms-page" id="p13"><h2><span class="ms-pn">p.13</span></h2><p>26 质心坐标系和实验室系</p>
+<p>经典力学中，两坐标系中，质点运行的轨道在形状上相似（相差一个缩放因子），但速度矢量表示不同。</p>
+<p>（图：$\theta_r$ 为实验室系下的散射角，$\theta_c$ 为质心系下的散射角）</p>
+<p>质点 $m_1$ 以速度 $\vec{v}_1$ 被质点 $m_2$ 散射，散射前后质心都以 $\vec{V}$ 运动。</p>
+<p>散射前</p>
+<div class="math">\[
+(m_1 + m_2)\vec{V} = m_1 \vec{v}_1, \quad \vec{V} = \frac{m_1 \vec{v}_1}{m_1 + m_2}
+\]</div>
+<p>相对质心</p>
+<div class="math">\[
+\vec{v}_{1c} = \vec{v}_1 - \vec{V} = \frac{m_2 \vec{v}_1}{m_1 + m_2}, \quad \vec{v}_{2c} = -\vec{V} = -\frac{m_1 \vec{v}_1}{m_1 + m_2}
+\]</div>
+<p>（质心系下：$m_1$ 以 $\vec{v}_{1c}$ 运动，$m_2$ 以 $\vec{v}_{2c}$ 运动，散射后 $m_1$ 速度 $\vec{v}_{1c}'$，散射角 $\theta_c$；实验室系（$m_2$ 静止系）：$m_1$ 以 $\vec{v}_1$ 运动，散射后 $m_1$ 速度 $\vec{v}_1'$，散射角 $\theta_r$）</p>
+<p>散射后 $m_1$：</p>
+<div class="math">\[
+\vec{v}_1&#x27; = \vec{v}_{1c}&#x27; + \vec{V}
+\]</div>
+<div class="math">\[
+\begin{cases}
+v_{1c}&#x27; \cos\theta_c + V = v_1&#x27; \cos\theta_r \\
+v_{1c}&#x27; \sin\theta_c = v_1&#x27; \sin\theta_r
+\end{cases}
+\]</div>
+<p>得</p>
+<div class="math">\[
+\tan\theta_r = \frac{v_{1c}&#x27; \sin\theta_c}{v_{1c}&#x27; \cos\theta_c + V} = \frac{\sin\theta_c}{\cos\theta_c + \frac{V}{v_{1c}&#x27;}}
+\]</div>
+<p>质心系下，散射前后，两质点速度大小分别与散射前相同</p>
+<div class="math">\[
+\frac{V}{v_{1c}&#x27;} = \frac{V}{v_{1c}} = \frac{m_1}{m_2}
+\]</div>
+<p></p>
+<figure><img src="figs/chapter2/p06-f6.svg" alt="质心系下质点m1和m2散射前后的速度矢量示意图" loading="lazy"><figcaption>质心系下质点m1和m2散射前后的速度矢量示意图</figcaption></figure>
+<figure><img src="figs/chapter2/p07-f7.svg" alt="m2静止系下质点m1和m2散射后的速度矢量示意图" loading="lazy"><figcaption>m2静止系下质点m1和m2散射后的速度矢量示意图</figcaption></figure></section>
+<section class="ms-page" id="p14"><h2><span class="ms-pn">p.14</span></h2><div class="math">\[
+\tan\theta_r = \frac{\sin\theta_c}{\cos\theta_c + \frac{m_1}{m_2}}
+\]</div>
+<div class="math">\[
+\begin{cases}
+\text{当} m_1 \ll m_2 &amp; \theta_r \sim \theta_c \\
+\text{当} m_1 = m_2 &amp; \theta_r = \frac{\theta_c}{2}
+\end{cases}
+\]</div>
+<p>能量转移</p>
+<div class="math">\[
+\vec{v}&#x27; + \vec{v}_c = \vec{v}_1&#x27;
+\]</div>
+<div class="math">\[
+(\vec{v}&#x27;)^2 = v_1&#x27;^2 + v_c^2 - 2 v_c v_1 \cos\theta
+\]</div>
+<p>质心系动量</p>
+<div class="math">\[
+\vec{v}_c = \frac{m_1 \vec{v}}{m_1 + m_2} \quad |\vec{v}&#x27;| = |\vec{v}_1| = \frac{m_2 v_1}{m_1 + m_2}
+\]</div>
+<p>能量转移</p>
+<div class="math">\[
+\left( \frac{(v_1&#x27;)^2}{v_1^2} \right) - \frac{2 m_1}{m_1 + m_2} \cdot \frac{v_1&#x27;}{v_1} \cos\theta_r - \frac{m_2 - m_1}{m_1 + m_2} = 0
+\]</div>
+<p>(1) 散射过程，实验室系与质心系中动能比较</p>
+<p>(2) 散射前：$m_1$具有动能，$m_2$静止</p>
+<p>(3) 散射后：$m_1$动能减小，$m_2$动能增加</p>
+<p>(4) 当 $m_1 = m_2$ 且 $\theta_r = \frac{\pi}{2}$ 时，能量转移最大。</p>
+<p>散射前后状态在很多实验中有重要作用，比如中子发现</p>
+<p>1932年 查德威克 $\alpha$粒子轰击铍，铍产生的射线轰击氢、氮，</p>
+<p>由于 $\gamma$ 不具有从原子中打出质子的能量，他测量了被打出的氢核、氮核的速度，推算出了新粒子的质量与质子差不多，且是电中性 1935 Nobel</p>
+<p>1930年 居里夫人的女儿和女婿 用$\alpha$粒子轰击铍，产生了穿透力很强的射线，他们认为这是电磁波，1931年他们认为电磁波不具备高能量；</p>
+<p>中微子 $n \to p^+ + e^- + \bar{\nu}_e$</p>
+<p></p></section>
+<section class="ms-page" id="p15"><h2><span class="ms-pn">p.15</span></h2><h3 id="p15-h3-1">2.7 变质量物体的运动 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h3>
+<p>物体质量不为常数情况，火箭，传送带，雨滴等。</p>
+<p>设一物体在$t$时刻质量为$m$，速度是$\vec{v}$，同时一微小质量$\Delta m$以速度$\vec{u}$运动，在$\Delta t$时间内与$m$合并，合前后速度是$\vec{v}+\Delta\vec{v}$，作用在$m$及$\Delta m$上的合外力为$\vec{F}$，由动量定理得：</p>
+<div class="math">\[
+(m+\Delta m)(\vec{v}+\Delta\vec{v}) - m\vec{v} - \Delta m \vec{u} = \vec{F}\Delta t
+\]</div>
+<p>只保留一阶小量，得：</p>
+<div class="math">\[
+\frac{d}{dt}(m\vec{v}) - \frac{dm}{dt}\vec{u} = \vec{F}
+\]</div>
+<p>若$\vec{u}=0$，则</p>
+<div class="math">\[
+\frac{d(m\vec{v})}{dt} = \vec{F}
+\]</div>
+<h4>例</h4>
+<p>已知火箭从静止运动，质量为$m_0$，以$\frac{dm}{dt}$变化率喷射气体，喷出气体的速率为$v_{\text{rel}}$，求火箭的速度。</p>
+<h4>解</h4>
+<p>系统只受重力影响。</p>
+<div class="math">\[
+\frac{d(m\vec{v})}{dt} - \frac{dm}{dt}\vec{u} = m\vec{g}
+\]</div>
+<p>其中$\vec{u}$为喷射质量的速度，整理得：</p>
+<div class="math">\[
+m\frac{d\vec{v}}{dt} - \frac{dm}{dt}(\vec{u}-\vec{v}) = m\vec{g}
+\]</div>
+<p>这里$\vec{u}-\vec{v}$是喷出速度，取向上为正方向，得：</p>
+<div class="math">\[
+\frac{d\vec{v}}{dt} + \frac{v_{\text{rel}}}{m}\frac{dm}{dt} = -g
+\]</div>
+<div class="math">\[
+v_f = v_0 + v_{\text{rel}} \ln\frac{m_0}{m_f} - gt
+\]</div>
+<p>使$v_{\text{rel}}$大，且$m_0/m_f$足够大，$v_f$大。</p></section>
+<section class="ms-page" id="p16"><h2><span class="ms-pn">p.16</span></h2><h4>例</h4>
+<p>有一链条其单位长度质量为$\rho$，上端部分盘着放在平台上，下端部分沿着光滑斜面下滑，求链条沿斜面滑下长度为$x$时链条的速度。</p>
+<h4>解</h4>
+<p>取斜面上链条质量为$m$，$m = x\rho$。即将下滑微元$dm = \rho dx$，初始速度为0。</p>
+<p>所以</p>
+<div class="math">\[
+\frac{d}{dt}(m\vec{v}) - \frac{dm}{dt}\vec{u} = \frac{d}{dt}(m\vec{v}) = \vec{F}
+\]</div>
+<p>沿斜面方向</p>
+<div class="math">\[
+\frac{dmv}{dt} = mg\sin\alpha = \rho g x \sin\alpha
+\]</div>
+<div class="math">\[
+\frac{dmv}{dt} = \frac{dm}{dt}\dot{x} + m\ddot{x} = \rho \dot{x}^2 + \rho x \ddot{x} = \frac{d}{dt}(\rho \dot{x} x)
+\]</div>
+<p>得</p>
+<div class="math">\[
+d(\dot{x} x) = g x \sin\alpha dt = g x^2 \sin\alpha \frac{dx}{x \dot{x}}
+\]</div>
+<p>初始条件 $x=0$，$\dot{x}=0$</p>
+<div class="math">\[
+\frac{1}{2} (\dot{x} x)^2 = \frac{g \sin\alpha}{3} x^3 \implies \dot{x}^2 = \frac{2}{3} g x \sin\alpha
+\]</div>
+<figure><img src="figs/chapter2/p09-f9.svg" alt="链条部分在平台上、部分沿光滑斜面下滑的几何示意图" loading="lazy"><figcaption>链条部分在平台上、部分沿光滑斜面下滑的几何示意图</figcaption></figure></section>
+<section class="ms-page" id="p17"><h2><span class="ms-pn">p.17</span></h2><h3 id="p17-h3-1">2.8 位力定理</h3>
+<p>对于大数目质点系，如$n$个质点，某一个质点质量$m_i$，位矢$\vec{r}_i$，受力$\vec{F}_i$，则</p>
+<div class="math">\[
+\dot{\vec{P}}_i = \vec{F}_i
+\]</div>
+<p>研究</p>
+<div class="math">\[
+G = \sum_{i=1}^n \vec{P}_i \cdot \vec{r}_i
+\]</div>
+<p>对时间求导</p>
+<div class="math">\[
+\dot{G} = \sum_{i=1}^n \dot{\vec{P}}_i \cdot \vec{r}_i + \sum_{i=1}^n \vec{P}_i \cdot \dot{\vec{r}}_i = \sum_{i=1}^n \vec{F}_i \cdot \vec{r}_i + 2T
+\]</div>
+<p>求时间平均</p>
+<div class="math">\[
+\frac{1}{\tau}(G(\tau) - G(0)) = \frac{1}{\tau}\int_0^\tau dt \dot{G} = \overline{\sum_{i=1}^n \vec{F}_i \cdot \vec{r}_i} + 2\overline{T}
+\]</div>
+<p>只要位矢$\vec{r}$和动量$\vec{P}$是有限的，时间足够长，则上式左边为零，因此</p>
+<div class="math">\[
+\overline{T} = -\frac{1}{2}\overline{\sum_{i=1}^n \vec{F}_i \cdot \vec{r}_i}
+\]</div>
+<p>这就是位力定理。</p>
+<p>对保守力系</p>
+<div class="math">\[
+\overline{T} = +\frac{1}{2}\overline{\sum_{i=1}^n \nabla_i V \cdot \vec{r}_i}
+\]</div>
+<p>对有心力</p>
+<div class="math">\[
+\overline{T} = +\frac{1}{2}\overline{\sum_{i=1}^n \frac{\partial V}{\partial r} r}
+\]</div>
+<p>对万有引力</p>
+<div class="math">\[
+\overline{T} = -\frac{1}{2}\overline{V_{\text{total}}}
+\]</div>
+<p>且</p>
+<div class="math">\[
+\frac{\partial V}{\partial r} r = -V
+\]</div>
+<p>对一个星系</p>
+<div class="math">\[
+\overline{V_{\text{total}}} = -\sum_{i&gt;j} \frac{G m_i m_j}{r_{ij}} \sim -\frac{G M^2}{r}
+\]</div>
+<p>其中$M$为星系质量。</p>
+<div class="math">\[
+\overline{T} = \frac{1}{2} m \langle v^2 \rangle \approx \frac{3}{2} m \sigma_{\text{1D}}^2
+\]</div>
+<p>其中$\langle v^2 \rangle = 3 \sigma_{\text{1D}}^2$，$\sigma_{\text{1D}}$为一维速度弥散。即</p>
+<div class="math">\[
+M \approx \frac{3 R \sigma_{\text{1D}}^2}{G}
+\]</div>
+<p>后发座超星系团</p>
+<div class="math">\[
+M = 1.9 \times 10^{15} M_\odot
+\]</div>
+<p>Coma Cluster可见物质</p>
+<div class="math">\[
+M = 1.6 \times 10^{14} M_\odot
+\]</div>
+<p>1933年瑞士天文学家Zwicky首次观测。</p></section>
+<section class="ms-page" id="p18"><h2><span class="ms-pn">p.18</span></h2><h4 id="p18-h4-1">例 巨大物体的引力场</h4>
+<p>解：</p>
+<p>dm产生的引力</p>
+<div class="math">\[
+d\vec{G} = -G M dm \frac{\vec{r}}{r^3}
+\]</div>
+<p>引力沿$\vec{r}$方向，对O点距离$\rho$的圆环</p>
+<p>平均后 $G_y$ 和 $G_z = 0$</p>
+<div class="math">\[
+dG_x = -\frac{GM x dm}{r^3} = -\frac{G a M dm}{r^3}
+\]</div>
+<p>此时dm为$\rho \to \rho+d\rho$圆环</p>
+<p>内的总质量：</p>
+<div class="math">\[
+dm = \mu 2\pi \rho d\rho
+\]</div>
+<p>$\mu$为质量（单位面积的）</p>
+<div class="math">\[
+dG_x = -G a M \mu 2\pi \rho \frac{d\rho}{r^3}
+\]</div>
+<p>已知 $r^2 = \rho^2 + d^2$</p>
+<p>即 $r dr = \rho d\rho$</p>
+<div class="math">\[
+dG_x = -\frac{G a M \mu 2\pi}{r^2} dr
+\]</div>
+<div class="math">\[
+G_x = \int_{a}^{\infty} -\frac{G a M \mu 2\pi}{r^2} dr = -\frac{2\pi G \mu a M}{a} = -2\pi G \mu M
+\]</div>
+<p>此时引力与质点与无穷大平面的距离无关</p>
+<figure><img src="figs/chapter2/p10-f10.svg" alt="无穷大平面y-z平面与质点P的引力场示意图，标注了点O、M，垂直距离d，矢量r等元素" loading="lazy"><figcaption>无穷大平面y-z平面与质点P的引力场示意图，标注了点O、M，垂直距离d，矢量r等元素</figcaption></figure></section>
+<section class="ms-page" id="p19"><h2><span class="ms-pn">p.19</span></h2><h4 id="p19-h4-1">球壳势能 解2.</h4>
+<p>已知球壳半径为 $a$。</p>
+<p>$Q$ 点坐标：</p>
+<div class="math">\[
+(a\cos\phi\sin\theta,\ a\sin\phi\sin\theta,\ a\cos\theta)
+\]</div>
+<p>$PQ$ 距离：</p>
+<div class="math">\begin{align*}
+r^2 &amp;= a^2\sin^2\theta + (z - a\cos\theta)^2 \\
+&amp;= a^2 + z^2 - 2az\cos\theta
+\end{align*}</div>
+<p>质量元：</p>
+<div class="math">\[
+dm = \sigma ds = \sigma a^2 d\phi d\cos\theta = 2\pi\sigma a^2 d\cos\theta
+\]</div>
+<p>势能元：</p>
+<div class="math">\[
+dV = -\frac{GM dm}{r} = -\frac{GM \cdot 2\pi\sigma a^2 d\cos\theta}{\sqrt{a^2 + z^2 - 2az\cos\theta}}
+\]</div>
+<p>总势能：</p>
+<div class="math">\[
+V = \int_{-1}^1 \frac{-GM \cdot 2\pi\sigma a^2 d\cos\theta}{\sqrt{a^2 + z^2 - 2az\cos\theta}}
+\]</div>
+<p>球壳质量：</p>
+<div class="math">\[
+m = \int dm = 2\pi\sigma a^2 \int_{-1}^1 d\cos\theta = 4\pi a^2 \sigma
+\]</div>
+<p>代入总势能：</p>
+<div class="math">\[
+V = -\frac{GMm}{2} \int_{-1}^1 \frac{d\cos\theta}{\sqrt{a^2 + z^2 - 2az\cos\theta}} = -(GMm) \begin{cases} \frac{1}{a} &amp; z &lt; a \\ \frac{1}{z} &amp; z \geq a \end{cases}
+\]</div>
+<p>计算积分：</p>
+<div class="math">\begin{align*}
+\int_{-1}^1 \frac{dx}{\sqrt{a^2 + z^2 - 2azx}} &amp;= -\frac{1}{az} \sqrt{a^2 + z^2 - 2azx} \bigg|_{-1}^1 \\
+&amp;= -\frac{1}{az} \left( \sqrt{(a - z)^2} - \sqrt{(a + z)^2} \right) \\
+&amp;= -\frac{1}{az} \left( |a - z| - (a + z) \right) = \begin{cases} \frac{2}{a} &amp; z &lt; a \\ \frac{2}{z} &amp; z &gt; a \end{cases}
+\end{align*}</div>
+<figure><img src="figs/chapter2/p11-f11.svg" alt="球壳示意图，标注了点P、Q，距离r及角度$\theta$等几何参数" loading="lazy"><figcaption>球壳示意图，标注了点P、Q，距离r及角度$\theta$等几何参数</figcaption></figure></section>
+<section class="ms-page" id="p20"><h2><span class="ms-pn">p.20</span></h2><p>例 2-d 运动。在水平桌上，一个球以速度 $v$ 接近一个静止的同质球，两球弹性碰撞，入射球的速度改变方向，角度为 $\theta$，求二球的末态速度。已知。</p>
+<p>解：在 $x,y$ 方向上动量守恒，设 $v_{1f}$ 和 $v_{2f}$ 为末态。</p>
+<div class="math">\[
+\begin{cases}
+mv = m v_{1f} \cos\theta + m v_{2f} \cos\phi \quad \text{(1)} \\
+0 = m v_{1f} \sin\theta - m v_{2f} \sin\phi \quad \text{(2)} \\
+\frac{1}{2} m v^2 = \frac{1}{2} m v_{1f}^2 + \frac{1}{2} m v_{2f}^2 \quad \text{(3)}
+\end{cases}
+\]</div>
+<p>利用(1)和(2)消去$\phi$：</p>
+<div class="math">\[
+(mv - m v_{1f} \cos\theta)^2 + m^2 v_{1f}^2 \sin^2\theta = m^2 v_{2f}^2
+\]</div>
+<p>两边除以$m^2$得：</p>
+<div class="math">\[
+v^2 - 2 v v_{1f} \cos\theta + v_{1f}^2 = v_{2f}^2
+\]</div>
+<p>将 $v_{2f}^2$ 代入(3)式：</p>
+<div class="math">\[
+v^2 - v_{1f}^2 = v^2 - 2 v v_{1f} \cos\theta + v_{1f}^2
+\]</div>
+<p>整理得：</p>
+<div class="math">\[
+v_{1f} = v \cos\theta
+\]</div>
+<p>代入(3)式得：</p>
+<div class="math">\[
+v_{2f} = v \sin\theta
+\]</div>
+<p>代入(2)式：</p>
+<div class="math">\[
+m v \cos\theta \sin\theta = m v_{2f} \sin\phi
+\]</div>
+<p>将 $v_{2f}=v\sin\theta$ 代入上式：</p>
+<div class="math">\[
+m v \cos\theta \sin\theta = m v \sin\theta \sin\phi
+\]</div>
+<p>约去公共项得：</p>
+<div class="math">\[
+\sin\phi = \cos\theta \implies \phi = \frac{\pi}{2} - \theta
+\]</div>
+<p></p></section>
+<section class="ms-page" id="p21"><h2><span class="ms-pn">p.21</span></h2><p>例题解析 PPT 35页 第二章 2.4节，$\boxed{A}\sim\boxed{B}$</p>
+<div class="math">\[
+m \ddot{x}_1 = k \Delta x = \frac{k x_0}{2} \sin\left( \sqrt{\frac{4k}{3m}} \, t \right)
+\]</div>
+<div class="math">\[
+\ddot{x}_1 = \frac{k x_0}{2m} \sin\left( \sqrt{\frac{4k}{3m}} \, t \right)
+\]</div>
+<div class="math">\[
+\dot{x}_1 = -\frac{k x_0}{2m} \sqrt{\frac{3m}{4k}} \cos\left( \sqrt{\frac{4k}{3m}} \, t \right) + \frac{k x_0}{2m} \sqrt{\frac{3m}{4k}} = \frac{3 x_0}{8} \sqrt{\frac{4k}{3m}} \left( 1 - \cos\left( \sqrt{\frac{4k}{3m}} \, t \right) \right)
+\]</div>
+<div class="math">\[
+x_1 = \frac{3 x_0}{8} \left[ \sqrt{\frac{4k}{3m}} \, t - \sin\left( \sqrt{\frac{4k}{3m}} \, t \right) \right]
+\]</div>
+<div class="math">\[
+dm = 2\pi \rho r \, dr
+\]</div>
+<div class="math">\[
+\pi R^2 \rho = m
+\]</div>
+<div class="math">\[
+dT = \frac12 (dm) r^2 \omega^2 = \pi \rho r^3 \omega^2 \, dr
+\]</div>
+<div class="math">\[
+= 2\pi \rho \cdot \frac{R^4 \omega^2}{4}
+\]</div>
+<div class="math">\[
+= \frac{m R^2 \omega^2}{4}
+\]</div>
+<figure><img src="figs/chapter2/p13-f13.svg" alt="标注A和B的带波浪线的线段示意图" loading="lazy"><figcaption>标注A和B的带波浪线的线段示意图</figcaption></figure></section>
+<section class="ms-page" id="p22"><h2><span class="ms-pn">p.22</span></h2><p>补充：机械能守恒与参考系</p>
+<p>(1) 在非惯性系中，若惯性力不作功或存在与时间无关的有效势，则仍可定义机械能守恒；否则机械能不守恒。</p>
+<p>(2) 在某一惯性系中机械能守恒，但在另一惯性系中机械能不一定守恒</p>
+<p>首先我们选定两个惯性系$A$，和惯性系$B$。</p>
+<div class="math">\[
+\vec{v}_B = \vec{v}_A + \Delta \vec{v}
+\]</div>
+<p>任意速度的变换。</p>
+<h4>1.</h4>
+<p>牛顿第二定律，在不同惯性系中都成立</p>
+<p>伽利略变换，</p>
+<div class="math">\[
+\begin{aligned}
+\vec{F}_A &amp;\Leftrightarrow \vec{F}_B = \vec{F}_A \\
+\vec{v}_A &amp;\Leftrightarrow \vec{v}_B = \vec{v}_A + \Delta \vec{v} \\
+\vec{r}_A &amp;\Leftrightarrow \vec{r}_B = \vec{r}_A + \Delta \vec{v} t
+\end{aligned}
+\]</div>
+<p>非惯性系下，$\vec{F} \to \vec{F} + \vec{F}_{\text{惯性力}}$，</p>
+<div class="math">\[
+\vec{d r} \cdot \vec{F}_{\text{惯性力}} \text{不一定为} 0.
+\]</div>
+<div class="math">\[
+\vec{F}_A = \frac{d m \vec{v}_A}{dt} \implies \vec{F}_B = \frac{d m \vec{v}_B}{dt}
+\]</div>
+<div class="math">\[
+d \vec{v}_B = d \vec{v}_A + d(\Delta \vec{v}) = d \vec{v}_A \quad (\text{常矢量})
+\]</div>
+<h4>2.</h4>
+<p>动能定理</p>
+<p>参考系 $A$：</p>
+<div class="math">\[
+\vec{F}_A \cdot d \vec{r}_A = m \frac{d \vec{v}_A}{dt} \cdot d \vec{r}_A = m \vec{v}_A \cdot \frac{d \vec{v}_A}{dt} = d\left( \frac{1}{2} m v_A^2 \right)
+\]</div>
+<p>若变换至参考系$B$.</p>
+<p>参考系 $B$：</p>
+<div class="math">\[
+\vec{F}_B \cdot d \vec{r}_B = \vec{F}_A \cdot d \vec{r}_A + \vec{F}_A \cdot \Delta \vec{v} dt
+\]</div></section>
+<section class="ms-page" id="p23"><h2><span class="ms-pn">p.23</span></h2><div class="math">\[
+m \frac{d\vec{v}_B}{dt} \cdot d\vec{r}_B = m \frac{d\vec{v}_A}{dt} \cdot \left( d\vec{r}_A + \Delta \vec{v} dt \right)
+\]</div>
+<div class="math">\[
+= d\left( \frac{1}{2} m v_A^2 \right) + m \Delta \vec{v} \cdot \frac{d\vec{v}_A}{dt} dt
+\]</div>
+<p>若 $\vec{F}_A \cdot \Delta \vec{v} dt = m \Delta \vec{v} \cdot \frac{d\vec{v}}{dt} dt$ 成立，则B参考系中</p>
+<div class="math">\[
+\vec{F}_B \cdot d\vec{r}_B = d\left( \frac{1}{2} m v_B^2 \right)
+\]</div>
+<p>动能定理成立。</p>
+<h4 id="p23-h4-1">3. 机械能守恒</h4>
+<p>A: $\vec{F}_A = -\vec{\nabla} V_A$ 保守力$\vec{F}_A$可写为势能$V$的梯度</p>
+<p>动能定理 $\vec{F}_A \cdot d\vec{r}_A = -(\vec{\nabla} V_A) \cdot d\vec{r}_A = -d V_A = d\left( \frac{1}{2} m v_A^2 \right)$</p>
+<p>得 $d\left[ \frac{1}{2} m v_A^2 + V_A \right] = 0$ 即机械能守恒</p>
+<p>B: $\vec{F}_A = -\vec{\nabla} V_A$ 则 $\vec{F}_B = -\vec{\nabla} V_B$</p>
+<p>$V_B(\vec{r} - \Delta \vec{v} t) = V_A(\vec{r})$ 因$V_A, V_B$描述同一场的势能，相当于平移了坐标</p>
+<div class="math">\[
+\vec{F}_B \cdot d\vec{r}_B = \vec{F}_A \cdot \left( d\vec{r}_A + \Delta \vec{v} dt \right)
+\]</div>
+<div class="math">\[
+= -d V_A + \left( \vec{F}_A \cdot \Delta \vec{v} \right) dt
+\]</div>
+<div class="math">\[
+d\left( \frac{1}{2} m v_B^2 \right) = d\left( \frac{1}{2} m (\vec{v}_A + \Delta \vec{v})^2 \right) = d\left( \frac{1}{2} m v_A^2 \right) + m \Delta \vec{v} \cdot d\vec{v}_A
+\]</div>
+<p>所以有 $\vec{F}_A \cdot \Delta \vec{v} dt = d\left[ \frac{1}{2} m v_A^2 + V_A \right] + m \Delta \vec{v} \cdot d\vec{v}_A$</p>
+<p>等式显然成立，但保守力做功与伽里略变换的速度有关，即参考系B中机械能不守恒。</p></section>
+<section class="ms-page" id="p24"><h2><span class="ms-pn">p.24</span></h2><p>第二章 质点系 例题</p>
+<h4 id="p24-h4-1">1. 火箭运动</h4>
+<p>根据动量守恒</p>
+<div class="math">\[
+mv = (m+dm)(v+dv) - dm(v-u)
+\]</div>
+<p>略去二阶小量</p>
+<div class="math">\[
+mv = m v + m dv + v dm - v dm + u dm
+\]</div>
+<div class="math">\[
+m dv + u dm = 0
+\]</div>
+<div class="math">\[
+dv = -u \frac{dm}{m}
+\]</div>
+<div class="math">\[
+v_2 - v_1 = u \ln \frac{m_1}{m_2}
+\]</div>
+<p>若$t=0$时 $v_0=0$，质量为$M$，则</p>
+<div class="math">\[
+v = u \ln \frac{M}{m}
+\]</div>
+<h4>2. 非弹性碰撞 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h4>
+<p>一链条长度为$L$，质量密度为$\sigma \ \text{kg/m}$，垂直悬挂在一个秤上，自由下落，求秤上的测量值。</p>
+<p>设平面上已落链条的长度为$y$（向下为正），链条受力为$F - \sigma L g$，秤上链条的动量为$\sigma y \dot{y}$</p>
+<div class="math">\[
+F - \sigma L g = \frac{d(\sigma y \dot{y})}{dt} = \sigma y \ddot{y} + \sigma \dot{y}^2
+\]</div>
+<p>自由下落的链条，重力加速度等于链条上单个质点的加速度，$\ddot{y} = g$</p>
+<p>所以 $\dot{y} = \sqrt{2g y}$</p>
+<p>求得</p>
+<div class="math">\[
+F = \sigma L g + \sigma y g + 2\sigma y g = \sigma L g + 3\sigma y g
+\]</div>
+<figure><img src="figs/chapter2/p14-f14.svg" alt="火箭运动示意图，包含火箭主体、喷出部分的质量与速度标注" loading="lazy"><figcaption>火箭运动示意图，包含火箭主体、喷出部分的质量与速度标注</figcaption></figure>
+<figure><img src="figs/chapter2/p15-f15.svg" alt="链条下落问题示意图，标注了平面、链条长度L、重力g、秤的支持力F等" loading="lazy"><figcaption>链条下落问题示意图，标注了平面、链条长度L、重力g、秤的支持力F等</figcaption></figure></section>
+<section class="ms-page" id="p25"><h2><span class="ms-pn">p.25</span></h2><p>第二种解法</p>
+<p>$y$ 表示已落长度，向下为正，$dy>0$，速度 $v = \dot{y} > 0$</p>
+<p>自由下落的质量变化</p>
+<div class="math">\[
+dm = \sigma dy = \sigma \dot{y} dt
+\]</div>
+<p>落在秤面上时，动量改变</p>
+<div class="math">\[
+dp = 0 - (dm)(-\dot{y}) = \sigma \dot{y}^2 dt
+\]</div>
+<div class="math">\[
+\frac{0 - (dm)(-\dot{y})}{dt\text{之后动量} - dt\text{之前动量}}
+\]</div>
+<div class="math">\[
+F_1 = \frac{dp}{dt} = \sigma \dot{y}^2
+\]</div>
+<div class="math">\[
+F_{\text{总}} = F_{weight} + F_1 = \sigma (L - y)g + 2\sigma (L - y)g = 3\sigma (L - y)g
+\]</div>
+<h4 id="p25-h4-1">3. 两球对撞</h4>
+<p>质量为 $M$，初速度为 $V$，与质点 $m$ 碰撞后，合二为一，求能量损失。</p>
+<p>(1) 在实验室系。</p>
+<p>(2) 在 $M$ 的静止系。</p>
+<p>(1) 根据动量守恒：</p>
+<div class="math">\[
+MV = (m + M)v&#x27;
+\]</div>
+<p>得碰撞后，速度为 $\frac{M}{m + M}V$</p>
+<p>碰后剩余动能为</p>
+<div class="math">\[
+E_k&#x27; = \frac{1}{2}(m + M)v&#x27;^2 = \frac{1}{2}\frac{M^2}{m + M}V^2
+\]</div>
+<p>动能损失为</p>
+<div class="math">\[
+\Delta E = \frac{1}{2}MV^2 - \frac{1}{2}(m + M)v&#x27;^2 = \frac{1}{2}MV^2 - \frac{1}{2}\frac{M^2}{m + M}V^2 = \frac{1}{2}\frac{mM}{m + M}V^2
+\]</div>
+<p>当 $M \gg m$ 时，$\Delta E \approx \frac{1}{2}mV^2$。损失的能量转化为内能。</p>
+<p>(2) 在 $M$ 的静止系。</p>
+<p>质点 $m$ 的速度为 $V$，碰撞后，碰后剩余动能为 $\frac{1}{2}(m + M)v_f^2 = \frac{1}{2}(m + M)\frac{m^2}{(m + M)^2}V^2 = \frac{1}{2}\frac{m^2}{m + M}V^2$</p>
+<div class="math">\[
+\Delta E = \frac{1}{2}mV^2 - \frac{1}{2}\frac{m^2}{m + M}V^2 = \frac{1}{2}\frac{mM}{m + M}V^2
+\]</div>
+<p>当 $M \gg m$ 时，$\Delta E \approx \frac{1}{2}mV^2$。</p></section>
+<section class="ms-page" id="p26"><h2><span class="ms-pn">p.26</span></h2><p>4. 质量为$M$的沙子，装在桶内，地面光滑，初始距墙$L$，桶内沙子在距墙$x$处的质量为$m$，且$\frac{dm}{dx}=\frac{M}{L}$。由任一$x$处，受一拉力$T$，如图。</p>
+<h4>a)</h4>
+<p>桶内沙子的动能，及其极大值</p>
+<h4>b)</h4>
+<p>桶内沙子的动量，及其极大值</p>
+<p>解：</p>
+<h4>a)</h4>
+<p>$\frac{dm}{dx}=\frac{M}{L}$，$t=0$时 $m_0=M$，$x_0=L$，得 $m=\frac{Mx}{L}$。</p>
+<p>根据牛顿第二定律，对于变质量物体，若流出物离开时与物体同速，则运动方程为：</p>
+<div class="math">\[
+m\frac{dv}{dt} = -T
+\]</div>
+<p>即</p>
+<div class="math">\[
+\frac{Mx}{L} v \frac{dv}{dx} = -T
+\]</div>
+<p>积分得：</p>
+<div class="math">\[
+-\frac{TL}{M}\int_{L}^{x}\frac{dx&#x27;}{x&#x27;}=\int_{0}^{v}v&#x27;dv&#x27;
+\]</div>
+<div class="math">\[
+\frac{1}{2}v^2= -\frac{TL}{M}\ln\frac{x}{L}
+\]</div>
+<p>能量 $E=\frac{mv^2}{2}=\frac{Mx}{L}\cdot\frac{v^2}{2}= -Tx\ln\frac{x}{L}$。</p>
+<div class="math">\[
+\frac{dE}{dx}=-T\ln\frac{x}{L} - T
+\]</div>
+<p>令导数为0，即 $\ln\frac{x}{L}=-1$ 时 $E$ 最大，得</p>
+<div class="math">\[
+x=Le^{-1}, \quad E=\frac{TL}{e}
+\]</div>
+<h4>b)</h4>
+<p>速度：</p>
+<div class="math">\[
+v=\sqrt{-\frac{2TL}{M}\ln\frac{x}{L}}
+\]</div>
+<p>动量：</p>
+<div class="math">\[
+p=mv=\frac{Mx}{L}\cdot\sqrt{-\frac{2TL}{M}\ln\frac{x}{L}}=\sqrt{-\frac{2T M x^2}{L}\ln\frac{x}{L}}
+\]</div>
+<p>对$p^2$求导：</p>
+<div class="math">\[
+\frac{dp^2}{dx}=-\frac{2TM}{L}\left(2x\ln\frac{x}{L} + x\right)=0
+\]</div>
+<p>解得 $x=\frac{L}{\sqrt{e}}$，此时</p>
+<div class="math">\[
+p=\sqrt{\frac{TLM}{e}}
+\]</div>
+<figure><img src="figs/chapter2/p16-f16.svg" alt="左侧为墙，地面上的桶受向左的拉力T的示意图" loading="lazy"><figcaption>左侧为墙，地面上的桶受向左的拉力T的示意图</figcaption></figure></section>
+<section class="ms-page" id="p27"><h2><span class="ms-pn">p.27</span></h2><p>5. 同例4，令 $\frac{dm}{dt} = b \dot{x} = b \frac{dx}{dt}$，即 $dm = b dx$。</p>
+<h4>a)</h4>
+<p>由 $m(t)$</p>
+<h4>b)</h4>
+<p>求 $v(t), x(t)$，及 $v(m), x(m)$。</p>
+<h4>c)</h4>
+<p>求动能。</p>
+<h4>d)</h4>
+<p>求动量</p>
+<h4>e)</h4>
+<p>$b$ 为何值时，$m=0$ 时桶恰好撞到墙？（原稿此句字迹不清，题意待确认）</p>
+<p>解：</p>
+<p>$dm = b dx$</p>
+<h4>a)</h4>
+<p>$T = -m \ddot{x}$，$\frac{dm}{dt} = b \cdot \frac{dx}{dt} = b v$。注意：由这两式不能推出 $m\,dm = bT\,dt$（相差一个速度因子）；原稿此处实际把 $\frac{dm}{dt}$ 写成了 $bT/m$，与题干 $dm/dt=bv$ 不一致。若 $dm=b\,dx$，则 $[b]=M/L$；而 $m^2=M^2-2bTt$ 要求 $[b]=MT/L$，二者不能同时成立。页面结果对应的是 $dm/dt=-bT/m$（$T$ 为恒力、质量流出），不是题干的 $dm/dt=bv$。以下 $m(t),v(t),x(t)$ 均依赖这条未定关系，需先确认模型。</p>
+<div class="math">\[ m(t) = \sqrt{M^2 - 2b T t} \]</div>
+<h4>b)</h4>
+<p>$T = -m \ddot{x} = - \sqrt{M^2 - 2b T t} \frac{dv}{dt}$，$dm = b dx = b v dt$，</p>
+<div class="math">\[ v = \frac{m - M}{b} = \frac{\sqrt{M^2 - 2b T t} - M}{b} \]</div>
+<div class="math">\[ x = L + \int v dt = L - \frac{M t}{b} - \frac{(M^2 - 2b T t)^{3/2}}{3 b^2 T} + \frac{M^3}{3 b^2 T} \]</div>
+<div class="math">\[ x(m) = L - \frac{(M - m)^2 (M + 2m)}{6 b^2 T} \]</div>
+<h4>c)</h4>
+<p>动能为 $\frac{1}{2} m v^2$，</p>
+<div class="math">\[ E = \frac{1}{2} m v^2 = \frac{1}{2 b^2} m (m - M)^2 \]</div>
+<p>当 $m = \frac{M}{3}$ 时，$E_{\text{max}} = \frac{2 M^3}{27 b^2}$</p>
+<h4>d)</h4>
+<p>动量 $p = m v = \frac{1}{b} m (m - M)$，当 $m = \frac{M}{2}$ 时，$|p_{\text{max}}| = \frac{M^2}{4 b}$</p>
+<h4>e)</h4>
+<p>$x=0$ 时，$m=0$，</p>
+<div class="math">\[ L - \frac{M^3}{6 b^2 T} = 0 \implies b = \sqrt{\frac{M^3}{6 T L}} \]</div></section>
+<section class="ms-page" id="p28"><h2><span class="ms-pn">p.28</span></h2><p>球壳上，引力势能</p>
+<p>我们首先看球壳上的一个圆环（平面垂直于$PO$），对$P$点引力势能的贡献，圆环上的质量，$ds$是圆环的厚度</p>
+<div class="math">\[
+dm = 2\pi y \mu ds
+\]</div>
+<p>$ds$表示$P$与球心连线，距$Q$最近点与球心距离$x \to x+dx$时球面长度$ds$，$ds$沿着球面切向在$POQ$平面内</p>
+<p>所以</p>
+<div class="math">\[
+ds = \frac{dx}{\sin\theta}
+\]</div>
+<div class="math">\[
+dm = \frac{2\pi y \mu dx}{\sin\theta} = 2\pi a \mu dx
+\]</div>
+<p>势能</p>
+<div class="math">\[
+dV = -\frac{GM dm}{r} = \frac{-GM 2\pi a \mu dx}{r}
+\]</div>
+<div class="math">\[
+r^2 = y^2 + (R-x)^2 = y^2 + x^2 + R^2 - 2Rx = a^2 + R^2 - 2Rx
+\]</div>
+<div class="math">\[
+2r dr = -2R dx \implies \frac{dr}{R} = -\frac{dx}{r}
+\]</div>
+<div class="math">\[
+dV = \frac{-GM \cdot 2\pi a \mu dr}{R}
+\]</div>
+<p>总势能对应：</p>
+<div class="math">\[
+V = \int dV = \int_{r_{\text{min}}}^{r_{\text{max}}} \frac{-GM 2\pi a \mu dr}{R}
+\]</div>
+<p>其中</p>
+<div class="math">\[
+r_{\text{min}} = R - a, \quad r_{\text{max}} = R + a
+\]</div>
+<div class="math">\[
+= \frac{-GM \cdot 4\pi a^2 \mu}{R} = \frac{-GM m}{R}
+\]</div>
+<figure><img src="figs/chapter2/p17-f17.svg" alt="球壳与点P的几何示意图，标注了球心O、半径R、a、r及微元ds等" loading="lazy"><figcaption>球壳与点P的几何示意图，标注了球心O、半径R、a、r及微元ds等</figcaption></figure>
+<p></p></section>
+<section class="ms-page" id="p29"><h2><span class="ms-pn">p.29</span></h2><p>若 P点在球壳内</p>
+<p>$r_{\text{min}} = a-R$</p>
+<p>$r_{\text{max}} = R+a$</p>
+<div class="math">\[
+4\pi a^2 \mu = m
+\]</div>
+<div class="math">\[
+V = -\frac{GM \cdot 2\pi a \mu \times 2R}{R} = -\frac{GM m}{a}
+\]</div>
+<figure><img src="figs/chapter2/p19-f19.svg" alt="球壳的几何示意图，标注了球心O、半径a、P点及距离R" loading="lazy"><figcaption>球壳的几何示意图，标注了球心O、半径a、P点及距离R</figcaption></figure></section>
+<section class="ms-page" id="p30"><h2><span class="ms-pn">p.30</span></h2><p>\centering 向心力</p>
+<h3 id="p30-h3-1">两体问题 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h3>
+<p>对于一个孤立的两体问题，如果不考虑外力，则这个两体问题总可以约化为两个独立的单体问题。我们的出发点还是牛顿定律</p>
+<div class="math">\[
+\mathbf{F}_{21} = \dot{\mathbf{p}}_1 \tag{1}
+\]</div>
+<div class="math">\[
+\mathbf{F}_{12} = \dot{\mathbf{p}}_2 \tag{2}
+\]</div>
+<p>两式相加，得到质心运动方程</p>
+<div class="math">\[
+0 = M \ddot{\mathbf{R}}_c \tag{3}
+\]</div>
+<p>(1)/$m_1$与(2)/$m_2$相减，得相对运动的方程</p>
+<div class="math">\[
+\underbrace{\left( \frac{1}{m_1} + \frac{1}{m_2} \right)}_{=1/\mu} \mathbf{F}_{21} = \frac{\mathrm{d}^2}{\mathrm{d}t^2} (\mathbf{r}_1 - \mathbf{r}_2) \tag{4}
+\]</div>
+<p>这里我们定义了约化质量$\mu^{-1} = m_1^{-1} + m_2^{-1}$。这表明对于一个一般的两体问题，我们可以将其拆为两个单体问题。当然，我们可以从拉格朗日函数直接得到这个结论</p>
+<div class="math">\[
+L_{\text{2-body}} = \frac{1}{2} m_1 \dot{\mathbf{r}}_1^2 + \frac{1}{2} m_2 \dot{\mathbf{r}}_2^2 - V(|\mathbf{r}_1 - \mathbf{r}_2|) \tag{5}
+\]</div>
+<div class="math">\[
+= \underbrace{\frac{1}{2} M_c \dot{\mathbf{R}}_c^2}_{L_c} + \underbrace{\frac{1}{2} \mu \dot{\mathbf{r}}^2}_{L} - V(|\mathbf{r}|) \tag{6}
+\]</div>
+<p>其中，$\mathbf{r} = \mathbf{r}_1 - \mathbf{r}_2$。</p>
+<p>接下来，让我们对$L$进行研究。为了习惯，我们还是将$\mu$记为$m$，这应该不至于引起歧义。</p>
+<div class="math">\[
+\boxed{ L = \frac{1}{2} m \dot{\mathbf{r}}^2 - V(r) } \tag{7}
+\]</div>
+<h3 id="p30-h3-2">一般讨论</h3>
+<h3 id="p30-h3-3">守恒量</h3>
+<p>由于$L$不含时，能量是守恒量。</p>
+<div class="math">\[
+E = \frac{1}{2} m \dot{\mathbf{r}}^2 + V(r) \tag{8}
+\]</div></section>
+<section class="ms-page" id="p31"><h2><span class="ms-pn">p.31</span></h2><p>动能为 $T=\frac{1}{2}m\dot{\vec r}^{\,2}$。在无穷小转动 $\vec r\to\vec r+\varepsilon\,\vec n\times\vec r$ 下，速度变为 $\dot{\vec r}\to\dot{\vec r}+\varepsilon\,\vec n\times\dot{\vec r}$，于是</p>
+<div class="math">\[
+\left(\dot{\vec r}+\varepsilon\,\vec n\times\dot{\vec r}\right)\cdot
+\left(\dot{\vec r}+\varepsilon\,\vec n\times\dot{\vec r}\right)
+=\dot{\vec r}^{\,2}+\mathcal{O}(\varepsilon^2)
+\]</div>
+<p>根据转动不变性，角动量</p>
+<div class="math">\[
+\mathbf{L} = \mathbf{r} \times \mathbf{p} = m\mathbf{r} \times \dot{\mathbf{r}}
+\]</div>
+<p>也是守恒量。这可以从Noether定理得到，考虑无穷小变换</p>
+<div class="math">\[
+\mathbf{r} \to \mathbf{r} + \varepsilon \mathbf{n} \times \mathbf{r} \tag{10}
+\]</div>
+<p>在该变换下，拉格朗日量不变，故守恒量为$\mathbf{p} \cdot (\mathbf{n} \times \mathbf{r}) = \mathbf{n} \cdot \mathbf{L}$。由于$\mathbf{n}$为任意方向，$\mathbf{L}$为守恒量。由于</p>
+<div class="math">\[
+\mathbf{r} \cdot \mathbf{L} = 0 \quad \frac{\partial L}{\partial \dot{\vec{r}}} \tag{11}
+\]</div>
+<p>我们可以取$\mathbf{L}$沿着$z$轴，则运动仅局限在$xy$平面内。因此，我们可以取极坐标</p>
+<div class="math">\[
+L = \frac{1}{2}m(\dot{\rho}^2 + \rho^2 \dot{\varphi}^2) - V(\rho) \tag{12}
+\]</div>
+<p>由于$\varphi$为可遗坐标，其相应的广义动量$p_\varphi = \partial L/\partial \dot{\varphi} = m\rho^2 \dot{\varphi} = L_z$为守恒量。设$\rho^2 \dot{\varphi} = h$，即$L_z = mh$，拉格朗日为</p>
+<div class="math">\[
+L = \frac{1}{2}m\left( \dot{\rho}^2 + \frac{h^2}{\rho^2} \right) - V(\rho) \tag{13}
+\]</div>
+<p>而哈密顿量（能量）为</p>
+<div class="math">\[
+E = H = \frac{1}{2}m\dot{\rho}^2 + \underbrace{\frac{1}{2}m \frac{h^2}{\rho^2} + V(\rho)}_{V_{\text{eff}}} \tag{14}
+\]</div>
+<h4 id="p31-h4-1">2.2 有效势</h4>
+<p>通过对有效势$V_{\text{eff}}$的分析，即可以得到对运动的整体把握。</p>
+<ul>
+<li>通过有效势对$V(\rho) = k\rho^\alpha$下的运动做定性分析。</li>
+<li>分析$V(\rho) = k\rho^\alpha$下的圆轨道的稳定性：利用$V'_{\text{eff}} = 0$和$V''_{\text{eff}} &gt; 0$，可解得</li>
+<div class="math">\[
+    k\alpha &gt; 0, \quad \alpha &gt; -2
+    \]</div>
+<li>事实上，这个结论可以由$V_{\text{eff}}$的图直接得到。</li>
+<li>对于在圆轨道附近的轨道，可以得到其径向的振动频率由$V_{\text{eff}}$给出：$\omega = \sqrt{V''_{\text{eff}} / m}$。</li>
+</ul>
+<h4 id="p31-h4-2">2.3 时间依赖</h4>
+<p>一般的，$\rho(t)$可以由积分给出</p>
+<div class="math">\[
+t - t_0 = \sqrt{\frac{m}{2}} \int_{\rho_0}^{\rho} \frac{d\rho}{\sqrt{E - V_{\text{eff}}}} \tag{15}
+\]</div>
+<p>在得到$\rho(t)$之后，$\varphi(t)$可以根据关系$\dot{\varphi} = h/\rho^2$给出</p>
+<div class="math">\[
+\varphi(t) - \varphi_0 = \int_{t_0}^{t} \frac{h dt}{\rho^2(t)} \tag{16}
+\]</div>
+<p>\centering 2</p>
+<figure><img src="figs/chapter2/p20-f20.svg" alt="手写的包含求和与偏导表达式的方框" loading="lazy"><figcaption>手写的包含求和与偏导表达式的方框</figcaption></figure></section>
+<section class="ms-page" id="p32"><h2><span class="ms-pn">p.32</span></h2><h4>1.</h4>
+<p>一质点在势场$V(r)=\beta r^2$中运动，证明该质点的运行轨道是椭圆。</p>
+<p>解：中心力场中，机械能守恒：</p>
+<div class="math">\[
+\frac{1}{2}m \dot{r}^2 + \frac{1}{2}m r^2 \dot{\theta}^2 + V(r) = E
+\]</div>
+<p>其中动能为$\frac{1}{2}m \dot{r}^2 + \frac{1}{2}m r^2 \dot{\theta}^2$，势能为$V(r)$，$E$为常量。</p>
+<p>角动量守恒：</p>
+<div class="math">\[
+L = m r^2 \dot{\theta}
+\]</div>
+<p>$L$为常量。</p>
+<p>将$\dot{\theta} = \frac{L}{m r^2}$代入机械能守恒表达式，得：</p>
+<div class="math">\[
+\frac{1}{2}m \dot{r}^2 + \frac{L^2}{2 m r^2} + V(r) = E
+\]</div>
+<p>该式仅为$r$的函数，换元$y = \frac{1}{r^2}$。</p>
+<p>由$\dot{r} = \frac{dr}{dt} = \frac{dr}{d\theta} \frac{d\theta}{dt}$，令$y = \frac{1}{r^2}$，则$\dot{r} = \frac{dy}{d\theta} \frac{dr}{dy} \dot{\theta} = -\frac{L r}{2 m} \frac{dy}{d\theta}$，代入上式得：</p>
+<div class="math">\[
+\left( \frac{1}{2} \frac{dy}{d\theta} \right)^2 = \frac{2 m E}{L^2} y - y^2 - \frac{2 m \beta}{L^2}
+\]</div>
+<p>整理为：</p>
+<div class="math">\[
+= - \left( y - \frac{m E}{L^2} \right)^2 - \frac{2 m \beta}{L^2} + \left( \frac{m E}{L^2} \right)^2
+\]</div>
+<p>令$z = y - \frac{m E}{L^2}$，记$B^2 = \left( \frac{m E}{L^2} \right)^2 - \frac{2 m \beta}{L^2}$，代入得：</p>
+<div class="math">\[
+\left( \frac{dz}{d\theta} \right)^2 = -4 z^2 + 4 B^2
+\]</div>
+<p>解得：</p>
+<div class="math">\[
+z = B \cos\left(2(\theta - \theta_0)\right)
+\]</div>
+<p>即：</p>
+<div class="math">\[
+\frac{1}{r^2} = \frac{m E}{L^2} \left( 1 + \varepsilon \cos 2\theta \right)
+\]</div>
+<p>其中$\varepsilon = \sqrt{1 - \frac{2 \beta L^2}{m E^2}}$，且$\cos 2\theta = \cos^2\theta - \sin^2\theta$，又$r^2 = x^2 + y^2$，故可改写为：</p>
+<div class="math">\[
+\frac{1}{r^2} = \frac{m E}{L^2} \left( 1 + \varepsilon \left( \frac{x}{r} \right)^2 - \varepsilon \left( \frac{y}{r} \right)^2 \right)
+\]</div>
+<p>整理后得到椭圆方程：</p>
+<div class="math">\[
+\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1
+\]</div>
+<p>其中$a = \sqrt{\frac{k}{1+\varepsilon}}$，$b = \sqrt{\frac{k}{1-\varepsilon}}$，$k = \frac{L^2}{m E}$。</p></section>
+<section class="ms-page" id="p33"><h2><span class="ms-pn">p.33</span></h2><h3 id="p33-h3-1">2. 如下图所示，开始时一个半径为$R$的球沿着水平面滑动（无滚动），初始速度为$v_0$，球的转动惯量为$I = \beta m R^2$，（25分） <a class="ms-demo" href="../../../modules/07-rigid-body/index.html">交互演示</a></h3>
+<h4>(a)</h4>
+<p>求开始纯滚动时球的速度，和球的能量损失</p>
+<h4>(b)</h4>
+<p>水平面的摩擦系数为$\mu$，需要多长时间，球开始纯滚动</p>
+<h4>(c)</h4>
+<p>证明摩擦力做的功等于球的能量损失</p>
+<h4>解</h4>
+<p>摩擦力为$f$。</p>
+<div class="math">\[
+\begin{cases}
+F = ma \\
+- F R = I \dot{\omega}
+\end{cases}
+\]</div>
+<h4>(a)</h4>
+<p>即 $ma R + I \dot{\omega} = 0$。</p>
+<p>当 $v_f = \omega R$ 时开始纯滚动，对上式积分：</p>
+<div class="math">\[
+m R (v_f - v_0) + I \frac{v_f}{R} = 0
+\]</div>
+<p>解得：</p>
+<div class="math">\[
+v_f = \frac{v_0}{1 + \beta}
+\]</div>
+<p>动能损失：</p>
+<div class="math">\[
+\Delta K = \frac{1}{2} m v_0^2 - \left( \frac{1}{2} m v_f^2 + \frac{1}{2} I \omega^2 \right)
+\]</div>
+<p>其中第一项为质心动能，第二项为相对质心转动动能，代入化简得：</p>
+<div class="math">\[
+\Delta K = \frac{1}{2} m v_0^2 \frac{\beta}{1 + \beta}
+\]</div>
+<h4>(b)</h4>
+<p>$F = - \mu m g$，对 $F = ma$ 积分：</p>
+<div class="math">\[
+\mu m g t = m (v_0 - v_f)
+\]</div>
+<p>解得：</p>
+<div class="math">\[
+t = \frac{v_0 - v_f}{\mu g} = \frac{\beta}{1 + \beta} \frac{v_0}{\mu g}
+\]</div>
+<h4>(c)</h4>
+<p>摩擦力做功为负，其绝对值等于能量损失。滑行距离为质心移动距离减去滚动距离：</p>
+<div class="math">\[
+d = v_0 t - \frac{1}{2} \mu g t^2 - \frac{1}{2} \frac{\mu m g R^2}{I} t^2
+\]</div>
+<p>代入 $I = \beta m R^2$，化简得：</p>
+<div class="math">\[
+d = \frac{1}{2} v_0^2 \frac{\beta}{1 + \beta} \frac{1}{\mu g}
+\]</div>
+<p>摩擦力做功：</p>
+<div class="math">\[
+W = -F d = -\frac{1}{2} m v_0^2 \frac{\beta}{1 + \beta}
+\]</div>
+<p>可见 $|W| = \Delta K$，即摩擦力做的负功的绝对值等于球的能量损失。</p>
+<figure><img src="figs/chapter2/p21-f21.svg" alt="半径为R的球在水平面上滑动的示意图，标注了角速度$\omega$、半径R和水平向右的速度v" loading="lazy"><figcaption>半径为R的球在水平面上滑动的示意图，标注了角速度$\omega$、半径R和水平向右的速度v</figcaption></figure></section>
+<section class="ms-page" id="p34"><h2><span class="ms-pn">p.34</span></h2><h4>3.</h4>
+<p>匀质杆，长度为$2l$，初始时，如图静止放置在光滑水平面上，并与水平面夹角为$\alpha$，任其在重力下自由运动，求质心运动。</p>
+<p>解：设$t$时刻杆与水平面夹角为$\theta$。</p>
+<p>机械能守恒：</p>
+<div class="math">\[
+T + mgl\sin\theta = mgl\sin\alpha
+\]</div>
+<p>动能分解为质心动能：$T_1 = \frac{1}{2}mv_c^2 = \frac{1}{2}m l^2 \dot{\theta}^2 \cos^2\theta$；转动动能：$T_2 = \frac{1}{2}I\dot{\theta}^2$。</p>
+<p>转动惯量：</p>
+<div class="math">\[
+I = \int_{-l}^{l} dm \, r^2 = \frac{1}{3} m l^2
+\]</div>
+<p>代入得：</p>
+<div class="math">\[
+mgl(\sin\alpha - \sin\theta) = \frac{1}{2} m l^2 \dot{\theta}^2 \cos^2\theta + \frac{1}{6} m l^2 \dot{\theta}^2
+\]</div>
+<p>可得：</p>
+<div class="math">\[
+\dot{\theta} = -\sqrt{\frac{6g(\sin\alpha - \sin\theta)}{l(1 + 3\cos^2\theta)}}
+\]</div>
+<figure><img src="figs/chapter2/p22-f22.svg" alt="与光滑水平面夹角为$\alpha$的均质杆示意图" loading="lazy"><figcaption>与光滑水平面夹角为$\alpha$的均质杆示意图</figcaption></figure></section>
+<section class="ms-page" id="p35"><h2><span class="ms-pn">p.35</span></h2><p>4. 两个相同质量的质点用轻绳连接，如下图所示，左边的质点只做竖直方向运动，右边的质点做小角度摆动，摆动幅度$\theta_0 \ll 1$，运用欧拉-拉格朗日方程求解$r$和$\theta$的运动。并求左边质点运动的平均效应。</p>
+<h4>解:</h4>
+<p>拉氏量 $L = T - V$。</p>
+<div class="math">\[
+T = \frac{1}{2} m \dot{r}^2 + \frac{1}{2} m (\dot{r}^2 + r^2 \dot{\theta}^2)
+\]</div>
+<p>其中第一项为左质点动能，第二项为右质点动能。</p>
+<div class="math">\[
+V = m g r - m g r \cos\theta
+\]</div>
+<p>其中第一项为左质点重力势能，第二项为右质点重力势能（取右质点最低点为零势能点）。</p>
+<p>因此拉氏量为：</p>
+<div class="math">\[
+L = \frac{1}{2} m \dot{r}^2 + \frac{1}{2} m (\dot{r}^2 + r^2 \dot{\theta}^2) - m g r + m g r \cos\theta
+\]</div>
+<p>欧拉-拉格朗日方程为：</p>
+<div class="math">\[
+\left\{
+\begin{aligned}
+\frac{\partial L}{\partial r} - \frac{d}{dt} \frac{\partial L}{\partial \dot{r}} &amp;= 0 \\
+\frac{\partial L}{\partial \theta} - \frac{d}{dt} \frac{\partial L}{\partial \dot{\theta}} &amp;= 0
+\end{aligned}
+\right.
+\]</div>
+<p>计算偏导数后得到运动方程：</p>
+<div class="math">\[
+\left\{
+\begin{aligned}
+2 \ddot{r} &amp;= r \dot{\theta}^2 - g (1 - \cos\theta) \\
+\frac{d}{dt} (r^2 \dot{\theta}) &amp;= - g r \sin\theta
+\end{aligned}
+\right.
+\]</div>
+<p>小角度近似 $\theta \ll 1$，则 $1 - \cos\theta \approx \frac{1}{2} \theta^2$，$\sin\theta \approx \theta$，代入得：</p>
+<div class="math">\[
+2 \ddot{r} = r \dot{\theta}^2 - \frac{1}{2} g \theta^2
+\]</div>
+<p>可得 $\ddot{r}$ 是 $\theta$ 的二阶小量。</p>
+<p>另外，$\frac{d}{dt}(r^2 \dot{\theta}) = 2 r \dot{r} \dot{\theta} + r^2 \ddot{\theta}$，由于 $\dot{r}$ 是小量，一阶小量项可忽略，因此近似为：</p>
+<div class="math">\[
+\frac{d}{dt}(r^2 \dot{\theta}) \approx r^2 \ddot{\theta}
+\]</div>
+<p>代入第二个运动方程得：</p>
+<div class="math">\[
+\ddot{\theta} + \frac{g}{r} \theta = 0
+\]</div>
+<p>这是简谐运动，解为：</p>
+<div class="math">\[
+\theta = \varepsilon \cos(\omega t + \theta_0), \quad \omega = \sqrt{\frac{g}{r}}
+\]</div>
+<p>其中 $\varepsilon$ 为小摆动幅度。</p>
+<p>将 $\theta$ 代入 $\ddot{r}$ 的方程，结合 $\omega^2 = \frac{g}{r}$，得：</p>
+<div class="math">\[
+2 \ddot{r} = r \cdot \varepsilon^2 \omega^2 \sin^2(\omega t + \theta_0) - \frac{1}{2} g \varepsilon^2 \cos^2(\omega t + \theta_0) = g \varepsilon^2 \sin^2(\omega t + \theta_0) - \frac{1}{2} g \varepsilon^2 \cos^2(\omega t + \theta_0)
+\]</div>
+<p>对时间求平均，利用周期函数的平均性质 $\langle \sin^2 x \rangle = \langle \cos^2 x \rangle = \frac{1}{2}$，因此：</p>
+<div class="math">\[
+\langle \ddot{r} \rangle = \frac{1}{2} \left( g \varepsilon^2 \cdot \frac{1}{2} - \frac{1}{2} g \varepsilon^2 \cdot \frac{1}{2} \right) = \frac{g \varepsilon^2}{8}
+\]</div>
+<p>即左边质点运动的时间平均效应为 $\langle \ddot{r} \rangle = \frac{\varepsilon^2 g}{8}$。</p>
+<figure><img src="figs/chapter2/p23-f23.svg" alt="两个定滑轮连接的系统，左侧悬挂方块，右侧质点做小角度摆动的示意图" loading="lazy"><figcaption>两个定滑轮连接的系统，左侧悬挂方块，右侧质点做小角度摆动的示意图</figcaption></figure></section>
+<section class="ms-page" id="p36"><h2><span class="ms-pn">p.36</span></h2><h4>5.</h4>
+<p>长为$2l$的匀质棒，一端抵在光滑墙上，而棒身如右图所示斜靠在与墙距为$d$（$d &lt; l \cos\theta$）的光滑棱角上，使用虚功原理，求棒平衡时与水平面所称的角$\theta$。</p>
+<p>解：自由度为1，用$\theta$作为广义坐标。主动力只有重力，质心高度用$y_c$表示。</p>
+<div class="math">\[
+y_c = -d \tan\theta + l \sin\theta
+\]</div>
+<p>虚位移：</p>
+<div class="math">\[
+\delta y_c = \left( -\frac{d}{\cos^2\theta} + l \cos\theta \right) \delta \theta
+\]</div>
+<p>虚功：</p>
+<div class="math">\[
+\delta W = mg \delta y_c = mg \left( -\frac{d}{\cos^2\theta} + l \cos\theta \right) \delta \theta = 0
+\]</div>
+<p>得：</p>
+<div class="math">\[
+-\frac{d}{\cos^2\theta} + l \cos\theta = 0
+\]</div>
+<p>整理得：</p>
+<div class="math">\[
+\cos^3\theta = \frac{d}{l}, \quad \theta = \arccos\left( \left( \frac{d}{l} \right)^{\frac{1}{3}} \right)
+\]</div>
+<figure><img src="figs/chapter2/p24-f24.svg" alt="斜靠在光滑墙与棱上的匀质棒的几何受力示意图，含坐标系、距离d、角度$\theta$及重力mg标注" loading="lazy"><figcaption>斜靠在光滑墙与棱上的匀质棒的几何受力示意图，含坐标系、距离d、角度$\theta$及重力mg标注</figcaption></figure></section>
+<section class="ms-page" id="p37"><h2><span class="ms-pn">p.37</span></h2><h4 id="p37-h4-1">质心位矢 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<p>$\vec{r}_c = \frac{\sum m_i \vec{r}_i}{m}, \quad \sum m_i \vec{r}_i = m \vec{r}_c$</p>
+<div class="math">\[
+\frac{d^2 \sum m_i \vec{r}_i}{dt^2} = \frac{d^2 (m \vec{r}_c)}{dt^2} = \vec{F}^{(e)}
+\]</div>
+<p>作用于质点系上的合外力等于质点系的总质量与质心加速度乘积。</p>
+<h4>3. 动量守恒定理 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<p>当 $\sum_i \vec{F}_i^{(e)} = 0$ 时</p>
+<div class="math">\[
+\vec{p} = \sum_i m_i \vec{v}_i = m \vec{v}_c = \text{常矢量}
+\]</div>
+<p>(1) 系统的总动量守恒不意味着各个质点的动量不变</p>
+<p>(2) 当外力作用远小于内力作用时，可近似认为系统动量守恒</p>
+<h4 id="p37-h4-2">2.3 角动量定理与角动量守恒定律 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<h4>1. 对固定点$O$的角动量定理 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<div class="math">\[
+m_i \frac{d^2 \vec{r}_i}{dt^2} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)}
+\]</div>
+<div class="math">\[
+\sum_{i=1}^n \vec{r}_i \times m_i \frac{d^2 \vec{r}_i}{dt^2} = \sum_{i=1}^n \left( \vec{r}_i \times \vec{F}_i^{(i)} \right) + \sum_{i=1}^n \left( \vec{r}_i \times \vec{F}_i^{(e)} \right)
+\]</div>
+<p>因内力成对出现，大小相等，方向相反，且沿两质点连线</p>
+<div class="math">\[
+\sum_{i=1}^n \left( \vec{r}_i \times \vec{F}_i^{(i)} \right) = 0
+\]</div>
+<div class="math">\[
+\vec{r}_i \times \frac{d^2 \vec{r}_i}{dt^2} = \frac{d}{dt} \left( \vec{r}_i \times \frac{d \vec{r}_i}{dt} \right) - \frac{d \vec{r}_i}{dt} \times \frac{d \vec{r}_i}{dt}
+\]</div>
+<div class="math">\[
+\frac{d}{dt} \sum_{i=1}^n \left( \vec{r}_i \times m_i \frac{d \vec{r}_i}{dt} \right) = \sum_{i=1}^n \left( \vec{r}_i \times \vec{F}_i^{(e)} \right)
+\]</div>
+<p>$\sum_i \vec{r}_i \times \vec{p}_i$</p></section>
+<section class="ms-page" id="p38"><h2><span class="ms-pn">p.38</span></h2><div class="math">\[
+\frac{d\vec{J}}{dt} = \vec{M}
+\]</div>
+<div class="math">\[
+\vec{J} = \sum_i \vec{J}_i = \sum_i \vec{r}_i \times \vec{p}_i
+\]</div>
+<div class="math">\[
+\vec{M} = \sum_i \vec{m}_i = \sum_i \vec{r}_i \times \vec{F}_i^{(e)}
+\]</div>
+<h4 id="p38-h4-1">在直角坐标系</h4>
+<div class="math">\[
+\frac{d}{dt} \sum_{i=1}^n m_i (y_i \dot{z}_i - z_i \dot{y}_i) = \sum_{i=1}^n (y_i F_{iz}^{(e)} - z_i F_{iy}^{(e)})
+\]</div>
+<h4>2. 角动量守恒定律 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<p>若所有作用在质点系上的外力对某一固定点$O$的合力矩为零。</p>
+<div class="math">\[
+\frac{d\vec{J}}{dt} = 0 \implies \vec{J} = \text{常矢量}
+\]</div>
+<p>若对某一通过定点的定轴的力矩为0，$M_x=0$，则</p>
+<div class="math">\[
+J_x = \sum_i m_i (y_i \dot{z}_i - z_i \dot{y}_i) = C
+\]</div>
+<h4>3. 对质心的角动量定理 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<div class="math">\[
+\vec{R}_i = \vec{r}_i - \vec{r}_c \quad (\text{质心})
+\]</div>
+<div class="math">\[
+\vec{V}_i = \vec{v}_i - \vec{v}_c
+\]</div>
+<div class="math">\[
+\vec{p}_c = \sum m_i \frac{d\vec{r}_i}{dt} = \sum m_i \vec{v}_i
+\]</div>
+<div class="math">\[
+\vec{v}_i = \vec{V}_i + \vec{v}_c
+\]</div>
+<div class="math">\[
+\vec{J} = \sum m_i \vec{r}_i \times \vec{v}_i = \sum m_i (\vec{r}_c + \vec{R}_i) \times \vec{v}_i
+\]</div>
+<div class="math">\[
+= \sum m_i \vec{r}_c \times \vec{v}_i + \sum m_i \vec{R}_i \times (\vec{V}_i + \vec{v}_c)
+\]</div>
+<div class="math">\[
+= \vec{r}_c \times \sum m_i \vec{v}_i + \sum m_i \vec{R}_i \times \vec{v}_c + \sum m_i \vec{R}_i \times \vec{V}_i
+\]</div>
+<div class="math">\[
+= \vec{r}_c \times \vec{p}_c + \left( \sum m_i \vec{R}_i \right) \times \vec{v}_c + \sum m_i \vec{R}_i \times \vec{V}_i
+\]</div>
+<div class="math">\[
+\sum m_i \vec{R}_i = \sum m_i \vec{r}_i - \sum m_i \vec{r}_c = m \left( \frac{\sum m_i \vec{r}_i}{\sum m_i} - \vec{r}_c \right) = 0
+\]</div>
+<div class="math">\[
+\sum m_i \vec{V}_i = \frac{d}{dt} \sum m_i \vec{R}_i = 0
+\]</div></section>
+<section class="ms-page" id="p39"><h2><span class="ms-pn">p.39</span></h2><div class="math">\[
+\vec{J} = \vec{r}_c \times \vec{P}_c + \sum_i m_i \vec{R}_i \times \vec{V}_i
+\]</div>
+<div class="math">\[
+\vec{R}_i = \vec{r}_i - \vec{r}_c \quad \vec{V}_i = \vec{v}_i - \vec{v}_c
+\]</div>
+<p>相对质心运动的位矢与速度</p>
+<div class="math">\[
+\frac{d\vec{J}}{dt} = \frac{d}{dt} \sum_{i=1}^n \left( \vec{r}_i \times m_i \frac{d\vec{r}_i}{dt} \right) = \underbrace{\sum_{i=1}^n \frac{d\vec{r}_i}{dt} \times m_i \frac{d\vec{r}_i}{dt}}_{=0} + \sum_{i=1}^n \left( \vec{r}_i \times \vec{F}_i^{(e)} \right) = \vec{M}
+\]</div>
+<div class="math">\[
+\frac{d\vec{J}}{dt} = \underbrace{\frac{d\vec{r}_c}{dt} \times \vec{P}_c}_{=0\ (\text{两矢量平行})} + \vec{r}_c \times \frac{d\vec{P}_c}{dt} + \vec{r}_c \times \vec{F}^{(e)} + \frac{d\vec{J}'}{dt}
+\]</div>
+<div class="math">\[
+\frac{d\vec{J}'}{dt} = \sum_i \vec{r}_i \times \vec{F}_i^{(e)} - \vec{r}_c \times \vec{F}^{(e)} = \sum_i \vec{R}_i \times \vec{F}_i^{(e)} = \vec{M}'
+\]</div>
+<p>质点系对质心C的动量对时间的微商，是诸外力对质心C的力矩之和，即质点系对质心的动量定理。</p></section>
+<section class="ms-page" id="p40"><h2><span class="ms-pn">p.40</span></h2><h3 id="p40-h3-1">2.4 动能定理与机械能守恒定律</h3>
+<h4>1. 质点系的动能定理</h4>
+<p>牛二定律</p>
+<div class="math">\[ \frac{d (m_i \vec{v}_i)}{dt} = \vec{F}_i^{(e)} + \vec{F}_i^{(i)} \]</div>
+<p>得</p>
+<div class="math">\[ d\vec{r}_i \cdot \frac{d (m_i \vec{v}_i)}{dt} = \vec{v}_i \cdot d(m_i \vec{v}_i) = d\left( \frac{1}{2} m_i v_i^2 \right) = d T_i \]</div>
+<p>得</p>
+<div class="math">\[ dT = \sum_i d T_i = \sum_{i=1}^n \vec{F}_i^{(e)} \cdot d\vec{r}_i + \sum_{i=1}^n \vec{F}_i^{(i)} \cdot d\vec{r}_i \]</div>
+<p>动能的微分等于诸内力及外力所作元功之和。</p>
+<p>内力作功，质点1和2.</p>
+<div class="math">\[ dA = dA_1 + dA_2 = \vec{F}_{1 \leftarrow 2} \cdot d\vec{r}_1 + \vec{F}_{2 \leftarrow 1} \cdot d\vec{r}_2 \]</div>
+<div class="math">\[ = \vec{F}_{1 \leftarrow 2} \cdot d(\vec{r}_1 - \vec{r}_2) = \vec{F}_{1 \leftarrow 2} \cdot d\vec{r}_{12} \]</div>
+<p>只有当 \( \vec{r}_{12} \cdot d\vec{r}_{12} = 0 \) 时，内力作功为0（例如中心内力且相对距离不变）。</p>
+<h4>2. 机械能守恒定律</h4>
+<p>如果一个系统只有保守力作功，非保守内力和一切外力都不作功，那么系统的总机械能保持不变。</p>
+<p>(1) 机械能守恒定律通常适用于惯性系；在非惯性系中，若存在与时间无关的有效势，也可得到相应的能量积分。</p>
+<p>(2) 在某一惯性系中机械能守恒，在另一惯性系中不一定守恒，这是因为外力的功与参考系有关。</p>
+</section>
+<section class="ms-page" id="p41"><h2><span class="ms-pn">p.41</span></h2><h4 id="p41-h4-1">3. 柯尼希定理</h4>
+<p>以物体的质心做为质原点，并和质心共同运动的坐标系</p>
+<div class="math">\[
+m\vec{v}_0 = \sum m_i \vec{v}_i
+\]</div>
+<div class="math">\[
+\frac{d m \vec{v}_0}{dt} = m \vec{a}_0 = \sum \vec{F}_i^{(e)}
+\]</div>
+<p>质点坐标为 $\vec{r}_i = \vec{r}_c + \vec{R}_i$（相对质心）</p>
+<div class="math">\[
+T_i = \frac{1}{2} m_i (\dot{\vec{r}}_c + \dot{\vec{R}}_i)^2 = \frac{1}{2} m_i \dot{\vec{r}}_c^2 + \frac{1}{2} m_i \dot{\vec{R}}_i^2 + m_i \dot{\vec{r}}_c \cdot \dot{\vec{R}}_i
+\]</div>
+<p>对质点求和</p>
+<div class="math">\[
+\begin{split}
+T = \sum T_i  = \left( \sum_i \frac{1}{2} m_i \right) \dot{\vec{r}}_c^2 + \sum_i \frac{1}{2} m_i \dot{\vec{R}}_i^2 + \dot{\vec{r}}_c \cdot \left( \sum_i m_i \dot{\vec{R}}_i \right) \\
+ = \frac{1}{2} m \dot{\vec{r}}_c^2 + \frac{1}{2} \sum_i m_i \dot{\vec{R}}_i^2
+\end{split}
+\]</div>
+<p>柯尼希定理：质点组的动能 = 质心的动能 + 相对质心动能</p>
+<h4>4. 质心系动能定理 <a class="ms-demo" href="../../../modules/03-two-body/index.html">交互演示</a></h4>
+<p>$\vec{r}_i = \vec{r}_c + \vec{R}_i'$</p>
+<div class="math">\[
+m_i \frac{d^2 \vec{r}_i}{dt^2} = \vec{F}_i^{(i)} + \vec{F}_i^{(e)} = m_i \frac{d^2 \vec{r}_c}{dt^2} + m_i \frac{d^2 \vec{R}_i}{dt^2}
+\]</div>
+<div class="math">\[
+\sum_i m_i \frac{d^2 \vec{r}_c}{dt^2} = \sum_i \vec{F}_i^{(e)}
+\]</div>
+<p>可推导出</p>
+<div class="math">\[
+d\left( \frac{1}{2} \sum_i m_i \dot{\vec{R}}_i^2 \right) = \sum_i \vec{F}_i^{(e)} \cdot d\vec{R}_i + \sum_{i=1}^n \vec{F}_i^{(i)} \cdot d\vec{R}_i
+\]</div>
+<p>质点系对质心的动能的微分，等于质点系对质心系平移时内力与外力所做元功之和（非惯性系亦成立！）</p></section>
+<section class="ms-page" id="p42"><h2><span class="ms-pn">p.42</span></h2><h3 id="p42-h3-1">质点系引力、球体引力场与潮汐力——理论力学练习题</h3>
+<h3 id="p42-h3-2">1 例题：球壳定理的积分证明</h3>
+<p>例题1 (均匀球壳的引力与势). 质量 $M$、半径 $R$ 的均匀球壳，面密度 $\sigma = \dfrac{M}{4\pi R^2}$。求距球心 $r$ 处质点 $m$ 所受的引力 $F(r)$ 及势函数 $\phi(r)$。</p>
+<p>解. 以球心 $O$ 到质点 $P$ 的连线为轴，取 $\theta \sim \theta + \mathrm{d}\theta$ 之间的圆环带，其质量与到质点的距离分别为</p>
+<div class="math">\[
+\mathrm{d}M = \sigma \cdot 2\pi R^2 \sin\theta \, \mathrm{d}\theta, \quad l = \sqrt{R^2 + r^2 - 2Rr\cos\theta}. \tag{1}
+\]</div>
+<p>由轴对称性，各面元贡献的横向分量相互抵消，合力沿 $OP$ 方向。取指向球心为力的正方向（$F &gt; 0$ 表示吸引），轴向投影因子为 $\dfrac{r - R\cos\theta}{l}$，故</p>
+<div class="math">\[
+F = 2\pi G m \sigma R^2 \int_{0}^{\pi} \dfrac{(r - R\cos\theta)\sin\theta}{(R^2 + r^2 - 2Rr\cos\theta)^{3/2}} \, \mathrm{d}\theta. \tag{2}
+\]</div>
+<p>令 $u = \cos\theta$，并利用恒等式</p>
+<div class="math">\[
+\dfrac{r - R u}{l^3} = \dfrac{1}{2r} \left[ \dfrac{r^2 - R^2}{l^3} + \dfrac{1}{l} \right], \tag{3}
+\]</div>
+<p>其中定积分公式为</p>
+<div class="math">\[
+\int_{-1}^{1} \dfrac{\mathrm{d}u}{l} = \begin{cases}
+\dfrac{2}{r}, &amp; r &gt; R, \\
+\dfrac{2}{R}, &amp; r &lt; R,
+\end{cases} \quad
+\int_{-1}^{1} \dfrac{\mathrm{d}u}{l^3} = \begin{cases}
+\dfrac{2}{r(r^2 - R^2)}, &amp; r &gt; R, \\
+\dfrac{2}{R(R^2 - r^2)}, &amp; r &lt; R.
+\end{cases} \tag{4}
+\]</div>
+<p>于是</p>
+<ul>
+<li><span class="label"></span>  $r &gt; R$ 时，方括号内为 $\dfrac{2}{r} + \dfrac{2}{r} = \dfrac{4}{r}$，代入得 $F = 4\pi G m \sigma R^2 / r^2 = G M m / r^2$；</li>
+<li><span class="label"></span>  $r &lt; R$ 时，方括号内为 $-\dfrac{2}{R} + \dfrac{2}{R} = 0$，故 $F = 0$。</li>
+</ul></section>
+<section class="ms-page" id="p43"><h2><span class="ms-pn">p.43</span></h2><p>取 $\phi(\infty)=0$，由径向场强 $g_r = -\frac{\mathrm{d}\phi}{\mathrm{d}r} = -\frac{F}{m}$ 积分得势函数</p>
+<div class="math">\[
+\phi(r) = \begin{cases} 
+-\dfrac{GM}{r}, &amp; r \geq R, \\
+-\dfrac{GM}{R} = \text{常量}, &amp; r \leq R.
+\end{cases}
+\tag{5}
+\]</div>
+<p>注记 1. 球壳内部场强为零，但引力势恒为 $-GM/R$ 而非零，这是常见的易错点：$g = -\nabla\phi = 0$ 只要求 $\phi$ 在球内为常量，并不意味着 $\phi = 0$。</p>
+<h3 id="p43-h3-1">练习题</h3>
+<p>练习 1 (实心球的场分布与自引力势能). 质量 $M$、半径 $R$ 的均匀实心球。求:</p>
+<ol>
+<li><span class="label"></span>  引力场强分布 $g(r)$;</li>
+<li><span class="label"></span>  球体自身的引力势能 $U$。</li>
+</ol>
+<p>解答. (1) 由球对称性，取半径 $r$ 的同心球面为高斯面，引力场的高斯定理给出</p>
+<div class="math">\[
+\oint \vec{g} \cdot \mathrm{d}\vec{S} = -4\pi G M_{\text{内}}(r) \implies g \cdot 4\pi r^2 = -4\pi G M_{\text{内}}(r).
+\tag{6}
+\]</div>
+<p>均匀球体的内部质量 $M_{\text{内}}(r) = M \dfrac{r^3}{R^3}$，故</p>
+<div class="math">\[
+g(r) = \begin{cases} 
+-\dfrac{GM}{R^3} r, &amp; r &lt; R, \\
+-\dfrac{GM}{r^2}, &amp; r &gt; R.
+\end{cases}
+\tag{7}
+\]</div>
+<p>（负号表示指向球心。）</p>
+<p>注意: 球壳内部场为零，但实心球内部场一般不为零——由上式，内部场强随 $r$ 线性增大，仅球心 $r = 0$ 处为零。切勿把球壳定理的“内部无场”误用到实心球内部（实心球是无穷多壳层叠加，只有 $x &gt; r$ 的外层壳贡献为零）。</p>
+<p>(2) 用“逐层堆积”法: 把球体看成由半径 $r$、厚 $\mathrm{d}r$ 的薄球壳从内到外堆积而成。设已有质量 $M(r) = \dfrac{4}{3}\pi \rho r^3$，其对外层壳的势为 $\phi(r) = -GM(r)/r$。每堆积一层增加的势能为</p>
+<div class="math">\[
+\mathrm{d}U = \phi(r) \mathrm{d}M = -\frac{G \left(\dfrac{4}{3}\pi \rho r^3\right)}{r} \cdot 4\pi \rho r^2 \mathrm{d}r = -\frac{16}{3}\pi^2 G \rho^2 r^4 \mathrm{d}r.
+\tag{8}
+\]</div>
+<p>积分并代入 $\rho = \dfrac{3M}{4\pi R^3}$:</p>
+<div class="math">\[
+U = -\frac{16}{15}\pi^2 G \rho^2 R^5 = -\frac{3GM^2}{5R}
+\tag{9}
+\]</div></section>
+<section class="ms-page" id="p44"><h2><span class="ms-pn">p.44</span></h2><h4 id="p44-h4-1">2 练习题</h4>
+<h4>练习2 (空腔内的均匀引力场)</h4>
+<p>密度为 $\rho$ 的均匀球体内挖去一个球形空腔。设大球球心为 $O$、空腔中心为 $C$, $\vec{a} = \overrightarrow{OC}$ ($|\vec{a}| = a$)。证明空腔内的引力场是均匀场，并求其大小与方向。</p>
+<p>解答. 用叠加原理，把带空腔的球体看作“完整大球 + 密度为 $-\rho$ 的填充小球”。设待求点相对大球心、空腔中心的位矢分别为 $\vec{r}$、$\vec{r}'$，则</p>
+<div class="math">\[
+\vec{g}_1 = -\frac{4}{3}\pi G\rho \vec{r}, \quad \vec{g}_2 = +\frac{4}{3}\pi G\rho \vec{r}&#x27;. \tag{10}
+\]</div>
+<p>叠加得</p>
+<div class="math">\[
+\vec{g} = \vec{g}_1 + \vec{g}_2 = -\frac{4}{3}\pi G\rho (\vec{r} - \vec{r}&#x27;) = -\frac{4}{3}\pi G\rho \vec{a}, \tag{11}
+\]</div>
+<p>与待求点位置无关，故为空腔内的均匀场，大小为</p>
+<div class="math">\[
+g = \frac{4}{3}\pi G\rho a \tag{12}
+\]</div>
+<p>方向沿两心连线由空腔中心指向大球球心，即与 $\vec{a} = \overrightarrow{OC}$ 反向（空腔内质量分布偏向大球球心一侧，故引力指向 $O$）。</p>
+<h4>练习3 (泊松方程解法)</h4>
+<p>用引力势的泊松方程</p>
+<div class="math">\[
+\nabla^2 \phi = 4\pi G\rho \tag{13}
+\]</div>
+<p>求解均匀实心球内部的势函数 $\phi(r)$，并验证与球壳叠加法的结果一致。</p>
+<p>解答. 均匀球体 $\rho$ 为常量。由球对称性，$\nabla^2 \phi = \frac{1}{r^2}\frac{\mathrm{d}}{\mathrm{d}r}\left(r^2 \frac{\mathrm{d}\phi}{\mathrm{d}r}\right) = 4\pi G\rho$。对 $r$ 积分两次：</p>
+<div class="math">\[
+r^2 \frac{\mathrm{d}\phi}{\mathrm{d}r} = \frac{4}{3}\pi G\rho r^3 + C_1 \quad \Longrightarrow \quad \frac{\mathrm{d}\phi}{\mathrm{d}r} = \frac{4}{3}\pi G\rho r + \frac{C_1}{r^2}. \tag{14}
+\]</div>
+<p>由 $r = 0$ 处场强有限，$C_1 = 0$；再积分得</p>
+<div class="math">\[
+\phi(r) = \frac{2}{3}\pi G\rho r^2 + C_2. \tag{15}
+\]</div>
+<p>在 $r = R$ 处与外部解 $\phi_{\text{外}}(r) = -\frac{GM}{r}$ 衔接：由 $\left.\frac{\mathrm{d}\phi}{\mathrm{d}r}\right|_R = \frac{GM}{R^2}$ 已自动满足，且</p>
+<div class="math">\[
+\frac{2}{3}\pi G\rho R^2 + C_2 = -\frac{GM}{R} \quad \Longrightarrow \quad C_2 = -\frac{3GM}{2R}. \tag{16}
+\]</div>
+<p>代入 $\frac{2}{3}\pi G\rho = \frac{GM}{2R^3}$，得</p>
+<div class="math">\[
+\phi(r) = -\frac{GM}{2R^3} \left(3R^2 - r^2\right), \quad r \leq R \tag{17}
+\]</div>
+<p>与球壳叠加法（积分）结果一致：$r = 0$ 处 $\phi = -\frac{3GM}{2R}$，$r = R$ 处给出 $-\frac{GM}{R}$，内部场强 $g = -\frac{\mathrm{d}\phi}{\mathrm{d}r} = -\frac{GM}{R^3} r$，与练习1相同。</p></section>
+<section class="ms-page" id="p45"><h2><span class="ms-pn">p.45</span></h2><p>3 潮汐力计算</p>
+<h3 id="p45-h3-1">3.1 差动引力与潮汐加速度</h3>
+<p>物体在引力场中自由下落时，其各部分受到的引力并不相同，真正引起物体形变的是这一差动部分。设参考点（如质心）位于 $\vec{R}$，物体上某点相对参考点的位移为 $\delta\vec{r}$，则该点的潮汐加速度定义为</p>
+<div class="math">\[
+\delta\vec{g} = \vec{g}(\vec{R} + \delta\vec{r}) - \vec{g}(\vec{R}) \approx (\delta\vec{r} \cdot \nabla) \vec{g}\bigg|_{\vec{R}}, \tag{18}
+\]</div>
+<p>它只依赖引力场的空间变化率（一阶梯度）。对球对称引力源 $\vec{g}(\vec{r}) = -\frac{GM}{r^3}\vec{r}$，有</p>
+<div class="math">\[
+\frac{\partial g_i}{\partial x_j} = -\frac{GM}{r^3}\left(\delta_{ij} - 3\frac{x_i x_j}{r^2}\right), \tag{19}
+\]</div>
+<p>在参考点处记 $\vec{e} = \vec{R}/R$，即得潮汐张量形式的潮汐加速度</p>
+<div class="math">\[
+\delta\vec{g} = \frac{GM}{R^3}\left[3(\delta\vec{r} \cdot \vec{e})\vec{e} - \delta\vec{r}\right] \tag{20}
+\]</div>
+<p>其中沿连心方向（$\delta\vec{r} \parallel \vec{e}$）为拉伸，系数 $+2GM/R^3$；垂直方向（$\delta\vec{r} \perp \vec{e}$）为压缩，系数 $-GM/R^3$。相应的潮汐势（忽略相当于整体平动的均匀项）为</p>
+<div class="math">\[
+\phi_{\text{潮}} = -\frac{GM}{2R^3}\left[3(\delta\vec{r} \cdot \vec{e})^2 - \delta r^2\right], \quad \delta\vec{g} = -\nabla_{\delta\vec{r}} \phi_{\text{潮}}. \tag{21}
+\]</div>
+<h4>例题 2</h4>
+<p>（潮汐加速度公式的推导）. 从 $\vec{g}(\vec{r}) = -\frac{GM}{r^3}\vec{r}$ 出发，将 $\vec{g}(\vec{R} + \delta\vec{r})$ 对 $\delta\vec{r}$ 作一阶泰勒展开，导出潮汐加速度公式，并讨论径向与横向位移的效应。</p>
+<p>解. 写成分量 $g_i = -GM x_i r^{-3}$，对坐标求偏导：</p>
+<div class="math">\[
+\frac{\partial g_i}{\partial x_j} = -GM\left[\frac{\delta_{ij}}{r^3} + x_i\left(-\frac{3}{r^4}\right)\frac{x_j}{r}\right] = -\frac{GM}{r^3}\left(\delta_{ij} - 3\frac{x_i x_j}{r^2}\right). \tag{22}
+\]</div>
+<p>在参考点 $\vec{R} = R\vec{e}$ 处取一阶项：</p>
+<div class="math">\[
+\delta g_i = \frac{\partial g_i}{\partial x_j}\bigg|_{\vec{R}} \delta r_j = -\frac{GM}{R^3}\left[\delta r_i - 3(\delta\vec{r} \cdot \vec{e}) e_i\right] = \frac{GM}{R^3}\left[3(\delta\vec{r} \cdot \vec{e}) e_i - \delta r_i\right], \tag{23}
+\]</div>
+<p>即 $\delta\vec{g} = \frac{GM}{R^3}\left[3(\delta\vec{r} \cdot \vec{e})\vec{e} - \delta\vec{r}\right]$。</p>
+<ul>
+<li>径向：$\delta\vec{r} = \delta s_{\parallel} \vec{e}$，得 $\delta\vec{g} = +\frac{2GM \delta s_{\parallel}}{R^3}\vec{e}$——远离源的一侧被进一步拉远，拉伸；</li>
+<li>横向：$\delta\vec{r} \cdot \vec{e} = 0$，得 $\delta\vec{g} = -\frac{GM}{R^3}\delta\vec{r}$——侧向被压缩。</li>
+</ul></section>
+<section class="ms-page" id="p46"><h2><span class="ms-pn">p.46</span></h2><h3 id="p46-h3-1">3 潮汐力计算</h3>
+<h4>练习4 (地月潮汐加速度)</h4>
+<p>. 已知月球质量 $M_m = 7.35 \times 10^{22}\,\text{kg}$, 地月距离 $d = 3.84 \times 10^8\,\text{m}$, 地球半径 $R_E = 6.37 \times 10^6\,\text{m}$。</p>
+<ol>
+<li><span class="label"></span>  求地球表面正对月球处和背对月球处的潮汐加速度；</li>
+<li><span class="label"></span>  计算数值, 并与地面重力加速度 $g_0 = 9.8\,\text{m/s}^2$ 比较；</li>
+<li><span class="label"></span>  说明大多数海岸每天出现两次高潮的原因。</li>
+</ol>
+<p>解答. (1) 取地心为参考点, $\vec{e}$ 为地心指向月球的单位矢量。</p>
+<ul>
+<li><span class="label"></span>  正对月球处: $\delta\vec{r} = +R_E \vec{e}$, 代入潮汐公式</li>
+<div class="math">\[
+\delta\vec{g} = \frac{G M_m}{d^3} \left( 3 R_E \vec{e} - R_E \vec{e} \right) = + \frac{2 G M_m R_E}{d^3} \vec{e},
+\]</div>
+<p>方向指向月球, 即背离地心；</p>
+<li><span class="label"></span>  背对月球处: $\delta\vec{r} = -R_E \vec{e}$,</li>
+<div class="math">\[
+\delta\vec{g} = \frac{G M_m}{d^3} \left( -3 R_E \vec{e} + R_E \vec{e} \right) = - \frac{2 G M_m R_E}{d^3} \vec{e},
+\]</div>
+<p>方向背离月球, 同样背离地心。</p>
+</ul>
+<p>即正、背两面均被“拉离”地心, 形成沿地月连线的两个潮汐隆起, 这就是潮汐的四极特征。</p>
+<p>(2) 代入数值, $G M_m = 6.674 \times 10^{-11} \times 7.35 \times 10^{22} = 4.90 \times 10^{12}\,\text{m}^3/\text{s}^2$, $d^3 = 5.66 \times 10^{25}\,\text{m}^3$:</p>
+<div class="math">\[
+\frac{2 G M_m R_E}{d^3} = \frac{2 \times 4.90 \times 10^{12} \times 6.37 \times 10^6}{5.66 \times 10^{25}} \approx 1.1 \times 10^{-6}\,\text{m/s}^2,
+\]</div>
+<p>仅为 $g_0$ 的约 $1.1 \times 10^{-7}$——潮汐力虽小, 却能对海洋等流体产生可观的累积形变。</p>
+<p>(3) 潮汐场相对地月连线固定, 地球自转使地面上同一点在一个太阴日(约24.8小时)内依次经过两个隆起区, 故一天出现两次高潮, 间隔约12.4小时。</p>
+<h4>练习5 (洛希极限)</h4>
+<p>. 半径为 $r_s$、密度为 $\rho_s$ 的刚性球形小天体, 绕密度为 $\rho_p$、半径为 $R_p$ 的主星做轨道半径为 $d$ 的圆运动(忽略自转)。</p>
+<ol>
+<li><span class="label"></span>  求其表面正对主星处的潮汐加速度；</li>
+<li><span class="label"></span>  令潮汐加速度等于小天体表面重力, 导出洛希极限, 并计算月球绕地球的洛希极限。</li>
+</ol>
+<p>解答. (1) 取小天体中心为参考点, $\vec{e}$ 为主星指向小天体的单位矢量, 则正对主星处 $\delta\vec{r} = -r_s \vec{e}$, 潮汐加速度大小为</p>
+<div class="math">\[
+\delta g = \frac{2 G M_p r_s}{d^3},
+\]</div></section>
+<section class="ms-page" id="p47"><h2><span class="ms-pn">p.47</span></h2><p>方向指向主星（拉伸）。</p>
+<h4>(2)</h4>
+<p>小天体表面重力加速度 $a_s = \frac{GM_s}{r_s^2}$。令 $\delta g = a_s$:</p>
+<div class="math">\[
+\frac{2GM_p r_s}{d^3} = \frac{GM_s}{r_s^2} \implies d^3 = \frac{2M_p r_s^3}{M_s} = \frac{2\rho_p}{\rho_s} R_p^3,
+\]</div>
+<p>即洛希极限</p>
+<div class="math">\[
+d_{\text{Roche}} = \left( \frac{2\rho_p}{\rho_s} \right)^{1/3} R_p \tag{24}
+\]</div>
+<p>数值: 地球 $\rho_p = 5.51 \, \text{g/cm}^3$, 月球 $\rho_s = 3.34 \, \text{g/cm}^3$,</p>
+<div class="math">\[
+d_{\text{Roche}} = \left( \frac{2 \times 5.51}{3.34} \right)^{1/3} \times 6.37 \times 10^6 \approx 9.5 \times 10^6 \, \text{m} \approx 1.5 R_E.
+\]</div>
+<p>实际地月距离 $3.84 \times 10^8 \, \text{m} \approx 60 R_E$, 远在洛希极限之外。</p>
+<p>注记 2. 对小天体形变不可忽略的流体情形, 洛希极限改为 $d \approx 2.44 (\rho_p/\rho_s)^{1/3} R_p$, 比刚性情形大约 1.94 倍。此外, 太阳潮汐与月球潮汐之比为</p>
+<div class="math">\[
+\frac{M_\text{日}/d_\text{日}^3}{M_m/d_m^3} \approx 0.46,
+\]</div>
+<p>朔望时日月潮汐叠加形成大潮, 上下弦时相互削弱形成小潮。</p>
+<h3 id="p47-h3-1">4 编程题: 数值验证球壳定理</h3>
+<h4>练习 6.</h4>
+<p>数值计算球壳对质点的引力</p>
+<div class="math">\[
+F(r) = 2\pi G m \sigma R^2 \int_{-1}^{1} \frac{r - R u}{(R^2 + r^2 - 2 R r u)^{3/2}} \mathrm{d}u \tag{25}
+\]</div>
+<p>与解析结果 $F = GMm/r^2 \ (r &gt; R)$、$F = 0 \ (r &lt; R)$ 比较。</p>
+<pre class="ms-code"><code>1 &#105;mport numpy as np
+2
+3 M = R = m = G = 1.0
+4 sigma = M / (4 * np.pi * R**2)
+5
+6 def simpson(f, a, b, n=2_000_000):
+7     x = np.linspace(a, b, n + 1)
+8     y = f(x)
+9     h = (b - a) / n
+10    return h / 3 * (y[0] + y[-1] + 4 * y[1:-1:2].sum() + 2 * y
+11                     [2:-1:2].sum())
+</code></pre></section>
+<section class="ms-page" id="p48"><h2><span class="ms-pn">p.48</span></h2><p>朔望时日月潮汐叠加形成大潮，上下弦时相互削弱形成小潮。</p>
+<h4 id="p48-h4-1">4 编程题：数值验证球壳定理</h4>
+<h4>练习6. 数值计算球壳对质点的引力</h4>
+<div class="math">\[ F(r) = 2\pi G m \sigma R^2 \int_{-1}^{1} \frac{r - R u}{(R^2 + r^2 - 2 R r u)^{3/2}} \mathrm{d}u, \tag{25} \]</div>
+<p>与解析结果 $F = \frac{GMm}{r^2} \ (r &gt; R)$、$F = 0 \ (r &lt; R)$ 比较。</p>
+<pre class="ms-code"><code>1 &#105;mport numpy as np
+
+2
+
+3 M = R = m = G = 1.0
+
+4 sigma = M / (4 * np.pi * R**2)
+
+5
+
+6 def simpson(f, a, b, n=2_000_000):
+
+7     x = np.linspace(a, b, n + 1)
+
+8     y = f(x)
+
+9     h = (b - a) / n
+
+10    return h / 3 * (y[0] + y[-1] + 4 * y[1:-1:2].sum() + 2 * y
+
+        [2:-1:2].sum())
+</code></pre></section>
+<section class="ms-page" id="p49"><h2><span class="ms-pn">p.49</span></h2><pre class="ms-code"><code>def F_shell(r):
+
+    f = lambda u: (r - R * u) / (R**2 + r**2 - 2 * R * r * u) ** 1.5
+
+    return 2 * np.pi * G * m * sigma * R**2 * simpson(f, -1.0, 1.0)
+
+for r in [0.3, 0.9, 0.99, 1.01, 1.1, 2.0, 5.0]:
+
+    F_num = F_shell(r)
+
+    F_ana = 0.0 if r &lt; 1.0 else 1.0 / r**2
+
+    print(f&quot;r={r:5.2f}  F_num={F_num:+.8f}  F_ana={F_ana:+.8f}&quot;)
+</code></pre>
+<p>Listing 1: 球壳引力的数值积分验证 (取 $G = M = m = R = 1$, 仅需 numpy)</p>
+<p>注记 3. $r$ 跨越 $R=1$ 时数值结果与解析结果一致: 内部为零, 外部为 $1/r^2$, 即使在 $r \to 1^\pm$ 附近误差也仅约 $10^{-9}$。被积函数在质点贴近球壳时出现尖锐峰 (可积奇点), 需要足够密的网格 (上例用 $N = 2 \times 10^6$ 的 Simpson 法); 若改用粗网格的等距梯形法, 建议先作 $\theta$ 变换再加密取样。</p>
+<p>练习 7 (潮汐加速度的数值验证与潮汐隆起). 取 $G = M = R = 1$ 的球对称引力源, 将潮汐加速度的定义式与解析公式比较, 验证相对误差随 $|\delta \vec{r}|/R$ 一阶减小; 并绘制潮汐势与小球自身引力势叠加后的等势线, 观察沿连心方向的两个隆起。</p>
+<pre class="ms-code"><code>&#105;mport numpy as np
+
+&#105;mport matplotlib.pyplot as plt
+
+G = M = R = 1.0
+
+Rvec = np.array([R, 0.0])  # 参考点 (小球中心), 主星在原点
+
+e = Rvec / np.linalg.norm(Rvec)
+
+def g(r):  # 主星的精确引力场
+
+    r = np.asarray(r, float)
+
+    return -G * M * r / np.linalg.norm(r) ** 3
+
+def dg_num(dr):  # 按定义求差动加速度
+
+    return g(Rvec + dr) - g(Rvec)
+
+def dg_ana(dr):  # 潮汐加速度解析公式
+
+    dr = np.asarray(dr, float)
+
+    return G * M / R**3 * (3 * np.dot(dr, e) * e - dr)
+</code></pre></section>
+<section class="ms-page" id="p50"><h2><span class="ms-pn">p.50</span></h2><h3 id="p50-h3-1">10 变质量运动 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h3>
+<h3 id="p50-h3-2">10.1 从常质量到变质量：问题的提出 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h3>
+<p>牛顿第二定律 $m\ddot{\vec{r}} = \vec{F}$ 默认研究对象的质量不变，而自然界与工程中大量过程涉及质量的连续交换：火箭喷射燃气、恒星风、黑洞吸积、雨滴穿过云雾长大、链条落到秤上、砂粒落到传送带上、彗星升华、行星形成中的卵石吸积等。处理这类问题的正确方式，是把主体与被交换的质量一并纳入动量（必要时连同能量）账本，而不是把 $F=ma$ 生搬硬套。</p>
+<h3 id="p50-h3-3">10.2 基本方程（密歇尔斯基方程）</h3>
+<p>设主体在时刻 $t$ 的质量为 $m(t)$、速度为 $\vec{v}(t)$，在 $[t, t+\mathrm{d}t]$ 内与外界交换质量 $\mathrm{d}m$：$\mathrm{d}m &lt; 0$ 表示喷出质量 $|\mathrm{d}m|$，$\mathrm{d}m &gt; 0$ 表示并入质量 $\mathrm{d}m$；被交换质量相对主体的速度为 $\vec{c}$（火箭排气时 $\vec{c}$ 与 $\vec{v}$ 反向）。以下对两种情形分别清点动量（只计外力 $\vec{F}_{\text{ext}}$）。</p>
+<p>并入（$\mathrm{d}m &gt; 0$）：设即将并入的物质在实验室系的速度为 $\vec{u}$。$t$ 时刻总动量为 $m\vec{v} + \mathrm{d}m\,\vec{u}$，$t+\mathrm{d}t$ 时刻合并后为 $(m+\mathrm{d}m)(\vec{v}+\mathrm{d}\vec{v})$，故</p>
+<div class="math">\[
+m\,\mathrm{d}\vec{v} + \mathrm{d}m\,(\vec{v}-\vec{u}) = \vec{F}_{\text{ext}}\,\mathrm{d}t \implies m\,\mathrm{d}\vec{v} = \vec{F}_{\text{ext}}\,\mathrm{d}t + \mathrm{d}m\,(\vec{u}-\vec{v}),
+\]</div>
+<p>而 $\vec{u}-\vec{v} = \vec{c}$，恰是被并入物质相对主体的速度。</p>
+<p>喷出（$\mathrm{d}m &lt; 0$）：$t$ 时刻总动量为 $m\vec{v}$；$t+\mathrm{d}t$ 时刻主体与喷出物分离，动量分别为 $(m+\mathrm{d}m)(\vec{v}+\mathrm{d}\vec{v})$ 与 $(-\mathrm{d}m)(\vec{v}+\vec{c})$：</p>
+<div class="math">\[
+(m+\mathrm{d}m)(\vec{v}+\mathrm{d}\vec{v}) + (-\mathrm{d}m)(\vec{v}+\vec{c}) - m\vec{v} = \vec{F}_{\text{ext}}\,\mathrm{d}t \implies m\,\mathrm{d}\vec{v} = \vec{F}_{\text{ext}}\,\mathrm{d}t + \vec{c}\,\mathrm{d}m.
+\]</div>
+<p>两种情形给出同一个方程（已舍去二阶小量 $\mathrm{d}m\,\mathrm{d}\vec{v}$），即变质量运动基本方程（密歇尔斯基方程，Meshchersky equation）：</p>
+<div class="math">\[
+\boxed{m\frac{\mathrm{d}\vec{v}}{\mathrm{d}t} = \vec{F}_{\text{ext}} + \dot{m}\,\vec{c}} \tag{24}
+\]</div>
+<p>其中 $\vec{\Phi} = \dot{m}\,\vec{c}$ 称为反推力。注意约定 $\vec{c}$ 相对主体：对火箭 $\vec{c} = -u\hat{\vec{v}}$（$u&gt;0$ 为相对排气速率），</p>
+<div class="math">\[
+\vec{\Phi} = (-|\dot{m}|)(-u\hat{\vec{v}}) = |\dot{m}|\,u\hat{\vec{v}},
+\]</div>
+<p>即反推力向前，与经验一致。</p>
+<h4>注记 10.1（常见误区）</h4>
+<p>对变质量主体把外力直接写成 $F_{\text{ext}} = \mathrm{d}(m\vec{v})/\mathrm{d}t$ 是常见错误：$\mathrm{d}(m\vec{v})$ 中含有 $\vec{v}\,\mathrm{d}m$ 一项，它描述的是“随质量进出账本”的动量，而不是主体受到的作用。正确做法始终是对“主体 + 被交换质量”这个质量守恒的复合系统使用动量定理——上面的推导正是如此。直观类比：人站在小车上向后扔沙袋，人车系统获得向前反冲，靠的正是沙袋带走的动量。</p></section>
+<section class="ms-page" id="p51"><h2><span class="ms-pn">p.51</span></h2><p>10 变质量运动</p>
+<h4>注记 10.2 (两种等价形式与历史“佯谬”)</h4>
+<p>. 由 $\mathrm{d}(m \vec{v}) = m \mathrm{d}\vec{v} + \vec{v} \mathrm{d}m$，基本方程严格等价于</p>
+<div class="math">\[
+\frac{\mathrm{d}(m \vec{v})}{\mathrm{d}t} = \vec{F}_{\text{ext}} + \dot{m} \vec{u}_{\text{abs}}, \quad \vec{u}_{\text{abs}} = \vec{v} + \vec{c}. \tag{25}
+\]</div>
+<p>两式数学等价，但物理输入不同：$\vec{c}$ 是相对主体的速度（由发动机特性决定，近似恒定），$\vec{u}_{\text{abs}}$ 是实验室系的绝对速度（随主体变化）。历史文献中的“变质量佯谬”多源于把两者混用。</p>
+<h3 id="p51-h3-1">10.3 齐奥尔科夫斯基火箭方程</h3>
+<p>深空无外力、一维运动、排气相对速率 $u$ 恒定。记质量流率 $\dot{m}_e = -\dot{m} &gt; 0$，密歇尔斯基方程给出</p>
+<div class="math">\[
+m \frac{\mathrm{d}v}{\mathrm{d}t} = u \dot{m}_e \quad \Longleftrightarrow \quad \mathrm{d}v = u \frac{\mathrm{d}m_e}{m} = -u \frac{\mathrm{d}m}{m}.
+\]</div>
+<p>全过程质量单调减小、速度单调增大，可直接分离变量并积分：</p>
+<div class="math">\[
+\int_{0}^{\Delta v} \mathrm{d}v&#x27; = -u \int_{m_0}^{m_f} \frac{\mathrm{d}m}{m} = -u \left[ \ln m \right]_{m_0}^{m_f} = u \ln \frac{m_0}{m_f}.
+\]</div>
+<p>即得齐奥尔科夫斯基公式</p>
+<div class="math">\[
+\Delta v = u \ln \frac{m_0}{m_f} = v_e \ln \frac{m_0}{m_f} \tag{26}
+\]</div>
+<p>其中 $v_e = I_{\text{sp}} g_0$ 为有效排气速度。要点：</p>
+<ul>
+<li>$\Delta v$ 只依赖质量比的对数与排气速度：质量比 10、$u = 3\,\text{km/s}$（化学推进典型值）给出 $\Delta v \approx 6.9\,\text{km/s}$；</li>
+<li>化学推进的 $u$ 受燃烧室温度与排气分子量限制，量级为 $\sqrt{k_B T / (\mu m_p)}$，实际值通常在 $3 \sim 4.5\,\text{km/s}$；</li>
+<li>竖直发射（均匀重力）时 $m \dot{v} = -mg + u \dot{m}_e$，积分得 $v(t) = u \ln \frac{m_0}{m(t)} - gt$，第二项为重力损失（实际入轨还含气动损失）；</li>
+<li>分级（staging）及时抛掉用尽的干重，避免继续加速死重，是多级火箭提高总 $\Delta v$ 的根本原因。</li>
+</ul>
+<h4>例题 10.1 (单级与两级火箭)</h4>
+<p>. 取排气速度 $u = 3.0\,\text{km/s}$。两级火箭：第一级初始质量 $100\,\text{t}$，熄火时 $20\,\text{t}$（其中 $2\,\text{t}$ 为级间结构，分离抛掉）；第二级从 $18\,\text{t}$ 燃烧到 $3.0\,\text{t}$。忽略重力与阻力，求总速度增量，并与“不分离、全部装成一级”的方案比较。</p>
+<p>解. 两级：</p>
+<div class="math">\[
+\Delta v_1 = 3.0 \ln \frac{100}{20} = 3.0 \ln 5 \approx 4.83\,\text{km/s}, \quad \Delta v_2 = 3.0 \ln \frac{18}{3.0} = 3.0 \ln 6 \approx 5.38\,\text{km/s},
+\]</div>
+<p>总计 $\Delta v \approx 10.2\,\text{km/s}$。若同样的硬件不分离（最终干重 $2 + 3 = 5\,\text{t}$）：</p>
+<div class="math">\[
+\Delta v&#x27; = 3.0 \ln \frac{100}{5} = 3.0 \ln 20 \approx 9.0\,\text{km/s},
+\]</div>
+<p>分级带来约 $13\%$ 的增益。</p></section>
+<section class="ms-page" id="p52"><h2><span class="ms-pn">p.52</span></h2><h3 id="p52-h3-1">10 变质量运动 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h3>
+<h3 id="p52-h3-2">10.4 现代应用实例（一）：电推进与低推力轨道</h3>
+<p>反推力公式与齐奥尔科夫斯基公式正是现代航天推进的设计基础。下面用真实系统的数字来体会它们。</p>
+<h4>电推进：用高排气速度换工质</h4>
+<p>离子/霍尔推力器先用静电场电离氙、氪等重气体，再把离子加速到 $30 \sim 50\,\text{km/s}$ 喷出，对应比冲 $I_{\text{sp}} = u/g_0 \approx 3000 \sim 5000\,\text{s}$，比化学推进高一个数量级；代价是推力很小（$0.1 \sim 0.5\,\text{N}$），只能做“细水长流”式的连续加速。</p>
+<h4>例题 10.2 (Dawn 探测器的电推进)</h4>
+<p>Dawn 探测器发射质量约 $1218\,\text{kg}$，其中氙工质 $425\,\text{kg}$（全部用尽后剩余约 $793\,\text{kg}$），排气速度约 $30\,\text{km/s}$。(1) 求氙用尽时的理论速度增量；(2) 若改用化学推进（$u = 3.0\,\text{km/s}$）达到同样的 $\Delta v$，求所需质量比。</p>
+<h4>解.</h4>
+<p>(1) $m_0 \approx 1218\,\text{kg}$, $m_f \approx 793\,\text{kg}$,</p>
+<div class="math">\[
+\Delta v = u \ln \frac{m_0}{m_f} = 30 \ln \frac{1218}{793} \approx 30 \times 0.429 \approx 12.9\,\text{km/s}.
+\]</div>
+<p>Dawn 实际累计速度增量约 $11\,\text{km/s}$（计入各种损失），先后访问了灶神星与谷神星。(2) 化学推进要求</p>
+<div class="math">\[
+\frac{m_0}{m_f} = e^{\Delta v / u} = e^{12.9/3.0} \approx 74,
+\]</div>
+<p>即每 $1\,\text{kg}$ 干重需要 $73\,\text{kg}$ 推进剂——工程上不可实现。这正是深空任务青睐电推进的原因。</p>
+<h4>低推力螺旋机动</h4>
+<p>连续切向小推力下，轨道近似保持圆形、半径缓慢变化。由圆轨道能量 $E = -\frac{GMm}{2r}$ 得 $\mathrm{d}E = \frac{GMm}{2r^2} \mathrm{d}r$；又推力做功 $\mathrm{d}E = Fv \mathrm{d}t$，故</p>
+<div class="math">\[
+F \mathrm{d}t = \frac{GMm}{2r^2 v} \mathrm{d}r \implies \mathrm{d}(\Delta v) = \frac{F}{m} \mathrm{d}t = \frac{GM}{2r^2 v} \mathrm{d}r.
+\]</div>
+<p>代入 $v = \sqrt{GM/r}$ 并积分：</p>
+<div class="math">\[
+\Delta v = \int_{r_1}^{r_2} \frac{\sqrt{GM}}{2 r^{3/2}} \mathrm{d}r = \left[ -\sqrt{\frac{GM}{r}} \right]_{r_1}^{r_2} = \sqrt{\frac{GM}{r_1}} - \sqrt{\frac{GM}{r_2}} = v_1 - v_2. \tag{27}
+\]</div>
+<h4>例题 10.3 (从近地轨道到同步轨道的电推进提升)</h4>
+<p>取 $r_1 = 6678\,\text{km}$, $r_2 = 42164\,\text{km}$, $\mu = GM = 3.986 \times 10^{14}\,\text{m}^3/\text{s}^2$。求螺旋提升所需 $\Delta v$，并与化学推进的霍曼转移比较工质消耗。</p></section>
+<section class="ms-page" id="p53"><h2><span class="ms-pn">p.53</span></h2><h4 id="p53-h4-1">10 变质量运动 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h4>
+<p>解.</p>
+<p>$v_1 = \sqrt{\frac{\mu}{r_1}} \approx 7.73\,\text{km/s}$,   $v_2 = \sqrt{\frac{\mu}{r_2}} \approx 3.07\,\text{km/s}$,   $\Delta v_{\text{spiral}} = v_1 - v_2 \approx 4.65\,\text{km/s}$,</p>
+<p>比霍曼转移（约 $3.9\,\text{km/s}$）略多，但电推进排气速度高一个数量级：以 $u = 30\,\text{km/s}$ 计，所需质量比仅 $\text{e}^{4.65/30} \approx 1.17$；而化学推进（$u = 3.2\,\text{km/s}$）走霍曼转移需要 $\text{e}^{3.9/3.2} \approx 3.4$。</p>
+<p>这正是星链卫星用电推进自主升轨的原因；大型同步卫星若追求快速入轨仍常用化学上级，而新一代全电推卫星平台（如 Boeing 702SP）则宁愿花数月螺旋升轨，以换取数倍的有效载荷。</p>
+<h4>多级火箭与现代运载</h4>
+<p>把齐奥尔科夫斯基公式逐级应用，$N$ 级火箭的总速度增量为</p>
+<div class="math">\[
+\Delta v_{\text{total}} = \sum_{k=1}^N u_k \ln \frac{m_{0,k}}{m_{f,k}},
+\tag{28}
+\]</div>
+<p>其中每级只对自己之上的质量负责。现代大型运载（如 Falcon 9、Starship）还把一级回收复用，进一步摊薄成本——但回收所需的减速与着陆要消耗一部分 $\Delta v$ 预算，是“变质量优化”的前沿课题。</p>
+<h4 id="p53-h4-2">10.5 现代应用实例（二）：天体物理中的质量交换</h4>
+<h4>恒星风与行星轨道的外移</h4>
+<p>太阳每年以太阳风形式失去约 $2 \times 10^{-14} M_\odot$ 的质量，大质量恒星（如沃尔夫-拉叶星）的质量损失率可达 $10^{-5} M_\odot/\text{yr}$ 量级。若质量损失缓慢且各向同性，行星的角动量 $L = m\sqrt{GMr}$（圆轨道）近似守恒，于是</p>
+<div class="math">\[
+Mr = \text{常量} \implies r \propto \frac{1}{M},
+\]</div>
+<p>即恒星变轻时行星轨道外移——这是讨论太阳演化到红巨星阶段时地球轨道命运的起点之一。（若质量损失各向异性或伴随物质流带走角动量，结论会改变。）</p>
+<h4>吸积：从雨滴到黑洞</h4>
+<p>把雨滴模型放大到天体尺度，就得到吸积过程。以声速 $c_s$ 落入黑洞的 Bondi 吸积率为</p>
+<div class="math">\[
+\dot{M} = \frac{4\pi \lambda G^2 M^2 \rho}{c_s^3},
+\]</div>
+<p>其中 $\rho$、$c_s$ 为远处介质的密度与声速，$\lambda \sim 1$ 为量级因子。银河系中心 Sgr A*、X 射线双星与活动星系核都靠吸积发光，其光度上限（爱丁顿限）正是辐射压力与引力平衡的结果——变质量方程在这些系统中以最壮观的方式登场。</p></section>
+<section class="ms-page" id="p54"><h2><span class="ms-pn">p.54</span></h2><h4 id="p54-h4-1">10 变质量运动 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h4>
+<h4>彗星的“火箭效应”</h4>
+<p>2014--2016年Rosetta任务环绕彗星67P时测得近日点附近 $\dot{m} \sim 1 \sim 10\,\text{kg/s}$ 的升率。喷出的气体给彗核一个微小的反推力（非引力摄动），足以在数十年尺度上改变彗星的公转周期——这是火箭方程在太阳系尺度上的直接演示。</p>
+<h4 id="p54-h4-2">10.6 经典变质量问题 <a class="ms-demo" href="../../../modules/06-collisions/index.html">交互演示</a></h4>
+<h4>例题10.4（雨滴的吸积增长）</h4>
+<p>雨滴在静止水汽云中下落，单位体积水汽质量 $\rho_m$；雨滴半径 $r$、密度 $\rho_\ell$，扫过的水汽全部被吸收。证明长时间后加速度趋于常数并求其值。</p>
+<p>解. 质量增长 $\dot{m} = \rho_m \pi r^2 v$；由 $m = \frac{4}{3}\pi \rho_\ell r^3$ 可写成 $\dot{m} = \beta m^{2/3} v$。水汽静止，故 $\vec{c} = -\vec{v}$，运动方程（向下为正）为</p>
+<div class="math">\[
+m\dot{v} = mg - \dot{m} v = mg - \beta m^{2/3} v^2.
+\]</div>
+<p>设长时间后 $v \simeq at$、$m \propto t^n$。由质量方程 $\dot{m}/m = \beta m^{-1/3} v \propto t^{1-n/3}$，与 $\dot{m}/m = n/t$ 比较得 $n = 6$；代入运动方程并除以 $m$：</p>
+<div class="math">\[
+a = g - \frac{\dot{m}}{m} v = g - na \implies a = \frac{g}{1 + n} = \frac{g}{7} \approx 1.4\,\text{m/s}^2.
+\]</div>
+<h4>注记10.3</h4>
+<p>结果依赖“扫过即吸收”的几何模型；捕获率或水滴形变不同则系数改变。这类模型在现代云物理与行星形成（卵石吸积）中都有直接对应。</p>
+<h4>例题10.5（链条落到秤上）</h4>
+<p>均匀链条线密度 $\lambda$，下端恰好接触秤面，释放后逐节落到秤上并立即静止堆积。当已落下长度 $x$ 时，求秤的读数。</p>
+<p>解. 每节链下落距离 $x$，到达秤面时速度 $v = \sqrt{2gx}$。已堆积部分重量 $\lambda g x$；单位时间到达的链条质量 $\lambda v$，在接触瞬间由速度 $v$ 变为零，动量流为</p>
+<div class="math">\[
+\lambda v \cdot v = \lambda v^2 = 2\lambda g x.
+\]</div>
+<p>故读数为</p>
+<div class="math">\[
+F = \lambda g x + \lambda v^2 = 3\lambda g x.
+\]</div>
+<h4>注记10.4</h4>
+<p>这是理想化结果（接触即静止、无反弹、链节间无张力传递）。真实链条的读数在 $3\lambda g x$ 附近振荡，“落链问题”至今仍是教学与研究话题。它提醒我们：非弹性捕获伴随不可逆的能量耗散，动量与能量必须分别清点。</p>
+<h4>例题10.6（砂粒落到传送带）</h4>
+<p>砂粒以速率 $\mu$（$\text{kg/s}$）竖直落到以恒定速度 $v$ 运动的水平传送带上。求传送带所需的水平驱动力与电机功率，并分析能量的去向。</p>
+<p>解. 单位时间落到带上的砂粒水平动量由0变为 $\mu v$，故驱动力 $F = \mu v$，功率 $P = Fv = \mu v^2$。砂粒获得的动能率 $\frac{1}{2}\mu v^2$ 只占一半，另一半在非弹性加速的相对滑动摩擦中耗散为热。工业上可用预加速砂粒的方式回收这部分能量。</p></section>
+<section class="ms-page" id="p55"><h2><span class="ms-pn">p.55</span></h2><h4 id="p55-h4-1">10.7 含重力的竖直发射（例题）</h4>
+<p>例题10.7（竖直发射的重力损失）. 火箭排气速度 $u = 3.0\ \text{km/s}$，初始质量 $50\ \text{t}$、燃烧 $120\ \text{s}$ 后剩 $10\ \text{t}$，只计均匀重力 $g = 9.8\ \text{m/s}^2$。求熄火速度，并与无重力时的理想值比较。</p>
+<p>解. 竖直向上为正时 $m\dot{v} = -mg + u\dot{m}_e$。把 $u\dot{m}_e/m$ 一项用 $dm_e = -dm$ 改写后分离变量积分：</p>
+<div class="math">\[
+v = u \ln \frac{m_0}{m_f} - gt.
+\]</div>
+<p>代入 $u\ln5 \approx 4.83\ \text{km/s}$、$gt = 9.8 \times 120 \approx 1.18\ \text{km/s}$，得</p>
+<div class="math">\[
+v \approx 4.83 - 1.18 = 3.65\ \text{km/s}.
+\]</div>
+<p>重力“吃掉”了约 $24\%$ 的速度增量。计入气动与转向损失后，运载火箭的 $\Delta v$ 预算通常比轨道速度多 $1.5 \sim 2\ \text{km/s}$，这正是各航天大国竞相优化发射剖面与推进剂的现实原因。</p>
+<p>$\square$</p>
+<h3 id="p55-h3-1">11 位力定理</h3>
+<p>位力定理（又称维里定理，virial theorem）由克劳修斯于1870年提出（“virial”源自拉丁语 $vis$，力），它把束缚系统的动能时间平均值与势能（力的位力）联系起来，是经典力学中适用范围最广的标度关系之一：从理想气体状态方程、恒星与星系团，到量子力学与冷原子，都有它的身影。</p>
+<h4 id="p55-h4-2">11.1 定义与基本推导</h4>
+<p>位力（virial）的定义为</p>
+<div class="math">\[
+G = \sum_{i} \vec{p}_i \cdot \vec{r}_i, \tag{29}
+\]</div>
+<p>它粗略地度量“系统的尺度与动量之积”。利用 $\dot{\vec{p}}_i = \vec{F}_i$、$\dot{\vec{r}}_i = \vec{v}_i$ 求时间导数：</p>
+<div class="math">\[
+\frac{\mathrm{d}G}{\mathrm{d}t} = \sum_{i} \vec{F}_i \cdot \vec{r}_i + \sum_{i} m_i \vec{v}_i \cdot \vec{v}_i = \sum_{i} \vec{F}_i \cdot \vec{r}_i + 2T. \tag{30}
+\]</div>
+<p>对束缚运动，坐标与动量都有界，因而 $G$ 有界；其长时间平均的变化率必为零：</p>
+<div class="math">\[
+\left\langle \frac{\mathrm{d}G}{\mathrm{d}t} \right\rangle = \lim_{T \to \infty} \frac{G(T) - G(0)}{T} = 0.
+\]</div>
+<p>于是得到位力定理</p>
+<div class="math">\[
+\boxed{2\langle T \rangle + \left\langle \sum_{i} \vec{F}_i \cdot \vec{r}_i \right\rangle = 0} \tag{31}
+\]</div>
+<p>它是一个统计性（时间平均）的结论：瞬时量 $2T + \sum_{i} \vec{F}_i \cdot \vec{r}_i$ 一般并不为零，但对一切束缚系统，其长时平均为零。</p></section>
+<section class="ms-page" id="p56"><h2><span class="ms-pn">p.56</span></h2><h4 id="p56-h4-1">11 位力定理</h4>
+<p>若内力为有心力、总势能 $V$ 是坐标的 $\alpha$ 次齐次函数（把所有坐标放大 $\lambda$ 倍时 $V \to \lambda^\alpha V$，例如引力 $V \propto r^{-1}$ 是 $-1$ 次、谐振子 $V \propto r^2$ 是 $2$ 次），由欧拉齐次函数定理 $\sum_i \vec{r}_i \cdot \nabla_i V = \alpha V$，从而</p>
+<div class="math">\[
+2\langle T \rangle = \alpha \langle V \rangle. \tag{32}
+\]</div>
+<p>两个最重要的特例：</p>
+<ul>
+<li><span class="label"></span>  平方反比引力与库仑力（$V \propto r^{-1}, \alpha = -1$）：$2\langle T \rangle = -\langle V \rangle$，总能量 $E = \langle T \rangle + \langle V \rangle = -\langle T \rangle = \frac{1}{2}\langle V \rangle$；</li>
+<li><span class="label"></span>  谐振子（$V \propto r^2, \alpha = 2$）：$\langle T \rangle = \langle V \rangle = E/2$。</li>
+</ul>
+<h4>例题 11.1（理想气体的状态方程）</h4>
+<p>用位力定理证明理想气体 $PV = \frac{2}{3}\langle T \rangle$。</p>
+<p>解. 理想气体分子间无相互作用，位力全部来自器壁压力。对壁面元 $\mathrm{d}\vec{S}$（外法向），器壁对分子的力为 $-P \mathrm{d}\vec{S}$，故</p>
+<div class="math">\[
+\left\langle \sum_i \vec{F}_i \cdot \vec{r}_i \right\rangle = -P \oint \vec{r} \cdot \mathrm{d}\vec{S} = -3PV,
+\]</div>
+<p>其中对闭合曲面用高斯定理 $\oint \vec{r} \cdot \mathrm{d}\vec{S} = \int \nabla \cdot \vec{r} \, \mathrm{d}V = 3V$。代入位力定理即得 $2\langle T \rangle = 3PV$，亦即 $PV = \frac{2}{3}\langle T \rangle = NkT$。</p>
+<h4 id="p56-h4-2">11.2 连续系统、张量形式与负热容</h4>
+<p>对 $N$ 个质点定义对原点的转动惯量 $I = \sum_i m_i \vec{r}_i^2$。逐次求导：</p>
+<div class="math">\[
+\dot{I} = 2\sum_i m_i \vec{r}_i \cdot \vec{v}_i, \quad \ddot{I} = 2\sum_i m_i \left( v_i^2 + \vec{r}_i \cdot \vec{a}_i \right) = 4T + 2\sum_i \vec{F}_i \cdot \vec{r}_i.
+\]</div>
+<p>若系统无外力、内力皆成对且为有心力，则</p>
+<div class="math">\[
+\sum_i \vec{F}_i \cdot \vec{r}_i = \frac{1}{2}\sum_{i \neq j} \vec{F}_{ij} \cdot (\vec{r}_i - \vec{r}_j) = \sum_{\text{对}} \vec{F}_{ij} \cdot \vec{r}_{ij}.
+\]</div>
+<p>对引力 $\vec{F}_{ij} = -G m_i m_j \vec{r}_{ij}/r_{ij}^3$，有 $\vec{F}_{ij} \cdot \vec{r}_{ij} = -G m_i m_j / r_{ij} \equiv u_{ij}$，对所有力对求和恰为总引力势能 $\Omega = \sum_{\text{对}} u_{ij}$（负值），于是得到标量位力定理的推广</p>
+<div class="math">\[
+\boxed{\frac{1}{2}\ddot{I} = 2T + \Omega} \tag{33}
+\]</div>
+<p>静态或统计平衡时 $\ddot{I} = 0$，即 $2T + \Omega = 0$。此时系统总能量</p>
+<div class="math">\[
+E = T + \Omega = \frac{1}{2}\Omega = -T &lt; 0,
+\]</div>
+<p>由此得到著名而反直觉的结论：引力系统的热容为负。恒星辐射能量使 $E$ 更负，而 $E = -T$ 意味着动能在增加——失去能量反而变得更热，这正是主序前恒星收缩升</p></section>
+<section class="ms-page" id="p57"><h2><span class="ms-pn">p.57</span></h2><p>11 位力定理</p>
+<p>温与星团核心坍缩（gravothermal catastrophe）的力学根源。开尔文—亥姆霍兹时标 $t_{\rm KH} \sim |\Omega|/(2L)$（$L$ 为光度）即由此估计。</p>
+<p>张量形式 $2T_{ij} + \Omega_{ij} = 0$（Chandrasekhar）把位力定理推广到各向异性系统，是解释椭圆星系形状（旋转压扁与速度各向异性）的经典工具，今天仍是积分场光谱巡天（SDSS/MaNGA、MUSE）分析星系运动学的基础。</p>
+<h3 id="p57-h3-1">11.3 引力系统：恒星、星系团与宇宙学</h3>
+<p>对束缚引力系统 $2\langle T \rangle = -\langle \Omega \rangle$。若系统近似等温各向同性，$\langle T \rangle = \frac{3}{2} M \sigma_v^2$（$\sigma_v$ 为一维速度弥散），对均匀球 $\Omega = -\frac{3}{5} GM^2/R$，由 $2T + \Omega = 0$ 得位力质量估计：</p>
+<div class="math">\[
+M = \frac{5\sigma_v^2 R}{G}. \tag{34}
+\]</div>
+<h4>例题 11.2 (Coma 星系团的质量)</h4>
+<p>Coma 团一维速度弥散 $\sigma_v \approx 1000\ \text{km/s}$，有效半径 $R \approx 1.5\ \text{Mpc}$。估计其质量。</p>
+<p>解.</p>
+<div class="math">\[
+M = \frac{5(10^6)^2 \times 1.5 \times 3.086 \times 10^{22}}{6.674 \times 10^{-11}} \approx 3.5 \times 10^{45}\ \text{kg} \approx 1.7 \times 10^{15} M_\odot.
+\]</div>
+<p>这是可见光质量的百倍以上。1933年Zwicky正是用同样的方法发现Coma团“缺失质量”，成为暗物质存在的最早证据之一。现代宇宙学把这类估计规范化为球状过密度 $M_{200}$、速度弥散—质量标定，并用于X射线、SZ效应与弱引力透镜的联合测量。</p>
+<h4>例题 11.3 (天龙座矮星系的暗物质)</h4>
+<p>天龙座矮星系（Draco）是银河系的暗弱卫星星系：一维速度弥散 $\sigma_v \approx 9\ \text{km/s}$、半光半径 $R \approx 200\ \text{pc}$，可见光光度仅约 $2.4 \times 10^5 L_\odot$。用位力质量估计其质量与质光比。</p>
+<p>解.</p>
+<div class="math">\[
+M = \frac{5\sigma_v^2 R}{G} = \frac{5(9 \times 10^3)^2 \times 200 \times 3.086 \times 10^{16}}{6.674 \times 10^{-11}} \approx 3.8 \times 10^{37}\ \text{kg} \approx 1.9 \times 10^7 M_\odot,
+\]</div>
+<p>质光比 $M/L \approx 80$（以太阳单位计），远高于恒星系统的典型值 $1 \sim 10$。若改用现代半光半径经验公式 $M_{1/2} \simeq 4\sigma_v^2 R_{1/2}/G$（对任意色散支撑系统都相当准确），得到约 $1.5 \times 10^7 M_\odot$，与均匀球估计同量级。银河系周围的矮星系几乎都是这样“暗”，这是暗物质在星系尺度上的直接证据，也是现代巡天（SDSS、DES、LSST）与高红移星系运动学研究的标准分析方法。</p>
+<p>以气体温度表示动能，位力定理给出温度—质量标度关系：</p>
+<div class="math">\[
+k_B T \approx \frac{GM \mu m_p}{3R},
+\]</div>
+<p>它是X射线与SZ观测中用星系团温度估计质量的依据（数量级关系，精确系数依赖密度剖面）。在宇宙学中，Layzer-Irvine方程：</p>
+<div class="math">\[
+\frac{\text{d}}{\text{d}t}(T + \Omega) + \frac{\dot{a}}{a}(2T + \Omega) = 0
+\]</div></section>
+<section class="ms-page" id="p58"><h2><span class="ms-pn">p.58</span></h2><p>11 位力定理 \hfill 27</p>
+<p>描述膨胀背景中结构（暗物质质量）的位力化：数值模拟的初始条件常取 $2T/|\Omega|=1$，球坍缩模型给出位力半径 $R_{\text{vir}} \approx R_{\text{ta}}/2$ 与过密度 $\Delta \sim 18\pi^2$。Millennium、IllustrisTNG、FLAMINGO 等大规模 N 体/流体模拟均以位力比作为结构识别与质量定义的核心判据。</p>
+<h3 id="p58-h3-1">11.4 量子与统计物理中的位力定理</h3>
+<p>对量子定态有 Fock 定理：</p>
+<div class="math">\[
+2\langle T \rangle = \langle \vec{r} \cdot \nabla V \rangle. \tag{35}
+\]</div>
+<p>对库仑势得 $2\langle T \rangle = -\langle V \rangle$，与经典结论相同。氢原子基态 $E=-13.6\,\text{eV}$ 可分解为 $\langle T \rangle=13.6\,\text{eV}$、$\langle V \rangle=-27.2\,\text{eV}$——这正是玻尔模型（§8.1）的分解，也说明位力定理早于量子力学就被用于原子尺度估计。</p>
+<p>现代应用：</p>
+<ul>
+<li><span class="label"></span>  量子化学与密度泛函理论（DFT）：位力定理给出压力公式，并作为交换关联泛函必须满足的约束；</li>
+<li><span class="label"></span>  冷原子：谐振势阱 $\alpha=2$，呼吸模式频率为 $2\omega$；对幺正费米气体，标度不变性使呼吸模频率保持 $2\omega$，其偏离可直接探测相互作用引起的标度破缺，是近年（JILA、ENS 等）的核心精确测量；</li>
+<li><span class="label"></span>  分子动力学（MD）：模拟中压力由位力公式计算，</li>
+<div class="math">\[
+PV = \frac{1}{3}\left(2\langle T \rangle + \left\langle \sum_i \vec{r}_i \cdot \vec{F}_i \right\rangle\right),
+\]</div>
+<p>这是 LAMMPS、GROMACS 等现代分子模拟软件的默认压力算法。</p>
+</ul>
+<h3 id="p58-h3-2">11.5 解析验证：开普勒轨道的时间平均</h3>
+<p>位力定理对开普勒轨道可以精确解析验证，无需任何数值计算。设轨道为 $r = \frac{p}{1 + e\cos\theta}$，其中 $p=a(1-e^2)$。由角动量守恒 $L=mr^2\dot{\theta}$，时间元可换成角度元：</p>
+<div class="math">\[
+dt = \frac{mr^2}{L} d\theta \implies \frac{dt}{r} = \frac{m}{L} r d\theta.
+\]</div>
+<p>于是</p>
+<div class="math">\[
+\left\langle \frac{1}{r} \right\rangle = \frac{1}{T} \int_0^T \frac{dt}{r} = \frac{m}{LT} \int_0^{2\pi} r d\theta. \tag{36}
+\]</div>
+<p>椭圆几何给出周期 $T=2\pi\sqrt{a^3/(GM)}$ 与角动量 $L=m\sqrt{GMa(1-e^2)}$。角度积分为</p>
+<div class="math">\[
+\int_0^{2\pi} r d\theta = p \int_0^{2\pi} \frac{d\theta}{1 + e\cos\theta} = \frac{2\pi p}{\sqrt{1 - e^2}} = 2\pi a\sqrt{1 - e^2} = 2\pi b,
+\]</div></section>
+<section class="ms-page" id="p59"><h2><span class="ms-pn">p.59</span></h2><p>其中 $b = a\sqrt{1 - e^2}$ 为半短轴（中间的积分可用 $\tan(\theta/2)$ 换元求得）。三式联立：</p>
+<div class="math">\[
+\left\langle \frac{1}{r} \right\rangle = \frac{m \cdot 2\pi b}{m\sqrt{GMa(1 - e^2)} \cdot 2\pi \sqrt{a^3/(GM)}} = \frac{b}{a^2\sqrt{1 - e^2}} = \frac{1}{a}.
+\]</div>
+<p>因此势能时间平均为</p>
+<div class="math">\[
+\langle V \rangle = -GMm \left\langle \frac{1}{r} \right\rangle = -\frac{GMm}{a},
+\]</div>
+<p>又轨道能量 $E = -\frac{GMm}{2a}$ 守恒，故</p>
+<div class="math">\[
+\langle T \rangle = E - \langle V \rangle = -\frac{GMm}{2a} + \frac{GMm}{a} = \frac{GMm}{2a},
+\]</div>
+<p>任一周期上都有</p>
+<div class="math">\[
+2\langle T \rangle + \langle V \rangle = \frac{GMm}{a} - \frac{GMm}{a} = 0, \tag{37}
+\]</div>
+<p>位力定理得证——而且结果与偏心率 $e$ 完全无关：无论轨道多扁，动能与势能的时间平均都只由半长轴决定。</p>
+<p>注记 11.1. 这个解析结果可作为判断数值计算的标尺：取 $GM = m = a = 1$、$e = 0.6$ 做辛积分，会得到 $\langle T \rangle \approx 0.500$、$\langle V \rangle \approx -1.000$、$2\langle T \rangle + \langle V \rangle \approx 0$，与上面的解析值一致。注意必须对时间取平均：瞬时量 $2T + V = E + T$ 随轨道周期性起伏，并不为零。$N$ 体宇宙学模拟中，同样的位力比 $2T/|\Omega|$ 是判断系统是否达到平衡的标准诊断量。</p>
+<h3 id="p59-h3-1">12 习题与思考题</h3>
+<h3 id="p59-h3-2">12.1 基础题</h3>
+<ol>
+<li><span class="label"></span>  质点在有心力 $F = -k/r^2$ 作用下沿椭圆轨道运动，证明面积速度为常量，并推导开普勒第三定律。</li>
+<li><span class="label"></span>  已知轨道为 $r = a\cos\theta$，求力函数 $F(r)$。</li>
+<li><span class="label"></span>  推导卢瑟福散射公式，并说明散射截面与散射角的关系。</li>
+<li><span class="label"></span>  求 $\alpha$ 粒子在金核库仑场中散射到 $\theta &gt; 60^\circ$ 的截面比例（注意：无屏蔽库仑总截面在小角处发散，此处需指定截断条件或仅计算相对比例）。</li>
+<li><span class="label"></span>  火箭相对排气速度 $u = 2.5\,\text{km/s}$，初始与末态质量比为 8。求理想速度增量；若燃烧时间 $60\,\text{s}$ 且只计均匀重力，再求净速度增量与重力损失。</li>
+<li><span class="label"></span>  链条落到秤上：证明读数最大可达同长度链重的 3 倍，并指出动量流项与能量耗散各出现在哪里。</li>
+</ol></section>
+<section class="ms-page" id="p60"><h2><span class="ms-pn">p.60</span></h2><h3 id="p60-h3-1">12 习题与思考题</h3>
+<h3 id="p60-h3-2">12.2 提高题</h3>
+<h4>1.</h4>
+<p>证明拉普拉斯—龙格—楞次矢量守恒，并由其方向导出轨道方程。</p>
+<h4>2.</h4>
+<p>讨论有心力 $F=-k/r^n$ 中近圆轨道的小振动频率，并求轨道进动角。</p>
+<h4>3.</h4>
+<p>计算水星近日点的相对论进动率，并与观测值比较。</p>
+<h4>4.</h4>
+<p>计算太阳-木星系统质心位置，并估算太阳径向速度摆动幅度。</p>
+<h4>5.</h4>
+<p>证明准圆低推力螺旋机动的总速度增量为 $\Delta v = \sqrt{GM/r_1} - \sqrt{GM/r_2}$，并用它估算从 $6678\ \text{km}$ 提升到 $42164\ \text{km}$ 所需的速度增量（与霍曼转移比较）。</p>
+<h4>6.</h4>
+<p>雨滴在静止水汽中下落、扫过即吸收。证明长期加速度趋于 $g/7$，并讨论结论对捕获模型的依赖性。</p>
+<h4>7.</h4>
+<p>用位力定理证明理想气体 $PV = \frac{2}{3}\langle T \rangle$，并由此导出 $PV = NkT$。</p>
+<h4>8.</h4>
+<p>用位力定理估计星系团质量：取 $\sigma_v = 800\ \text{km/s}$、$R=2\ \text{Mpc}$，求 $M$，并讨论与可见光质量的差异。</p>
+<h3 id="p60-h3-3">12.3 编程题</h3>
+<h4>1.</h4>
+<p>用辛积分器模拟行星椭圆轨道，验证能量长期守恒，并与欧拉法比较。</p>
+<h4>2.</h4>
+<p>模拟限制性三体问题，观察混沌轨道与拉格朗日点附近的稳定轨道。</p>
+<h4>3.</h4>
+<p>建立太阳风动压模型，估算日球层顶半径，并绘制动压随距离衰减曲线。</p>
+<h4>4.</h4>
+<p>模拟黑洞ISCO内外的圆轨道，观察 $r &lt; 6GM/c^2$ 时轨道的不稳定性。</p>
+<h4>5.</h4>
+<p>数值积分含重力的变质量火箭方程，与解析解 $v = u\ln(m_0/m) - gt$ 比对，并研究分级方案的 $\Delta v$ 增益。</p>
+<h4>6.</h4>
+<p>数值积分开普勒轨道，验证时间平均满足 $2\langle T \rangle + \langle V \rangle = 0$（取 $e=0,0.3,0.6,0.9$ 对比）。</p></section>
+<p class="ms-note">本页由手写扫描 OCR 后重排；公式用 MathJax 本地渲染，图为 TikZ/矢量 SVG。原扫描仅作校对底稿，不再作为站点阅读形式。</p>
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>理论力学 · 手稿代码版</span><span><a href="../index.html">返回第 2 章 质点系力学</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
+<script src="../../../assets/mathjax/tex-svg.js"></script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>变分原理手稿 · 理论力学手稿</title>
+<link rel="stylesheet" href="../../../assets/manuscript.css">
+<script>
+window.MathJax = {tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
+</script>
+<!-- TM-SEO:START -->
+<meta name="description" content="变分原理手稿 · 理论力学手稿：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/chapters/03-variational/manuscripts/variational.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="变分原理手稿 · 理论力学手稿">
+<meta property="og:description" content="变分原理手稿 · 理论力学手稿：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/chapters/03-variational/manuscripts/variational.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="变分原理手稿 · 理论力学手稿">
+<meta name="twitter:description" content="变分原理手稿 · 理论力学手稿：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+</head>
+<body>
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="../index.html">← 第 3 章 变分法</a><a href="../../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">HANDWRITTEN MANUSCRIPT · CODE EDITION</div>
+<h1>变分原理手稿</h1>
+<p class="ms-lead">最速降线、欧拉–拉格朗日方程、费马原理与摆线；公式为 MathJax。</p>
+<div class="ms-links"><b>相关交互</b> <a href="../../../modules/04-variational/index.html">M4 变分原理</a></div>
+</div>
+<div class="ms-shell">
+<!-- MS-TOC:START -->
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l3"><a href="#p1-h3-1" title="变分原理">变分原理</a></li>
+<li class="l3"><a href="#p2-h3-1" title="History">History</a></li>
+<li class="l4"><a href="#p4-h3-1" title="3.1 费马原理（1662年，法国科学家提出）">3.1 费马原理（1662年，法国科学家提出）</a></li>
+<li class="l4"><a href="#p4-h3-2" title="3.2 变分法计算">3.2 变分法计算</a></li>
+<li class="l4"><a href="#p10-h3-1" title="3.3 测地线（曲面上两点之间距离最短的一条线）">3.3 测地线（曲面上两点之间距离最短的一条线）</a></li>
+<li class="l4"><a href="#p14-h3-1" title="3.4 最速降线">3.4 最速降线</a></li>
+</ul>
+</details>
+</nav>
+<!-- MS-TOC:END -->
+
+<article class="ms-body">
+<section class="ms-page" id="p1"><h2><span class="ms-pn">p.1</span></h2><h3 id="p1-h3-1">变分原理</h3>
+<p>参考：<em>Modern Classical Mechanics</em></p>
+<p>T. M. Helliwell</p>
+<p>V. U. Sahakian</p>
+<h4>3.</h4>
+<p>The variational Principle.</p></section>
+<section class="ms-page" id="p2"><h2><span class="ms-pn">p.2</span></h2><h3 id="p2-h3-1">History</h3>
+<p>变分法，又称为泛函的极值问题，通俗讲“函数的函数”</p>
+<p>光学费马原理，法国数学家费马1662年提出，路径极值问题：根据未发表的工作 据说1684年牛顿几乎已发明变分法。</p>
+<p><em>待考证</em></p>
+<p>真正开始，引起广泛关注，自1696年，由Johan伯努利发起的挑战，最速降线挑战。</p>
+<p>1696年6月   为期6个月</p>
+<p>I. Johan Bernouli. address the most brilliant mathematicians in the world. Nothing is more attractive to intelligent people than an honest, challenging problem, whose possible solution will bestow fame and remain as a lasting monument. ------ from wiki</p>
+<h4>Problem statement as</h4>
+<p>Given two points $A$ and $B$ in a vertical plane, what is the curve traced out by a point acted on only by gravity, which starts at $A$ and reaches $B$ in the shortest time.</p>
+<p>在Leibniz建议下，$^{12}$月伯努利因未收到答案而将挑战延长至一年半。</p>
+<p>1697年1月，伯努利给牛顿写信，将上述内容给牛顿，牛顿1月29日下午4点收到，到第二天早晨4点写解答后寄出匿名，牛顿说：</p>
+<p>``I do not love to be dunned and teased by foreigners about mathematic Thyrs…&#x27;&#x27;</p></section>
+<section class="ms-page" id="p3"><h2><span class="ms-pn">p.3</span></h2><p>Euler（欧拉）1733年建立起这个学科。Lagrange在Euler影响下开始研究这个问题。1755年欧拉开始采用时年19岁Lagrange的$\textit{purely analytic approach}$，在1756年Euler正式提出“$\textit{calculus of variations}$”。Lagrange首个将其方法用于力学，伯努利挑战137年之后，哈密顿正式提出最小作用量原理。</p></section>
+<section class="ms-page" id="p4"><h2><span class="ms-pn">p.4</span></h2><h3 id="p4-h3-1">3.1 费马原理（1662年，法国科学家提出） <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
+<p>费马原理指出，光沿着两点之间所需光程取驻值的路径前进。也就是说，光从$a$到$b$选择走一条光程为极值（通常为极小值，但也可能为极大值或鞍点）的路径，局部最短结论需满足特定条件。</p>
+<p>光在折射率为 $n(x,y,z) = n(\vec{r})$ 的介质中运行，光传播$ds$路程所需的时间为</p>
+<div class="math">\[ dt = \frac{ds}{c/n(\vec{r})} \]</div>
+<p>从$a$点到$b$点，传播的路径 $S = \int_a^b ds$</p>
+<div class="math">\[ t = \int dt = \frac{1}{c}\int_a^b n(\vec{r}) ds, \]</div>
+<p>最终光程所需的时间依赖于路径的选取，原则上光传播有无穷个路径，但物理发生的过程必定是由$a$到$b$，所耗用的时间取驻值。</p>
+<p>这就引入一个问题，怎么求 $t$ 的驻值，求解这一问题可用变分法或泛函数分析。</p>
+<h3 id="p4-h3-2">3.2 变分法计算 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
+<p>一般的变分法，是1750年代法国数学家拉格朗日（Lagrange）和瑞士数学家欧拉（Euler）首先发展完善的，比费马原理的提出，晚了一个世纪。</p>
+<p>在直角坐标系中 $ds = \sqrt{dx^2 + dy^2}$</p>
+<p>所以</p>
+<div class="math">\[
+\begin{aligned}
+t &amp;= \frac{1}{c}\int n(x) \sqrt{dx^2 + dy^2} = \frac{1}{c}\int n(x) \sqrt{1 + \left( \frac{dy}{dx} \right)^2} \cdot dx \\
+&amp;= \frac{1}{c} \int n(x) \sqrt{1+(y&#x27;)^2} dx
+\end{aligned}
+\]</div></section>
+<section class="ms-page" id="p5"><h2><span class="ms-pn">p.5</span></h2><p>在这里, 我们看到 $t$ 的值依赖于 $x$, 和 $y'(x)$. 当然 $n(x)$, 有可能也依赖 $y$. 所以我们写为</p>
+<div class="math">\[
+t = \frac{1}{c} \int n(x,y) \sqrt{1+(y&#x27;)^2} dx = \int F(x, y(x), y&#x27;(x)) dx
+\]</div>
+<p>被积函数 $F(x, y(x), y'(x)) = \frac{n(x,y)}{c} \sqrt{1+(y')^2}$, 是 $x, y(x)$ 和 $y'(x)$ 的函数.</p>
+<p>我们要求解的问题. 怎么找到 $y(x)$ 使得 $t$ 最小?</p>
+<p>更为一般的情况. Euler-Lagrange 求解任意函数的极小值.</p>
+<div class="math">\[
+I = \int F(x, y(x), y&#x27;(x)) dx
+\]</div>
+<p>$I$ 的极值, 以及对应的 $y(x)$</p>
+<p>所谓的极值, 是指积分值 $I$ 的一阶变分为零. 当我们对 $y(x)$ 施加一个无穷小扰动时, 积分值 $I$ 的一阶变化为零. 我们看当 $x$ 有一个无穷小变化 $x \to x+\delta x$</p>
+<p>$x$ 的函数 $f(x) \to f(x+\delta x) = f(x) + \frac{\partial f}{\partial x} \cdot \delta x + \frac{1}{2!} \frac{\partial^2 f}{\partial x^2} (\delta x)^2$</p>
+<p>稳定点的意义是指 $\frac{\partial f}{\partial x} = 0$</p>
+<p>对于一个多变量函数</p>
+<div class="math">\[
+f(x_1, x_2) \longrightarrow f(x_1+\delta x_1, x_2+\delta x_2)
+= f(x_1, x_2) + \sum_{i=1}^2 \frac{\partial f}{\partial x_i} \delta x_i + \frac{1}{2}\sum_{i=1}^2 \sum_{j=1}^2 \frac{\partial^2 f}{\partial x_i \partial x_j} \delta x_i \delta x_j + \cdots
+\]</div>
+<p>极值要求 $\frac{\partial f}{\partial x_1} = 0$ 和 $\frac{\partial f}{\partial x_2} = 0$.</p>
+<p>以此类推至更多自变量的情况.</p></section>
+<section class="ms-page" id="p6"><h2><span class="ms-pn">p.6</span></h2><p>总结：当我们要 $f(x)$ 极值时</p>
+<div class="math">\[
+\delta f = f(x_i + \delta x_i) - f(x_i) = 0 \quad \text{保留到} \ \delta x_i: \text{第一阶}
+\]</div>
+<p>因 $\delta x_i$ 表示任意变化，上式可得 $\frac{\partial f}{\partial x_i} \delta x_i = 0 \implies \frac{\partial f}{\partial x_i} = 0$</p>
+<p>我们再回头看 $I$，$I$并不是一个常规函数，</p>
+<p>常规函数指：数 $\xrightarrow{f}$ 数的映射</p>
+<p>而 $I$ 是可能的路径，或可能的函数 $y(x)$ 的函数，而 $y(x)$ 是未知的，$I$ 是 $y(x)$ 在整个路径的依赖。</p>
+<div class="math">\[
+I\left[ y(x) \right] = \int_{a}^{b} F\left(x, y(x), y&#x27;(x)\right) dx
+\]</div>
+<p>方括号表示 $I$ 不是通常意义下的函数。</p>
+<p>$I\left[ y(x) \right]$ 指泛函（functional），通常人们称其为函数的函数，</p>
+<p>泛函可以依赖于多个函数，我们先看最简单的情况 $I\left[ y(x) \right]$</p>
+<p>当函数 $y(x)$ 变化时，我们计算 $y(x) \to y(x) + \underbrace{\delta y(x)}_{\text{路径偏移}}$</p>
+<p>因为初始点 $a$ 和终止点 $b$ 固定，所以 $\delta y(a) = 0 \quad \delta y(b) = 0$</p>
+<p>边界点没有微扰。</p>
+<p>我们希望</p>
+<div class="math">\[
+\delta I\left[ y(x) \right] = I\left[ y(x) + \delta y(x) \right] - I\left[ y(x) \right] = 0
+\]</div>
+<p>泛函 $I$ 取极值对应于：泛函的一阶变分为零（$\delta y(x)$ 的第一阶），并非所有有限扰动都不改变积分；在固定端点变分中，$x$ 通常作为不变的积分自变量。</p>
+<p>怎么计算 $I\left[ y(x) + \delta y(x) \right]$？</p></section>
+<section class="ms-page" id="p7"><h2><span class="ms-pn">p.7</span></h2><p>我们把对 $x$ 的连续积分离散化。</p>
+<div class="math">\[
+a &lt; x &lt; b \implies x_n = a + n\varepsilon, \quad \varepsilon \geq 0, \quad 0 &lt; n &lt; \frac{b-a}{\varepsilon}
+\]</div>
+<p>当 $\varepsilon \to 0$ 时，离散点变连续。</p>
+<p>然后 泛函指它是 $y(x_0), y(x_1) \cdots y(x_{n-1}), y(x_n)$ 无穷个变量的函数</p>
+<p>当 $\varepsilon \to 0$ 时 $I[y(x)]$ 为无穷个自变量的函数</p>
+<div class="math">\[
+I = \int F(x, y(x), y&#x27;(x)) dx \implies I = \sum_{n} F(x_n, y(x_n), y&#x27;(x_n)) \varepsilon
+\]</div>
+<p>当我们改变 $y$ 时，$y(x_n) \to y(x_n) + \delta y(x_n)$，</p>
+<p>$y'(x)$ 也相应改变 $y'(x_n) \to y'(x_n) + \delta y'(x_n)$，</p>
+<div class="math">\[
+y&#x27; = \frac{dy}{dx} = \frac{y(x_n) - y(x_{n-1})}{\varepsilon}
+\]</div>
+<div class="math">\[
+\delta y&#x27;(x_n) = \frac{\delta y(x_n) - \delta y(x_{n-1})}{\varepsilon} = \frac{d \delta y(x)}{dx}, \quad \delta \frac{dy}{dx} = \frac{d}{dx} \delta y
+\]</div>
+<p>所以</p>
+<div class="math">\[
+\delta I = \sum_{n} \left[ \frac{\partial F}{\partial y(x_n)} \delta y(x_n) + \frac{\partial F}{\partial y&#x27;(x_n)} \delta y&#x27;(x_n) \right] \varepsilon = 0
+\]</div>
+<p>当 $\varepsilon \to 0$ 时</p>
+<div class="math">\[
+\delta I = \int_a^b \left[ \frac{\partial F}{\partial y(x)} \delta y(x) + \frac{\partial F}{\partial y&#x27;(x)} \frac{d}{dx} \delta y(x) \right] dx
+\]</div>
+<p>对上式第二部分 分部积分</p>
+<div class="math">\[
+\int f \frac{dg}{dx} dx = \int d(fg) - \int g \frac{df}{dx} dx
+\]</div>
+<div class="math">\[
+\int \frac{\partial F}{\partial y&#x27;(x)} \frac{d}{dx} \delta y(x) dx = \int d\left( \frac{\partial F}{\partial y&#x27;(x)} \delta y(x) \right) - \int \left( \frac{d}{dx} \left( \frac{\partial F}{\partial y&#x27;(x)} \right) \right) \delta y(x) dx
+\]</div>
+<div class="math">\[
+\int_a^b d\left[ \frac{\partial F}{\partial y&#x27;(x)} \delta y(x) \right] = \left. \frac{\partial F}{\partial y&#x27;(x)} \delta y(x) \right|_a^b = 0
+\]</div>
+<p>因为在边界点没有扰动</p></section>
+<section class="ms-page" id="p8"><h2><span class="ms-pn">p.8</span></h2><p>所以我们有</p>
+<div class="math">\[
+\delta I[y(x)] = \int_a^b \left( \frac{\partial F}{\partial y(x)} - \frac{d}{dx}\left[ \frac{\partial F}{\partial y&#x27;(x)} \right] \right) \delta y(x) dx = 0
+\]</div>
+<p>因为 $\delta(y(x))$ 代表任意变化。</p>
+<p>若 $\frac{\partial F}{\partial y(x)} - \frac{d}{dx}\left[ \frac{\partial F}{\partial y'(x)} \right]$ 在某一段 $x$ 的区间不为0，则我们可以找 $\delta y(x)$ 的扰动，使得 $\delta I[y(x)] \neq 0$。</p>
+<p>若想 $\delta I[y(x)] = 0$，必有</p>
+<div class="math">\[
+\frac{\partial F}{\partial y(x)} - \frac{d}{dx}\left[ \frac{\partial F}{\partial y&#x27;(x)} \right] = 0 \quad \text{欧拉方程}.
+\]</div>
+<p>例 光在真空中传播 $t \propto S$，$t$ 最小，等价于 $S$ 最小，求传播路径</p>
+<div class="math">\[
+S = \int_a^b ds = \int_a^b \sqrt{dx^2 + dy^2} = \int_a^b \sqrt{1 + (y&#x27;)^2} dx
+\]</div>
+<p>代入欧拉方程 $F(x, y, y') = \sqrt{1 + (y')^2}$</p>
+<div class="math">\[
+\frac{d}{dx} \frac{\partial F}{\partial y&#x27;(x)} = \frac{d}{dx} \frac{y&#x27;}{\sqrt{1 + (y&#x27;)^2}} = 0
+\]</div>
+<p>即</p>
+<div class="math">\[
+\frac{y&#x27;}{\sqrt{1 + (y&#x27;)^2}} = k \implies y&#x27; = \frac{\pm k}{\sqrt{1 - k^2}} \equiv C \ (\text{常数})
+\]</div>
+<div class="math">\[
+\frac{dy}{dx} = C \implies y = C x + d
+\]</div>
+<p>其中 $(C, d)$ 可由初末两点定出，$C$ 为常数，$d$ 为常数。</p>
+<p>即由费马原理推导出了光沿直线传播。</p></section>
+<section class="ms-page" id="p9"><h2><span class="ms-pn">p.9</span></h2><h4>1.</h4>
+<p>假设介质折射率为 $n = \frac{y_0}{y}$，求光在介质中传播的轨迹。</p>
+<p>解：根据费马原理，</p>
+<div class="math">\[
+I[x] = \int \frac{ds}{c/n} = \frac{1}{c} \int \frac{y_0}{y} \sqrt{(dx)^2 + (dy)^2} = \frac{y_0}{c} \int \frac{1}{y} \sqrt{1 + (x&#x27;)^2} dy
+\]</div>
+<p>其中 $x' = \frac{dx}{dy}$，令 $F = \frac{1}{y} \sqrt{1 + (x')^2} = F(y, x, x')$。</p>
+<p>运用欧拉公式可得：</p>
+<div class="math">\[
+\frac{\partial F}{\partial x} - \frac{d}{dy} \frac{\partial F}{\partial x&#x27;} = 0
+\]</div>
+<p>因 $\frac{\partial F}{\partial x} = 0$，得</p>
+<div class="math">\[
+\frac{\partial F}{\partial x&#x27;} = \frac{x&#x27;}{y \sqrt{1 + (x&#x27;)^2}} = k
+\]</div>
+<p>$k$ 为常数，解得</p>
+<div class="math">\[
+x&#x27; = \pm \frac{k y}{\sqrt{1 - k^2 y^2}}
+\]</div>
+<p>积分得</p>
+<div class="math">\[
+x - x_0 = -\frac{\sqrt{1 - k^2 y^2}}{k}
+\]</div>
+<p>整理得</p>
+<div class="math">\[
+k^2 (x - x_0)^2 + k^2 y^2 = 1
+\]</div>
+<p>设 $y = \frac{1}{k} \sin\theta$，则 $dy = \frac{1}{k} \cos\theta d\theta$，</p>
+<div class="math">\[
+\frac{dx}{dy} = \frac{dx}{d\theta} \cdot \frac{d\theta}{dy} = \frac{dx}{d\theta} \cdot \frac{k}{\cos\theta} = \pm \frac{k \cdot \frac{1}{k}\sin\theta}{\sqrt{1 - \sin^2\theta}} = \pm \frac{\sin\theta}{|\cos\theta|}
+\]</div>
+<p>选取 $\cos\theta \ge 0$ 的分支，则 $|\cos\theta| = \cos\theta$，故</p>
+<div class="math">\[
+\frac{dx}{d\theta} = \pm \frac{1}{k} \sin\theta
+\]</div>
+<p>积分得</p>
+<div class="math">\[
+x - x_0 = \pm \frac{1}{k} \cos\theta
+\]</div>
+<p>结合 $y = \frac{1}{k} \sin\theta$，仍有</p>
+<div class="math">\[
+k^2 (x - x_0)^2 + k^2 y^2 = 1
+\]</div>
+<p>所以轨迹为一个圆，形状和大小与初始条件有关。另外，当 $k = 0$ 时，由 $\frac{\partial F}{\partial x'} = 0$ 得 $x' = 0$，即轨迹为竖直直线 $x = \text{常数}$。</p></section>
+<section class="ms-page" id="p10"><h2><span class="ms-pn">p.10</span></h2><p>例</p>
+<p>在Euler方程中，对$y$和$y'$求的是偏导数，为对$x$求的导数。</p>
+<p>比如，$F(x,y,y') = x y (y')^2$</p>
+<div class="math">\[
+\frac{\partial F}{\partial y} = x (y&#x27;)^2, \quad \frac{\partial F}{\partial y&#x27;} = 2x y y&#x27;, \quad \frac{d}{dx} \frac{\partial F}{\partial y&#x27;} = 2y y&#x27; + 2x (y&#x27;)^2 + 2x y y&#x27;&#x27;
+\]</div>
+<p>Euler方程变为</p>
+<div class="math">\[
+x (y&#x27;)^2 - \left(2y y&#x27; + 2x (y&#x27;)^2 + 2x y y&#x27;&#x27;\right) = 0
+\]</div>
+<p>在运用变分法计算后，Euler方程把求解路径的问题变成了求解微分方程的问题。</p>
+<h3 id="p10-h3-1">3.3 测地线（曲面上两点之间距离最短的一条线）</h3>
+<p>我们现在寻找一个球面上两点之间最短距离，球半径为$R$。</p>
+<p>球坐标下，无穷小位移路程 $ds_\theta = R d\theta$</p>
+<p>若改变$\varphi$，则 $ds_\varphi = R \sin\theta d\varphi$，在方向上，$ds_\theta, ds_\varphi$互相垂直，所以</p>
+<div class="math">\[
+ds^2 = R^2 d\theta^2 + R^2 \sin^2\theta d\varphi^2
+\]</div>
+<p>我们可以选择$\varphi$或$\theta$作为积分的变量，以用$\varphi$为例</p>
+<div class="math">\[
+S = R \int_a^b \sqrt{(\theta&#x27;)^2 + \sin^2\theta} \, d\varphi
+\]</div>
+<p>其中$\theta$和$\theta'$是$\varphi$的函数，</p>
+<div class="math">\[
+\theta&#x27; = \frac{d\theta}{d\varphi}
+\]</div></section>
+<section class="ms-page" id="p11"><h2><span class="ms-pn">p.11</span></h2><p>(1)情况下，根据欧拉方程</p>
+<div class="math">\[
+\frac{\partial F}{\partial \theta} - \frac{d}{d\varphi} \frac{\partial F}{\partial \theta&#x27;} = 0 \quad \text{其中} \quad F = \sqrt{(\theta&#x27;)^2 + \sin^2 \theta}
+\]</div>
+<div class="math">\[
+\frac{\partial F}{\partial \theta} = \frac{\sin\theta \cos\theta}{\sqrt{(\theta&#x27;)^2 + \sin^2 \theta}}, \quad \frac{\partial F}{\partial \theta&#x27;} = \frac{\theta&#x27;}{\sqrt{(\theta&#x27;)^2 + \sin^2 \theta}}
+\]</div>
+<div class="math">\[
+\frac{d}{d\varphi} \frac{\partial F}{\partial \theta&#x27;} = \left( (\theta&#x27;)^2 + \sin^2 \theta \right)^{-3/2} \sin\theta \left( \sin\theta \cdot \theta&#x27;&#x27; - \cos\theta (\theta&#x27;)^2 \right)
+\]</div>
+<div class="math">\[
+\frac{d}{d\varphi} \left( \frac{\partial F}{\partial \theta&#x27;} \right) = \frac{\theta&#x27;&#x27;}{\sqrt{(\theta&#x27;)^2 + \sin^2 \theta}} - \frac{(\theta&#x27;)^2 \theta&#x27;&#x27;}{\left( (\theta&#x27;)^2 + \sin^2 \theta \right)^{3/2}} - \frac{\sin\theta \cos\theta (\theta&#x27;)^2}{\left( (\theta&#x27;)^2 + \sin^2 \theta \right)^{3/2}}
+\]</div>
+<div class="math">\[
+= \left( (\theta&#x27;)^2 + \sin^2 \theta \right)^{-3/2} \left[ \theta&#x27;&#x27; \sin^2 \theta - \sin\theta \cos\theta (\theta&#x27;)^2 \right]
+\]</div>
+<p>所以</p>
+<div class="math">\[
+\frac{\sin\theta \cos\theta}{\sqrt{(\theta&#x27;)^2 + \sin^2 \theta}} - \frac{\theta&#x27;&#x27; \sin^2 \theta - \sin\theta \cos\theta (\theta&#x27;)^2}{\left( (\theta&#x27;)^2 + \sin^2 \theta \right)^{3/2}} = 0
+\]</div>
+<div class="math">\[
+\frac{\sin\theta \left( 2(\theta&#x27;)^2 \cos\theta + \cos\theta \sin^2 \theta - \sin\theta \theta&#x27;&#x27; \right)}{\sqrt{(\theta&#x27;)^2 + \sin^2 \theta}} = 0
+\]</div>
+<p>令 \( f(\theta) = \cot\theta \implies \theta' = -f' \sin^2 \theta \)</p>
+<div class="math">\[
+\theta&#x27;&#x27; = -f&#x27;&#x27; \sin^2 \theta + 2(f&#x27;)^2 \sin^3\theta \cos\theta
+\]</div>
+<div class="math">\[
+\sin^4 \theta \left( f + f&#x27;&#x27; \right) = 0
+\]</div>
+<p>由此可得</p>
+<div class="math">\[
+\cot\theta = A \sin(\varphi - \varphi_0) = A \sin\varphi + B \cos\varphi
+\]</div>
+<div class="math">\[
+\cos\theta = A \sin\theta \sin\varphi + B \sin\theta \cos\varphi
+\]</div>
+<p>两边乘 \( r \) 得 \( z = A x + B y \)，即此限制必过球心。</p></section>
+<section class="ms-page" id="p12"><h2><span class="ms-pn">p.12</span></h2><p>所以在球面上，两点之间距离的极大或极小值必是在大圆线上。</p>
+<h4>(2)</h4>
+<p>我们重新把 $S$ 写为</p>
+<div class="math">\[
+S = R \int_{a}^{b} \sqrt{d\theta^2 + \sin^2\theta \, d\varphi^2}
+\]</div>
+<div class="math">\[
+S = R \int_{a}^{b} \sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2} \, d\theta
+\]</div>
+<p>令</p>
+<div class="math">\[
+F = \sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2} \implies \frac{\partial F}{\partial \varphi&#x27;} = \frac{\sin^2\theta \, \varphi&#x27;}{\sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2}} = k
+\]</div>
+<div class="math">\[
+\implies \varphi&#x27; = \frac{k \csc^2\theta}{\sqrt{1 - k^2 \csc^2\theta}} \implies \varphi = \alpha \sin^{-1} \left( \frac{\alpha \cot\theta}{\sqrt{1 + \alpha^2}} \right) + \beta
+\]</div>
+<p>即</p>
+<div class="math">\[
+\sin(\varphi - \beta) = \alpha \cot\theta
+\]</div>
+<div class="math">\[
+\sin\varphi \cos\beta - \cos\varphi \sin\beta = \alpha \cos\theta
+\]</div>
+<div class="math">\[
+y \cos\beta - x \sin\beta = \alpha z,
+\]</div>
+<p>曲线为过球心的平面与球面的切割线，即为大圆。</p>
+<p>$\varphi$ 和 $q$ 得 $\frac{d\varphi}{dq}$ 的表达式见下一页推导过程。</p></section>
+<section class="ms-page" id="p13"><h2><span class="ms-pn">p.13</span></h2><div class="math">\[
+\frac{d\varphi}{d\theta} = \varphi&#x27; = \pm \frac{k \csc^2 \theta}{\sqrt{1 - k^2 \csc^2 \theta}}
+\]</div>
+<div class="math">\[
+q = \frac{k}{\sqrt{1 - k^2}} \cot \theta \quad q^2 = \frac{k^2}{1 - k^2} \cot^2 \theta = \frac{k^2}{1 - k^2} (\csc^2 \theta - 1)
+\]</div>
+<div class="math">\[
+k^2 \csc^2 \theta = (1 - k^2) q^2 + k^2
+\]</div>
+<div class="math">\[
+\frac{dq}{d\theta} = \frac{k}{\sqrt{1 - k^2}} \frac{d \cot \theta}{d\theta} = \frac{-k}{\sqrt{1 - k^2}} \csc^2 \theta
+\]</div>
+<div class="math">\[
+\frac{d\varphi}{d\theta} = \frac{d\varphi}{dq} \frac{dq}{d\theta} = \frac{d\varphi}{dq} \cdot \frac{-k}{\sqrt{1 - k^2}} \csc^2 \theta = \frac{\pm k \csc^2 \theta}{\sqrt{(1 - k^2)(1 - q^2)}}
+\]</div>
+<div class="math">\[
+\frac{d\varphi}{dq} = \frac{\pm 1}{\sqrt{1 - q^2}}
+\]</div>
+<p>得 \(\varphi = \sin^{-1} q + \beta\)</p>
+<div class="math">\[
+q = a \cot \theta = \sin(\varphi - \beta)
+\]</div>
+<div class="math">\[
+a \cos \theta = \sin \varphi \sin \theta \cos \beta - \sin \beta \cos \varphi \sin \theta
+\]</div>
+<p>两边乘以 \(R\)</p>
+<div class="math">\[
+a z = y \cos \beta - x \sin \beta
+\]</div>
+<div class="math">\[
+a z = -x \sin \beta + y \cos \beta
+\]</div>
+<p>\(\textcircled{7} - 2\)</p></section>
+<section class="ms-page" id="p14"><h2><span class="ms-pn">p.14</span></h2><h3 id="p14-h3-1">3.4 最速降线 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
+<p>这是Johan. Bernoulli在1696年提出的问题.</p>
+<p>给定在竖直平面的两点 $a$ 和 $b$. 在仅有重力作用下,</p>
+<p>哪条路径用时最短?</p>
+<p>此即为最速降线问题.</p>
+<div class="ms-box">
+<p>历史<br></p>
+<p>Johan的哥哥 Jakob Bernoulli<br></p>
+<p>牛顿、莱布尼兹、Tschirnhaus, $\text{I'H}\hat{o}\text{pital}$（洛必达）, 1697年5月的《博学通报》<br></p>
+<p>Jakob后来提出了更为复杂的最速降线问题, 他求解该问题的方法, 被Euler提炼发展为变分法, Lagrange后来进一步将Euler的结果用现代化的无穷小变分计算.</p>
+</div>
+<p><strong>此解为摆线的一段</strong></p>
+<figure><img src="figs/variational/p14-paths.svg" alt="四条候选路径的比较示意图：1 摆线，4 直线，2 与 3 为中间路径。" loading="lazy"><figcaption>四条候选路径：1 为摆线，4 为直线，2、3 为中间路径；y 轴向下。</figcaption></figure>
+<p>图中, 路径4中, 质点加速较慢, 最终耗时长. 路径2中, 最开始, 质点的速度比路径3中的快, 但路径2的路程长, 两个因素共同影响下, 它用的时间可能比路径3中短, 也可能长.</p></section>
+<section class="ms-page" id="p15"><h2><span class="ms-pn">p.15</span></h2><p>从a到b的用时为</p>
+<div class="math">\[
+t = \int \frac{ds}{V}
+\]</div>
+<p>其中</p>
+<div class="math">\[
+ds = \sqrt{dx^2+dy^2} = \sqrt{1+(y&#x27;)^2} dx = \sqrt{1+(x&#x27;)^2} dy
+\]</div>
+<p>根据机械能守恒</p>
+<div class="math">\[
+E = \frac{1}{2}mv^2 + mg(-y) = 0
+\]</div>
+<p>得</p>
+<div class="math">\[
+v = \sqrt{2gy}
+\]</div>
+<div class="math">\[
+t = \int \frac{\sqrt{1+(y&#x27;)^2}}{\sqrt{2gy}} dx \quad \text{或} \quad t = \int \frac{\sqrt{1+(x&#x27;)^2}}{\sqrt{2gy}} dy
+\]</div>
+<p>采用后一种方案</p>
+<div class="math">\[
+F = \frac{\sqrt{1+(x&#x27;)^2}}{\sqrt{2gy}}
+\]</div>
+<div class="math">\[
+\frac{\partial F}{\partial x} = 0 \implies \frac{d}{dy}\left( \frac{\partial F}{\partial x&#x27;} \right) = 0 \implies \frac{\partial F}{\partial x&#x27;} = k \quad \text{常数}.
+\]</div>
+<div class="math">\[
+\frac{\partial F}{\partial x&#x27;} = \frac{1}{\sqrt{2gy}} \cdot \frac{x&#x27;}{\sqrt{1+(x&#x27;)^2}} = k \quad \implies \quad \frac{1}{2gy} \cdot \frac{x&#x27;^2}{1+x&#x27;^2} = k^2
+\]</div>
+<p>得</p>
+<div class="math">\[
+x&#x27; = \frac{\pm k \sqrt{2gy}}{\sqrt{1 - 2k^2 g y}} = \pm \sqrt{\frac{y}{a - y}} \quad \text{其中} \ a = \frac{1}{2k^2 g}, \ \text{取正值}.
+\]</div>
+<div class="math">\[
+x = \int dx = \int dy \sqrt{\frac{y}{a - y}}
+\]</div>
+<p>令 $y = a \sin^2 \frac{\theta}{2}$，则</p>
+<div class="math">\[
+dy = a \sin \frac{\theta}{2} \cos \frac{\theta}{2} d\theta = \frac{a}{2} \sin \theta d\theta, \quad \sqrt{\frac{y}{a - y}} = \sqrt{\frac{a \sin^2 \frac{\theta}{2}}{a - a \sin^2 \frac{\theta}{2}}} = \frac{\sin \frac{\theta}{2}}{\cos \frac{\theta}{2}}
+\]</div>
+<div class="math">\[
+x = a \int \sin^2 \frac{\theta}{2} d\theta
+\]</div>
+<div class="math">\[
+\begin{cases}
+x = \frac{a}{2} (\theta - \sin \theta) \\
+y = \frac{a}{2} (1 - \cos \theta)
+\end{cases}
+\]</div>
+<div class="math">\[
+\left( x - \frac{a}{2} \theta \right)^2 + \left( y - \frac{a}{2} \right)^2 = \frac{a^2}{4}
+\]</div>
+<p>摆线：滚动圆上固定点的轨迹.</p></section>
+<section class="ms-page" id="p16"><h2><span class="ms-pn">p.16</span></h2><p>此时 $t = \sqrt{\frac{a}{2g}} \int_{0}^{\theta_f} d\theta = \sqrt{\frac{a}{2g}} \theta_f$</p>
+<p>当 $(x_b, y_b) = \left( \frac{\pi}{2} a, a \right)$ 时 $\theta_f = \pi$，$t = \pi \sqrt{\frac{a}{2g}}$</p>
+<h4>例：</h4>
+<p>现在我们回头看费马原理中，时间极值的问题.</p>
+<div class="math">\[
+t = \frac{1}{c} \int n(y) \sqrt{1 + (y&#x27;)^2} dx = \frac{1}{c} \int n(y) \sqrt{1 + (x&#x27;)^2} dy \quad \text{（与} \ x \ \text{无关）}
+\]</div>
+<p>代入Euler方程：</p>
+<div class="math">\[
+\frac{\partial F}{\partial x} - \frac{d}{dy} \left( \frac{\partial F}{\partial x&#x27;} \right) = 0 \implies \frac{d}{dy} \left( \frac{\partial F}{\partial x&#x27;} \right) = 0
+\]</div>
+<div class="math">\[
+\frac{\partial F}{\partial x&#x27;} = \frac{n(y) x&#x27;}{\sqrt{1 + (x&#x27;)^2}} = k
+\]</div>
+<p>当 $n(y) = n_0$ 时 $x' = $ 常数，光沿直线传播.</p>
+<div class="math">\[
+x&#x27; = \frac{dx}{dy} = \tan\theta \quad \text{如图所示}
+\]</div>
+<p>即</p>
+<div class="math">\[
+\frac{n_y \tan\theta}{\sqrt{1 + \tan^2\theta}} = n_y \sin\theta = k \quad \text{（常数）}
+\]</div>
+<div class="math">\[
+n_1 \sin\theta_1 = n_2 \sin\theta_2 \quad \text{即} \quad \frac{\sin\theta_1}{\sin\theta_2} = \frac{n_2}{n_1}
+\]</div></section>
+<section class="ms-page" id="p17"><h2><span class="ms-pn">p.17</span></h2><p>伯努利解法</p>
+<p>机械能守恒：$\frac{1}{2}mv^2 + mgy = mgh$</p>
+<p>得 $v = \sqrt{2g(h-y)}$</p>
+<p>最速降线问题理解成光在多个不同介质下的传播问题。根据费马原理，光线是沿着耗时最短的路径向前走，这样求解所得路径，耗时最短。</p>
+<p>首先将下降长度离散化</p>
+<div class="math">\[
+\frac{\sin \alpha_j}{v_j} = \frac{\sin \alpha_{j+1}}{v_{j+1}}
+\]</div>
+<p>以此类推</p>
+<div class="math">\[
+\frac{\sin \alpha_1}{v_1} = \frac{\sin \alpha_2}{v_2} = \dots = \frac{\sin \alpha_n}{v_n} = C
+\]</div>
+<p>即</p>
+<div class="math">\[
+\frac{\sin \alpha}{\sqrt{2g(h-y)}} = C \implies \sin^2 \alpha = 2gC^2(h-y)
+\]</div>
+<div class="math">\[
+y = h - \frac{\sin^2 \alpha}{2gC^2}
+\]</div>
+<div class="math">\[
+\frac{dx}{dy} = \tan \alpha, \quad \frac{dx}{d\alpha} = \frac{dx}{dy} \cdot \frac{dy}{d\alpha} = - \tan \alpha \cdot \frac{\sin \alpha \cos \alpha}{gC^2} = -\frac{\sin^2 \alpha}{gC^2}
+\]</div>
+<p>\(\textcircled{12}\)</p></section>
+<section class="ms-page" id="p18"><h2><span class="ms-pn">p.18</span></h2><p>积分可得</p>
+<div class="math">\[
+x = -\frac{1}{g C^2} \int \sin^2 \alpha \, d\alpha = -\frac{1}{4 g C^2} (2\alpha - \sin 2\alpha) + x_0
+\]</div>
+<p>令 $\theta = 2\alpha$ 可得</p>
+<div class="math">\[
+\begin{cases}
+y = h - \frac{1}{4 g C^2} (1 - \cos\theta) \\
+x = x_1 - \frac{1}{4 g C^2} (\theta - \sin\theta)
+\end{cases}
+\]</div>
+<p>此即为摆线</p></section>
+<section class="ms-page" id="p19"><h2><span class="ms-pn">p.19</span></h2><h4>注意</h4>
+<h4>(1)</h4>
+<div class="math">\[
+\delta y'(x) = \delta \lim_{\varepsilon \to 0} \frac{y(x+\varepsilon) - y(x)}{\varepsilon} = \lim_{\varepsilon \to 0} \frac{\delta y(x+\varepsilon) - \delta y(x)}{\varepsilon} = \frac{d}{dx} \delta y(x)
+\]</div>
+<h4>(2)</h4>
+<div class="math">\[
+F\left( x, y_1(x), y_2(x), \dots, y_n(x), y_1&#x27;(x), y_2&#x27;(x), \dots, y_n&#x27;(x) \right)
+\]</div>
+<p>欧拉方程</p>
+<div class="math">\[
+\frac{\partial F}{\partial y_i} - \frac{d}{dx} \frac{\partial F}{\partial y_i&#x27;} = 0 \quad i=1,2,\dots,n
+\]</div></section>
+<section class="ms-page" id="p20"><h2><span class="ms-pn">p.20</span></h2><p>假设有一连续函数 $y(x)$，在区间 $[a,b]$ 内积分</p>
+<div class="math">\[
+\int_{a}^{b} y(x) \eta(x) \, dx = 0
+\]</div>
+<p>其中 $\eta(x)$ 为任一可导函数，左式成立，在 $x \in [a,b]$ 区间内 $y(x)=0$</p></section>
+<section class="ms-page" id="p21"><h2><span class="ms-pn">p.21</span></h2><h4>0</h4>
+<p>给定两点之间，悬挂一段匀质细绳，求绳在势能最低处的形状。</p>
+<figure><img src="figs/variational/p21-catenary.svg" alt="悬链线示意图：两端 a、b 固定，最低点 C，y 轴向下。" loading="lazy"><figcaption>悬链线：两端 a、b 固定，最低点 C；y 轴向下。</figcaption></figure>
+<p>解：设细绳密度为$\rho$，重力加速度为$g$，则</p>
+<div class="math">\[ dm = \rho \, ds \]</div>
+<p>势能</p>
+<div class="math">\[ V = -\int g y \, dm = -\rho g \int y \sqrt{(dx)^2 + (dy)^2} = -\rho g \int y \sqrt{1 + (x&#x27;)^2} \, dy \]</div>
+<p>由变分法可知，考虑绳长$l$为定长约束，引入拉格朗日乘子$\lambda$，拉格朗日函数为</p>
+<div class="math">\[ F(y, x, x&#x27;) = y \sqrt{1 + (x&#x27;)^2} + \lambda \sqrt{1 + (x&#x27;)^2} \]</div>
+<p>因 $\frac{\partial F}{\partial x} = 0$，故得</p>
+<div class="math">\[ \frac{d}{dy} \frac{\partial F}{\partial x&#x27;} = 0 \]</div>
+<p>计算偏导数：</p>
+<div class="math">\[ \frac{\partial F}{\partial x&#x27;} = \frac{x&#x27; (y + \lambda)}{\sqrt{1 + (x&#x27;)^2}} = k \]</div>
+<p>由此得</p>
+<div class="math">\[ dx = \pm \frac{k\,dy}{\sqrt{(y + \lambda)^2 - k^2}} \]</div>
+<p>且</p>
+<div class="math">\[ x&#x27; = \sqrt{\frac{k^2}{(y + \lambda)^2 - k^2}} \]</div>
+<p>解此微分方程可得</p>
+<div class="math">\[ x = k \ln \left( \frac{y + \lambda}{k} + \sqrt{\left( \frac{y + \lambda}{k} \right)^2 - 1} \right) + x_0 \]</div>
+<p>即</p>
+<div class="math">\[ y + \lambda = k \cosh \frac{x - x_0}{k} \]</div>
+<p>当取绳的最低点位于$x=0$且$y=0$时，有$\lambda = -k$，故</p>
+<div class="math">\[ y = k \left( \cosh \frac{x}{k} - 1 \right) \]</div>
+<p>绳长$l$与$k$的关系由定长条件确定。</p></section>
+<section class="ms-page" id="p22"><h2><span class="ms-pn">p.22</span></h2><h4>4</h4>
+<p>抛物面方程为 $z = A(x^2 + y^2)$，其中 $A$ 为常数，求测地线方程，设已知该测地线过点 $(x,y)_0=(x_0,0)$，且满足 $\left(\frac{dy}{dx}\right)_0 = 0$，该测地线能否回到原点相同点？</p>
+<p>解：$x$-$y$平面用极坐标，令 $x = r\cos\theta$，$y = r\sin\theta$，则 $z = A r^2$，故 $dz = 2A r dr$。</p>
+<p>弧长元素：</p>
+<div class="math">\[
+(ds)^2 = (dx)^2 + (dy)^2 + (dz)^2 = (dr)^2 + r^2 (d\theta)^2 + 4A^2 r^2 (dr)^2
+\]</div>
+<p>最小化路程：</p>
+<div class="math">\[
+L = \int ds = \int \sqrt{1 + 4A^2 r^2 + r^2 \left(\frac{d\theta}{dr}\right)^2} dr
+\]</div>
+<p>将泛函写为：</p>
+<div class="math">\[
+F(r, \theta, \theta&#x27;) = \sqrt{1 + 4A^2 r^2 + r^2 (\theta&#x27;)^2}
+\]</div>
+<p>根据欧拉方程 $\frac{\partial F}{\partial \theta} - \frac{d}{dr} \frac{\partial F}{\partial \theta'} = 0$，得：</p>
+<div class="math">\[
+\frac{\partial F}{\partial \theta&#x27;} = \frac{r^2 \theta&#x27;}{\sqrt{1 + 4A^2 r^2 + r^2 (\theta&#x27;)^2}} = k
+\]</div>
+<p>解得：</p>
+<div class="math">\[
+\theta&#x27; = \frac{d\theta}{dr} = \frac{k}{r} \sqrt{\frac{1 + 4A^2 r^2}{r^2 - k^2}}
+\]</div>
+<p>又：</p>
+<div class="math">\[
+\frac{dy}{dx} = \frac{(dr)\sin\theta + r\cos\theta d\theta}{(dr)\cos\theta - r\sin\theta d\theta} = \frac{\sin\theta + r\cos\theta \theta&#x27;}{\cos\theta - r\sin\theta \theta&#x27;}
+\]</div>
+<p>已知 $(x,y)_0$ 为 $(x_0,0)$，得 $\theta_0 = 0$，$\left(\frac{dy}{dx}\right)_0 = \left(r \frac{d\theta}{dr}\right)_0 = 0$，即 $\left(\frac{d\theta}{dr}\right)_0 = 0$，代入测地线方程得 $k=0$，故测地线 $\theta=0$，$z=A r^2$，为 $x$-$z$ 平面内沿着抛物线开口向上的线。</p></section>
+<section class="ms-page" id="p23"><h2><span class="ms-pn">p.23</span></h2><h4>3.</h4>
+<p>在2维平面内，运用极坐标，证明直线距离最短</p>
+<h4>解:</h4>
+<p>距离与路径关系为</p>
+<div class="math">\[
+I[\ ] = \int \sqrt{(dx)^2 + (dy)^2}
+\]</div>
+<p>在极坐标下，$x = r\cos\theta$，$y = r\sin\theta$</p>
+<div class="math">\[
+dx = -r\sin\theta \, d\theta + \cos\theta \, dr, \quad dy = r\cos\theta \, d\theta + \sin\theta \, dr
+\]</div>
+<div class="math">\[
+(dx)^2 + (dy)^2 = (dr)^2 + r^2 (d\theta)^2
+\]</div>
+<div class="math">\[
+I[\theta(r)] = \int \sqrt{(dr)^2 + r^2 (d\theta)^2} = \int \sqrt{1 + r^2 (\theta&#x27;)^2} dr, \quad \theta&#x27; = \frac{d\theta}{dr}
+\]</div>
+<p>令 $F = \sqrt{1 + r^2 (\theta')^2}$，</p>
+<p>欧拉方程：$\frac{\partial F}{\partial \theta} - \frac{d}{dr} \left( \frac{\partial F}{\partial \theta'} \right) = 0$</p>
+<p>所以 $\frac{\partial F}{\partial \theta'} = \frac{r^2 \theta'}{\sqrt{1 + r^2 (\theta')^2}} = C$，</p>
+<div class="math">\[
+(\theta&#x27;)^2 = \frac{C^2}{r^4 - C^2 r^2}
+\]</div>
+<p>得 $d\theta = \pm \frac{C}{\sqrt{r^4 - C^2 r^2}} dr$</p>
+<div class="math">\[
+\theta - \theta_0 = \pm \int \frac{C}{r \sqrt{r^2 - C^2}} dr
+\]</div>
+<p>令 $r = \frac{C}{\sin\varphi}$，</p>
+<div class="math">\[
+dr = \frac{-C \cos\varphi}{\sin^2 \varphi} d\varphi, \quad r \sqrt{r^2 - C^2} = \frac{C^2}{\sin\varphi} \sqrt{\frac{1 - \sin^2 \varphi}{\sin^2 \varphi}} = \frac{C^2 \cos\varphi}{\sin^2 \varphi}
+\]</div>
+<div class="math">\[
+\theta - \theta_0 = \pm \int \frac{ - \frac{C^2 \cos\varphi}{\sin^2 \varphi} }{ \frac{C^2 \cos\varphi}{\sin^2 \varphi} } d\varphi = \pm \int d\varphi = \varphi - \varphi_0
+\]</div>
+<p>所以 $r = \frac{C}{\sin\varphi} = \frac{C}{\sin(\theta - \theta_0)}$，得 $r \sin(\theta - \theta_0) = C$</p>
+<p>展开得：$r \sin\theta \cos\theta_0 - r \cos\theta \sin\theta_0 = C$，即 $y \cos\theta_0 - x \sin\theta_0 = C$，这是直线方程。</p></section>
+<section class="ms-page" id="p24"><h2><span class="ms-pn">p.24</span></h2><p>Revisit 变分法</p>
+<div class="math">\[
+I[y] = \int_a^b F(x, y, y&#x27;) dx
+\]</div>
+<div class="math">\[
+I[y + \alpha \eta] = \int_a^b F(x, y + \alpha \eta, y&#x27; + \alpha \eta&#x27;) dx \quad \text{其中} \ \alpha \text{为常数}, \ \eta \text{为任意函数}
+\]</div>
+<div class="math">\[
+\frac{d}{d\alpha} I[y + \alpha \eta] \bigg|_{\alpha=0} = \int_a^b \left( \eta(x) \frac{\partial}{\partial y} F(x, y, y&#x27;) + \eta&#x27;(x) \frac{\partial}{\partial y&#x27;} F(x, y, y&#x27;) \right) dx
+\]</div>
+<div class="math">\[
+\eta&#x27;(x) \frac{\partial}{\partial y&#x27;} F(x, y, y&#x27;) = \frac{d}{dx} \left( \eta(x) \frac{\partial}{\partial y&#x27;} F(x, y, y&#x27;) \right) - \eta(x) \frac{d}{dx} \frac{\partial}{\partial y&#x27;} F(x, y, y&#x27;)
+\]</div>
+<p>所以</p>
+<div class="math">\[
+\frac{d}{d\alpha} I[y + \alpha \eta] \bigg|_{\alpha=0} = \int_a^b \eta(x) \left( \frac{\partial}{\partial y} F(x, y, y&#x27;) - \frac{d}{dx} \frac{\partial}{\partial y&#x27;} F(x, y, y&#x27;) \right) dx + \left. \left[ \eta \frac{\partial}{\partial y&#x27;} F(x, y, y&#x27;) \right] \right|_a^b = 0
+\]</div>
+<p>因为 $\eta(x)$ 是一个任意可导连续的函数，若使得上式成立，可得</p>
+<div class="math">\[
+\frac{\partial}{\partial y} F(x, y, y&#x27;) - \frac{d}{dx} \frac{\partial F(x, y, y&#x27;)}{\partial y&#x27;} = 0
+\]</div></section>
+<section class="ms-page" id="p25"><h2><span class="ms-pn">p.25</span></h2><p>针对多变量系统</p>
+<div class="math">\[
+I[q_1, \dots, q_n] = \int_a^b F(t, q_1, \dots, q_n, \dot{q}_1, \dots, \dot{q}_n) dt
+\]</div>
+<p>求 $I$ stationary 值时的欧拉方程。</p>
+<p>我们可以定义</p>
+<div class="math">\[
+q_i(t) \to q_i(t) + \alpha \eta_i(t)
+\]</div>
+<div class="math">\[
+\left. \frac{dI}{d\alpha} \right|_{\alpha=0} = \int_a^b \sum_{i=1}^n \left( \eta_i \frac{\partial F}{\partial q_i} + \dot{\eta}_i \frac{\partial F}{\partial \dot{q}_i} \right) dt
+\]</div>
+<div class="math">\[
+= \sum_{i=1}^n \left[ \eta_i \frac{\partial F}{\partial \dot{q}_i} \right]_a^b + \int_a^b \sum_{i=1}^n \eta_i \left( \frac{\partial F}{\partial q_i} - \frac{d}{dt} \frac{\partial F}{\partial \dot{q}_i} \right) dt
+\]</div>
+<div class="math">\[
+= 0
+\]</div>
+<p>则要求</p>
+<div class="math">\[
+\frac{d}{dt} \frac{\partial F}{\partial \dot{q}_i} - \frac{\partial F}{\partial q_i} = 0
+\]</div></section>
+<section class="ms-page" id="p26"><h2><span class="ms-pn">p.26</span></h2><p>Two-fold integration</p>
+<div class="math">\[
+I[z] = \iint_R F\left(x, y, z, \frac{\partial z}{\partial x}, \frac{\partial z}{\partial y}\right) dx dy
+\]</div>
+<p>$R$是某一积分区域</p>
+<p>令 $z(x, y) \to z(x, y) + \alpha \eta(x, y)$</p>
+<p>则</p>
+<div class="math">\[
+0 = \left. \frac{dI}{d\alpha} \right|_{\alpha=0} = \iint_R \left( \eta \frac{\partial F}{\partial z} + \eta_x \frac{\partial F}{\partial z_x} + \eta_y \frac{\partial F}{\partial z_y} \right) dx dy
+\]</div>
+<div class="math">\[
+z_x = \frac{\partial z}{\partial x}, \quad z_y = \frac{\partial z}{\partial y}, \quad \eta_x = \frac{\partial \eta}{\partial x}, \quad \eta_y = \frac{\partial \eta}{\partial y}
+\]</div>
+<p>在积分区域边界上 $\eta(x, y) = 0$</p>
+<div class="math">\[
+\left. \frac{dI}{d\alpha} \right|_{\alpha=0} = \iint_R \eta \left( \frac{\partial F}{\partial z} - \frac{\partial}{\partial x} \frac{\partial F}{\partial z_x} - \frac{\partial}{\partial y} \frac{\partial F}{\partial z_y} \right) dx dy = 0
+\]</div>
+<p>可得欧拉方程</p>
+<div class="math">\[
+\frac{\partial F}{\partial z} - \frac{\partial}{\partial x} \frac{\partial F}{\partial z_x} - \frac{\partial}{\partial y} \frac{\partial F}{\partial z_y} = 0
+\]</div></section>
+<section class="ms-page" id="p27"><h2><span class="ms-pn">p.27</span></h2><p>设 函数 动能 势能</p>
+<div class="math">\[ L = \frac{1}{2} m \dot{x}^2 - V(x) \]</div>
+<p>定义 \( S = \int_{t_1}^{t_2} L \, dt \) 作用量</p>
+<p>求 \( S \) 取极值时 对应的运动方程</p>
+<p>欧拉-拉格朗日方程</p>
+<div class="math">\[ \frac{\partial L}{\partial x} - \frac{d}{dt} \frac{\partial L}{\partial \dot{x}} = 0 \]</div>
+<div class="math">\[ -\frac{dV}{dx} - \frac{d}{dt} m \dot{x} = 0 \]</div>
+<div class="math">\[ \frac{d}{dt} m \dot{x} = -\frac{dV}{dx} \]</div></section>
+<p class="ms-note">本页由手写扫描 OCR 后重排；公式用 MathJax 本地渲染，图为 TikZ/矢量 SVG。原扫描仅作校对底稿，不再作为站点阅读形式。</p>
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>理论力学 · 手稿代码版</span><span><a href="../index.html">返回第 3 章 变分法</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
+<script src="../../../assets/mathjax/tex-svg.js"></script>
+</body>
+</html>

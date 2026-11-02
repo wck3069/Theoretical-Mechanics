@@ -1,0 +1,129 @@
+/* 理论力学 · 手稿代码版 —— 阅读版式（两栏：语义目录侧栏 + 正文栏） */
+:root{
+  --bg:#05060f;--panel:rgba(10,14,30,.72);--line:rgba(150,170,255,.16);
+  --text:#eef1ff;--text2:#b9c2e4;--muted:#8089b0;--cyan:#6fe3ff;--violet:#b79bff;
+  --amber:#ffd27a;--teal:#7ff0cf;--pink:#ff9fc4;
+  --serif:"Noto Serif CJK SC","Songti SC","Source Han Serif SC",Georgia,serif;
+  --sans:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --header-h:52px;--side-w:250px;--content-w:780px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:
+  radial-gradient(1000px 620px at 85% -5%,rgba(60,50,150,.30),transparent 62%),
+  radial-gradient(800px 600px at 5% 15%,rgba(20,80,130,.22),transparent 60%),
+  var(--bg);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.9}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+.ms-header{position:sticky;top:0;z-index:50;background:rgba(5,6,15,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.ms-header .in{max-width:1140px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ms-brand{font-weight:650;font-size:14px}
+.ms-nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.ms-nav a{font-size:12.5px;color:var(--text2);padding:5px 10px;border:1px solid var(--line);border-radius:999px}
+.ms-nav a:hover{color:var(--text);border-color:rgba(111,227,255,.45);text-decoration:none}
+.ms-wrap{max-width:1140px;margin:0 auto;padding:28px 24px 90px;position:relative;z-index:1}
+.ms-hero{padding:20px 0 12px;border-bottom:1px solid var(--line)}
+.ms-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cyan)}
+.ms-hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4.5vw,46px);line-height:1.2;margin:10px 0}
+.ms-lead{color:var(--text2);font-size:14px;max-width:800px}
+.ms-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0 6px}
+.ms-links b{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);margin-right:2px}
+.ms-links a{font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid rgba(111,227,255,.35);background:rgba(111,227,255,.08);color:var(--text2)}
+.ms-links a:hover{color:var(--text);background:rgba(111,227,255,.18);text-decoration:none}
+
+/* ---- two-column shell: sticky semantic TOC + reading column ---- */
+.ms-shell{display:flex;gap:40px;align-items:flex-start;margin-top:8px}
+.ms-toc{flex:0 0 var(--side-w);width:var(--side-w);position:sticky;top:calc(var(--header-h) + 16px);
+  max-height:calc(100vh - var(--header-h) - 34px);overflow-y:auto;overscroll-behavior:contain;
+  padding:12px 10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);scrollbar-width:thin}
+.ms-toc summary{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);
+  list-style:none;padding:4px 8px;user-select:none}
+.ms-toc summary::-webkit-details-marker{display:none}
+.ms-toc ul{list-style:none;margin:6px 0 0;padding:0}
+.ms-toc li{margin:0}
+.ms-toc li a{display:block;padding:4px 8px;border-radius:7px;font-size:12.5px;line-height:1.5;color:var(--text2)}
+.ms-toc li.l4 a{padding-left:20px;font-size:12px;color:var(--muted)}
+.ms-toc li.l5 a{padding-left:32px;font-size:12px;color:var(--muted)}
+.ms-toc li a:hover{color:var(--amber);text-decoration:none}
+.ms-toc li a.active{background:rgba(111,227,255,.12);color:var(--cyan)}
+.ms-toc li.l4 a.active,.ms-toc li.l5 a.active{color:var(--text)}
+.ms-toc a:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+.ms-body{flex:1 1 auto;min-width:0;max-width:var(--content-w);overflow-wrap:anywhere}
+
+/* ---- body typography ---- */
+.ms-page{padding:26px 0 12px;border-top:1px solid rgba(150,170,255,.10);scroll-margin-top:calc(var(--header-h) + 16px)}
+.ms-body h3[id],.ms-body h4[id]{scroll-margin-top:calc(var(--header-h) + 16px)}
+.ms-page:first-of-type{border-top:0;padding-top:10px}
+.ms-page > h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;margin:0 0 8px}
+.ms-page > h2 .ms-pn{font-size:11px;color:var(--muted);opacity:.55}
+.ms-body h3{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.4;margin:28px 0 10px;color:var(--text)}
+.ms-body h4{font-weight:600;font-size:17.5px;line-height:1.5;margin:20px 0 6px;color:var(--amber)}
+.ms-body h3 + h4,.ms-body h4 + p{margin-top:8px}
+.ms-body p{margin:0.9em 0}
+.ms-body ul,.ms-body ol{margin:0.9em 0 0.9em 1.5em;padding:0}
+.ms-body li{margin:6px 0}
+.ms-body .center{text-align:center;margin:16px 0}
+.ms-body figure{margin:20px auto;text-align:center}
+.ms-body figure img{max-width:min(100%,720px);height:auto;background:#fff;border-radius:8px;padding:8px}
+.ms-body figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.6}
+.ms-demo{display:inline-block;font-size:12px;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,210,122,.4);color:var(--amber);white-space:nowrap;vertical-align:middle}
+.ms-demo:hover{background:rgba(255,210,122,.12);text-decoration:none}
+.ms-note{font-size:12px;color:var(--muted);margin-top:26px;border-top:1px solid var(--line);padding-top:14px}
+
+/* ---- MathJax: display math scrolls in the column; inline math stays in the line ---- */
+mjx-container[display="true"]{display:block;overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:baseline}
+mjx-container svg{height:auto}
+.ms-unknown{color:var(--amber);border-bottom:1px dashed rgba(255,210,122,.5)}
+
+.ms-footer{max-width:1140px;margin:0 auto;padding:18px 24px 40px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* ---- <=1100px: sidebar becomes a collapsible 目录 drawer above the text ---- */
+@media(max-width:1100px){
+  .ms-shell{display:block}
+  .ms-toc{position:static;width:auto;max-height:none;overflow:visible;margin:14px 0 2px}
+  .ms-toc summary{cursor:pointer;display:flex;align-items:center;gap:8px;font-size:12px}
+  .ms-toc summary::before{content:"▸";color:var(--cyan)}
+  .ms-toc details[open] summary::before{content:"▾"}
+  .ms-toc details[open] ul{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .ms-toc li.l5 a{padding-left:28px}
+  .ms-body{max-width:var(--content-w)}
+}
+@media(max-width:700px){
+  :root{--header-h:104px}
+  .ms-toc li a{min-height:44px;display:flex;align-items:center;padding:8px 10px}
+  .ms-toc li.l4 a{padding-left:24px}
+  .ms-toc li.l5 a{padding-left:32px}
+  .ms-toc summary{min-height:44px;padding:10px 12px}
+  .ms-demo{min-height:40px;padding:6px 10px;display:inline-flex;align-items:center;vertical-align:middle}
+  .ms-nav a{min-height:40px;display:inline-flex;align-items:center}
+  .ms-wrap{padding:20px 14px 60px}
+  .ms-header .in{padding:9px 14px}
+  .ms-nav{width:100%;margin-left:0;overflow-x:auto;flex-wrap:nowrap}
+  .ms-nav a{white-space:nowrap}
+  .ms-body h3{font-size:21px}
+  .ms-body figure img{max-width:100%}
+}
+
+.ms-code{background:#0a1020;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65;color:#cfe0ff}
+.ms-code code{white-space:pre}
+.ms-box{border:1px solid rgba(255,210,122,.4);background:rgba(255,210,122,.06);border-radius:10px;padding:10px 14px;margin:12px 0}
+.ms-code,.ms-code code{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
+.ms-body p,.ms-body li{overflow-wrap:anywhere;word-break:break-word}
+mjx-container{max-width:100%!important;min-width:0!important;overflow-x:auto!important}
+mjx-assistive-mml{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}
+
+/* ---- print: no sidebar, full-width reading column ---- */
+@media print{
+  body{background:#fff;color:#14182a;font-size:11.5pt;line-height:1.6}
+  .ms-header,.ms-toc,.ms-nav{display:none}
+  .ms-shell{display:block;margin:0}
+  .ms-wrap{max-width:none;padding:0}
+  .ms-body{max-width:none}
+  a{color:#14182a}
+  .ms-demo,.ms-links{display:none}
+  .ms-page{border-top:1px solid #d8dbe8;page-break-inside:auto}
+  .ms-body h3,.ms-body h4{page-break-after:avoid;color:#14182a}
+  .ms-body h4{color:#8a5a00}
+  mjx-container{overflow:visible}
+}
