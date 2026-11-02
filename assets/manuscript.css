@@ -46,7 +46,10 @@ a:hover{text-decoration:underline}
 .ms-demo{display:inline-block;font-size:12px;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,210,122,.4);color:var(--amber);white-space:nowrap;vertical-align:middle}
 .ms-demo:hover{background:rgba(255,210,122,.12);text-decoration:none}
 .ms-note{font-size:12px;color:var(--muted);margin-top:26px;border-top:1px solid var(--line);padding-top:14px}
-.mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container{display:block;overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container svg{max-width:100%;height:auto}
+.ms-body{overflow-wrap:anywhere}
+.ms-unknown{color:var(--amber);border-bottom:1px dashed rgba(255,210,122,.5)}
 .ms-footer{max-width:1040px;margin:0 auto;padding:18px 22px 40px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 @media(max-width:700px){
   .ms-wrap{padding:20px 14px 60px}
@@ -56,3 +59,9 @@ a:hover{text-decoration:underline}
   .ms-body h3{font-size:19px}
   .ms-body figure img{max-width:100%}
 }
+.ms-code{background:#0a1020;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65;color:#cfe0ff}
+.ms-code code{white-space:pre}
+.ms-box{border:1px solid rgba(255,210,122,.4);background:rgba(255,210,122,.06);border-radius:10px;padding:10px 14px;margin:12px 0}
+.ms-code,.ms-code code{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
+.ms-body p,.ms-body li{overflow-wrap:anywhere;word-break:break-word}
+mjx-container{max-width:100%!important;overflow-x:auto!important}

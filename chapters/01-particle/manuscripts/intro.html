@@ -6,7 +6,7 @@
 <title>绪论与第一章笔记 · 理论力学手稿</title>
 <link rel="stylesheet" href="../../../assets/manuscript.css">
 <script>
-window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
+window.MathJax = {tex:{inlineMath:[['$','$'],['\(','\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
 </script>
 </head>
 <body>
@@ -23,10 +23,9 @@ window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\
 </div>
 <div class="ms-toc"><b>页内导航</b> <a href="#p1">第 1 页</a> <a href="#p2">第 2 页</a> <a href="#p3">第 3 页</a> <a href="#p4">第 4 页</a> <a href="#p5">第 5 页</a> <a href="#p6">第 6 页</a> <a href="#p7">第 7 页</a> <a href="#p8">第 8 页</a> <a href="#p9">第 9 页</a> <a href="#p10">第 10 页</a> <a href="#p11">第 11 页</a> <a href="#p12">第 12 页</a> <a href="#p13">第 13 页</a> <a href="#p14">第 14 页</a> <a href="#p15">第 15 页</a> <a href="#p16">第 16 页</a> <a href="#p17">第 17 页</a> <a href="#p18">第 18 页</a> <a href="#p19">第 19 页</a> <a href="#p20">第 20 页</a> <a href="#p21">第 21 页</a> <a href="#p22">第 22 页</a> <a href="#p23">第 23 页</a> <a href="#p24">第 24 页</a> <a href="#p25">第 25 页</a> <a href="#p26">第 26 页</a> <a href="#p27">第 27 页</a> <a href="#p28">第 28 页</a> <a href="#p29">第 29 页</a> <a href="#p30">第 30 页</a> <a href="#p31">第 31 页</a> <a href="#p32">第 32 页</a> <a href="#p33">第 33 页</a> <a href="#p34">第 34 页</a> <a href="#p35">第 35 页</a> <a href="#p36">第 36 页</a> <a href="#p37">第 37 页</a> <a href="#p38">第 38 页</a> <a href="#p39">第 39 页</a> <a href="#p40">第 40 页</a> <a href="#p41">第 41 页</a> <a href="#p42">第 42 页</a> <a href="#p43">第 43 页</a> <a href="#p44">第 44 页</a> <a href="#p45">第 45 页</a> <a href="#p46">第 46 页</a> <a href="#p47">第 47 页</a> <a href="#p48">第 48 页</a> <a href="#p49">第 49 页</a></div>
 <article class="ms-body">
-<p class="ms-note" style="margin:0 0 10px">手写示意图经视觉审核：可读者已重绘为 SVG，不可读/误检者已移除。</p>
 <section class="ms-page" id="p1"><h2>第 1 页</h2><h4>1</h4>
 <div class="math">\[
-[?] \quad [?]
+<span class="ms-unknown">〔原稿不清〕</span> \quad <span class="ms-unknown">〔原稿不清〕</span>
 \]</div></section>
 <section class="ms-page" id="p2"><h2>第 2 页</h2><h3>理论力学课程</h3>
 <h4>考核标准</h4>
@@ -104,7 +103,7 @@ window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\
 <p><figure><img src="figs/intro/p01-f1.svg" alt="虚线构成的矩形框" loading="lazy"><figcaption>虚线构成的矩形框</figcaption></figure></p>
 <p></p></section>
 <section class="ms-page" id="p5"><h2>第 5 页</h2><h3>第一章 质点力学</h3>
-<p>\subsection*{1.1 运动的描述方法}</p>
+<h3>1.1 运动的描述方法</h3>
 <h4>1) 参考系与坐标系</h4>
 <p>为了研究宏观物体的机械运动，首先确定其位置，因位置是相对的，因此应首先找出另一个物体作为参考，这种参考的物体叫做参考系。</p>
 <p>坐标系：用以标定物体的空间位置。</p>
@@ -453,7 +452,7 @@ t&#x27; &amp;= t
 \implies
 \left\{
 \begin{aligned}
-x &amp;= x&#x27; - vt \\
+x &amp;= x&#x27; + vt \\
 y &amp;= y&#x27; \\
 z &amp;= z&#x27; \\
 t &amp;= t&#x27;
@@ -691,7 +690,7 @@ x = A e^{\sqrt{a} t} + B e^{-\sqrt{a} t}
 <div class="math">\[
 x = A e^{\sqrt{a} t} + B e^{-\sqrt{a} t} = \tilde{A} \cosh\left(\sqrt{a} t + \theta_0\right)
 \]</div>
-<p>若 $a < 0$，则解为：</p>
+<p>若 $a &lt; 0$，则解为：</p>
 <div class="math">\[
 x = A e^{i \sqrt{-a} t} + B e^{-i \sqrt{-a} t} = \tilde{A} \cos\left(\sqrt{-a} t + \theta_0\right)
 \]</div>
@@ -722,7 +721,7 @@ m \ddot{x} + b \dot{x} + k x = 0
 <div class="math">\[
 m \lambda^2 + b \lambda + k = 0
 \]</div>
-<p>若 $\frac{b^2}{4 m^2} - \frac{k}{m} < 0$，令 $\omega^2 = \frac{k}{m} - \frac{b^2}{4 m^2}$，则解为</p>
+<p>若 $\frac{b^2}{4 m^2} - \frac{k}{m} &lt; 0$，令 $\omega^2 = \frac{k}{m} - \frac{b^2}{4 m^2}$，则解为</p>
 <div class="math">\[
 x = e^{-\frac{b}{2m} t} \left( A e^{i \omega t} + B e^{-i \omega t} \right)
 \]</div>
@@ -919,7 +918,7 @@ m(x\dot{y} - y\dot{x}) = C_3
 <div class="math">\[
 0 - mg l \cos\theta_0 = \frac{1}{2}mv^2 - mg l \cos\theta
 \]</div>
-<p>得 $v^2 = 2gl(\cos\theta - \cos\theta_0)$，当 $\cos\theta = 0$ 时为最低点。</p>
+<p>得 $v^2 = 2gl(\cos\theta - \cos\theta_0)$，当 $\cos\theta = 1$ 时为最低点。</p>
 <p>(2) 极坐标，$v = l\dot{\theta}$，切向速度：</p>
 <div class="math">\[
 m\dot{v} = mg \sin\theta = -ml\ddot{\theta}
@@ -1048,9 +1047,9 @@ r = \frac{1}{u} = \frac{h^2/k^2}{1 + C \cos(\theta - \theta_0) \cdot h^2/k^2}
 r = \frac{h^2/k^2}{1 + \sqrt{1 + \frac{2 h^2 E}{m k^4}} \cos(\theta - \theta_0)} = \frac{p}{1 + e \cos\theta}
 \]</div>
 <p>当 $E = -\frac{m k^4}{2 h^2}$ 时，$e = 0$，圆；</p>
-<p>当 $E < 0$ 时，$e < 1$，椭圆；</p>
+<p>当 $E &lt; 0$ 时，$e &lt; 1$，椭圆；</p>
 <p>当 $E = 0$ 时，$e = 1$，轨道为抛物线；</p>
-<p>当 $E > 0$ 时，$e > 1$，双曲线。</p></section>
+<p>当 $E &gt; 0$ 时，$e &gt; 1$，双曲线。</p></section>
 <section class="ms-page" id="p35"><h2>第 35 页</h2><h4>4. 开普勒定律</h4>
 <p>Tycho Brahe 1546--1601   Johannes Kepler 1571--1630   Galileo Galilei 1564--1642   Isaac Newton 1643--1727</p>
 <p>开普勒利用第谷·布拉赫的观测资料，总结出了三条行星运动的规律。</p>
@@ -1119,7 +1118,7 @@ h^2 = - \frac{F}{m u^3} = \frac{P(u)}{u^3}
 v = \sqrt{\frac{P(u)}{u}}
 \]</div>
 <p>$P = - \frac{F}{m}$</p>
-<p>即只要在 $r$ 处垂直于 $\vec{r}$ 的抛射速度 $v > \sqrt{\frac{P(u)}{u}}$，可做圆周运动。</p>
+<p>即只要在 $r$ 处垂直于 $\vec{r}$ 的抛射速度 $v &gt; \sqrt{\frac{P(u)}{u}}$，可做圆周运动。</p>
 <p>稳定定义：当质点受到微小扰动而偏离原来轨道后，如果还保持在原来轨道近邻，那么原来的轨道是稳定的；反之就是不稳定的。</p>
 <p>28</p>
 <p></p></section>
@@ -1141,9 +1140,9 @@ v = \sqrt{\frac{P(u)}{u}}
 <div class="math">\[ \frac{d^2 \xi}{d\theta^2} + \xi \left( 3 - \frac{u_0 P&#x27;(u_0)}{P(u_0)} \right) = 0 \]</div>
 <p>解为：</p>
 <div class="math">\[ \xi = A e^{\theta \sqrt{\frac{u_0 P&#x27;(u_0)}{P(u_0)} - 3}} + B e^{-\theta \sqrt{\frac{u_0 P&#x27;(u_0)}{P(u_0)} - 3}} \]</div>
-<p>当 \( \frac{u_0 P'(u_0)}{P(u_0)} - 3 > 0 \) 时，$\xi$随$\theta$指数放大，发散；</p>
+<p>当 \( \frac{u_0 P'(u_0)}{P(u_0)} - 3 &gt; 0 \) 时，$\xi$随$\theta$指数放大，发散；</p>
 <p>当 \( \frac{u_0 P'(u_0)}{P(u_0)} - 3 = 0 \) 时，\( \xi = A\theta + B \)，随$\theta$线性变大，发散；</p>
-<p>当 \( \frac{u_0 P'(u_0)}{P(u_0)} - 3 < 0 \) 时，为振荡函数；</p>
+<p>当 \( \frac{u_0 P'(u_0)}{P(u_0)} - 3 &lt; 0 \) 时，为振荡函数；</p>
 <p>当 \( F = -\frac{k^2 m}{r^k} \) 时，\( \frac{u_0 P'(u_0)}{P(u_0)} = k - 3 \)，当k&lt;3时存在稳定圆轨道。</p>
 <p>\hfill (29)</p></section>
 <section class="ms-page" id="p38"><h2>第 38 页</h2><p>拉普拉斯-龙格-楞次矢量.</p>
@@ -1195,7 +1194,7 @@ r = \frac{L^2/(mk)}{1 + \frac{4}{mk} \cos\theta}
 <div class="math">\[ \frac{1}{2}mv^2 + \frac{k&#x27;}{r} = \frac{1}{2}m(\dot{r}^2 + r^2\dot{\theta}^2) + \frac{k&#x27;}{r} = E \]</div>
 <p>E恒大于零，轨道方程</p>
 <div class="math">\[ r = \frac{h^2/k^2}{1 + \sqrt{1 + 2h^2E/mk^4} \cos\theta} \]</div>
-<p>偏心率 $e > 0$，轨道为双曲线，$\varphi$ 为偏转角。</p>
+<p>偏心率 $e &gt; 0$，轨道为双曲线，$\varphi$ 为偏转角。</p>
 <p>初始条件：$\theta = \pi$，$r \to \infty$，$r\sin(\pi - \theta) = r\sin\theta = \rho$ 为截距。</p>
 <p>角动量：$mv_0\rho$，$h = v_0\rho$ 为常量。</p>
 <p>比耐公式：</p>
@@ -1257,13 +1256,13 @@ d\sigma = -2\pi \frac{k&#x27;}{m v_\infty} \cot \frac{\phi}{2} \cdot \frac{k&#x2
 <p><figure><img src="figs/intro/p37-f37.svg" alt="散射截面随散射角变化的曲线图" loading="lazy"><figcaption>散射截面随散射角变化的曲线图</figcaption></figure></p></section>
 <section class="ms-page" id="p42"><h2>第 42 页</h2><p>有心力，散射截面示例</p>
 <h4>例1</h4>
-<p>求质点在半径为$a$的刚性球上散射的有效截面。（即当$r<a$时 $U=\infty$，当$r>a$时 $U=0$）</p>
+<p>求质点在半径为$a$的刚性球上散射的有效截面。（即当$r&lt;a$时 $U=\infty$，当$r&gt;a$时 $U=0$）</p>
 <p>解：</p>
 <p>图示，两条直线（入射，出射）与撞击点的半径对称，</p>
 <div class="math">\[
 \rho = a \sin\varphi = a \sin\frac{\pi-\theta}{2} = a \cos\frac{\theta}{2}, \quad \theta = \pi - 2\varphi
 \]</div>
-<p>其中 $0<\varphi<\frac{\pi}{2}$，$0<\theta<\pi$。</p>
+<p>其中 $0&lt;\varphi&lt;\frac{\pi}{2}$，$0&lt;\theta&lt;\pi$。</p>
 <p>散射截面定义：</p>
 <div class="math">\[
 d\sigma = 2\pi \rho d\rho = \frac{1}{2} \cdot 2\pi a^2 \cos\frac{\theta}{2} \sin\frac{\theta}{2} d\theta = \frac{1}{2} \pi a^2 \sin\theta d\theta
@@ -1459,7 +1458,7 @@ a = \sqrt{\frac{L^2/mE}{1+\varepsilon}}, \quad b = \sqrt{\frac{L^2/mE}{1-\vareps
 \]</div>
 <p>类似与光子折射。</p>
 <h4>(2)</h4>
-<p>试求被半径为$a$、深度为$U_0$的球形势阱（当$r>a$时$U=0$，当$r<a$时$U=-U_0$）散射的有效截面。</p>
+<p>试求被半径为$a$、深度为$U_0$的球形势阱（当$r&gt;a$时$U=0$，当$r&lt;a$时$U=-U_0$）散射的有效截面。</p>
 <p>解：</p>
 <div class="math">\[
 \frac{\sin\alpha}{\sin\beta} = n, \quad n = \sqrt{1 + \frac{2 U_0}{m v^2}}
@@ -1495,7 +1494,7 @@ a = \sqrt{\frac{L^2/mE}{1+\varepsilon}}, \quad b = \sqrt{\frac{L^2/mE}{1-\vareps
 <div class="math">\[
 = \frac{\pi a^2 n^2}{2} \sin \frac{\chi}{2} \cdot \frac{\left(n \cos \frac{\chi}{2} - 1\right)\left(n - \cos \frac{\chi}{2}\right)}{\left(1 + n^2 - 2n \cos \frac{\chi}{2}\right)^2} d\chi
 \]</div>
-<p>由于 $0 < \rho < a$ 时存在散取 要求 $0 \leq \cos \frac{\chi}{2} \leq \frac{1}{n}$</p>
+<p>由于 $0 &lt; \rho &lt; a$ 时存在散取 要求 $0 \leq \cos \frac{\chi}{2} \leq \frac{1}{n}$</p>
 <div class="math">\[
 \int d\sigma = \int_{\frac{1}{n}} d\cos \frac{\chi}{2} \left( \frac{d\sigma}{d\cos \frac{\chi}{2}} \right) = \pi a^2
 \]</div></section>

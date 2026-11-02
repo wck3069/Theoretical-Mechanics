@@ -6,7 +6,7 @@
 <title>变分原理手稿 · 理论力学手稿</title>
 <link rel="stylesheet" href="../../../assets/manuscript.css">
 <script>
-window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
+window.MathJax = {tex:{inlineMath:[['$','$'],['\(','\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
 </script>
 </head>
 <body>
@@ -23,9 +23,8 @@ window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\
 </div>
 <div class="ms-toc"><b>页内导航</b> <a href="#p1">第 1 页</a> <a href="#p2">第 2 页</a> <a href="#p3">第 3 页</a> <a href="#p4">第 4 页</a> <a href="#p5">第 5 页</a> <a href="#p6">第 6 页</a> <a href="#p7">第 7 页</a> <a href="#p8">第 8 页</a> <a href="#p9">第 9 页</a> <a href="#p10">第 10 页</a> <a href="#p11">第 11 页</a> <a href="#p12">第 12 页</a> <a href="#p13">第 13 页</a> <a href="#p14">第 14 页</a> <a href="#p15">第 15 页</a> <a href="#p16">第 16 页</a> <a href="#p17">第 17 页</a> <a href="#p18">第 18 页</a> <a href="#p19">第 19 页</a> <a href="#p20">第 20 页</a> <a href="#p21">第 21 页</a> <a href="#p22">第 22 页</a> <a href="#p23">第 23 页</a> <a href="#p24">第 24 页</a> <a href="#p25">第 25 页</a> <a href="#p26">第 26 页</a> <a href="#p27">第 27 页</a></div>
 <article class="ms-body">
-<p class="ms-note" style="margin:0 0 10px">手写示意图经视觉审核：可读者已重绘为 SVG，不可读/误检者已移除。</p>
 <section class="ms-page" id="p1"><h2>第 1 页</h2><h3>变分原理 <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
-<p>参考：<em>Modern Classical Mechanics</em></p>
+<p>参考：&lt;em&gt;Modern Classical Mechanics&lt;/em&gt;</p>
 <p>T. M. Helliwell</p>
 <p>V. U. Sahakian</p>
 <h4>3.</h4>
@@ -33,7 +32,7 @@ window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\
 <section class="ms-page" id="p2"><h2>第 2 页</h2><h3>History</h3>
 <p>变分法，又称为泛函分析，通俗讲“函数的函数”</p>
 <p>光学费马原理，法国数学家费马1662年提出，路径极值问题：根据未发表的工作 据说1684年牛顿几乎已发明变分法。</p>
-<p><em>待考证</em></p>
+<p>&lt;em&gt;待考证&lt;/em&gt;</p>
 <p>真正开始，引起广泛关注，自1696年，由Johan伯努利发起的挑战，最速降线挑战。</p>
 <p>1696年6月   为期6个月</p>
 <p>I. Johan Bernouli. address the most brilliant mathematicians in the world. Nothing is more attractive to intelligent people than an honest, challenging problem, whose possible solution will bestow fame and remain as a lasting monument. ------ from wiki</p>
@@ -41,7 +40,7 @@ window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\
 <p>Given two points $A$ and $B$ in a vertical plane, what is the curve traced out by a point acted on only by gravity, which starts at $A$ and reaches $B$ in the shortest time.</p>
 <p>在Leibniz建议下，$^{12}$月伯努利因未收到答案而将挑战延长至一年半。</p>
 <p>1697年1月，伯努利给牛顿写信，将上述内容给牛顿，牛顿1月29日下午4点收到，到第二天早晨4点写解答后寄出匿名，牛顿说：</p>
-<p>``I do not love to be dunned and teased by foreigners about mathematic Thyrs[?]&#x27;&#x27;</p></section>
+<p>``I do not love to be dunned and teased by foreigners about mathematic Thyrs<span class="ms-unknown">〔原稿不清〕</span>&#x27;&#x27;</p></section>
 <section class="ms-page" id="p3"><h2>第 3 页</h2><p>Euler（欧拉）1733年建立起这个学科。Lagrange在Euler影响下开始研究这个问题。1755年欧拉开始采用时年19岁Lagrange的$\textit{purely analytic approach}$，在1756年Euler正式提出“$\textit{calculus of variations}$”。Lagrange首个将其方法用于力学，伯努利挑战137年之后，哈密顿正式提出最小作用量原理。</p></section>
 <section class="ms-page" id="p4"><h2>第 4 页</h2><h3>3.1 费马原理（1662年，法国科学家提出） <a class="ms-demo" href="../../../modules/04-variational/index.html">交互演示</a></h3>
 <p>费马原理指出，光沿着两点之间所需光程最短的路径前进。也就是说，光从$a$到$b$选择走一条用时最短（或最长）的路径。</p>
@@ -224,7 +223,7 @@ k^2 (x - x_0)^2 + k^2 y^2 = 1
 x (y&#x27;)^2 - \left(2y y&#x27; + 2x (y&#x27;)^2 + 2x y y&#x27;\right) = 0
 \]</div>
 <p>在运用变分法计算后，Euler方程把求解路径的问题变成了求解微分方程的问题。</p>
-<p>\subsection*{3.3 测地线（曲面上两点之间距离最短的一条线）}</p>
+<h3>3.3 测地线（曲面上两点之间距离最短的一条线）</h3>
 <p>我们现在寻找一个球面上两点之间最短距离，球半径为$R$。</p>
 <p>球坐标下，无穷小位移路程 $ds_\theta = R d\theta$</p>
 <p>若改变$\varphi$，则 $ds_\varphi = R \sin\theta d\varphi$，在方向上，$ds_\theta, ds_\varphi$互相垂直，所以</p>
@@ -291,7 +290,7 @@ S = R \int_{a}^{b} \sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2} \, d\theta
 F = \sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2} \implies \frac{\partial F}{\partial \varphi&#x27;} = \frac{\sin^2\theta \, \varphi&#x27;}{\sqrt{1 + \sin^2\theta \, (\varphi&#x27;)^2}} = k
 \]</div>
 <div class="math">\[
-\implies \varphi&#x27; = \pm \frac{k^2 \csc^2\theta}{\sqrt{1 - k^2 \csc^2\theta}} \implies \varphi = \alpha \sin^{-1} [?] + \beta \quad q = \alpha \cot\theta, \quad \alpha^{-1} = \pm \frac{\sqrt{1 - k^2}}{k}
+\implies \varphi&#x27; = \pm \frac{k^2 \csc^2\theta}{\sqrt{1 - k^2 \csc^2\theta}} \implies \varphi = \alpha \sin^{-1} <span class="ms-unknown">〔原稿不清〕</span> + \beta \quad q = \alpha \cot\theta, \quad \alpha^{-1} = \pm \frac{\sqrt{1 - k^2}}{k}
 \]</div>
 <p>即</p>
 <div class="math">\[
@@ -343,18 +342,13 @@ a z = -x \sin \beta + y \cos \beta
 <p>给定在竖直平面的两点 $a$ 和 $b$. 在仅有重力作用下,</p>
 <p>哪条路径用时最短?</p>
 <p>此即为最速降线问题.</p>
-<p>\vspace{2em}</p>
-<p>\fbox{</p>
-<p>\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}</p>
+<div class="ms-box">
 <p>历史<br></p>
 <p>Johan的哥哥 Jakob Bernoulli<br></p>
 <p>牛顿、莱布尼兹、Tschirnhaus, $\text{I'H}\hat{o}\text{pital}$（洛必达）, 1697年5月的《博学通报》<br></p>
 <p>Jakob后来提出了更为复杂的最速降线问题, 他求解该问题的方法, 被Euler提炼发展为变分法, Lagrange后来进一步将Euler的结果用现代化的无穷小变分计算.</p>
-<p>\end{minipage}</p>
-<p>}</p>
-<p>\vspace{1em}</p>
+</div>
 <p>\textcolor{red}{此解为摆线的一段}</p>
-<p>\vspace{1em}</p>
 <p>如上图所示, 路径4中, 质点加速较慢, 最终耗时长. 路径2中, 最开始, 质点的速度比路径3中的快, 但路径2的路程长, 两个因素共同影响下, 它用的时间可能比路径3中短, 也可能长.</p></section>
 <section class="ms-page" id="p15"><h2>第 15 页</h2><p>从a到b的用时为</p>
 <div class="math">\[
@@ -510,7 +504,7 @@ F\left( x, y_1(x), y_2(x), \dots, y_n(x), y_1&#x27;(x), y_2&#x27;(x), \dots, y_n
 <p>当 $y=0$ 时，$x=0$，故 $x_0 = 0$。</p>
 <p>绳长为 $l$，进一步化简得</p>
 <div class="math">\[ y = k \cosh \frac{x - x_0}{k} \]</div>
-<div class="math">\[ y = k \cdot \frac{e^{\frac{1}{k}(x - x_0)} - e^{-\frac{1}{k}(x - x_0)}}{e^{\frac{1}{k}(x - x_0)} + e^{-\frac{1}{k}(x - x_0)}} = k \tanh \frac{x - x_0}{k} \]</div></section>
+<div class="math">\[ y = k \cdot \frac{e^{\frac{1}{k}(x - x_0)} + e^{-\frac{1}{k}(x - x_0)}}{e^{\frac{1}{k}(x - x_0)} + e^{-\frac{1}{k}(x - x_0)}} = k \cosh \frac{x - x_0}{k} \]</div></section>
 <section class="ms-page" id="p22"><h2>第 22 页</h2><h4>4</h4>
 <p>抛物面方程为 $z = A(x^2 + y^2)$，其中 $A$ 为常数，求测地线方程，设已知该测地线过点 $(x,y)_0=(x_0,0)$，且满足 $\left(\frac{dy}{dx}\right)_0 = 0$，该测地线能否回到原点相同点？</p>
 <p>解：$x$-$y$平面用极坐标，令 $x = r\cos\theta$，$y = r\sin\theta$，则 $z = A r^2$，故 $dz = 2A r dr$。</p>

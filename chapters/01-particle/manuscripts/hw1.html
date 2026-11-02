@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>作业一 · 第一章手稿 · 理论力学手稿</title>
+<title>作业一与作业2 · 第一章手稿 · 理论力学手稿</title>
 <link rel="stylesheet" href="../../../assets/manuscript.css">
 <script>
-window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
+window.MathJax = {tex:{inlineMath:[['$','$'],['\(','\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'local'}};
 </script>
 </head>
 <body>
@@ -17,13 +17,12 @@ window.MathJax = {tex:{inlineMath:[['$','$']],displayMath:[['$$','$$'],['\\[','\
 <main class="ms-wrap">
 <div class="ms-hero">
 <div class="ms-eyebrow">HANDWRITTEN MANUSCRIPT · CODE EDITION</div>
-<h1>作业一 · 第一章手稿</h1>
+<h1>作业一与作业2 · 第一章手稿</h1>
 <p class="ms-lead">26 页手写题解的代码化转写；公式随页面渲染，图为 SVG。</p>
 <div class="ms-links"><a href="../../../modules/00-binet/index.html">M0 比奈方程</a> <a href="../../../modules/01-effective-potential/index.html">M1 有效势</a> <a href="../../../modules/02-scattering/index.html">M2 散射</a></div>
 </div>
 <div class="ms-toc"><b>页内导航</b> <a href="#p1">第 1 页</a> <a href="#p2">第 2 页</a> <a href="#p3">第 3 页</a> <a href="#p4">第 4 页</a> <a href="#p5">第 5 页</a> <a href="#p6">第 6 页</a> <a href="#p7">第 7 页</a> <a href="#p8">第 8 页</a> <a href="#p9">第 9 页</a> <a href="#p10">第 10 页</a> <a href="#p11">第 11 页</a> <a href="#p12">第 12 页</a> <a href="#p13">第 13 页</a> <a href="#p14">第 14 页</a> <a href="#p15">第 15 页</a> <a href="#p16">第 16 页</a> <a href="#p17">第 17 页</a> <a href="#p18">第 18 页</a> <a href="#p19">第 19 页</a> <a href="#p20">第 20 页</a> <a href="#p21">第 21 页</a> <a href="#p22">第 22 页</a> <a href="#p23">第 23 页</a> <a href="#p24">第 24 页</a> <a href="#p25">第 25 页</a> <a href="#p26">第 26 页</a></div>
 <article class="ms-body">
-<p class="ms-note" style="margin:0 0 10px">手写示意图经视觉审核：可读者已重绘为 SVG，不可读/误检者已移除。</p>
 <section class="ms-page" id="p1"><h2>第 1 页</h2><h3>作业一 第一章</h3>
 <h4>1.</h4>
 <p>如果 $\vec{F}(\vec{r}) = F(r) \vec{e}_r$，求证此力为保守力。</p>
@@ -106,7 +105,7 @@ v = \frac{r v_0}{r - t \cot\alpha \cdot v_0}
 \int \frac{\mathrm{d}v}{v^2} = \int \frac{\cot\alpha}{r} \mathrm{d}t
 \]</div>
 <div class="math">\[
-\frac{1}{v} - \frac{1}{v_0} = \frac{\cot\alpha}{r} t \implies v = \frac{r v_0}{r - t \cot\alpha \cdot v_0}
+\frac{1}{v} - \frac{1}{v_0} = -\frac{\cot\alpha}{r} t \implies v = \frac{r v_0}{r - t \cot\alpha \cdot v_0}
 \]</div>
 <p><figure><img src="figs/hw1/p01-f1.svg" alt="圆周运动：法向加速度 $a_n$、切向加速度 $a_t$ 与速度 $\vec v$ 的分解。" loading="lazy"><figcaption>圆周运动：法向加速度 $a_n$、切向加速度 $a_t$ 与速度 $\vec v$ 的分解。</figcaption></figure></p></section>
 <section class="ms-page" id="p3"><h2>第 3 页</h2><h4>4.</h4>
@@ -191,14 +190,14 @@ y = \left(\frac{mE}{eB^2}+\frac{mv_0}{eB}\right)\sin\frac{eB}{m}t - \frac{E}{B}t
 <p>其中角加速度满足：</p>
 <div class="math">\[ \ddot{\theta} = \frac{d\dot{\theta}}{dt} = \frac{d\dot{\theta}}{d\theta}\dot{\theta} = \frac{1}{2}\frac{d\dot{\theta}^2}{d\theta} \]</div>
 <p>代入得：</p>
-<div class="math">\[ \frac{m}{2}d\dot{\theta}^2 = -mg\sin\theta d\theta \]</div>
+<div class="math">\[ \frac{ml}{2}d\dot{\theta}^2 = -mg\sin\theta d\theta \]</div>
 <p>初始条件$\dot{\theta}|_{\theta=\theta_0}=0$，积分得：</p>
 <div class="math">\[ l\dot{\theta}^2 = 2g(\cos\theta - \cos\theta_0) \]</div>
 <p>整理变量分离：</p>
 <div class="math">\[ \frac{d\theta}{\sqrt{\cos\theta - \cos\theta_0}} = \sqrt{\frac{2g}{l}}dt \]</div>
 <p>积分得周期：</p>
 <div class="math">\[ T = \sqrt{\frac{8l}{g}}\int_{0}^{\theta_0}\frac{d\theta}{\sqrt{\cos\theta - \cos\theta_0}} \]</div>
-<p>(1) 当$\theta_0 \ll 1$时，$\theta < \theta_0 \ll 1$，令$\theta = \alpha\theta_0$，则：</p>
+<p>(1) 当$\theta_0 \ll 1$时，$\theta &lt; \theta_0 \ll 1$，令$\theta = \alpha\theta_0$，则：</p>
 <div class="math">\[ \cos\theta_0 \approx 1 - \frac{\theta_0^2}{2}, \quad \cos\theta \approx 1 - \frac{\alpha^2}{2}\theta_0^2, \quad d\theta = \theta_0 d\alpha \]</div>
 <p>代入积分：</p>
 <div class="math">\[ \int_{0}^{\theta_0}\frac{d\theta}{\sqrt{\cos\theta - \cos\theta_0}} = \sqrt{2}\int_{0}^{1}\frac{d\alpha}{\sqrt{1-\alpha^2}} = \frac{\pi}{\sqrt{2}} \]</div>
@@ -283,7 +282,7 @@ a_n = \frac{v^2}{r} = -\frac{N}{m} + g\cos\theta
 \frac{\partial F_x}{\partial y} - \frac{\partial F_y}{\partial x} = 0
 \]</div>
 <p>即 $a_{12}=a_{21}$，此外 $a_{23}=a_{32},a_{31}=a_{13}$。</p>
-<p>由 $x\mathrm{d}y + y\mathrm{d}x = \mathrm{d}(xy)$，$x\mathrm{d}x = \frac{1}{2}\mathrm{d}x^2$，$z\mathrm{d}x = \mathrm{d}(zx)$，</p>
+<p>由 $x\mathrm{d}y + y\mathrm{d}x = \mathrm{d}(xy)$，$x\mathrm{d}x = \frac{1}{2}\mathrm{d}x^2$，$z\mathrm{d}x + x\mathrm{d}z = \mathrm{d}(zx)$，</p>
 <div class="math">\[
 \begin{aligned}
 V &amp;= -\int F_x \mathrm{d}x + F_y \mathrm{d}y + F_z \mathrm{d}z \\
@@ -301,9 +300,9 @@ V &amp;= -\int F_x \mathrm{d}x + F_y \mathrm{d}y + F_z \mathrm{d}z \\
 \omega^2 r \left( \cos\theta - \mu \sin\theta \right) \le g\left( \sin\theta + \mu \cos\theta \right)
 \]</div>
 <p><figure><img src="figs/hw1/p04-f4.svg" alt="旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。" loading="lazy"><figcaption>旋转漏斗：锥面角 $\theta$、半径 $r$、支持力 $N$、摩擦力 $F_f$ 与重力 $mg$。</figcaption></figure></p></section>
-<section class="ms-page" id="p8"><h2>第 8 页</h2><p>当 $\cos\theta - \mu\sin\theta \neq 0$ 时，$\mu > \cot\theta$ 时，</p>
-<p>不等式永不成立，因 $\sin\theta + \mu\cos\theta > 0$，$(2\pi\omega)^2>0$，$g>0$，$r>0$。</p>
-<p>当 $\mu < \cot\theta$ 时</p>
+<section class="ms-page" id="p8"><h2>第 8 页</h2><p>当 $\cos\theta - \mu\sin\theta \neq 0$ 时，$\mu &gt; \cot\theta$ 时，</p>
+<p>左端系数为负，上界不再给出有限的正角速度限制。</p>
+<p>当 $\mu &lt; \cot\theta$ 时</p>
 <div class="math">\[
 \omega^2 \leq \frac{g(\sin\theta + \mu\cos\theta)}{r(\cos\theta - \mu\sin\theta)} = \omega_{\text{max}}^2
 \]</div>
@@ -318,8 +317,8 @@ mg\sin\theta - m\omega^2 r\cos\theta - F_f = 0
 <div class="math">\[
 \omega^2 r (\cos\theta + \mu\sin\theta) \geq g(\sin\theta - \mu\cos\theta)
 \]</div>
-<p>当 $\sin\theta - \mu\cos\theta < 0$，即 $\mu > \tan\theta$ 时，永远不会滑进中心；</p>
-<p>当 $\mu < \tan\theta$，则可能滑向中心，</p>
+<p>当 $\sin\theta - \mu\cos\theta &lt; 0$，即 $\mu &gt; \tan\theta$ 时，永远不会滑进中心；</p>
+<p>当 $\mu &lt; \tan\theta$，则可能滑向中心，</p>
 <div class="math">\[
 \omega^2 \geq \frac{g(\sin\theta - \mu\cos\theta)}{r(\cos\theta + \mu\sin\theta)} = \omega_{\text{min}}^2
 \]</div></section>
@@ -499,7 +498,7 @@ m\ddot{r} = -\frac{\mathrm{d}V_{\text{eff}}}{\mathrm{d}r}
 <div class="math">\[
 V_{\text{eff}}(r) = V_{\text{eff}}(r_0) + V_{\text{eff}}&#x27;(r_0) (r-r_0) + \frac{1}{2}V_{\text{eff}}&#x27;&#x27;(r_0) (r-r_0)^2 + \cdots
 \]</div>
-<p>其中$V_{\text{eff}}'(r_0)=0$，$V_{\text{eff}}''(r_0)>0$对应稳定圆形轨道，代入运动方程得近似式：</p>
+<p>其中$V_{\text{eff}}'(r_0)=0$，$V_{\text{eff}}''(r_0)&gt;0$对应稳定圆形轨道，代入运动方程得近似式：</p>
 <div class="math">\[
 m\ddot{r} = -(r-r_0) V_{\text{eff}}&#x27;&#x27;(r_0)
 \]</div>
@@ -528,7 +527,7 @@ w_r = \frac{L\sqrt{k+2}}{m r_0^2} \implies \boxed{k&gt;-2,\text{存在振动}}
 <p>$\star$ 当 $k=7$，$k=-7/4$ 等等，$\cdots\cdots$</p>
 <h3>3.</h3>
 <p>某彗星的轨道为抛物线，近日点为地球轨道半径的 $1/n$，</p>
-<p>证明：此彗星在地球轨道内停留的时间为1地球年的 $\frac{2}{3\pi}\frac{n+2}{n}\sqrt{\frac{n-1}{2n}}$，证明其最大值为 $\frac{2}{3\pi}$[?]</p>
+<p>证明：此彗星在地球轨道内停留的时间为1地球年的 $\frac{2}{3\pi}\frac{n+2}{n}\sqrt{\frac{n-1}{2n}}$，证明其最大值为 $\frac{2}{3\pi}$<span class="ms-unknown">〔原稿不清〕</span></p>
 <p>解：平方反比力，彗星轨道方程</p>
 <div class="math">\[
 r = \frac{h^2/k^2}{1+\cos(\theta-\theta_0)}
@@ -591,10 +590,10 @@ T = \frac{\pi R^2}{h/2} = \frac{2\pi R^{3/2}}{K}
 \left( \frac{\Delta t}{T} \right)_{\text{max}} = \frac{2}{3\pi} \cdot \frac{2+2}{2} \sqrt{\frac{1}{4}} = \frac{2}{3\pi}
 \]</div></section>
 <section class="ms-page" id="p17"><h2>第 17 页</h2><h4>4.</h4>
-<p>质点在平方反比引力场中沿椭圆轨道运动，如质点最大角动量和最小角动量之比为$n$，试证明轨道的离心率为$\frac{\sqrt{n}-1}{\sqrt{n}+1}$。</p>
+<p>质点在平方反比引力场中沿椭圆轨道运动，如质点最大角速度和最小角速度之比为$n$，试证明轨道的离心率为$\frac{\sqrt{n}-1}{\sqrt{n}+1}$。</p>
 <p>解：角动量守恒可得 $r^2\dot{\theta}=h$</p>
 <div class="math">\[
-r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r_1^2}{r_2^2} = \frac{\dot{\theta}_{\text{min}}^2}{\dot{\theta}_{\text{max}}^2} = \frac{1}{n}
+r_1^2\dot{\theta}_{\text{max}} = r_2^2\dot{\theta}_{\text{min}} \implies \frac{r_1^2}{r_2^2} = \frac{\dot{\theta}_{\text{min}}}{\dot{\theta}_{\text{max}}} = \frac{1}{n}
 \]</div>
 <p>即最大$r$与最小$r$之比为$\sqrt{n}$。</p>
 <p>椭圆方程 $r=\frac{p}{1+e\cos\theta}$ 中最大$r$为 $r_{\text{max}}=\frac{p}{1-e}$，最小$r$为 $r_{\text{min}}=\frac{p}{1+e}$</p>
@@ -822,7 +821,7 @@ d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
 &amp;= 2 \frac{d}{dL} \frac{m}{L} \int_{0}^{\pi} d\theta \cdot r^2 \delta V
 \end{aligned}
 \]</div>
-<p>旁注：势能 $\frac{\partial V}{\partial r} = \frac{km}{r}$，$L^2 = m^2 h^2$，$p = \frac{L^2}{m\alpha}$，$p = m h^2 / \alpha [?]$</p>
+<p>旁注：势能 $\frac{\partial V}{\partial r} = \frac{km}{r}$，$L^2 = m^2 h^2$，$p = \frac{L^2}{m\alpha}$，$p = m h^2 / \alpha <span class="ms-unknown">〔原稿不清〕</span>$</p>
 <h4>a) 当 $\delta V = \beta/r^2$ 时</h4>
 <div class="math">\[
 \begin{aligned}
@@ -834,7 +833,7 @@ d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
 <div class="math">\[
 \begin{aligned}
 \delta\theta &amp;= 2 \frac{d}{dL} \frac{m}{L} \int_{0}^{\pi} d\theta \cdot \gamma \frac{1+e\cos\theta}{p} \\
-&amp;= 2 \frac{d}{dL} \frac{m \gamma \pi}{L^3} \cdot m\alpha = -\frac{6\pi m^2 \gamma}{L^4} = -\frac{6\pi \gamma}{\alpha p^2}
+&amp;= 2 \frac{d}{dL} \frac{m \gamma \pi}{L^3} \cdot m\alpha = -\frac{6\pi m^2 \alpha \gamma}{L^4} = -\frac{6\pi \gamma}{\alpha p^2}
 \end{aligned}
 \]</div></section>
 <section class="ms-page" id="p24"><h2>第 24 页</h2><h3>1.9 有心力场，椭圆方程简单分析</h3>
@@ -843,7 +842,7 @@ d\theta = \frac{dr \cdot L/r^2}{\sqrt{2m(E-V) - L^2/r^2}}
 <p>当 $e=0$ 时：</p>
 <p>$r=P$，即可得 $r^2 = x^2 + y^2 = P^2$。</p>
 <h4>(2)</h4>
-<p>当 $0<e<1$ 时，坐标轴 $x=r\cos\theta$，$y=r\sin\theta$。</p>
+<p>当 $0&lt;e&lt;1$ 时，坐标轴 $x=r\cos\theta$，$y=r\sin\theta$。</p>
 <p>根据 $r=\dfrac{P}{1+e\cos\theta}$，当 $\cos\theta=\pm1$，$\Delta r$ 最大，$x$ 为长轴，$y$ 为短轴。</p>
 <div class="math">\[
 r + ex = P \implies x^2+y^2 = (ex-P)^2 = e^2x^2 + P^2 - 2exP
@@ -858,7 +857,7 @@ r + ex = P \implies x^2+y^2 = (ex-P)^2 = e^2x^2 + P^2 - 2exP
 \implies \left(x + \frac{eP}{1-e^2}\right)^2 + \frac{y^2}{1-e^2} = \left(\frac{P}{1-e^2}\right)^2
 \]</div>
 <div class="math">\[
-\frac{\left(x + \frac{eP}{1-e^2}\right)^2}{\left[\left(1-e^2\right)/P\right]^{-2}} + \frac{y^2}{\left(1-e^2\right)/P^2} = 1
+\frac{\left(x + \frac{eP}{1-e^2}\right)^2}{\left[\left(1-e^2\right)/P\right]^{-2}} + \frac{y^2}{P^2/(1-e^2)} = 1
 \]</div>
 <p>半长轴</p>
 <div class="math">\[
@@ -875,7 +874,7 @@ r = \frac{p}{1+\cos\theta} \to \sqrt{x^2+y^2} + x = p \to y^2 = p^2 - 2xp
 \]</div>
 <p>抛物线方程</p>
 <h4>(4)</h4>
-<p>$e>1$</p>
+<p>$e&gt;1$</p>
 <div class="math">\[
 r = \frac{p}{1+e\cos\theta} \implies x^2 + y^2 = e^2x^2 - 2epx + p^2
 \]</div>

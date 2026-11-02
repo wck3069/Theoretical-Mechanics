@@ -567,7 +567,7 @@ class Handler(BaseHTTPRequestHandler):
                     "probe": bool(_UPSTREAM["ok"]),
                     "probe_age": int(time.time() - _UPSTREAM["t"]) if _UPSTREAM["t"] else None,
                     "base": AI_BASE,
-                    "model": AI_MODEL,
+                    "model": LOCAL_MODEL if PIPELINE == "local_only" else AI_MODEL,
                     "kb_chunks": len(CHUNKS_FLAT),
                     "version": 1,
                     "mode_hint": mode_hint(),
@@ -792,7 +792,7 @@ class Handler(BaseHTTPRequestHandler):
         draft_ms = 0
         reviewed = True
 
-        if PIPELINE == "local_review":
+        if PIPELINE in ("local_review", "local_only"):
             try:
                 t0 = time.perf_counter()
                 lmsg = call_local(messages, max(420, cap))
@@ -800,6 +800,10 @@ class Handler(BaseHTTPRequestHandler):
                 draft_ms = int((time.perf_counter() - t0) * 1000)
             except Exception:
                 draft = None
+
+        if PIPELINE == "local_only" and draft:
+            answer = draft
+            reviewed = False
 
         if PIPELINE == "local_review" and draft:
             review_messages = [
@@ -883,12 +887,25 @@ class Handler(BaseHTTPRequestHandler):
         if refused:
             sources = []
 
+        link_parts = []
+        for s in sources[:4]:
+            mid = s.get("milestone") or ""
+            title = s.get("title") or ""
+            href = s.get("href") or ""
+            pdf = s.get("pdf") or ""
+            if href:
+                link_parts.append("[%s %s](/%s)" % (mid, title, href.lstrip("/")))
+            if pdf:
+                link_parts.append("[%s 讲义 PDF](/%s)" % (mid, pdf.lstrip("/")))
+        if link_parts:
+            answer = answer.rstrip() + "\n\n**讲义链接**：" + " · ".join(link_parts)
+
         ms = int((time.perf_counter() - start_ms) * 1000)
         self._send_json(200, {
             "answer": answer,
             "sources": sources,
             "mode": mode,
-            "model": AI_MODEL,
+            "model": LOCAL_MODEL if PIPELINE == "local_only" else AI_MODEL,
             "pipeline": PIPELINE,
             "reviewed": reviewed,
             "draft_ms": draft_ms,
