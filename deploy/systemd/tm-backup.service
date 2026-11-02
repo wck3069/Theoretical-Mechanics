@@ -1,0 +1,6 @@
+[Unit]
+Description=Backup TM login database
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/wck/TM-Login/backup.sh

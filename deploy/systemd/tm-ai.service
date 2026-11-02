@@ -1,0 +1,14 @@
+[Unit]
+Description=TM AI server (RAG over the lecture site)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/wck/Theoretical-Mechanics
+ExecStart=/bin/bash /home/wck/Theoretical-Mechanics/tools/serve.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

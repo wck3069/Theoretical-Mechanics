@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://wck3069.github.io/Theoretical-Mechanics/sitemap.xml

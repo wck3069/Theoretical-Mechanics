@@ -1,5 +1,10 @@
 # Cloudflare Tunnel（不开公网端口）
 
+> 当前生产使用 quick tunnel + systemd 单元 `tm-tunnel`；URL 每次重启会变，
+> 写入 `~/.local/state/tm/login-url` 并镜像到 `/tmp/tm-login-url`。
+> 要固定域名，必须完成下面的命名隧道步骤（需要 Cloudflare 账号与域名；
+> 当前机器没有 `~/.cloudflared/cert.pem`）。
+
 ## 快速试用（无鉴权，仅临时）
 
 ```bash

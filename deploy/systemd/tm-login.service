@@ -1,0 +1,14 @@
+[Unit]
+Description=TM login gate (Flask/waitress)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/wck/TM-Login
+ExecStart=/home/wck/.venv-tm/bin/python /home/wck/TM-Login/app.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

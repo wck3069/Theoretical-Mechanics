@@ -1,0 +1,13 @@
+[Unit]
+Description=TM Cloudflare quick tunnel (login gate)
+After=network-online.target tm-login.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/wck/TM-Login/tunnel.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

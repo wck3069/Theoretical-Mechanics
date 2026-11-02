@@ -35,6 +35,10 @@ except ImportError:
     sys.exit(2)
 
 SCHEME_RE = re.compile(r"https?://", re.IGNORECASE)
+# SEO 元数据（description/OG/canonical）需要绝对 URL，但不会加载外部资源。
+META_TAG_RE = re.compile(r"<meta\b[^>]*>", re.IGNORECASE)
+CANONICAL_LINK_RE = re.compile(
+    r"<link\b[^>]*\brel\s*=\s*[\"']canonical[\"'][^>]*>", re.IGNORECASE)
 PROTO_REL_ATTR_RE = re.compile(r"""(?:src|href|data)\s*=\s*["']//""")
 PROTO_REL_CSS_RE = re.compile(r"""url\(\s*["']?//""")
 PROTO_REL_STR_RE = re.compile(r"""["']//""")
@@ -162,6 +166,8 @@ def check_file(path: Path) -> bool:
 
     # 2a. http/https 外链
     masked = LOOPBACK_RE.sub(lambda m: " " * len(m.group(0)), text)
+    masked = META_TAG_RE.sub(lambda m: " " * len(m.group(0)), masked)
+    masked = CANONICAL_LINK_RE.sub(lambda m: " " * len(m.group(0)), masked)
     fails = [f"第 {line_of(text, m.start())} 行发现 {m.group(0)}"
              for m in SCHEME_RE.finditer(masked)]
     report("2a", "无 http 或 https 外链", fails, "全文未出现")
@@ -175,7 +181,8 @@ def check_file(path: Path) -> bool:
     report("2b", "无协议相对地址", fails, "属性、CSS、字符串均未出现")
 
     # 2c. 资源标签本地路径
-    report("2c", "资源引用均为本地相对路径", check_resource_tags(text),
+    resource_text = CANONICAL_LINK_RE.sub(lambda m: " " * len(m.group(0)), text)
+    report("2c", "资源引用均为本地相对路径", check_resource_tags(resource_text),
            "无外部资源标签")
 
     # 2d. fetch / import / XMLHttpRequest
