@@ -867,7 +867,6 @@ function draw() {
       ctx.globalAlpha = 1;
 
       ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
-      ctx.fillText('2D point mass · detach=' + detachAngle().toFixed(2) + '°', 20, 30);
     } else {
       // 三维圆柱：球在圆柱长度中间
       R = Math.min(W, H) * 0.33;
@@ -978,7 +977,6 @@ function draw() {
 
       ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
       var typeName3 = P.ballType === 'solid' ? 'solid' : 'hollow';
-      ctx.fillText('3D cylinder · ball at mid-length · ' + typeName3 + ' r=' + P.ballR.toFixed(2) + 'R · detach=' + detachAngle().toFixed(2) + '°', 20, 30);
     }
   } else if (P.mode === 'double') {
     var L1 = P.L, L2 = P.L;
@@ -1071,9 +1069,7 @@ function draw() {
     // 周期读数
     var T = pendulumPeriod(P.L, P.g, P.theta0);
     ctx.fillStyle = ART.text; ctx.font = '12px ui-monospace,monospace';
-    ctx.fillText('T = ' + T.toFixed(4) + '   (θ0 = ' + P.theta0.toFixed(1) + '°)', 20, 30);
     ctx.fillStyle = 'rgba(169,184,220,.9)';
-    ctx.fillText('T0 = 2π√(L/g) = ' + (2*Math.PI*Math.sqrt(P.L/P.g)).toFixed(4), 20, 50);
   }
 }
 
@@ -1299,7 +1295,8 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
   var CHAPTERS = [
     '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
     '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
-    '08-kinematics'
+    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
+    '11-rotation-and-field'
   ];
 
   function currentFolder() {
@@ -1475,5 +1472,7 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
 })();
 </script>
 <!-- TM-THEME-BODY:END -->
+  <script src="../../assets/tm-i18n-data.js"></script>
+  <script src="../../assets/tm-i18n.js"></script>
 </body>
 </html>

@@ -11,9 +11,12 @@ mkdir -p "$OUT/assets"
 cp -r "$ROOT/assets/textures" "$OUT/assets/textures"
 cp "$ROOT/assets/manuscript.css" "$OUT/assets/manuscript.css"
 cp "$ROOT/assets/manuscript-nav.js" "$OUT/assets/manuscript-nav.js"
+cp "$ROOT/assets/tm-i18n.js" "$OUT/assets/tm-i18n.js"
+cp "$ROOT/assets/tm-i18n-data.js" "$OUT/assets/tm-i18n-data.js"
 cp "$ROOT/assets/og-cover.png" "$OUT/assets/og-cover.png"
 cp -r "$ROOT/assets/mathjax" "$OUT/assets/mathjax"
 cp "$ROOT/sitemap.xml" "$ROOT/robots.txt" "$OUT/"
+cp "$ROOT/HOMEPAGE.md" "$OUT/HOMEPAGE.md"
 find "$OUT/modules" -type d -name qa -prune -exec rm -rf {} + 2>/dev/null || true
 find "$OUT/modules" \( -name '*.aux' -o -name '*.log' -o -name '*.out' -o -name '*.toc' \
   -o -name '*.fls' -o -name '*.fdb_latexmk' -o -name '*.xdv' -o -name '*.synctex.gz' \) -delete

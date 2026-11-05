@@ -857,8 +857,6 @@ function drawRefraction(){
   ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
   ctx.fillText('θ1 = ' + (th1*180/Math.PI).toFixed(1) + '°', X - 78, yI - 14);
   ctx.fillText('θ2 = ' + (th2*180/Math.PI).toFixed(1) + '°', X + 14, yI + 26);
-  ctx.fillText('n1 = 1.00   n2 = ' + P.n.toFixed(2), 12, 20);
-  ctx.fillText('n1 sinθ1 = ' + (1*Math.sin(th1)).toFixed(4) + '   n2 sinθ2 = ' + (P.n*Math.sin(th2)).toFixed(4), 12, H - 12);
   drawTrail(refr.trail, '#ffd27a');
   var pos = refrPosition(refr.phase);
   drawSphere(pos.x, pos.y, 7, '#ffd27a');
@@ -892,9 +890,6 @@ function drawShortest(){
   drawSphere(sp.x, sp.y, 8, '#e8eeff');
   drawSphere(cp.x, cp.y, 8, '#b79bff');
   ctx.fillStyle = '#e8eeff'; ctx.font = '12px ui-monospace,monospace';
-  ctx.fillText('直线球  t=' + shortState.straight.t.toFixed(2) + (shortState.straight.done ? '  到达' : ''), 12, 24);
-  ctx.fillText('曲线球  t=' + shortState.curve.t.toFixed(2) + (shortState.curve.done ? '  到达' : ''), 12, 44);
-  ctx.fillText('更短 ≠ 更快：曲线更长却先到 B', 12, H - 12);
 }
 
 function draw() {
@@ -1039,7 +1034,8 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
   var CHAPTERS = [
     '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
     '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
-    '08-kinematics'
+    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
+    '11-rotation-and-field'
   ];
 
   function currentFolder() {
@@ -1215,5 +1211,7 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
 })();
 </script>
 <!-- TM-THEME-BODY:END -->
+  <script src="../../assets/tm-i18n-data.js"></script>
+  <script src="../../assets/tm-i18n.js"></script>
 </body>
 </html>

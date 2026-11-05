@@ -523,6 +523,8 @@ window.TMART = (function () {
         <div class="row"><label for="p-th0">初始 θ₀（°）</label><span class="val" id="v-th0">8.6</span></div>
         <input id="p-th0" type="range" min="1" max="45" step="0.5" value="8.6">
       </div>
+      <button id="btn-view" type="button" style="width:100%;margin-top:2px">重置视角</button>
+      <div class="hint">拖动场景自由旋转视角；滚轮缩放，物理量保持不变。</div>
     </div>
 
     <div class="scene-group" data-scene="cyclotron">
@@ -553,7 +555,8 @@ window.TMART = (function () {
     自测：<span>index.html?selftest=1</span></div>
     <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
     <a class="doc" href="../10-coupled-systems/index.html">← 上一模块：耦合系统与小振动</a>
-    <a class="doc" href="../../chapters/04-lagrangian/index.html">回到第 4 章：拉格朗日力学 →</a>
+    <a class="doc" href="../../chapters/04-lagrangian/index.html">回到第 4 章：拉格朗日力学</a><br>
+    <a class="doc" href="../../chapters/05-oscillations/index.html">下一章：小振动 →</a>
     <details class="mapping">
       <summary>作业映射（作业-8 Q5 圆环、Q6 磁场）</summary>
       <table>
@@ -577,6 +580,17 @@ window.TMART = (function () {
 
   var ring = { R: 1.2, Om: 2, th0: 0.15, th: 0.15, om: 0, t: 0, trail: [] };
   var cyc = { B: 1.2, v0: 1, q: 1, t: 0, trail: [] };
+  var sph = { r: 1, theta: 1.27, phi: 0.42 };
+  var DEFAULT_SPH = { r: 1, theta: 1.27, phi: 0.42 };
+  var view = { x: 0.30, y: 0.42, z: 0 };
+  var dragging = false, dragLastX = 0, dragLastY = 0;
+  var TAU = Math.PI * 2;
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function syncView() {
+    view.x = Math.PI / 2 - sph.theta;
+    view.y = sph.phi;
+    view.z = 0;
+  }
 
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -626,71 +640,94 @@ window.TMART = (function () {
       ring.t += h;
     }
     var phi = ring.Om * ring.t;
-    ring.trail.push({ x: ring.R * Math.sin(ring.th) * Math.cos(phi), y: ring.R * Math.cos(ring.th) });
+    ring.trail.push({
+      x: ring.R * Math.sin(ring.th) * Math.cos(phi),
+      y: ring.R * Math.cos(ring.th),
+      z: ring.R * Math.sin(ring.th) * Math.sin(phi)
+    });
     if (ring.trail.length > 300) ring.trail.shift();
   }
   function resetRing() {
     ring.th = ring.th0; ring.om = 0; ring.t = 0; ring.trail = [];
   }
 
+  function ringPoint(u, phi) {
+    return {
+      x: ring.R * Math.cos(u) * Math.cos(phi),
+      y: ring.R * Math.sin(u),
+      z: ring.R * Math.cos(u) * Math.sin(phi)
+    };
+  }
+  function beadPoint(th, phi) {
+    return {
+      x: ring.R * Math.sin(th) * Math.cos(phi),
+      y: ring.R * Math.cos(th),
+      z: ring.R * Math.sin(th) * Math.sin(phi)
+    };
+  }
+  function ringCamera() {
+    var scale = Math.min(W, H) * 0.20 / sph.r;
+    return { scale: scale, cx: W * 0.5, cy: H * 0.52, axisLen: ring.R * 1.55 };
+  }
+  function projectRing(p, geo) {
+    var x = p.x, y = p.y, z = p.z || 0;
+    var cyw = Math.cos(view.y), syw = Math.sin(view.y);
+    var x1 = x * cyw + z * syw;
+    var z1 = -x * syw + z * cyw;
+    var cxp = Math.cos(view.x), sxp = Math.sin(view.x);
+    var y1 = y * cxp - z1 * sxp;
+    var z2 = y * sxp + z1 * cxp;
+    var czr = Math.cos(view.z), szr = Math.sin(view.z);
+    var x2 = x1 * czr - y1 * szr;
+    var y2 = x1 * szr + y1 * czr;
+    return { x: geo.cx + x2 * geo.scale, y: geo.cy - y2 * geo.scale, z: z2 };
+  }
   function drawRing() {
-    var cx = W * 0.5, cy = H * 0.48;
-    var scale = Math.min(W, H) * 0.28;
+    syncView();
+    var geo = ringCamera();
     var phi = ring.Om * ring.t;
-    var cphi = Math.cos(phi);
-    var Rs = ring.R * scale;
 
-    ctx.strokeStyle = 'rgba(140,160,220,.35)'; ctx.lineWidth = 1;
-    ctx.setLineDash([4, 5]);
-    ctx.beginPath(); ctx.moveTo(cx, cy - Rs - 24); ctx.lineTo(cx, cy + Rs + 24); ctx.stroke();
-    ctx.setLineDash([]);
-
-    // 圆环投影：绕竖直直径旋转的圆
-    ctx.strokeStyle = 'rgba(127,224,255,.55)'; ctx.lineWidth = 1.6;
+    // Ring in 3D.
+    ctx.strokeStyle = 'rgba(127,224,255,.58)'; ctx.lineWidth = 1.6;
     ctx.beginPath();
-    for (var i = 0; i <= 96; i++) {
-      var u = i / 96 * Math.PI * 2;
-      var x = cx + Rs * Math.cos(u) * cphi;
-      var y = cy - Rs * Math.sin(u);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    for (var i = 0; i <= 120; i++) {
+      var u = i / 120 * TAU;
+      var q = projectRing(ringPoint(u, phi), geo);
+      if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
     }
     ctx.stroke();
-    // 赤道参考
-    ctx.strokeStyle = 'rgba(183,155,255,.25)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.ellipse(cx, cy, Math.abs(Rs * cphi), Rs * 0.22, 0, 0, Math.PI * 2); ctx.stroke();
 
-    // 平衡位置
+    // Trail in world coordinates.
+    ctx.strokeStyle = 'rgba(255,210,122,.35)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ring.trail.forEach(function (p, i) {
+      var q = projectRing({ x: p.x, y: p.y, z: p.z || 0 }, geo);
+      if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+    });
+    ctx.stroke();
+
+    // Equilibrium marks.
     var eq = equilibrium();
     var marks = [0, Math.PI];
     if (eq !== null) marks.push(eq);
     marks.forEach(function (th, idx) {
-      var x = cx + Rs * Math.sin(th) * cphi;
-      var y = cy + Rs * Math.cos(th);
-      ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      var q = projectRing(beadPoint(th, phi), geo);
+      ctx.beginPath(); ctx.arc(q.x, q.y, 4.5, 0, TAU);
       ctx.strokeStyle = idx === 2 ? '#ffd27a' : 'rgba(200,214,255,.55)';
       ctx.lineWidth = 1.4; ctx.stroke();
     });
 
-    // 轨迹
-    ctx.strokeStyle = 'rgba(255,210,122,.35)'; ctx.lineWidth = 1;
-    ctx.beginPath();
-    ring.trail.forEach(function (p, i) {
-      var x = cx + p.x * scale, y = cy + p.y * scale;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-
-    // 珠子
-    var bx = cx + Rs * Math.sin(ring.th) * cphi;
-    var by = cy + Rs * Math.cos(ring.th);
+    // Bead.
+    var b = projectRing(beadPoint(ring.th, phi), geo);
     ctx.fillStyle = '#ffd27a';
-    ctx.beginPath(); ctx.arc(bx, by, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.x, b.y, 10, 0, TAU); ctx.fill();
     ctx.fillStyle = 'rgba(5,7,15,.85)';
-    ctx.beginPath(); ctx.arc(bx, by, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.x, b.y, 4, 0, TAU); ctx.fill();
 
+    // View-only transform: the physical spherical state is untouched.
     ctx.fillStyle = 'rgba(150,165,210,.8)'; ctx.font = '11px ui-monospace,monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('绕竖直直径以 Ω 转动', cx, cy + Rs + 40);
+    ctx.fillText('拖动旋转视角 · 滚轮缩放', geo.cx, H - 42);
 
     var ratio = ring.Om / Omc();
     setHud([
@@ -836,6 +873,7 @@ window.TMART = (function () {
     document.querySelectorAll('.scene-group').forEach(function (g) {
       g.classList.toggle('on', g.getAttribute('data-scene') === s);
     });
+    cv.style.cursor = s === 'ring' ? 'grab' : 'crosshair';
     $('eqBox').innerHTML = eqHtml();
     sync();
   }
@@ -850,6 +888,45 @@ window.TMART = (function () {
     resetRing(); resetCyc(); playing = true;
     $('btn-pause').textContent = '暂停'; draw();
   });
+
+  $('btn-view').addEventListener('click', function () {
+    sph.r = DEFAULT_SPH.r; sph.theta = DEFAULT_SPH.theta; sph.phi = DEFAULT_SPH.phi;
+    dragging = false; cv.style.cursor = 'grab'; draw();
+  });
+
+  cv.addEventListener('pointerdown', function (e) {
+    if (scene !== 'ring') return;
+    dragging = true;
+    dragLastX = e.clientX; dragLastY = e.clientY;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    cv.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (scene !== 'ring') return;
+    if (!dragging) { cv.style.cursor = 'grab'; return; }
+    var dx = e.clientX - dragLastX, dy = e.clientY - dragLastY;
+    sph.phi -= dx * 0.006;
+    sph.theta = clamp(sph.theta - dy * 0.006, 0.15, Math.PI - 0.15);
+    dragLastX = e.clientX; dragLastY = e.clientY;
+    draw();
+    e.preventDefault();
+  });
+  function endOrbitDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    cv.style.cursor = 'grab';
+    try { cv.releasePointerCapture(e.pointerId); } catch (err) {}
+  }
+  cv.addEventListener('pointerup', endOrbitDrag);
+  cv.addEventListener('pointercancel', endOrbitDrag);
+  cv.addEventListener('wheel', function (e) {
+    if (scene !== 'ring') return;
+    e.preventDefault();
+    sph.r = clamp(sph.r * Math.exp(e.deltaY * 0.0012), 0.65, 2.2);
+    draw();
+  }, { passive: false });
+  cv.style.cursor = 'grab';
 
   function runSelftest() {
     if (!/[?&]selftest=1(?:&|$)/.test(location.search)) return;
@@ -987,7 +1064,7 @@ window.TMART = (function () {
   if (idx < CHAPTERS.length - 1) {
     setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
   } else {
-    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+    setLink('next', base + 'chapters/05-oscillations/index.html', '下一章 ›');
   }
 
   var canvas = document.querySelector('.tm-stars');
@@ -1110,5 +1187,7 @@ window.TMART = (function () {
 })();
 </script>
 <!-- TM-THEME-BODY:END -->
+  <script src="../../assets/tm-i18n-data.js"></script>
+  <script src="../../assets/tm-i18n.js"></script>
 </body>
 </html>
