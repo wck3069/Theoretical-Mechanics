@@ -35,11 +35,23 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .monogram svg{width:34px;height:34px}
 .brand-title{font-size:15px;font-weight:650;letter-spacing:.4px}
 .brand-sub{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);letter-spacing:1.2px}
-.top-actions{display:flex;gap:8px}
+.top-actions{display:flex;gap:8px;align-items:center}
+.top-search{display:flex;align-items:center;gap:3px;padding:3px;border:1px solid var(--tm-line);border-radius:999px;background:rgba(6,10,23,.62)}
+.top-search .search-box{position:relative;display:flex;align-items:center}
+.top-search .cmd-search{width:215px;min-width:0;flex:0 0 auto;padding:6px 30px 6px 12px;border:0;background:transparent;border-radius:999px;font-size:12.5px;outline:none}
+.top-search .cmd-search:focus{box-shadow:inset 0 0 0 1px rgba(111,227,255,.45)}
+.top-search .search-go{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:26px;height:26px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:var(--tm-text-2);cursor:pointer}
+.top-search .search-go:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
+.top-search .search-go svg{width:15px;height:15px;display:block}
+.top-search .tag-btn{border:0;background:transparent;padding:6px 10px;font-size:12px;color:var(--tm-text-2);border-radius:999px}
+.top-search .tag-btn:hover{background:rgba(146,182,255,.12);color:var(--tm-text)}
+.top-search .tag-expander{position:relative}
+.top-search .tag-menu{top:calc(100% + 20px);bottom:auto;left:auto;right:0}
 .top-actions button{padding:7px 12px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:12px;color:var(--tm-text-2);transition:background .12s}
 .top-actions button:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
 .top-actions a{padding:7px 12px;border-radius:999px;background:rgba(146,182,255,.08);border:1px solid var(--tm-line);font-size:12px;color:var(--tm-text-2);text-decoration:none;transition:background .12s}
 .top-actions a:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
+#btnCatalog[aria-expanded="true"],#btnPath[aria-expanded="true"],#btnGloss[aria-expanded="true"],#btnAbout[aria-expanded="true"]{background:rgba(146,182,255,.18);border-color:rgba(146,182,255,.3);color:var(--tm-text)}
 
 /* hero */
 .hero{position:fixed;top:120px;left:24px;max-width:380px;z-index:40}
@@ -52,13 +64,21 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .hint{margin-top:12px;font-size:11.5px;color:var(--tm-muted);font-family:var(--tm-font-mono)}
 
 /* star label */
-.star-label{position:fixed;left:46%;top:50%;transform:translate(-50%,60px);z-index:20;font-size:11px;color:var(--tm-solar);font-family:var(--tm-font-mono);pointer-events:none;text-shadow:0 0 8px rgba(255,210,122,.4)}
 
 /* catalog */
-.catalog{position:fixed;top:96px;right:24px;width:330px;bottom:96px;z-index:40;background:rgba(8,13,28,.94);border:1px solid var(--tm-line);border-radius:var(--tm-radius);display:flex;flex-direction:column;overflow:hidden}
-.cat-header{padding:14px 16px;border-bottom:1px solid var(--tm-line);display:flex;align-items:center;justify-content:space-between}
+.catalog{position:fixed;top:96px;right:24px;width:330px;bottom:96px;z-index:40;background:rgba(8,13,28,.94);border:1px solid var(--tm-line);border-radius:var(--tm-radius);display:flex;flex-direction:column;overflow:hidden;transition:transform .28s cubic-bezier(.22,.9,.24,1),opacity .2s ease;will-change:transform}
+.cat-collapse{width:26px;height:26px;border-radius:8px;border:1px solid var(--tm-line);background:rgba(146,182,255,.08);color:var(--tm-text-2);font-size:16px;line-height:1;cursor:pointer;flex:0 0 auto}
+.cat-collapse:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
+.cat-tab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:41;writing-mode:vertical-rl;letter-spacing:.18em;padding:14px 7px;border-radius:10px 0 0 10px;background:rgba(8,13,28,.94);border:1px solid var(--tm-line);border-right:0;color:var(--tm-text-2);font-size:12px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s ease,background .12s}
+.cat-tab:hover{background:rgba(146,182,255,.18);color:var(--tm-text)}
+@media(min-width:980px){
+  body.cat-collapsed .catalog{transform:translateX(calc(100% + 40px));opacity:0;pointer-events:none}
+  body.cat-collapsed .cat-tab{opacity:1;pointer-events:auto}
+}
+#orbitCanvas{touch-action:none}
+.cat-header{padding:14px 16px;border-bottom:1px solid var(--tm-line);display:flex;align-items:center;justify-content:space-between;gap:8px}
 .cat-header h2{font-size:13px;letter-spacing:1.5px;color:var(--tm-text-2);font-weight:600}
-.cat-count{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted)}
+.cat-count{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);margin-left:auto}
 .cat-list{flex:1;overflow:auto;padding:8px}
 .cat-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 10px;border-radius:10px;text-align:left;transition:background .12s}
 .cat-row:hover{background:rgba(146,182,255,.08)}
@@ -109,8 +129,16 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .motion-controls button[aria-pressed="true"]{background:rgba(255,210,122,.18);color:var(--tm-solar)}
 .live-count{font-family:var(--tm-font-mono);font-size:11px;color:var(--tm-muted);white-space:nowrap}
 
+#flyFlash{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:0;background:radial-gradient(circle at var(--fx,50%) var(--fy,50%),rgba(255,255,255,.95) 0,rgba(255,236,190,.72) 14%,rgba(5,8,20,0) 58%)}
+body.is-flying .topbar,body.is-flying .hero,body.is-flying .catalog,body.is-flying .cmdbar,body.is-flying .detail,body.is-flying #tm-ai-root,body.is-flying .drawer,body.is-flying .overlay,body.is-flying .popover{display:none!important}
 /* tooltip */
-.tooltip{position:fixed;z-index:70;pointer-events:none;padding:8px 10px;border-radius:8px;background:rgba(6,10,23,.92);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text);display:none;max-width:240px}
+.tooltip{position:fixed;left:0;top:0;z-index:70;pointer-events:none;will-change:transform;padding:10px 12px;border-radius:10px;background:rgba(6,10,23,.94);border:1px solid var(--tm-line);font-size:11.5px;color:var(--tm-text);display:none;max-width:300px;box-shadow:0 12px 32px rgba(0,0,0,.45)}
+.tooltip .t-head{display:flex;align-items:center;gap:6px;font-weight:600}
+.tooltip .t-title{line-height:1.45}
+.tooltip .t-sum{color:var(--tm-text-2);font-size:11px;line-height:1.55;margin-top:5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tooltip .t-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.tooltip .t-tags span{font-size:10px;padding:2px 6px;border-radius:999px;background:rgba(146,182,255,.10);color:var(--tm-text-2)}
+.tooltip .t-foot{font-size:10px;color:var(--tm-muted);margin-top:6px}
 .tooltip .t-ms{font-family:var(--tm-font-mono);color:var(--tm-solar);margin-right:6px}
 .tooltip .t-src{color:var(--tm-muted);font-size:10.5px;margin-top:2px}
 
@@ -120,11 +148,11 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 /* drawers/popovers */
 .overlay{position:fixed;inset:0;z-index:80;background:rgba(3,5,12,.55);display:none}
 .overlay.open{display:block}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,90vw);z-index:90;background:var(--tm-panel-solid);border-left:1px solid var(--tm-line);transform:translateX(100%);transition:transform .2s ease;display:flex;flex-direction:column}
-.drawer.open{transform:translateX(0)}
-.drawer header{padding:16px;border-bottom:1px solid var(--tm-line);display:flex;justify-content:space-between;align-items:center}
+.drawer{position:fixed;top:80px;right:24px;bottom:auto;width:min(380px,calc(100vw - 48px));max-height:min(62vh,560px);z-index:90;background:var(--tm-panel-solid);border:1px solid var(--tm-line);border-radius:var(--tm-radius);display:flex;flex-direction:column;overflow:hidden;transform:translateY(-8px);opacity:0;pointer-events:none;transition:transform .18s ease,opacity .18s ease;box-shadow:0 24px 60px rgba(0,0,0,.48)}
+.drawer.open{transform:none;opacity:1;pointer-events:auto}
+.drawer header{padding:14px 16px;border-bottom:1px solid var(--tm-line);display:flex;justify-content:space-between;align-items:center;flex:0 0 auto}
 .drawer header h3{font-size:14px;letter-spacing:1.5px;color:var(--tm-text-2)}
-.drawer .body{flex:1;overflow:auto;padding:16px}
+.drawer .body{flex:1;min-height:0;overflow:auto;padding:16px}
 .path-line{position:relative;padding-left:24px;margin-bottom:18px}
 .path-line::before{content:'';position:absolute;left:8px;top:6px;bottom:-12px;width:2px;background:linear-gradient(var(--tm-solar),var(--tm-cyan))}
 .path-line:last-child::before{bottom:6px}
@@ -149,13 +177,25 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 /* responsive */
 @media (max-width:979px){
   .hero{top:80px;left:16px;max-width:calc(100vw-32px)}
+  .top-search .cmd-search{width:150px}
   .hero h1{font-size:30px}
   .catalog{top:auto;bottom:0;left:0;right:0;width:100%;height:68vh;z-index:46;border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .25s ease}
   .catalog.open{transform:translateY(0)}
+  .cat-tab,.cat-collapse{display:none}
   .cmdbar{bottom:0;left:0;right:0;transform:none;width:100%;border-radius:0;border-left:none;border-right:none}
   .footnote{display:none}
-  .star-label{transform:translate(-50%,50px)}
   body.cat-open #tmai-launcher{display:none}
+}
+@media (max-width:720px){
+  .topbar{height:auto;min-height:64px;flex-wrap:wrap;padding:8px 10px}
+  .drawer{top:auto;left:10px;right:10px;bottom:84px;width:auto;max-height:60vh;border-radius:16px;transform:translateY(12px)}
+  .drawer.open{transform:none}
+  .top-actions{width:100%;margin-left:0;flex-wrap:wrap}
+  .top-search{order:3;width:100%;margin-top:4px}
+  .top-search .search-box{flex:1}
+  .top-search .cmd-search{width:100%}
+  .brand-sub{display:none}
+  .hero{top:148px}
 }
 @media (max-width:640px){
   .hero h1{font-size:26px}
@@ -211,47 +251,48 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
     </div>
   </div>
   <div class="top-actions">
-    <button type="button" id="btnCatalog" aria-label="打开星表">星表</button>
-    <button type="button" id="btnPath" aria-label="打开学习路径">学习路径</button>
-    <button type="button" id="btnGloss" aria-label="打开术语表">术语</button>
-    <button type="button" id="btnAbout" aria-label="打开关于">关于</button>
+    <div class="top-search" role="search">
+      <div class="search-box">
+        <input class="cmd-search" id="search" type="search" autocomplete="off" placeholder="搜索章节 / 标签 / 作业来源…" aria-label="搜索章节">
+        <button class="search-go" id="searchGo" type="button" aria-label="搜索" title="搜索">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4.2-4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="tag-expander">
+        <button class="tag-btn" id="tagBtn" type="button" aria-haspopup="true" aria-expanded="false">标签</button>
+        <div class="tag-menu" id="tagMenu"></div>
+      </div>
+    </div>
+    <button type="button" id="btnCatalog" aria-label="打开星表" aria-expanded="true">星表</button>
+    <button type="button" id="btnPath" aria-haspopup="dialog" aria-controls="drawer" aria-expanded="false" aria-label="打开学习路径">学习路径</button>
+    <button type="button" id="btnGloss" aria-label="术语表" aria-haspopup="dialog" aria-controls="glossPopover" aria-expanded="false">术语</button>
+    <button type="button" id="btnAbout" aria-label="关于" aria-haspopup="dialog" aria-controls="aboutPopover" aria-expanded="false">关于</button>
   </div>
 </header>
 
 <section class="hero">
   <div class="eyebrow">DEEP-SPACE LECTURE NOTES</div>
   <h1><span class="grad-text">理论力学</span><br><span class="grad-text">从质点到哈密顿</span></h1>
-  <p class="sub">按七章重构：质点力学、质点系力学、变分法、拉格朗日力学、小振动、刚体力学、哈密顿力学。每章由 note.tex 推导、note.pdf 阅读版和单文件数值实验组成。</p>
-  <div class="chips">
-    <span class="chip-stat">7 章</span>
-    <span class="chip-stat">8 次作业</span>
-    
-    <span class="chip-stat">12 个可交互模块</span>
-  </div>
-  <div class="hint">拖动星图 · 滚轮缩放 · 拖动太阳移动系统 · 点击行星进入章节 · / 搜索</div>
+  <div class="hint">拖动星球/太阳移动系统 · 滚轮缩放 · 点击行星进入章节 · / 搜索</div>
 </section>
 
-<div class="star-label">质心 · 系统核心</div>
 
 <aside class="catalog" id="catalog" aria-label="星表">
   <div class="cat-header">
     <h2>星表 STAR CATALOG</h2>
     <span class="cat-count" id="catalogCount">7</span>
+    <button class="cat-collapse" id="catCollapse" type="button" aria-label="收起星表" aria-controls="catalog">›</button>
   </div>
   <div class="cat-list" id="catalogList"></div>
   <div class="cat-empty" id="catalogEmpty">没有匹配的章节</div>
   <div class="detail" id="detailView"></div>
 </aside>
+<button class="cat-tab" id="catTab" type="button" aria-label="展开星表" aria-controls="catalog" aria-expanded="true">星表</button>
 
 <div class="tooltip" id="tooltip"></div>
 
 <div class="cmdbar" role="toolbar" aria-label="筛选与搜索">
-  <input class="cmd-search" id="search" type="search" placeholder="搜索章节 / 标签 / 作业来源…" aria-label="搜索章节">
   <div class="cmd-ms" id="msChips"></div>
-  <div class="tag-expander">
-    <button class="tag-btn" id="tagBtn" type="button" aria-haspopup="true" aria-expanded="false">标签</button>
-    <div class="tag-menu" id="tagMenu"></div>
-  </div>
   <div class="motion-controls">
     <button type="button" id="pauseBtn" aria-pressed="false" aria-label="暂停动画">⏸</button>
     <button type="button" id="speedBtn" aria-pressed="false" aria-label="速度">x1</button>
@@ -259,8 +300,6 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   <span class="live-count" id="liveCount" aria-live="polite">显示 7 / 7 章</span>
 </div>
 
-<div class="hud">开普勒第二定律 · 掠面速度守恒</div>
-<div class="footnote">零外部依赖 · 单文件 · 7 章 · 12 个模块全部可离线打开</div>
 
 <div class="overlay" id="overlay"></div>
 <div class="drawer" id="drawer">
@@ -291,10 +330,12 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   <h3>关于 ABOUT</h3>
   <p>每章三件套：note.tex 推导 / note.pdf 阅读版 / index.html 数值实验。</p>
   <p>七章覆盖质点力学、质点系力学、变分法、拉格朗日力学、小振动、刚体力学、哈密顿力学；共 12 个可交互模块。单文件、零外部依赖、全部可离线打开。</p>
+  <p><a href="HOMEPAGE.md">首页文案与说明（Markdown）</a></p>
 </div>
 
 <canvas id="starfield"></canvas>
 <canvas id="orbitCanvas"></canvas>
+<div id="flyFlash" aria-hidden="true"></div>
 
 <script>
 window.TM_SUBMODULES = [
@@ -328,7 +369,7 @@ window.TM_MODULES = [
  'use strict';
  var TM = window.TM_MODULES;
  var reducedMotion = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
- var state = {selected:null,filterMs:'all',filterTag:'all',q:'',paused:false,speed:1,hovered:null,detailOpen:false,catalogOpen:false};
+ var state = {selected:null,filterMs:'all',filterTag:'all',q:'',paused:false,speed:1,hovered:null,detailOpen:false,catalogOpen:false,catalogCollapsed:false,flying:null};
 
  function $(id){return document.getElementById(id);}
  function matches(m){
@@ -348,6 +389,9 @@ window.TM_MODULES = [
  var orbitCtx = orbitCanvas.getContext('2d');
  var stars = [], nebulas = [], starCenter = {x:0,y:0};
 var starHomeX = 0, starHomeY = 0;
+var STAR_GOLDEN = 0.6180339887;
+var starShift = null;
+var starField = {x:0, y:0};
  var mouse = {x:0,y:0};
  var TAU = Math.PI*2;
  var introStart = performance.now();
@@ -420,12 +464,73 @@ var starHomeX = 0, starHomeY = 0;
      c.style.width = w+'px'; c.style.height = h+'px';
      c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
    });
-   starCenter = {x: w*0.46, y: h*0.5};
-   starHomeX = starCenter.x; starHomeY = starCenter.y;
+   syncCatalogAria();
+   var anchor = starAnchorPoint();
+   starCenter = {x: anchor.x, y: anchor.y};
+   starHomeX = anchor.x; starHomeY = anchor.y;
+   starShift = null;
+   starField.x = 0; starField.y = 0;
+   updateTipMetrics();
    initStars();
    initOrbits();
    initDust();
  }
+ function panelLeft(el){
+   if(!el) return null;
+   var cs=window.getComputedStyle(el);
+   if(cs.display==='none'||cs.visibility==='hidden') return null;
+   var width=el.offsetWidth;
+   if(!width) return null;
+   var right=parseFloat(cs.right);
+   return isNaN(right) ? el.getBoundingClientRect().left : window.innerWidth-width-right;
+ }
+ function rightPanelInset(){
+   if(window.innerWidth<980) return 0;
+   var w=window.innerWidth, left=w;
+   function use(el){ var l=panelLeft(el); if(l!==null && l>0 && l<left) left=l; }
+   var cat=$('catalog');
+   if(cat && !document.body.classList.contains('cat-collapsed')) use(cat);
+   var drawer=$('drawer');
+   if(drawer && drawer.classList.contains('open')) use(drawer);
+   var ai=$('tmai-panel');
+   if(ai && !ai.hidden) use(ai);
+   ['glossPopover','aboutPopover'].forEach(function(id){
+     var el=$(id);
+     if(el && el.classList.contains('open')) use(el);
+   });
+   return Math.max(0,w-left);
+ }
+ function starAnchorPoint(){
+   var w=window.innerWidth, h=window.innerHeight;
+   return {x:(w-rightPanelInset())*STAR_GOLDEN, y:h*0.5};
+ }
+ function setStarAnchor(animate){
+   if(state.flying || document.body.classList.contains('portal-open')) return;
+   var target=starAnchorPoint();
+   starHomeX=target.x; starHomeY=target.y;
+   var instant=!animate || reducedMotion || (!starCenter.x && !starCenter.y);
+   if(!instant && Math.abs(target.x-starCenter.x)<0.5 && Math.abs(target.y-starCenter.y)<0.5) instant=true;
+   if(instant){
+     starCenter.x=target.x; starCenter.y=target.y; starShift=null;
+   } else {
+     starShift={fromX:starCenter.x,fromY:starCenter.y,toX:target.x,toY:target.y,start:performance.now(),dur:560};
+   }
+   state.hovered=null; hideTooltip();
+   if(orbits) orbits.forEach(function(o){o.trail.length=0;});
+   updateTipMetrics();
+ }
+ function updateStarShift(now){
+   if(!starShift) return;
+   var p=Math.min(1,(now-starShift.start)/starShift.dur);
+   var e=p<0.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;
+   starCenter.x=starShift.fromX+(starShift.toX-starShift.fromX)*e;
+   starCenter.y=starShift.fromY+(starShift.toY-starShift.fromY)*e;
+   if(p>=1){ starCenter.x=starShift.toX; starCenter.y=starShift.toY; starShift=null; }
+ }
+ window.TM_STAR_POS=function(){ return {x:starCenter.x,y:starCenter.y,inset:rightPanelInset(),shift:!!starShift}; };
+ window.TM_STAR_LAYOUT=function(animate){ setStarAnchor(animate!==false); return window.TM_STAR_POS(); };
+ window.TM_CLOSE_TOP_PANELS=function(){ closeOtherTopPanels('lang'); };
+
  function initStars(){
    var w=window.innerWidth,h=window.innerHeight;
    var count = w<980 ? 170 : 300;
@@ -450,9 +555,17 @@ var starHomeX = 0, starHomeY = 0;
    var my=(mouse.y-h/2)/(h/2||1);
    ctx.clearRect(0,0,w,h);
    ctx.fillStyle='#03050c'; ctx.fillRect(0,0,w,h);
-   var fieldX = starCenter.x - starHomeX;
-   var fieldY = starCenter.y - starHomeY;
-   var bgX = mx*5-8+fieldX, bgY = my*4-8+fieldY;
+   var targetX = (starCenter.x - starHomeX) * 0.34;
+   var targetY = (starCenter.y - starHomeY) * 0.34;
+   if(reducedMotion){
+     starField.x = targetX; starField.y = targetY;
+   }else{
+     starField.x += (targetX - starField.x) * 0.12;
+     starField.y += (targetY - starField.y) * 0.12;
+   }
+   var fieldX = starField.x;
+   var fieldY = starField.y;
+   var bgX = mx*5-8+fieldX*0.65, bgY = my*4-8+fieldY*0.65;
    for(var bx=-1;bx<=1;bx++) for(var by=-1;by<=1;by++){
      var tx=bgX+bx*w, ty=bgY+by*h;
      if(tx > w || tx+w < 0 || ty > h || ty+h < 0) continue;
@@ -466,16 +579,18 @@ var starHomeX = 0, starHomeY = 0;
      var a=reducedMotion?st.base:Math.max(0.08,Math.min(1,st.base+tw*0.35));
      var wobbleX=reducedMotion?0:Math.sin(t*0.00009*st.speed+st.phase)*1.8;
      var wobbleY=reducedMotion?0:Math.cos(t*0.00007*st.speed+st.phase)*1.3;
-     var wx=((st.x+mx*5+flowX+fieldX+wobbleX)%w+w)%w;
-     var wy=((st.y+my*4+flowY+fieldY+wobbleY)%h+h)%h;
+     var depth = 0.70 + st.z*0.15;
+     var wx=((st.x+mx*5+flowX+fieldX*depth+wobbleX)%w+w)%w;
+     var wy=((st.y+my*4+flowY+fieldY*depth+wobbleY)%h+h)%h;
      ctx.globalAlpha=a; ctx.fillStyle='#e8eeff';
      ctx.beginPath(); ctx.arc(wx,wy,st.r,0,TAU); ctx.fill();
    }
    ctx.globalAlpha=1;
    for(var j=0;j<stars.length;j+=37){
      var c=stars[j];
-     var gx=((c.x+mx*5+flowX+fieldX)%w+w)%w;
-     var gy=((c.y+my*4+flowY+fieldY)%h+h)%h;
+     var gd = 0.70 + c.z*0.15;
+     var gx=((c.x+mx*5+flowX+fieldX*gd)%w+w)%w;
+     var gy=((c.y+my*4+flowY+fieldY*gd)%h+h)%h;
      glowAt(ctx,gx,gy,c.r*5,'#7fe0ff',0.10);
    }
  }
@@ -677,6 +792,11 @@ function drawPlanetTexture(ctx,x,y,r,color,kind,alpha){
   var ctx = orbitCtx;
   var w=window.innerWidth,h=window.innerHeight;
   ctx.clearRect(0,0,w,h);
+  if(state.flying){
+    var fo=orbits[state.flying.i];
+    if(fo) drawPlanet(fo,state.flying.i,dt);
+    return;
+  }
   drawDust(t,dt);
   drawBursts(dt);
   // constellation links
@@ -772,7 +892,7 @@ function drawPlanet(o,i,dt){
   var intro=reducedMotion?1:Math.min(1,(performance.now()-introStart)/1600);
   var ie=1-Math.pow(1-Math.max(0,Math.min(1,(intro-i*0.055)/0.75)),3);
   var pAlpha=(match?1:0.16)*ie;
-  var tgt=sel?1.8:(hov?1.35:1);
+  var tgt=sel?1.8:(hov?1.55:1);
   var ks=120, cs=18;
   o.sv += (-ks*(o.scale-tgt)-cs*o.sv)*dt; o.scale += o.sv*dt;
   var ps=o.scale*ie;
@@ -806,6 +926,7 @@ function drawPlanet(o,i,dt){
     ctx.beginPath(); ctx.arc(pos.x,pos.y,pr+13,0,TAU); ctx.stroke();
     ctx.globalAlpha=1;
   }
+  if(hov && !state.flying) positionTooltip(pos.x,pos.y);
 }
 
 function drawStar(t){
@@ -893,11 +1014,113 @@ function renderMsChips(){
    $('liveCount').textContent='显示 '+matching.length+' / 7 章';
  }
 
- function selectModule(i){
-  var m=TM[i]; if(!m) return;
+ function selectModule(i, animate){
+  var m=TM[i]; if(!m || state.flying) return;
   state.hovered=i;
   if(orbits[i]){ var bp=orbits[i]._pos||planetPos(orbits[i]); burstAt(bp.x,bp.y,m.color,22); }
+  if(animate && !reducedMotion && orbits[i]){ startPlanetFly(i,m); return; }
   window.location.href = m.sim;
+}
+function finishFlight(f){
+  if(!f || f.finished || f.revealing) return;
+  f.finished=true;
+  state.flying=null;
+  window.location.href=f.m.sim;
+}
+function placeFlightPlanet(f,z,ax,ay){
+  var o=orbits[f.i]; if(!o) return null;
+  var r=o.a*(1-o.e*o.e)/(1+o.e*Math.cos(o.theta));
+  var bx=r*Math.cos(o.theta), by=r*Math.sin(o.theta)*0.58;
+  var co=Math.cos(o.rot), si=Math.sin(o.rot);
+  var ox=bx*co-by*si, oy=bx*si+by*co;
+  starCenter.x=ax-ox*z;
+  starCenter.y=ay-oy*z;
+  o._pos={x:ax,y:ay,rdist:r,z:r*Math.sin(o.theta)};
+  o._z=o._pos.z;
+  return o;
+}
+function startPlanetFly(i,m){
+  var o=orbits[i]; if(!o) return;
+  var p=o._pos||planetPos(o);
+  cancelSunFling();
+  starShift=null;
+  hideTooltip();
+  state.hovered=i;
+  var targetSize=Math.hypot(window.innerWidth,window.innerHeight)*1.04;
+  var baseR=Math.max(1,o.r*1.55);
+  var toZoom=Math.min(120,Math.max(14,targetSize/(2*baseR)));
+  state.flying={i:i,m:m,start:performance.now(),dur:900,fromZoom:systemZoom,
+    preZoom:systemZoom,preCenter:{x:starCenter.x,y:starCenter.y},preTitle:document.title,
+    toZoom:toZoom,a0:{x:p.x,y:p.y},
+    a1:{x:window.innerWidth*0.5,y:window.innerHeight*0.5}};
+  var f=state.flying;
+  document.body.classList.add('is-flying');
+  var flash=$('flyFlash'); if(flash){ flash.style.display='none'; flash.style.opacity='0'; }
+  var ifr=document.createElement('iframe');
+  ifr.setAttribute('aria-hidden','true'); ifr.tabIndex=-1;
+  ifr.className='tm-portal';
+  ifr.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;opacity:0;pointer-events:none;border:0;z-index:80;background:#05060f';
+  ifr.onload=function(){
+    if(state.flying===f){ f.preloaded=true; }
+    else if(f.revealed){ syncPortalUrl(f); }
+  };
+  ifr.src=m.sim;
+  document.body.appendChild(ifr);
+  f.iframe=ifr;
+  setTimeout(function(){ if(state.flying===f && !f.revealing) finishFlight(f); }, 2500);
+}
+function updateFly(now){
+  var f=state.flying; if(!f) return;
+  var o=orbits[f.i];
+  if(!o){ state.flying=null; window.location.href=f.m.sim; return; }
+  var t=Math.min(1,Math.max(0,(now-f.start)/f.dur));
+  var e=t*(0.35+0.65*t);
+  var w=window.innerWidth, h=window.innerHeight;
+  var cx=w*0.5, cy=h*0.5;
+  if(t<1){
+    var z=f.fromZoom+(f.toZoom-f.fromZoom)*e;
+    var ax=f.a0.x+(f.a1.x-f.a0.x)*e;
+    var ay=f.a0.y+(f.a1.y-f.a0.y)*e;
+    systemZoom=z;
+    placeFlightPlanet(f,z,ax,ay);
+    return;
+  }
+  if(!f.preloaded){
+    f.done=true;
+    var wt=Math.min(1,(now-f.start-f.dur)/1500);
+    systemZoom=f.toZoom*(1+0.035*wt);
+    placeFlightPlanet(f,systemZoom,cx,cy);
+    return;
+  }
+  if(!f.revealing){
+    f.revealing=true; f.revealed=true; f.revealStart=now;
+    state.portalRestore={zoom:f.preZoom,center:f.preCenter,title:f.preTitle};
+    try{ history.pushState({tmPortal:true},'',f.m.sim); }catch(err){}
+    if(f.iframe && f.iframe.contentDocument) document.title=f.iframe.contentDocument.title||document.title;
+  }
+  var rt=Math.min(1,(now-f.revealStart)/220);
+  systemZoom=f.toZoom*(1+0.035*rt);
+  placeFlightPlanet(f,systemZoom,cx,cy);
+  if(f.iframe) f.iframe.style.opacity=String(rt);
+  if(rt>=1) finishPortal(f);
+}
+function syncPortalUrl(f){
+  try{
+    var w=f.iframe && f.iframe.contentWindow;
+    if(!w) return;
+    var p=w.location.pathname+w.location.search+w.location.hash;
+    history.replaceState({tmPortal:true},'',p);
+    if(f.iframe.contentDocument) document.title=f.iframe.contentDocument.title||document.title;
+  }catch(e){}
+}
+function finishPortal(f){
+  if(!f || f.finished) return;
+  f.finished=true;
+  state.flying=null;
+  var ifr=f.iframe;
+  if(ifr){ ifr.style.opacity='1'; ifr.style.pointerEvents='auto'; }
+  document.body.classList.add('portal-open');
+  try{ ifr.contentWindow.focus(); }catch(e){}
 }
 function showDetail(m,i){
    var dv=$('detailView');
@@ -939,22 +1162,49 @@ function showDetail(m,i){
    syncUrl();
  }
 
+ var tipW=0, tipH=0, tipLimit=0;
+ function updateTipMetrics(){
+   var tip=$('tooltip'); if(!tip||tip.style.display==='none') return;
+   tipW=tip.offsetWidth||300; tipH=tip.offsetHeight||80;
+   var limit=window.innerWidth-12;
+   var cat=$('catalog');
+   if(window.innerWidth>=980 && cat && !document.body.classList.contains('cat-collapsed')) limit=Math.min(limit, cat.getBoundingClientRect().left-12);
+   tipLimit=limit;
+ }
+ function positionTooltip(x,y){
+   var tip=$('tooltip'); if(!tip||tip.style.display==='none') return;
+   if(!tipW||!tipH) updateTipMetrics();
+   var w=tipW||300, h=tipH||80, limit=tipLimit||window.innerWidth-12;
+   var tx=x+16, ty=y-h/2;
+   if(tx+w>limit) tx=x-w-16;
+   if(tx<12) tx=12;
+   if(tx+w>limit) tx=Math.max(12,limit-w);
+   if(ty<70) ty=70;
+   if(ty+h>window.innerHeight-90) ty=window.innerHeight-90-h;
+   tip.style.transform='translate3d('+Math.round(tx)+'px,'+Math.round(ty)+'px,0)';
+ }
  function showTooltipFor(i){
    var o = orbits[i];
    if(!o || !o._pos) return;
    var m=TM[i];
    var tip=$('tooltip');
    tip.textContent='';
-   var ms=document.createElement('span');ms.className='t-ms';ms.textContent=m.milestone;tip.appendChild(ms);
-   tip.appendChild(document.createTextNode(m.title));
-   var src=document.createElement('div');src.className='t-src';src.textContent=m.src;tip.appendChild(src);
+   var head=document.createElement('div');head.className='t-head';
+   var ms=document.createElement('span');ms.className='t-ms';ms.textContent=m.milestone;head.appendChild(ms);
+   var title=document.createElement('span');title.className='t-title';title.textContent=m.title;head.appendChild(title);
+   tip.appendChild(head);
+   var sum=document.createElement('div');sum.className='t-sum';sum.textContent=m.summary;tip.appendChild(sum);
+   var tags=document.createElement('div');tags.className='t-tags';
+   (m.tags||[]).forEach(function(t){var s=document.createElement('span');s.textContent=t;tags.appendChild(s);});
+   tip.appendChild(tags);
+   var src=document.createElement('div');src.className='t-src';src.textContent='来源：'+m.src;tip.appendChild(src);
+   var foot=document.createElement('div');foot.className='t-foot';foot.textContent='点击行星进入 '+m.milestone;tip.appendChild(foot);
    tip.style.display='block';
-   var x=o._pos.x+12, y=o._pos.y-10;
-   if(x+250>window.innerWidth) x=o._pos.x-260;
-   if(y+60>window.innerHeight) y=o._pos.y-60;
-   tip.style.left=x+'px';tip.style.top=y+'px';
+   updateTipMetrics();
+   positionTooltip(o._pos.x,o._pos.y);
  }
- function hideTooltip(){$('tooltip').style.display='none';}
+ function hideTooltip(){var tip=$('tooltip');if(tip)tip.style.display='none';}
+ function clearHover(){state.hovered=null;hideTooltip();}
 
  // ---------- deep links ----------
  function parseDeepLinks(){
@@ -993,16 +1243,37 @@ function showDetail(m,i){
    }catch(e){}
  }
 
- // ---------- catalog toggle mobile ----------
- function toggleCatalog(){
-   if(window.innerWidth<980){
-     state.catalogOpen=!state.catalogOpen;
-     $('catalog').classList.toggle('open',state.catalogOpen);
-     document.body.classList.toggle('cat-open',state.catalogOpen);
-   } else {
-     $('catalog').scrollIntoView({behavior:'smooth'});
-   }
- }
+// ---------- catalog collapse / mobile toggle ----------
+function setCatalogCollapsed(v){
+  state.catalogCollapsed=!!v;
+  document.body.classList.toggle('cat-collapsed',state.catalogCollapsed);
+  var b=$('btnCatalog'), t=$('catTab');
+  if(b) b.setAttribute('aria-expanded',String(!state.catalogCollapsed));
+  if(t) t.setAttribute('aria-expanded',String(!state.catalogCollapsed));
+  try{localStorage.setItem('tm-catalog-collapsed',state.catalogCollapsed?'1':'0');}catch(e){}
+  updateTipMetrics();
+  setStarAnchor(true);
+}
+function syncCatalogAria(){
+  var b=$('btnCatalog'), t=$('catTab');
+  var expanded=window.innerWidth<980 ? !!state.catalogOpen : !state.catalogCollapsed;
+  if(b) b.setAttribute('aria-expanded',String(expanded));
+  if(t) t.setAttribute('aria-expanded',String(!state.catalogCollapsed));
+}
+function toggleCatalog(){
+  if(window.innerWidth<980){
+    var openMobile=!state.catalogOpen;
+    if(openMobile) closeOtherTopPanels('catalog');
+    state.catalogOpen=openMobile;
+    $('catalog').classList.toggle('open',openMobile);
+    document.body.classList.toggle('cat-open',openMobile);
+    syncCatalogAria();
+  } else {
+    var opening=state.catalogCollapsed;
+    if(opening) closeOtherTopPanels('catalog');
+    setCatalogCollapsed(!opening);
+  }
+}
 
  // ---------- path drawer ----------
  function buildPath(){
@@ -1020,7 +1291,46 @@ function showDetail(m,i){
    body.appendChild(credit);
  }
 
+ // ---------- top panel exclusivity / path hover ----------
+ function closeCatalogTop(){
+   if(window.innerWidth<980){
+     if(state.catalogOpen){
+       state.catalogOpen=false;
+       $('catalog').classList.remove('open');
+       document.body.classList.remove('cat-open');
+       syncCatalogAria();
+     }
+   } else if(!state.catalogCollapsed){
+     setCatalogCollapsed(true);
+   }
+ }
+ function closePathPanel(){
+   var d=$('drawer'); if(!d) return;
+   d.classList.remove('open');
+   $('btnPath').setAttribute('aria-expanded','false');
+   var ov=$('overlay'); if(ov) ov.classList.remove('open');
+   setStarAnchor(true);
+ }
+ function openPathPanel(){
+   var d=$('drawer'); if(!d) return;
+   closeOtherTopPanels('path');
+   buildPath();
+   d.classList.add('open');
+   $('btnPath').setAttribute('aria-expanded','true');
+   var ov=$('overlay'); if(ov) ov.classList.remove('open');
+   setStarAnchor(true);
+ }
+ function closeOtherTopPanels(except){
+   if(except!=='lang' && window.TM_I18N && window.TM_I18N.closeMenu) window.TM_I18N.closeMenu();
+   if(except!=='catalog') closeCatalogTop();
+   if(except!=='path') closePathPanel();
+   if(except!=='gloss') setGlossOpen(false,true);
+   if(except!=='about') setAboutOpen(false,true);
+ }
  // ---------- events ----------
+ $('searchGo').addEventListener('click',function(){
+   var s=$('search'); s.focus(); s.dispatchEvent(new Event('input',{bubbles:true}));
+ });
  $('search').addEventListener('input',function(){
    state.q=this.value.trim();
    renderCatalog();
@@ -1045,25 +1355,50 @@ function showDetail(m,i){
    else state.speed=1;
    this.textContent='x'+state.speed;
  });
+ function setGlossOpen(v,skipExclusive){
+   var el=$('glossPopover'); if(!el) return;
+   if(v && !skipExclusive) closeOtherTopPanels('gloss');
+   el.classList.toggle('open',!!v);
+   $('btnGloss').setAttribute('aria-expanded',String(!!v));
+   setStarAnchor(true);
+ }
+ function setAboutOpen(v,skipExclusive){
+   var el=$('aboutPopover'); if(!el) return;
+   if(v && !skipExclusive) closeOtherTopPanels('about');
+   el.classList.toggle('open',!!v);
+   $('btnAbout').setAttribute('aria-expanded',String(!!v));
+   setStarAnchor(true);
+ }
  $('btnCatalog').addEventListener('click',toggleCatalog);
- $('btnPath').addEventListener('click',function(){buildPath();$('overlay').classList.add('open');$('drawer').classList.add('open');});
- $('btnGloss').addEventListener('click',function(){$('aboutPopover').classList.remove('open');$('glossPopover').classList.add('open');});
- $('glossClose').addEventListener('click',function(){$('glossPopover').classList.remove('open');});
- $('glossPopover').addEventListener('click',function(e){if(e.target===$('glossPopover'))$('glossPopover').classList.remove('open');});
- $('btnAbout').addEventListener('click',function(){$('glossPopover').classList.remove('open');$('aboutPopover').classList.add('open');});
- $('drawerClose').addEventListener('click',function(){$('overlay').classList.remove('open');$('drawer').classList.remove('open');});
- $('overlay').addEventListener('click',function(){$('overlay').classList.remove('open');$('drawer').classList.remove('open');});
- $('aboutClose').addEventListener('click',function(){$('aboutPopover').classList.remove('open');});
- $('aboutPopover').addEventListener('click',function(e){if(e.target===$('aboutPopover'))$('aboutPopover').classList.remove('open');});
+ $('catCollapse').addEventListener('click',function(){setCatalogCollapsed(true);});
+ $('catTab').addEventListener('click',function(){setCatalogCollapsed(false);});
+ try{ if(window.innerWidth>=980 && localStorage.getItem('tm-catalog-collapsed')==='1') setCatalogCollapsed(true); }catch(e){}
+ $('btnPath').addEventListener('click',function(e){
+   e.preventDefault();
+   if($('drawer').classList.contains('open')) closePathPanel();
+   else openPathPanel();
+ });
+ document.addEventListener('click',function(e){
+   if(!e.target.closest('#drawer') && !e.target.closest('#btnPath')) closePathPanel();
+ });
+ $('btnGloss').addEventListener('click',function(){setGlossOpen(!$('glossPopover').classList.contains('open'));});
+ $('glossClose').addEventListener('click',function(){setGlossOpen(false);});
+ $('glossPopover').addEventListener('click',function(e){if(e.target===$('glossPopover'))setGlossOpen(false);});
+ $('btnAbout').addEventListener('click',function(){setAboutOpen(!$('aboutPopover').classList.contains('open'));});
+ $('drawerClose').addEventListener('click',closePathPanel);
+ $('overlay').addEventListener('click',closePathPanel);
+ $('aboutClose').addEventListener('click',function(){setAboutOpen(false);});
+ $('aboutPopover').addEventListener('click',function(e){if(e.target===$('aboutPopover'))setAboutOpen(false);});
 
  // keyboard
  document.addEventListener('keydown',function(e){
    if(e.key==='/' && document.activeElement!==$('search')){e.preventDefault();$('search').focus();return;}
    if(e.key==='Escape'){
      if($('detailView').classList.contains('active')) closeDetail();
-     else if($('drawer').classList.contains('open')){$('drawer').classList.remove('open');$('overlay').classList.remove('open');}
-     else if($('glossPopover').classList.contains('open')) $('glossPopover').classList.remove('open');
-     else if($('aboutPopover').classList.contains('open')) $('aboutPopover').classList.remove('open');
+     else if($('drawer').classList.contains('open')) closePathPanel();
+     else if($('glossPopover').classList.contains('open')) setGlossOpen(false);
+     else if($('aboutPopover').classList.contains('open')) setAboutOpen(false);
+     else if(window.innerWidth>=980 && !state.catalogCollapsed){ setCatalogCollapsed(true); }
      else if(window.innerWidth<980 && state.catalogOpen){state.catalogOpen=false;$('catalog').classList.remove('open');}
      return;
    }
@@ -1088,57 +1423,125 @@ function showDetail(m,i){
 
  // mouse
  window.addEventListener('mousemove',function(e){
+   if(state.flying) return;
    mouse.x=e.clientX; mouse.y=e.clientY;
    if(window.innerWidth>=980){
+     var ui = e.target && e.target.closest && e.target.closest('.catalog,.cmdbar,.topbar,.hero,.popover,.drawer,.overlay,#tm-ai-root');
+     if(ui){ if(!e.target.closest('.catalog')) clearHover(); return; }
      var idx=hitPlanet(e.clientX,e.clientY);
-     if(idx!==-1 && matches(TM[idx])){ state.hovered=idx; showTooltipFor(idx);}
-     else if(state.hovered!==null && !e.target.closest('.catalog,.cmdbar,.topbar')){ /* keep */ }
+     if(idx!==-1 && matches(TM[idx])){
+       if(state.hovered!==idx){ state.hovered=idx; showTooltipFor(idx); }
+     } else if(state.hovered!==null && !e.target.closest('.catalog,.cmdbar,.topbar')){
+       clearHover();
+     }
    }
  });
+ window.addEventListener('blur', clearHover);
+ orbitCanvas.addEventListener('mouseleave', clearHover);
  function hitPlanet(mx,my){
    for(var i=orbits.length-1;i>=0;i--){
      var o=orbits[i];
      if(!o._pos) continue;
      if(!matches(o.m)) continue;
      var dx=mx-o._pos.x, dy=my-o._pos.y;
-     var rr=o.r*systemZoom+6; if(dx*dx+dy*dy <= rr*rr) return i;
+     var rr=o.r*(o.scale||1)*systemZoom+10; if(dx*dx+dy*dy <= rr*rr) return i;
    }
    return -1;
  }
  orbitCanvas.addEventListener('wheel', function(e){
+  if(state.flying) return;
   var rect=orbitCanvas.getBoundingClientRect();
   var mx=e.clientX-rect.left, my=e.clientY-rect.top;
   var R=92.21*systemZoom;
   var dx=mx-starCenter.x, dy=my-starCenter.y;
   if(dx*dx+dy*dy > R*R) return;
   e.preventDefault();
+  starShift=null;
   var f = Math.exp(-e.deltaY * 0.0012);
   systemZoom = Math.max(0.45, Math.min(2.6, systemZoom * f));
   orbits.forEach(function(o){ o.trail.length = 0; });
 }, {passive:false});
-var sunDragging = false, sunDragX = 0, sunDragY = 0, sunDragMoved = false, suppressClick = false;
+var sunDragging = false, sunDragX = 0, sunDragY = 0, sunStartX = 0, sunStartY = 0, sunDragMoved = false, suppressClick = false;
+var sunSamples = [], sunRaf = 0, sunVX = 0, sunVY = 0, sunLastT = 0;
+var SUN_MIN_V = 0.02, SUN_MAX_V = 2.2, SUN_DAMP = 7.0, SUN_FLING_SCALE = 0.7;
+var SUN_DRAG_RATIO = 1/2.71828182;
+function panX(v){ return Math.max(50, Math.min(window.innerWidth-50, v)); }
+function panY(v){ return Math.max(70, Math.min(window.innerHeight-70, v)); }
+function sunTrack(x,y){
+  var now=performance.now();
+  sunSamples.push({x:x,y:y,t:now});
+  while(sunSamples.length>8 || (sunSamples.length>2 && now-sunSamples[0].t>120)) sunSamples.shift();
+}
+function cancelSunFling(){
+  if(sunRaf){ cancelAnimationFrame(sunRaf); sunRaf=0; }
+  sunVX=0; sunVY=0;
+}
+function finishSunFling(){
+  sunRaf=0; sunVX=0; sunVY=0;
+  setTimeout(function(){ suppressClick=false; }, 120);
+}
+function sunStep(now){
+  sunRaf=0;
+  var dt=Math.min(32, Math.max(8, now-sunLastT || 16.7));
+  sunLastT=now;
+  var wantX=starCenter.x+sunVX*dt, wantY=starCenter.y+sunVY*dt;
+  var nx=panX(wantX), ny=panY(wantY);
+  var hitX=(nx!==wantX), hitY=(ny!==wantY);
+  starCenter.x=nx; starCenter.y=ny;
+  orbits.forEach(function(o){ o.trail.length=0; });
+  var damp=Math.exp(-SUN_DAMP*dt/1000);
+  sunVX*=damp; sunVY*=damp;
+  if(hitX) sunVX=0;
+  if(hitY) sunVY=0;
+  if(Math.hypot(sunVX,sunVY)<SUN_MIN_V || (!sunVX && !sunVY)){ finishSunFling(); return; }
+  sunRaf=requestAnimationFrame(sunStep);
+}
+function startSunFling(){
+  if(reducedMotion || sunSamples.length<2){ setTimeout(function(){suppressClick=false;},60); return; }
+  var a=sunSamples[0], b=sunSamples[sunSamples.length-1];
+  var dt=b.t-a.t;
+  if(dt<=0){ setTimeout(function(){suppressClick=false;},60); return; }
+  var vx=(b.x-a.x)/dt, vy=(b.y-a.y)/dt;
+  var sp=Math.hypot(vx,vy);
+  if(sp<SUN_MIN_V){ setTimeout(function(){suppressClick=false;},60); return; }
+  var k=Math.min(1,SUN_MAX_V/sp);
+  sunVX=vx*k*SUN_FLING_SCALE*SUN_DRAG_RATIO; sunVY=vy*k*SUN_FLING_SCALE*SUN_DRAG_RATIO;
+  sunLastT=performance.now();
+  sunRaf=requestAnimationFrame(sunStep);
+}
 orbitCanvas.addEventListener('pointerdown', function(e){
+  if(state.flying) return;
   var rect=orbitCanvas.getBoundingClientRect();
   var mx=e.clientX-rect.left, my=e.clientY-rect.top;
-  if(hitPlanet(mx,my)!==-1) return;
+  var hit=hitPlanet(mx,my);
   var R=92.21*systemZoom;
-  var dx=mx-starCenter.x, dy=my-starCenter.y;
-  if(dx*dx+dy*dy <= R*R){
-    sunDragging=true; sunDragMoved=false; sunDragX=mx; sunDragY=my;
-    orbits.forEach(function(o){ o.trail.length=0; });
-    try { orbitCanvas.setPointerCapture(e.pointerId); } catch(err) {}
-    e.preventDefault();
-  }
+  var cx=mx-starCenter.x, cy=my-starCenter.y;
+  if(hit===-1 && cx*cx+cy*cy>R*R) return;
+  cancelSunFling();
+  starShift=null;
+  suppressClick=false;
+  sunDragging=true; sunDragMoved=false;
+  sunDragX=sunStartX=mx; sunDragY=sunStartY=my;
+  sunSamples=[]; sunTrack(mx,my);
+  orbits.forEach(function(o){ o.trail.length=0; });
+  try { orbitCanvas.setPointerCapture(e.pointerId); } catch(err) {}
+  e.preventDefault();
 });
 orbitCanvas.addEventListener('pointermove', function(e){
-  if(!sunDragging) return;
+  if(state.flying || !sunDragging) return;
   var rect=orbitCanvas.getBoundingClientRect();
   var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  if(!sunDragMoved){
+    if(Math.hypot(mx-sunStartX,my-sunStartY)<4){ sunDragX=mx; sunDragY=my; e.preventDefault(); return; }
+    sunDragMoved=true;
+    sunDragX=sunStartX; sunDragY=sunStartY;
+  }
   var dx=mx-sunDragX, dy=my-sunDragY;
   if(dx||dy){
-    starCenter.x = Math.max(50, Math.min(window.innerWidth-50, starCenter.x+dx));
-    starCenter.y = Math.max(70, Math.min(window.innerHeight-70, starCenter.y+dy));
-    sunDragX=mx; sunDragY=my; sunDragMoved=true;
+    starCenter.x = panX(starCenter.x+dx*SUN_DRAG_RATIO);
+    starCenter.y = panY(starCenter.y+dy*SUN_DRAG_RATIO);
+    sunDragX=mx; sunDragY=my;
+    sunTrack(mx,my);
     orbits.forEach(function(o){ o.trail.length=0; });
   }
   e.preventDefault();
@@ -1146,14 +1549,44 @@ orbitCanvas.addEventListener('pointermove', function(e){
 function endSunDrag(){
   if(!sunDragging) return;
   sunDragging=false;
-  if(sunDragMoved){ suppressClick=true; setTimeout(function(){ suppressClick=false; }, 60); }
+  if(sunDragMoved){ suppressClick=true; startSunFling(); }
+  else { suppressClick=false; }
 }
 orbitCanvas.addEventListener('pointerup', endSunDrag);
 orbitCanvas.addEventListener('pointercancel', endSunDrag);
+function collapseRightPanels(){
+  if(window.innerWidth<980){
+    state.catalogOpen=false;
+    var cat=$('catalog'); if(cat) cat.classList.remove('open');
+    document.body.classList.remove('cat-open');
+  } else {
+    setCatalogCollapsed(true);
+  }
+  setGlossOpen(false);
+  setAboutOpen(false);
+  if(window.TM_AI && typeof window.TM_AI.close==='function') window.TM_AI.close();
+}
+window.addEventListener('popstate', function(){
+  var pf=state.flying;
+  if(!document.body.classList.contains('portal-open') && !(pf && pf.revealing)) return;
+  var ifr=document.querySelector('.tm-portal'); if(ifr) ifr.remove();
+  document.body.classList.remove('portal-open','is-flying');
+  var r=state.portalRestore;
+  if(r){ systemZoom=r.zoom; starCenter.x=r.center.x; starCenter.y=r.center.y; if(r.title) document.title=r.title; }
+  starShift=null;
+  state.portalRestore=null; state.flying=null; state.hovered=null;
+  var flash=$('flyFlash'); if(flash){ flash.style.transition='none'; flash.style.opacity='0'; flash.style.display='none'; }
+  orbits.forEach(function(o){ o.trail.length=0; });
+  startFrames();
+});
 orbitCanvas.addEventListener('click',function(e){
+   if(state.flying) return;
    if(suppressClick){ suppressClick=false; return; }
-   var idx=hitPlanet(e.clientX,e.clientY);
-   if(idx!==-1 && matches(TM[idx])) selectModule(idx);
+   var rect=orbitCanvas.getBoundingClientRect();
+   var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+   var idx=hitPlanet(mx,my);
+   if(idx!==-1 && matches(TM[idx])) selectModule(idx,true);
+   else collapseRightPanels();
  });
 
  // init
@@ -1172,14 +1605,18 @@ var rafId=0, pageVisible=!document.hidden, lastDraw=0;
 function frame(now){
   rafId=0;
   if(!pageVisible) return;
-  if(now-lastDraw < 32){
+  if(document.body.classList.contains('portal-open')) return;
+  var cap = (state.flying || state.hovered!==null || starShift) ? 16 : 32;
+  if(now-lastDraw < cap){
     rafId=requestAnimationFrame(frame);
     return;
   }
   lastDraw=now;
   var dt=Math.min(0.05,(now-last)/1000);
   last=now;
+  updateStarShift(now);
   if(!state.paused) updatePlanets(dt);
+  if(state.flying) updateFly(now);
   if(!reducedMotion) handleShot(now);
   drawStarfield(now);
   drawOrbits(now,dt);
@@ -1905,6 +2342,7 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
     isOpen = true;
     panel.hidden = false;
     launcher.setAttribute('aria-expanded', 'true');
+    if (window.TM_STAR_LAYOUT) window.TM_STAR_LAYOUT(true);
     if (!healthOk) {
       setStatus('checking');
       fetch(API_BASE + '/api/health').then(function (res) {
@@ -1929,6 +2367,7 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
     isOpen = false;
     panel.hidden = true;
     launcher.setAttribute('aria-expanded', 'false');
+    if (window.TM_STAR_LAYOUT) window.TM_STAR_LAYOUT(true);
   }
 
   function togglePanel() {
@@ -2049,5 +2488,7 @@ window.TM_OFFLINE_KB = {"v":1,"modules":[{"m":"M0","slug":"00-binet","title":"�
 </script>
 filePath: /home/wck/Theoretical-Mechanics/assets/tm-ai-panel.html
 <!-- TM-AI:END -->
+  <script src="assets/tm-i18n-data.js"></script>
+  <script src="assets/tm-i18n.js"></script>
 </body>
 </html>

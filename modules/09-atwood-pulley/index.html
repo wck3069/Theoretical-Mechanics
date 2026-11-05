@@ -548,10 +548,18 @@ window.TMART = (function () {
   var P = { m1: DEFAULTS.m1, m2: DEFAULTS.m2, I: DEFAULTS.I, R: DEFAULTS.R, speed: DEFAULTS.speed };
   var cv = $('cv'), ctx = cv.getContext('2d');
   var W = 0, H = 0, DPR = 1;
-  var s = 0, v = 0, t = 0, playing = true, last = 0;
+  var s = 0, v = 0, t = 0, playing = true, settled = false, last = 0;
   var reduced = false;
   try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
 
+  function setNotice(msg, bad) {
+    var el = $('notice');
+    if (!el) return;
+    if (!msg) { el.hidden = true; el.textContent = ''; return; }
+    el.hidden = false;
+    el.textContent = msg;
+    el.className = bad ? 'notice bad' : 'notice';
+  }
   function meff() { return P.m1 + P.m2 + P.I / (P.R * P.R); }
   function accel() { return (P.m2 - P.m1) * G / meff(); }
   function tension() {
@@ -560,6 +568,23 @@ window.TMART = (function () {
   }
   function energy() {
     return 0.5 * meff() * v * v - (P.m2 - P.m1) * G * s;
+  }
+  function geom() {
+    var cx = W * 0.5, cy = H * 0.28;
+    var rp = Math.min(70, Math.max(38, H * 0.09));
+    var box = 34;
+    var top = cy + rp;
+    var bottom = H - 70;
+    var travel = Math.max(70, (bottom - top - box) / 2);
+    var y0 = top + travel;
+    var scale = Math.max(48, Math.min(H * 0.13, W * 0.11));
+    return {
+      cx: cx, cy: cy, rp: rp, box: box, top: top, bottom: bottom,
+      travel: travel, y0: y0, scale: scale,
+      sPulley: travel / scale,
+      sGroundDown: (bottom - box - y0) / scale,
+      sGroundUp: (y0 + box - bottom) / scale
+    };
   }
 
   function resize() {
@@ -590,11 +615,8 @@ window.TMART = (function () {
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
-    var cx = W * 0.5, cy = H * 0.34;
-    var rp = Math.min(70, Math.max(38, H * 0.09));
-    var scale = Math.min(H * 0.24, W * 0.18);
-    var box = 34;
-    var y0 = cy + 90;
+    var g = geom();
+    var cx = g.cx, cy = g.cy, rp = g.rp, scale = g.scale, box = g.box, y0 = g.y0;
     var y1 = y0 - s * scale;
     var y2 = y0 + s * scale;
     var x1 = cx - rp, x2 = cx + rp;
@@ -667,13 +689,28 @@ window.TMART = (function () {
     $('hudE').textContent = energy().toFixed(3) + ' J';
   }
 
+  function stopMotion(a, g) {
+    var hitPulley = a > 0 ? s >= g.sPulley - 1e-7 : s <= -g.sPulley + 1e-7;
+    playing = false;
+    settled = true;
+    v = 0;
+    setNotice(hitPulley
+      ? (a > 0 ? 'm₁ 碰到滑轮，运动停止' : 'm₂ 碰到滑轮，运动停止')
+      : '物块到达行程末端，运动停止', false);
+    var pb = $('btn-pause');
+    if (pb) { pb.disabled = true; pb.textContent = '已停止'; }
+  }
   function step(dt) {
     // 匀加速精确解，避免欧拉积分让总能量漂移
     var a = accel();
+    if (Math.abs(a) < 1e-9) return;
     t += dt;
     s = 0.5 * a * t * t;
     v = a * t;
-    if (s > 1.15 || s < -0.35) { s = 0; v = 0; t = 0; }
+    var g = geom();
+    var limit = a > 0 ? Math.min(g.sPulley, g.sGroundDown) : Math.max(-g.sPulley, g.sGroundUp);
+    if (a > 0 && s >= limit) { s = limit; stopMotion(a, g); }
+    else if (a < 0 && s <= limit) { s = limit; stopMotion(a, g); }
   }
 
   function frame(now) {
@@ -685,6 +722,13 @@ window.TMART = (function () {
     requestAnimationFrame(frame);
   }
 
+  function resetMotion() {
+    s = 0; v = 0; t = 0; playing = true; settled = false;
+    setNotice('', false);
+    var pb = $('btn-pause');
+    if (pb) { pb.disabled = false; pb.textContent = '暂停'; }
+    draw();
+  }
   function sync() {
     P.m1 = parseFloat($('p-m1').value);
     P.m2 = parseFloat($('p-m2').value);
@@ -696,22 +740,18 @@ window.TMART = (function () {
     $('v-I').textContent = P.I.toFixed(2);
     $('v-R').textContent = P.R.toFixed(2);
     $('v-speed').textContent = P.speed.toFixed(1);
-    s = 0; v = 0; t = 0;
-    draw();
+    resetMotion();
   }
 
   ['p-m1', 'p-m2', 'p-I', 'p-R', 'p-speed'].forEach(function (id) {
     $(id).addEventListener('input', sync);
   });
   $('btn-pause').addEventListener('click', function () {
+    if (settled) { resetMotion(); return; }
     playing = !playing;
     this.textContent = playing ? '暂停' : '继续';
   });
-  $('btn-reset').addEventListener('click', function () {
-    s = 0; v = 0; t = 0; playing = true;
-    $('btn-pause').textContent = '暂停';
-    draw();
-  });
+  $('btn-reset').addEventListener('click', resetMotion);
 
   function runSelftest() {
     if (!/[?&]selftest=1(?:&|$)/.test(location.search)) return;
@@ -946,5 +986,7 @@ window.TMART = (function () {
 })();
 </script>
 <!-- TM-THEME-BODY:END -->
+  <script src="../../assets/tm-i18n-data.js"></script>
+  <script src="../../assets/tm-i18n.js"></script>
 </body>
 </html>

@@ -591,10 +591,17 @@ window.TMART = (function () {
   var reduced = false;
   try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
 
-  var wedge = { ratio: 2, alpha: 30, t: 0 };
+  var wedge = { ratio: 2, alpha: 30, t: 0, done: false };
   var spring = { k: 80, l0: 0.5, m: 1, th0: 0.3, r: 0, vr: 0, th: 0, om: 0, trail: [] };
   var cart = { ratio: 3, l: 1, th0: 0.25, X: 0, vX: 0, th: 0, om: 0, trail: [] };
 
+  function setNotice(msg) {
+    var el = $('notice');
+    if (!el) return;
+    if (!msg) { el.hidden = true; el.textContent = ''; return; }
+    el.hidden = false;
+    el.textContent = msg;
+  }
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     var r = cv.getBoundingClientRect();
@@ -617,9 +624,18 @@ window.TMART = (function () {
     return { aRel: aRel, aX: aX, eta: num / den2, k: k, a: a };
   }
   function wedgeStep(dt) {
+    if (wedge.done) return;
     var v = wedgeVals();
+    var tBottom = Math.sqrt(2 * 0.9 / v.aRel);
     wedge.t += dt;
-    if (0.5 * v.aRel * wedge.t * wedge.t > 0.9) wedge.t = 0;
+    if (wedge.t >= tBottom) {
+      wedge.t = tBottom;
+      wedge.done = true;
+      playing = false;
+      setNotice('滑块到达斜面底部，动画暂停');
+      var pb = $('btn-pause');
+      if (pb) { pb.disabled = true; pb.textContent = '已暂停'; }
+    }
   }
   function drawWedge() {
     var v = wedgeVals();
@@ -872,8 +888,13 @@ window.TMART = (function () {
     $('v-speed').textContent = speed.toFixed(1);
 
     wedge.t = 0;
+    wedge.done = false;
     resetSpring();
     resetCart();
+    playing = true;
+    setNotice('');
+    var pb = $('btn-pause');
+    if (pb) { pb.disabled = false; pb.textContent = '暂停'; }
     draw();
   }
 
@@ -894,8 +915,8 @@ window.TMART = (function () {
     playing = !playing; this.textContent = playing ? '暂停' : '继续';
   });
   $('btn-reset').addEventListener('click', function () {
-    wedge.t = 0; resetSpring(); resetCart(); playing = true;
-    $('btn-pause').textContent = '暂停'; draw();
+    wedge.t = 0; wedge.done = false; resetSpring(); resetCart(); playing = true;
+    setNotice(''); $('btn-pause').disabled = false; $('btn-pause').textContent = '暂停'; draw();
   });
 
   function runSelftest() {
@@ -1138,5 +1159,7 @@ window.TMART = (function () {
 })();
 </script>
 <!-- TM-THEME-BODY:END -->
+  <script src="../../assets/tm-i18n-data.js"></script>
+  <script src="../../assets/tm-i18n.js"></script>
 </body>
 </html>
