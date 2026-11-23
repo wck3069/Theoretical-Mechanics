@@ -80,3 +80,14 @@ dist 8081 同步: modules=30 links=40 ✓
 第二波：M29 勒让德-罗斯（modules/22-legendre-routh，构建中）、
 M30 双曲运动（modules/23-hyperbolic-motion，自测已 20/20，收尾中）。
 完成后按第 5 节同流程集成（注册表/KB/边/卡片/方程/计数 25→27）。
+
+## 8. 追补：桌面预览面板 ✕ 失效（用户报告，Pages 实测复现）
+
+症状：桌面端点模块卡（小标题）打开右侧预览面板后，✕ 点击无反应。
+根因：桌面首击走 `state.preview` 预览态（hash 不变、不进模块视图），
+而 `closeDetail()` 只有 node/module 两个分支，预览态空转；`goUp()`（Esc）
+同样缺预览分支，会直接跳回首页。移动端首击直接进模块视图，故不受影响。
+修复：closeDetail 补 preview 分支（清 preview/selected + markCardsSelected(null)
++ renderPanel 走既有关闭/焦点归还路径）；goUp 补 preview→closeDetail 阶梯。
+回归：新工具 `tools/qa-neural/panel_close_audit.py`（物理点击四步断言），
+修复前 RED（✕ 后 panel 仍 open），修复后 GREEN；interaction_audit 复跑 exit 0。

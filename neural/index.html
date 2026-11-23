@@ -2693,10 +2693,17 @@ function hideNotice(){ $('notice').classList.remove('show'); }
 function closeDetail(){
   if(state.node){ writeHash(state.chapter.slug, state.module.id.toLowerCase()); return; }
   if(state.module){ writeHash(state.chapter.slug); return; }
+  if(state.preview){
+    state.preview=null; state.selected=null;
+    markCardsSelected(null);
+    renderPanel();
+    return;
+  }
 }
 function goUp(){
   if(state.node){ writeHash(state.chapter.slug, state.module.id.toLowerCase()); return; }
   if(state.module){ writeHash(state.chapter.slug); return; }
+  if(state.preview){ closeDetail(); return; }
   if(state.chapter){ window.location.href='../index.html'; }
 }
 document.addEventListener('keydown', function(e){
