@@ -1,0 +1,1275 @@
+\chapter{拉格朗日力学}\label{ch:lagrange}
+
+\begin{guidebox}
+描述一个摆，给出摆角就够了。若还用两个直角坐标，就要额外保证摆杆长度不变。拉格朗日方法先挑出刚好够用的独立变量，再用这些变量写动能和势能。这样常能在求轨道时先省去未知的反力。
+
+本章先从摆和滑轮练习选坐标，再用虚功说明哪些力要进入方程。读到守恒量时，试着找出哪个坐标可以改变而不影响力学规律。若题目还要求绳张力或接触力，后面会用乘子把这些力求回来。
+\end{guidebox}
+
+\section{约束与广义坐标}
+
+固定长度的摆只需给出一个角度，尽管摆球的位置有两个坐标。先看哪些坐标受限制，再挑出能独立描述运动的少数变量。
+
+\subsection{约束及其分类}
+
+摆杆的长度限制摆球能到哪里，理想滚动则直接限制接触点能怎样移动。遇到约束，先写下它限制的是位置、速度，还是某一侧的接触范围。
+
+在第一章中，我们处理质点或质点系时，往往直接把受力逐个写出。对于由 $n$ 个质点组成的系统，原则上需要 $3n$ 个直角坐标。然而真实力学系统几乎总受到限制：刚体内部两点距离不变，轮子在地面上无滑动滚动，摆球被限制在圆周上，滑块被限制在导轨上。这些限制称为\textbf{约束}。
+
+设第 $i$ 个质点的位矢为 $\br_i=(x_i,y_i,z_i)$，约束通常可以写成
+\begin{equation}
+f_\ell(\br_1,\br_2,\dots,\br_n,t)=0,
+\qquad \ell=1,2,\dots,m.
+\label{eq:constraint}
+\end{equation}
+若约束方程只含坐标而不含速度，称为\textbf{几何约束}；若约束方程中还出现速度，则称为\textbf{运动约束}或\textbf{微分约束}。若微分约束可以积分成式 \eqref{eq:constraint} 的形式，它本质上仍是几何约束，称为\textbf{完整约束}；若不能积分，则称为\textbf{非完整约束}。
+
+\begin{definition}[完整约束与非完整约束]
+若约束可以写成只含坐标和时间的等式
+\[
+f(\br_1,\dots,\br_n,t)=0,
+\]
+则称为\textbf{完整约束}。若约束必须写成不可积分的微分形式
+\[
+\sum_{i=1}^{n}\boldsymbol a_i(\br_1,\dots,\br_n,t)\cdot \dd\br_i
++b(\br_1,\dots,\br_n,t)\dd t=0,
+\]
+则称为\textbf{非完整约束}。
+\end{definition}
+
+约束对系统的作用力称为\textbf{约束力}，其余力称为\textbf{主动力}。约束力不是事先给定的力，而是由约束条件和运动状态共同决定的反力；这正是牛顿力学处理受约束系统时最不方便的地方。
+
+例如，质点被限制在半径为 $R$ 的球面上，约束为
+\[
+x^2+y^2+z^2-R^2=0,
+\]
+这是完整约束。若球面半径随时间变化，$R=R(t)$，约束仍可写成
+\[
+x^2+y^2+z^2-R^2(t)=0,
+\]
+仍是完整约束，只是显含时间。相反，半径为 $R$ 的竖直圆盘在水平面上无滑动滚动时，接触点的速度为零，得到
+\[
+\dot x-R\dot\varphi\cos\theta=0,\qquad
+\dot y-R\dot\varphi\sin\theta=0,
+\]
+其中 $\theta$ 是圆盘平面与固定方向的夹角，$\varphi$ 是圆盘绕自身对称轴的自转角。这两个微分约束一般不能积分为只含坐标的代数方程，因此是非完整约束。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth]
+\draw[thick,blue!60!black] (0,0) circle (2);
+\draw[dashed,gray] (0,0) circle (2.6);
+\coordinate (P) at (1.6,1.2);\fill (P) circle (2pt) node[below]{$P$};
+\draw[->,thick] (0,0)--(P) node[midway,below]{$R(t)$};
+\draw[->,very thick,red!70!black] (P)--(1,2) node[above left]{$\delta\br$};
+\draw[->,very thick,green!40!black] (P)--(2.24,1.68) node[right]{$\dd\br$};
+\node at (-1.25,-.7) {冻结的约束};\node[gray] at (-1,-2.85) {下一时刻的半径};
+\end{tikzpicture}
+\caption{半径受驱动增大的圆周约束。冻结时刻的虚位移沿切向；图示实际瞬时角速度为零，真实位移随半径增大而沿径向。两种位移不能互相替代。}
+\label{fig:virtual-displacement}
+\end{figure}
+
+约束还可以按其他方式分类：
+\begin{itemize}[leftmargin=1.8em]
+  \item \textbf{定常约束}：约束方程不显含时间，$f(\br)=0$；
+  \item \textbf{非定常约束}：约束方程显含时间，$f(\br,t)=0$；
+  \item \textbf{双侧约束}：约束是等式，质点不能从两侧脱离；
+  \item \textbf{单侧约束}：约束是不等式，例如 $z\ge 0$，质点可以离开约束面；
+  \item \textbf{理想约束}：约束力在任意虚位移上所作的总虚功为零。
+\end{itemize}
+
+理想约束是本章最重要的结构性假设。光滑曲面、光滑铰链、刚性杆、不可伸长的轻绳都近似为理想约束。对于理想约束，约束力的总虚功为零，因此它不会进入广义坐标下的运动方程；我们只需处理主动力。滑动摩擦通常须作为主动力处理；无滑动滚动中的静摩擦在适当理想接触模型下可不做虚功，不能单凭“有摩擦”就判为非理想。绳的拉紧条件和单侧接触还须检验反力可实现性。
+
+\begin{physicsbox}
+“约束力不做虚功”并不意味着约束力不做功。真实运动中，约束力完全可能做功，例如外部机构驱动的光滑导轨可通过法向反力向滑块传递能量。虚功中的位移是同一时刻、只满足约束的假想位移，时间被冻结，所以法向约束力与虚位移正交，虚功才为零。
+\end{physicsbox}
+
+\subsection{自由度与广义坐标}
+
+固定长摆杆后，摆球的横、竖坐标不能独立变化。可以用角度代替这两个坐标；有多个约束时，还得检查它们是否真的给出了不同的限制。
+
+设有 $n$ 个质点、$m$ 个完整约束。若在所考察的正则位形邻域中，这些约束对位置坐标的雅可比矩阵具有秩 $m$，则独立坐标数为
+\begin{equation}
+s=3n-m.
+\label{eq:dof}
+\end{equation}
+$s$ 称为系统的\textbf{自由度}。我们可以选一组 $s$ 个独立参数
+\[
+q_1,q_2,\dots,q_s,
+\]
+使得所有质点的位矢都可以表示为
+\begin{equation}
+\br_i=\br_i(q_1,q_2,\dots,q_s,t),
+\qquad i=1,2,\dots,n.
+\label{eq:generalized-coordinates}
+\end{equation}
+这组参数称为\textbf{广义坐标}。它们通常只是位形空间的局部坐标。机械系统中可以是长度或角度；扩展到机电模型时也可以用电荷，但不能把不同模型的自由变量混为一谈。重要的是它们彼此独立，并且自动满足全部完整约束。同一系统可以选多组不同的广义坐标，物理结果不依赖于坐标选择；好的选择通常能让 $T$ 和 $V$ 更简单。
+
+对时间求导，得到\textbf{广义速度}
+\[
+\dot q_a=\dv{q_a}{t},\qquad a=1,2,\dots,s.
+\]
+质点的速度可以写成
+\begin{equation}
+\bv_i=\sum_{a=1}^{s}\pdv{\br_i}{q_a}\dot q_a+\pdv{\br_i}{t}.
+\label{eq:velocity-generalized}
+\end{equation}
+其中第一项是广义速度引起的部分，第二项来自参数化的显式时间依赖，可由移动约束或含时坐标选择引起。
+
+\begin{example}[球坐标与双摆]
+质量为 $m$ 的质点被约束在球面上，取球坐标 $(r,\theta,\varphi)$，约束为 $r=R$。自由度 $s=2$，广义坐标可取 $q_1=\theta,q_2=\varphi$。若取 $r$ 也作为广义坐标，则约束没有自动满足，后续必须用乘子处理。
+
+平面双摆由两根长为 $l_1,l_2$ 的轻杆和两个质量 $m_1,m_2$ 组成。四个直角坐标减去两个杆长约束，自由度 $s=2$，广义坐标可取两杆与竖直方向的夹角 $\theta_1,\theta_2$。这两个角度自动满足杆长约束，因此拉格朗日方程中不会出现杆的张力。
+\end{example}
+
+\subsection{位形空间}
+
+把系统的每一种姿态看作一个点。双摆的一点就由两个角度标记；摆动时，这个点会在由所有可能姿态组成的空间中画出一条线。
+
+在正则完整约束下，容许位形的集合构成 $s$ 维的\textbf{位形空间}。一组独立广义坐标只给出局部表示。系统的运动对应位形空间中的一条曲线 $q_a=q_a(t)$。局部坐标不必覆盖全部位形，例如摆角按 $2\pi$ 周期识别，不能把坐标图边界当成物理边界。运动由方程和初始数据确定；作用量的固定端点表述则比较连接给定端点的路径。本章将使用上一章的变分法说明二者的关系，固定两端一般不保证解存在或唯一。
+
+\section{虚功原理与达朗贝尔原理}
+
+铁丝的推力可以很大，但它若始终垂直于珠子可移动的方向，就不会出现在沿铁丝的运动方程里。虚功把这种投影推广到多坐标系统。
+
+\subsection{虚位移与虚功}
+
+先把时钟按暂停，再让系统沿约束容许的方向试着挪一点，这就是虚位移。若约束本身正在移动，真实速度还会包含约束的运动。
+
+设系统在时刻 $t$ 处于满足约束的位形。想象在时间 $t$ 冻结的条件下，系统发生一个无穷小位移 $\delta\br_i$，它仍然满足约束的线性化条件。这样的位移称为\textbf{虚位移}。对完整约束，虚位移满足 $\sum_i(\partial f_\ell/\partial\br_i)\cdot\delta\br_i=0$，位于冻结约束的切空间；对本章采用的理想、仿射速度非完整模型，容许虚位移由达朗贝尔规则规定为约束系数的齐次核；它一般不是比较两条都满足速度约束的路径得到的任意变分。详见本章非完整系统一节。虚位移与真实位移 $\dd\br_i$ 的关键区别是：
+\begin{equation}
+\delta t=0,
+\qquad
+\dd\br_i=\sum_a\pdv{\br_i}{q_a}\dd q_a+\pdv{\br_i}{t}\dd t,
+\qquad
+\delta\br_i=\sum_a\pdv{\br_i}{q_a}\delta q_a.
+\label{eq:virtual-vs-real}
+\end{equation}
+真实位移可能包含约束随时间变化产生的项，虚位移没有这一项。若选用无显式时间依赖的定常参数化，$\partial\br_i/\partial t=0$，两者的容许切向形式相同，但真实位移由实际速度确定，虚位移则仍可独立选取；对于非定常约束，两者一般不同。
+
+作用在第 $i$ 个质点上的力为 $\bF_i$，在虚位移上作的功
+\[
+\delta W=\sum_{i=1}^{n}\bF_i\cdot\delta\br_i
+\]
+称为\textbf{虚功}。把力分成主动力 $\bF_i^{(a)}$ 和约束力 $\bN_i$，则
+\[
+\delta W=\sum_i\bF_i^{(a)}\cdot\delta\br_i
++\sum_i\bN_i\cdot\delta\br_i.
+\]
+\subsection{虚功原理}
+
+在静力问题中，想象系统在每一个允许方向上试着移动一点。如果所有主动力的虚功之和都为零，沿这些方向就没有净推动。
+
+若约束是理想的，第二项为零。于是虚功原理可以表述为：
+
+\begin{keybox}
+受理想双侧约束的力学系统，在静止的定常约束上、排除奇异位形时，主动力可由理想约束反力平衡的条件是：对任意满足约束（或其线性化条件）的虚位移，主动力所作的总虚功为零，
+\begin{equation}
+\delta W=\sum_{i=1}^{n}\bF_i^{(a)}\cdot\delta\br_i=0.
+\label{eq:virtual-work}
+\end{equation}
+\end{keybox}
+
+用广义坐标表示，$\delta\br_i=\sum_a(\partial\br_i/\partial q_a)\delta q_a$，于是
+\begin{equation}
+\delta W=\sum_{a=1}^{s}Q_a\,\delta q_a,
+\qquad
+Q_a=\sum_{i=1}^{n}\bF_i^{(a)}\cdot\pdv{\br_i}{q_a}.
+\label{eq:generalized-force}
+\end{equation}
+$Q_a$ 称为与 $q_a$ 对应的\textbf{广义力}。广义力的量纲一般不是力的量纲，因为 $q_a$ 的量纲不一定是长度；但乘积 $Q_a\delta q_a$ 必须具有功的量纲。由于 $\delta q_a$ 彼此独立，平衡条件 $\delta W=0$ 等价于
+\begin{equation}
+Q_a=0,\qquad a=1,2,\dots,s.
+\label{eq:equilibrium-generalized}
+\end{equation}
+这就是广义坐标下的平衡方程。
+
+\begin{example}[两杆平衡：同一正切值有不同稳定性]
+固定铰支点 $O$，等长均匀杆 $OA,AB$ 长均为 $l$、重量为 $P_1,P_2$，铰链理想。取 $x$ 向右、$y$ 向上，两杆绝对角从 $+x$ 逆时针量起，记为 $\alpha,\beta$。在 $B$ 施加恒定向左力 $F>0$，其势能为 $Fx_B$。两杆质心高度分别为 $l\sin\alpha/2$ 与 $l\sin\alpha+l\sin\beta/2$，所以总势为
+\[
+U=l[(P_1/2+P_2)\sin\alpha+F\cos\alpha]
++l[(P_2/2)\sin\beta+F\cos\beta].
+\]
+虚功为 $-\delta U$，两坐标独立，平衡要求
+\[
+(P_1/2+P_2)\cos\alpha-F\sin\alpha=0,
+\qquad(P_2/2)\cos\beta-F\sin\beta=0.
+\]
+只写正切会丢失象限。令 $A_1=P_1/2+P_2,A_2=P_2/2$，稳定下垂支应取
+\[
+\cos\alpha=-\frac{F}{\sqrt{F^2+A_1^2}},\quad
+\sin\alpha=-\frac{A_1}{\sqrt{F^2+A_1^2}},
+\]
+$\beta$ 将 $A_1$ 换为 $A_2$。两角均在第三象限（或等价的负角区间）。此时 $U_{\alpha\alpha}=l\sqrt{F^2+A_1^2}>0$、$U_{\beta\beta}=l\sqrt{F^2+A_2^2}>0$，交叉导数为零，确为势能极小。两角同时取相反方向也满足相同的正切式，却是极大分支。
+
+$F\to0$ 时稳定支竖直向下；$F$ 很大时向左近乎水平。消去铰链反力简化了计算，但不会替代平衡稳定性和几何分支的检查。
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth]
+\coordinate (O) at (0,0);\coordinate (A) at (-1.2,-1.6);\coordinate (B) at (-3.027623097,-2.412276932);
+\draw[very thick,blue!60!black] (O)--(A);\draw[very thick,red!60!black] (A)--(B);
+\draw[->] (O)--(1.4,0) node[right]{$x$};\draw[->] (O)--(0,1.1) node[above]{$y$};
+\fill (O) circle (2pt) node[above left]{$O$};\fill (A) circle (2pt) node[right]{$A$};\fill (B) circle (2pt) node[below]{$B$};
+\draw[->,thick,green!40!black] (B)--++(-.9,0) node[left]{$F$};
+\draw[->,thick] (-.6,-.8)--++(0,-.8) node[right]{$P_1$};
+\draw[->,thick] (-2.113811549,-2.006138466)--++(0,-.8) node[right]{$P_2$};
+\node at (-1.5,.65) {稳定支向左下垂};
+\end{tikzpicture}
+\caption{对应稳定分支的两杆示意，取 $P_1=P_2$ 且 $F=9P_1/8$。两杆长度相等，重力向下、端点力向左，绝对角的象限与正文稳定解一致。}
+\label{fig:two-rods}
+\end{figure}
+
+\subsection{达朗贝尔原理}
+
+把牛顿方程中的质量乘加速度移到力的一侧，再投影到允许方向。这样就能沿用虚功的写法处理有加速度的物体。
+
+虚功原理原本只适用于静力学。达朗贝尔在 1743 年注意到：若把惯性力 $-m_i\ddot\br_i$ 也看作一种“力”，则动力学问题可以转化为瞬时静力学问题。定义\textbf{达朗贝尔惯性力}
+\[
+\bF_i^{\rm inertia}=-m_i\ddot\br_i,
+\]
+则对每个质点有
+\[
+\bF_i+\bN_i+\bF_i^{\rm inertia}=0,
+\]
+其中 $\bF_i$ 为主动力，$\bN_i$ 为约束力。在理想约束下，约束力的总虚功为零，因此
+\begin{equation}
+\sum_{i=1}^{n}\left(\bF_i-m_i\ddot\br_i\right)\cdot\delta\br_i=0.
+\label{eq:dAlembert}
+\end{equation}
+这就是\textbf{达朗贝尔原理}。它不是新的物理定律，而是牛顿第二定律与理想约束假设的结合；其价值在于把约束力消去，并把动力学问题写成变分形式。
+
+\begin{physicsbox}
+达朗贝尔原理的“惯性力”不是参考系变换意义下的惯性力，而是一个形式上的记账项。它的作用是把 $m\ddot\br$ 从方程右边移到左边，使动力学方程看起来像平衡方程。真正进入虚功的是主动力与惯性力的合力。
+\end{physicsbox}
+
+\section{拉格朗日方程}
+
+一旦选好坐标，只要算出动能、势能和必要的外力投影，就能系统地写方程。这一节给出两条来路，再用具体模型练习。
+
+\subsection{从达朗贝尔原理导出}
+
+对某个广义坐标作一点改动，先问每个质点会往哪个方向移动。把牛顿方程投影到这些方向，再整理成动能的导数。
+
+我们已把位矢写成广义坐标的函数 $\br_i=\br_i(q,t)$。速度
+\[
+\bv_i=\dot\br_i=\sum_a\pdv{\br_i}{q_a}\dot q_a+\pdv{\br_i}{t}.
+\]
+由此得到两个关键恒等式：
+\begin{equation}
+\pdv{\bv_i}{\dot q_a}=\pdv{\br_i}{q_a},
+\qquad
+\frac{\dd}{\dd t}\left(\pdv{\br_i}{q_a}\right)=\pdv{\bv_i}{q_a}.
+\label{eq:kinematic-identities}
+\end{equation}
+这不是对任意函数都可随意交换两个算子。这里逐项展开为
+\[
+\frac{\partial\bv_i}{\partial q_a}
+=\sum_b\frac{\partial^2\br_i}{\partial q_a\partial q_b}\dot q_b
++\frac{\partial^2\br_i}{\partial q_a\partial t}
+=\frac{\dd}{\dd t}\left(\frac{\partial\br_i}{\partial q_a}\right),
+\]
+偏导时保持 $\dot q$ 不变，并利用 $\br_i(q,t)$ 的混合偏导连续。第一式则直接来自速度对 $\dot q_a$ 的线性依赖。
+
+系统的动能
+\[
+T=\frac12\sum_i m_i\bv_i^2.
+\]
+利用式 \eqref{eq:kinematic-identities}，
+\[
+\pdv{T}{\dot q_a}=\sum_i m_i\bv_i\cdot\pdv{\bv_i}{\dot q_a}
+=\sum_i m_i\bv_i\cdot\pdv{\br_i}{q_a},
+\]
+\[
+\pdv{T}{q_a}=\sum_i m_i\bv_i\cdot\pdv{\bv_i}{q_a}.
+\]
+于是
+\[
+\frac{\dd}{\dd t}\left(\pdv{T}{\dot q_a}\right)-\pdv{T}{q_a}
+=\sum_i m_i\ddot\br_i\cdot\pdv{\br_i}{q_a}.
+\]
+另一方面，达朗贝尔原理中的惯性力项为
+\[
+-\sum_i m_i\ddot\br_i\cdot\delta\br_i
+=-\sum_a\left[\sum_i m_i\ddot\br_i\cdot\pdv{\br_i}{q_a}\right]\delta q_a.
+\]
+主动力的虚功为 $\sum_a Q_a\delta q_a$。代入式 \eqref{eq:dAlembert}，并利用 $\delta q_a$ 的独立性，得到
+\begin{equation}
+\boxed{
+\frac{\dd}{\dd t}\left(\pdv{T}{\dot q_a}\right)-\pdv{T}{q_a}=Q_a,
+\qquad a=1,2,\dots,s.
+}
+\label{eq:lagrange-general}
+\end{equation}
+这就是\textbf{拉格朗日方程}的基本形式。它把 $3n$ 个直角坐标的牛顿方程压缩成 $s$ 个广义坐标方程，约束力自动消失。
+
+若主动力可用位置势 $V(q,t)$ 表示，且没有额外做虚功的非保守力，则
+\[
+Q_a=-\pdv{V}{q_a}.
+\]
+定义\textbf{拉格朗日函数}
+\begin{equation}
+L(q,\dot q,t)=T(q,\dot q,t)-V(q,t),
+\label{eq:lagrangian}
+\end{equation}
+则式 \eqref{eq:lagrange-general} 化为
+\begin{equation}
+\boxed{
+\frac{\dd}{\dd t}\left(\pdv{L}{\dot q_a}\right)-\pdv{L}{q_a}=0,
+\qquad a=1,2,\dots,s.
+}
+\label{eq:lagrange-euler}
+\end{equation}
+这是分析力学中最常用的形式。
+
+\begin{keybox}
+拉格朗日方程的三个要点：
+\begin{enumerate}[leftmargin=1.6em]
+  \item 只出现广义坐标、广义速度和广义力，不出现理想约束力；
+  \item 对完整系统，方程数目等于自由度 $s$，而不是质点数 $3n$；
+  \item 对质量恒定、完整理想约束且主动力由位置势描述的模型，写出 $T,V$ 与初始数据即可建立独立坐标方程；但接触保持、摩擦可行性或支承载荷仍可能需要求约束力。
+\end{enumerate}
+\end{keybox}
+
+\subsection{从哈密顿原理导出}\label{sec:ham-principle}
+把第二章的变分步骤用到动能减势能的积分。两端固定后，边界项消失，内部任意的小改动就给出运动方程。
+
+第\ref{sec:action-first}节已给出一维固定端点的分部积分。这里在独立完整坐标中使用同一边界条件；下文的作用量变分应与式 \eqref{eq:virtual-vs-real} 的冻结时间虚位移区分。
+
+拉格朗日方程也可以从整体变分原理得到。定义\textbf{作用量}
+\begin{equation}
+S[q]=\int_{t_1}^{t_2}L(q,\dot q,t)\,\dd t.
+\label{eq:action}
+\end{equation}
+在所有满足端点条件
+\[
+q_a(t_1)=q_{a1},\qquad q_a(t_2)=q_{a2}
+\]
+的曲线中，真实运动使作用量取驻值：
+\begin{equation}
+\delta S=0.
+\label{eq:hamilton-principle-lagrange}
+\end{equation}
+这是通常的\textbf{哈密顿驻作用量原理}。此处使用独立广义坐标、固定时间和位置端点；$L$ 可显含时间，也可包含电磁速度耦合，不能把它仅限于不显含时间的位置保守势。任意耗散力则不能自动由这个简单作用量给出。把 $\delta S$ 展开，并注意变分与时间导数可交换：$\delta\dot q_a=\frac{\dd}{\dd t}\delta q_a$，
+\[
+\delta S=\int_{t_1}^{t_2}\sum_a
+\left(\pdv{L}{q_a}\delta q_a+\pdv{L}{\dot q_a}\delta\dot q_a\right)\dd t.
+\]
+对第二项分部积分，并利用端点处 $\delta q_a(t_1)=\delta q_a(t_2)=0$：
+\[
+\delta S=\int_{t_1}^{t_2}\sum_a
+\left[\pdv{L}{q_a}-\frac{\dd}{\dd t}\left(\pdv{L}{\dot q_a}\right)\right]\delta q_a\,\dd t.
+\]
+由于 $\delta q_a$ 在内部彼此独立且任意，括号必须为零，即得到式 \eqref{eq:lagrange-euler}。在上述完整、理想且力可由所选 $L$ 描述的条件下，两种表述给出同一组方程；前者是“逐时刻”的表述，后者是“整条路径”的表述。
+
+\begin{remark}
+哈密顿原理中的端点固定，但端点处的速度不固定。变分只比较在相同时间间隔内、从同一起点到同一终点的路径。若端点时间也可变，则会得到更一般的能量关系；这一点在第六章讨论哈密顿-雅可比理论时还会出现。
+\end{remark}
+
+\subsection{非保守广义力与受驱动运动}
+摩擦、阻尼和电机力矩常直接按力来给。先算它们沿允许位移做多少功，再把每个坐标的位移前面的系数读作相应的广义力。
+
+若部分力已用 $L$ 表示，另有外力、阻尼或控制力矩，其虚功为 $\sum_a Q_a^{\rm nc}\delta q_a$，则
+\begin{equation}\label{eq:lag-nonconservative}
+\frac{\dd}{\dd t}L_{\dot q_a}-L_{q_a}=Q_a^{\rm nc}.
+\end{equation}
+这里不是令非保守作用量驻值，而是采用拉格朗日--达朗贝尔表述 $\delta\int L\dd t+\int\sum_a Q_a^{\rm nc}\delta q_a\dd t=0$。额外力不应既写进势又在右端重复加入。
+
+若黏滞阻尼的广义力可写为 $Q_a^{\rm damp}=-\partial\mathcal D/\partial\dot q_a$，则用耗散函数 $\mathcal D=\frac12\sum_{ab}C_{ab}\dot q_a\dot q_b$ 表示。$C$ 对称半正定时，$\sum_a Q_a^{\rm damp}\dot q_a=-2\mathcal D\le0$；$\mathcal D$ 的量纲为功率，不是势能。它描述这一类黏滞模型，不能自动包括静摩擦阈值或所有耗散。
+\begin{example}[有阻尼和关节驱动力矩的单摆]
+固定摆长 $l$，角度从向下方向量起，$L=ml^2\dot\theta^2/2+mgl\cos\theta$。若关节黏滞力矩为 $-b\dot\theta$，驱动力矩为 $\tau(t)$，则
+\[
+ml^2\ddot\theta+b\dot\theta+mgl\sin\theta=\tau(t).
+\]
+以最低点势能为零的机械能 $E=ml^2\dot\theta^2/2+mgl(1-\cos\theta)$ 满足
+\[
+\dot E=-b\dot\theta^2+\tau\dot\theta.
+\]
+无驱动时单调耗散；驱动可输入或取出能量。$b=\tau=0$ 恢复第一章单摆。这既训练广义力矩，也给数值计算提供可检查的能量收支。
+\end{example}
+
+\subsection{广义动量和循环坐标的判定}
+当位置用角度描述时，与角速度对应的动量常是角动量。把动能和其他耦合项写进拉格朗日量后，可统一用对速度的偏导确定广义动量。
+
+定义\textbf{广义动量}
+\begin{equation}
+p_a=\pdv{L}{\dot q_a}.
+\label{eq:generalized-momentum}
+\end{equation}
+广义动量的量纲由对应的坐标决定，因为 $q_a$ 的量纲不一定是长度；它与广义坐标共轭，满足 $p_a\delta q_a$ 具有作用量的量纲。若 $L$ 不显含某个广义坐标 $q_a$，即
+\[
+\pdv{L}{q_a}=0,
+\]
+则 $q_a$ 称为\textbf{循环坐标}或\textbf{可遗坐标}。若该坐标没有额外广义力，则拉格朗日方程给出
+\[
+\frac{\dd}{\dd t}\left(\pdv{L}{\dot q_a}\right)=0,
+\]
+于是
+\begin{equation}
+p_a=\text{常量}.
+\label{eq:cyclic-integral}
+\end{equation}
+这就是\textbf{循环积分}。
+
+\subsection{典型应用}
+
+每做一题先画坐标方向，写出位置，再求速度和能量。最后检查所得方程在某个简单极限下是否回到熟悉的模型。
+
+本节依次训练三个步骤：先用坐标自动满足约束，再从惯性速度构造动能，最后以守恒量或牛顿方程独立验算。所有绳、杆均按题目理想化，工程背景只用于说明模型用途，不代表具体设备的实测参数。
+
+\begin{example}[阿特伍德机]
+质量分别为 $m_1,m_2$ 的两物体用不可伸长的轻绳跨过定滑轮，绳与滑轮间无滑动，滑轮质量和转动惯量均忽略不计。取 $q$ 为 $m_1$ 下落的距离，则 $m_2$ 上升 $q$。动能和势能分别为
+\[
+T=\frac12(m_1+m_2)\dot q^2,
+\qquad
+V=-m_1gq+m_2gq.
+\]
+拉格朗日函数
+\[
+L=T-V=\frac12(m_1+m_2)\dot q^2+(m_1-m_2)gq.
+\]
+代入式 \eqref{eq:lagrange-euler}：
+\[
+(m_1+m_2)\ddot q=(m_1-m_2)g,
+\]
+即
+\[
+\ddot q=\frac{m_1-m_2}{m_1+m_2}g.
+\]
+绳的张力没有出现在方程中；若要它，需回到约束力或使用乘子法。
+
+为独立复核，取 $m_1$ 向下为正，写 $m_1g-\mathcal T=m_1\ddot q$、$\mathcal T-m_2g=m_2\ddot q$。相加给同一 $\ddot q$，再回代得 $\mathcal T=2m_1m_2g/(m_1+m_2)$。
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth]
+\draw[thick] (-1.4,3.8)--(1.4,3.8);\draw[thick] (0,3.8)--(0,3);
+\draw[thick,blue!60!black] (0,3) circle (.5);
+\draw[thick] (-.5,3)--(-.5,1.2);\draw[thick] (.5,3)--(.5,1.8);
+\draw[fill=red!12] (-.85,.6) rectangle (-.15,1.2);\node at (-.5,.9) {$m_1$};
+\draw[fill=green!12] (.15,1.2) rectangle (.85,1.8);\node at (.5,1.5) {$m_2$};
+\draw[->,thick] (-1.1,1.4)--(-1.1,.5) node[below]{$q$};
+\draw[->,thick] (1.1,.8)--(1.1,1.7) node[above]{$q$};
+\end{tikzpicture}
+\caption{质量与转动惯量均忽略的定滑轮模型。两段竖直绳与轮相切，一质量向下时另一质量等量向上，坐标符号与势能定义相同。}
+\label{fig:atwood}
+\end{figure}
+
+\begin{example}[双滑轮三质量系统]
+一个定滑轮 $O$ 固定，一根轻绳跨过 $O$，左端挂质量为 $m_1$ 的物体，右端悬挂一个动滑轮 $B$；第二根轻绳跨过 $B$，两端分别挂质量为 $m_2,m_3$ 的物体。绳与滑轮间无滑动，绳不可伸长，滑轮质量和转动惯量均忽略。取 $q_1$ 为 $m_1$ 向下的位移，取 $q_2$ 为 $m_2$ 相对动滑轮 $B$ 向下的位移。求系统的运动方程。
+
+\begin{center}
+\begin{tikzpicture}[>=Stealth]
+\draw[thick] (-1.5,4.7)--(1.7,4.7);\draw[thick] (0,4.7)--(0,4);
+\draw[thick,blue!60!black] (0,4) circle (.45);
+\draw[thick] (-.45,4)--(-.45,1.8);\draw[thick] (.45,4)--(.45,2.6);
+\draw[thick,blue!60!black] (.45,2.6) circle (.35);\fill (.45,2.6) circle (1.5pt) node[right=12pt]{$B$};
+\draw[thick] (.1,2.6)--(.1,1.3);\draw[thick] (.8,2.6)--(.8,.8);
+\draw[fill=red!12] (-.7,1.1) rectangle (-.2,1.8);\node at (-.45,1.45) {$m_1$};
+\draw[fill=green!12] (-.15,.6) rectangle (.35,1.3);\node at (.1,.95) {$m_2$};
+\draw[fill=orange!12] (.55,.1) rectangle (1.05,.8);\node at (.8,.45) {$m_3$};
+\draw[->,thick] (-1,1.8)--(-1,.8) node[below]{$q_1$};
+\node at (.1,4.85) {$O$};
+\end{tikzpicture}
+\end{center}
+
+由于第一根绳长不变，$B$ 的速度为 $-\dot q_1$（取向下为正）。第二根绳长不变，因此
+\[
+v_2=-\dot q_1+\dot q_2,
+\qquad
+v_3=-\dot q_1-\dot q_2.
+\]
+系统的动能和势能分别为
+\[
+T=\frac12m_1\dot q_1^2+\frac12m_2(-\dot q_1+\dot q_2)^2
++\frac12m_3(-\dot q_1-\dot q_2)^2,
+\]
+\[
+V=-m_1gq_1-m_2g(-q_1+q_2)-m_3g(-q_1-q_2).
+\]
+拉格朗日函数 $L=T-V$。代入拉格朗日方程，得到
+\[
+(m_1+m_2+m_3)\ddot q_1+(m_3-m_2)\ddot q_2
+=(m_1-m_2-m_3)g,
+\]
+\[
+(m_3-m_2)\ddot q_1+(m_2+m_3)\ddot q_2
+=(m_2-m_3)g.
+\]
+写成矩阵形式：
+\[
+\begin{pmatrix}
+m_1+m_2+m_3 & m_3-m_2\\
+m_3-m_2 & m_2+m_3
+\end{pmatrix}
+\begin{pmatrix}\ddot q_1\\ \ddot q_2\end{pmatrix}
+=g\begin{pmatrix}m_1-m_2-m_3\\ m_2-m_3\end{pmatrix}.
+\]
+两个广义坐标自动满足两根绳的约束，绳中张力不必出现在方程中。
+
+\begin{modernbox}
+这类“多绳—多滑轮”系统是电梯配重、塔吊起升、缆索驱动并联机器人和空间吊装系统的基本模型。工程上关心的是各段绳的张力、负载的加速度和系统的固有频率；拉格朗日方法先消去绳张力，再用矩阵方程统一求解，比逐段列牛顿方程更适合多自由度系统。
+\end{modernbox}
+\end{example}
+
+\begin{example}[球坐标中的质点]
+质量为 $m$ 的质点在中心力势 $V(r)$ 中运动，取球坐标 $(r,\theta,\varphi)$ 为广义坐标，并把极轴取为 $z$ 轴。速度为
+\[
+\bv=\dot r\,\er+r\dot\theta\,\etheta+r\sin\theta\,\dot\varphi\,\ephi,
+\]
+动能为
+\[
+T=\frac12m\left(\dot r^2+r^2\dot\theta^2+r^2\sin^2\theta\,\dot\varphi^2\right).
+\]
+拉格朗日函数
+\[
+L=\frac12m\left(\dot r^2+r^2\dot\theta^2+r^2\sin^2\theta\,\dot\varphi^2\right)-V(r).
+\]
+$\varphi$ 是循环坐标，因此
+\[
+p_\varphi=\pdv{L}{\dot\varphi}=mr^2\sin^2\theta\,\dot\varphi
+\]
+守恒，这就是角动量的 $z$ 分量。对 $\theta$ 的方程为
+\[
+\frac{\dd}{\dd t}\left(mr^2\dot\theta\right)
+-mr^2\sin\theta\cos\theta\,\dot\varphi^2=0.
+\]
+在 $r>0$ 且方程正则的区域，若初始 $\theta=\pi/2,\dot\theta=0$，赤道平面是方程的不变子集；径向距离不必固定。对 $r$ 的方程给出
+\[
+m\ddot r-mr\dot\theta^2-mr\sin^2\theta\,\dot\varphi^2
+=-\pdv{V}{r}.
+\]
+这正是中心力场中的径向方程。
+\end{example}
+
+\begin{example}[双摆：把耦合项逐项算出来]
+两根无质量刚杆长为 $l_1,l_2$，端点质量为 $m_1,m_2>0$，固定支点，运动限于竖直平面。两绝对角 $\theta_1,\theta_2$ 均从向下竖直方向量起，坐标为
+\[
+\br_1=(l_1\sin\theta_1,-l_1\cos\theta_1),\qquad
+\br_2=\br_1+(l_2\sin\theta_2,-l_2\cos\theta_2).
+\]
+令 $\Delta=\theta_1-\theta_2$，微分后由点积 $\bv_1\cdot(\bv_2-\bv_1)=l_1l_2\dot\theta_1\dot\theta_2\cos\Delta$ 得
+\begin{align}
+T&=\tfrac12(m_1+m_2)l_1^2\dot\theta_1^2+\tfrac12m_2l_2^2\dot\theta_2^2
++m_2l_1l_2\cos\Delta\,\dot\theta_1\dot\theta_2,\\
+V&=-(m_1+m_2)gl_1\cos\theta_1-m_2gl_2\cos\theta_2.
+\end{align}
+取 $D=m_2l_1l_2$，第一方程的动量和坐标导数是
+\[
+p_1=(m_1+m_2)l_1^2\dot\theta_1+D\cos\Delta\dot\theta_2,
+\quad L_{\theta_1}=-D\sin\Delta\dot\theta_1\dot\theta_2-(m_1+m_2)gl_1\sin\theta_1.
+\]
+对 $p_1$ 求时间导数时还须微分 $\cos\Delta$。与 $L_{\theta_1}$ 相减后，两个含 $\dot\theta_1\dot\theta_2$ 的项抵消，得到
+\begin{align}\label{eq:lag-double-pendulum}
+(m_1+m_2)l_1^2\ddot\theta_1+D\cos\Delta\ddot\theta_2
++D\sin\Delta\dot\theta_2^2+(m_1+m_2)gl_1\sin\theta_1&=0,\nonumber\\
+m_2l_2^2\ddot\theta_2+D\cos\Delta\ddot\theta_1
+-D\sin\Delta\dot\theta_1^2+m_2gl_2\sin\theta_2&=0.
+\end{align}
+第二式由相同方法得到，注意两项正负号。写成 $M(\theta)\ddot\theta+b(\theta,\dot\theta)=0$，质量矩阵行列式为
+\[
+\det M=m_2l_1^2l_2^2[m_1+m_2\sin^2\Delta]>0.
+\]
+因此物理参数为正时可解出两角加速度；不能把速度耦合项略去后仍声称是精确双摆。无驱动、无阻尼下 $T+V$ 守恒；小角展开将导向第四章耦合小振动。加入关节力矩后，右侧为各角对应的广义力矩，是平面机械臂模型的一个出发点，但本例的质点杆端质量假设不同于一般有质量机械臂。
+\end{example}
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth]
+\coordinate (O) at (0,3.7);\coordinate (A) at (1,1.967949);\coordinate (B) at (.25,.668911);
+\draw[very thick,blue!70!black] (O)--(A);\draw[very thick,red!70!black] (A)--(B);
+\draw[dashed] (O)--(0,1.4);\draw[dashed] (A)--(1,.1);
+\fill (O) circle (2pt) node[above]{$O$};\fill (A) circle (3pt) node[right]{$m_1$};\fill (B) circle (3pt) node[below]{$m_2$};
+\draw (0,2.9) arc (-90:-60:.8);\node at (.3,2.7) {$\theta_1$};
+\draw[->] (1,1.317949) arc (-90:-120:.65);\node at (.7,1.1) {$\theta_2$};
+\node[right] at (.55,2.85) {$l_1$};\node[left] at (.55,1.3) {$l_2$};
+\end{tikzpicture}
+\caption{双摆使用两根杆的绝对角，而非两杆之间的夹角。图取 $\theta_1=30^\circ,\theta_2=-30^\circ$；杆长与坐标采用同一几何关系。}
+\label{fig:lag-double-pendulum}
+\end{figure}
+
+\begin{example}[旋转圆环上的小珠：驱动约束改变平衡]
+半径 $R$ 的竖直光滑圆环绕竖直直径以给定 $\Omega$ 匀速旋转。小珠质量 $m$，用从最低点量起的角 $\theta$ 描述位置：
+\[
+\br=(R\sin\theta\cos\Omega t,R\sin\theta\sin\Omega t,-R\cos\theta).
+\]
+直接微分给出 $v^2=R^2\dot\theta^2+R^2\Omega^2\sin^2\theta$，所以
+\[
+L=\tfrac12mR^2\dot\theta^2+\tfrac12mR^2\Omega^2\sin^2\theta+mgR\cos\theta,
+\]
+\[
+\ddot\theta=\sin\theta(\Omega^2\cos\theta-g/R).
+\]
+平衡为 $\theta=0,\pi$，并在 $\Omega^2>g/R$ 时出现两支 $\theta=\pm\arccos[g/(\Omega^2R)]$。最低点线性方程为 $\ddot\eta+(g/R-\Omega^2)\eta=0$，故临界转速前稳定、之后不稳定；新分支的平方频率为 $\Omega^2\sin^2\theta_0>0$。临界点线性恢复项消失，须看高阶，不能仅凭零频率判为不稳定。
+
+本例 $E_L=mR^2\dot\theta^2/2-mR^2\Omega^2\sin^2\theta/2-mgR\cos\theta$ 守恒；电机维持给定转速，珠的惯性机械能不一定守恒。第1章给出了有效势方法，本章从惯性系动能重建同一结果；第四章再系统讨论平衡附近的展开。
+\end{example}
+
+\begin{example}[弹簧摆]
+一根自然长度为 $l$、劲度系数为 $k$ 的轻弹簧，一端固定，另一端连接质量为 $m$ 的质点。取弹簧伸长量为 $x$、摆角为 $\theta$，则摆长为 $l+x$。动能和势能分别为
+\[
+T=\frac12m\left[\dot x^2+(l+x)^2\dot\theta^2\right],
+\]
+\[
+V=-mg(l+x)\cos\theta+\frac12kx^2.
+\]
+拉格朗日函数 $L=T-V$。对 $x$ 和 $\theta$ 分别求导，得到
+\[
+m\ddot x-m(l+x)\dot\theta^2-mg\cos\theta+kx=0,
+\]
+\[
+m(l+x)^2\ddot\theta+2m(l+x)\dot x\dot\theta
++mg(l+x)\sin\theta=0.
+\]
+这两个方程是非线性的，且彼此耦合。平衡点为 $\theta=0,x=mg/k$；小振动需围绕这个伸长后的平衡展开，而非默认 $x=0$。第四章将系统处理。
+
+由 $\partial L/\partial\dot\theta=m(l+x)^2\dot\theta$，其导数含 $2m(l+x)\dot x\dot\theta$。角度偏导为 $-mg(l+x)\sin\theta$。径向偏导同时包含 $m(l+x)\dot\theta^2$、弹簧项 $-kx$ 和重力项 $mg\cos\theta$。令速度和加速度为零，先取下垂角 $\theta=0$，径向平衡即化为 $kx=mg$。
+\end{example}
+
+\begin{example}[旋转杆上的滑块与弹簧]
+质量为 $m_1$、长为 $l$ 的均匀杆 $OA$ 绕水平轴 $O$ 在竖直平面内转动。质量为 $m_2$ 的滑块 $B$ 套在杆上，可在杆上无摩擦滑动；一根劲度系数为 $k$、自然长度为 $r_0$ 的轻弹簧沿杆放置，一端固定在 $O$，另一端连接 $B$。取杆与竖直向下方向的夹角为 $\theta$，$r=OB$ 为滑块到 $O$ 的距离。求系统的运动方程。
+
+\begin{center}
+\begin{tikzpicture}[>=Stealth,scale=0.95]
+  \coordinate (O) at (0,3.2);
+  \coordinate (A) at (2.9,0.9);
+  \coordinate (B) at (1.45,2.05);
+  \draw[very thick,blue!60!black] (O)--(A);
+  \draw[dashed,gray] (O)--(0,0.5);
+  \draw[decorate,decoration={coil,aspect=0.6,segment length=5pt,amplitude=4pt},thick,green!50!black] (0.18,3.05)--(1.30,2.12);
+  \fill[red!70!black] (B) circle (0.12);
+  \node[above right] at (B) {$B$};
+  \node[left] at (O) {$O$};
+  \node[below right] at (2.7,0.85) {$A$};
+  \draw[->,thick,red!70!black] (O)--(1.45,2.05) node[midway,above]{$r$};
+  \draw (0.0,2.45) arc (-90:-38.416:0.75);
+  \node at (0.28,2.52) {$\theta$};
+\end{tikzpicture}
+\end{center}
+
+杆绕 $O$ 的转动惯量为
+\[
+I=\int_0^l s^2\frac{m_1}{l}\,\dd s=\frac13m_1l^2.
+\]
+系统的动能为
+\[
+T=\frac12I\dot\theta^2+\frac12m_2\left(\dot r^2+r^2\dot\theta^2\right),
+\]
+势能为
+\[
+V=-m_1g\frac l2\cos\theta-m_2gr\cos\theta+\frac12k(r-r_0)^2.
+\]
+拉格朗日函数 $L=T-V$。对 $\theta$ 的方程为
+\[
+\left(I+m_2r^2\right)\ddot\theta+2m_2r\dot r\dot\theta
++\left(\frac{m_1l}{2}+m_2r\right)g\sin\theta=0,
+\]
+对 $r$ 的方程为
+\[
+m_2\left(\ddot r-r\dot\theta^2\right)-m_2g\cos\theta
++k(r-r_0)=0.
+\]
+第一式是转动方程，第二式是滑块沿杆的径向方程；$2m_2r\dot r\dot\theta$ 是由转动惯量随 $r$ 改变产生的耦合项。两条式子均由惯性系动能导出，不能再额外加一次非惯性系的惯性力。
+
+\begin{modernbox}
+这个刚性伸缩机构模型把径向运动与转动耦合写成两个广义坐标方程。滑块移动改变转动惯量，角速度又影响径向加速度，可据此练习角动量与能量的交叉检查。若研究实际柔性伸缩机构，还须增加杆的弹性自由度、驱动和阻尼；这里的刚杆模型本身不预测其变形或工程性能。
+\end{modernbox}
+\end{example}
+
+\begin{example}[两体问题的约化]
+两个质量 $m_1,m_2$ 的质点只受彼此相互作用 $V(|\br_1-\br_2|)$。引入质心 $\bR$ 和相对位矢 $\br=\br_1-\br_2$：
+\[
+\bR=\frac{m_1\br_1+m_2\br_2}{m_1+m_2},
+\qquad
+\br=\br_1-\br_2,
+\qquad
+\mu=\frac{m_1m_2}{m_1+m_2}.
+\]
+反解出
+\[
+\br_1=\bR+\frac{m_2}{m_1+m_2}\br,
+\qquad
+\br_2=\bR-\frac{m_1}{m_1+m_2}\br.
+\]
+代入总动能并利用一次项相消，得到
+\[
+T=\frac12(m_1+m_2)\dot{\bR}^2+\frac12\mu\dot{\br}^2.
+\]
+于是拉格朗日函数分解为
+\[
+L=\frac12(m_1+m_2)\dot{\bR}^2
++\frac12\mu\dot{\br}^2-V(r).
+\]
+质心运动是自由的，相对运动等价于一个质量为 $\mu$ 的质点在中心势 $V(r)$ 中运动。这个分解在第一章已从牛顿方程得到；拉格朗日方法把它变成动能项的代数分解，更加直接。
+\end{example}
+
+\begin{example}[圆锥面上的圆轨道]
+一个顶点在下、开口向上的光滑圆锥，对称轴竖直向上，半顶角为 $\alpha$。质量为 $m$ 的质点被约束在圆锥面上运动。取 $r$ 为质点沿母线到顶点的距离，$\varphi$ 为绕轴的方位角。求质点的运动方程，并讨论圆轨道的可能性。
+
+\begin{center}
+\begin{tikzpicture}[>=Stealth]
+\draw[thick] (0,0)--(-1.732051,3);\draw[thick] (0,0)--(1.732051,3);
+\draw[dashed] (0,0)--(0,3.4) node[above]{$z$};
+\draw[thick,blue!60!black] (0,1.905256) ellipse (1.1 and .23);
+\draw[->,thick,red!70!black] (0,0)--(1.1,1.905256) node[midway,right]{$r$};
+\fill (1.1,1.905256) circle (2pt) node[right]{$m$};
+\draw[->] (1.1,1.905256)--(1.1,2.4) node[right]{$\dot\varphi$};
+\draw (0,.8) arc (90:60:.8);\node at (.3,1.05) {$\alpha$};
+\node at (-1.1,-.35) {顶点};
+\end{tikzpicture}
+\end{center}
+
+由几何关系，质点到轴的距离为 $\rho=r\sin\alpha$，相对顶点的竖直高度为 $z=r\cos\alpha$。因此
+\[
+T=\frac12m\left(\dot r^2+r^2\sin^2\alpha\,\dot\varphi^2\right),
+\qquad
+V=mgr\cos\alpha.
+\]
+拉格朗日函数
+\[
+L=\frac12m\left(\dot r^2+r^2\sin^2\alpha\,\dot\varphi^2\right)
+-mgr\cos\alpha.
+\]
+$\varphi$ 是循环坐标，故
+\[
+p_\varphi=mr^2\sin^2\alpha\,\dot\varphi=\text{常量}.
+\]
+对 $r$ 的方程为
+\[
+m\ddot r-mr\sin^2\alpha\,\dot\varphi^2+mg\cos\alpha=0.
+\]
+若质点做半径为 $r_0$ 的圆轨道，则 $\dot r=0$，上式给出
+\[
+\dot\varphi^2=\frac{g\cos\alpha}{r_0\sin^2\alpha}.
+\]
+这里 $r_0$ 是沿母线量取的距离，实际圆半径为 $r_0\sin\alpha$。取 $0<\alpha<\pi/2$、$r_0>0$。考察同一守恒动量 $p_\varphi$ 下的径向扰动，将 $\dot\varphi=p_\varphi/(mr^2\sin^2\alpha)$ 代入已经得到的径向方程，得 $m\ddot r=-V_{\rm eff}'(r)$，其中
+\[
+V_{\rm eff}(r)=\frac{p_\varphi^2}{2mr^2\sin^2\alpha}+mgr\cos\alpha
+\]
+圆轨道满足 $p_\varphi^2/(mr_0^3\sin^2\alpha)=mg\cos\alpha$。因此 $V_{\rm eff}''(r_0)=3p_\varphi^2/(mr_0^4\sin^2\alpha)=3mg\cos\alpha/r_0$。令 $r=r_0+\eta$，保留一阶项得 $m\ddot\eta=-V_{\rm eff}''(r_0)\eta$，故 $\omega_r^2=3g\cos\alpha/r_0>0$。
+
+\begin{modernbox}
+锥面上的圆轨道是锥形离心分离器、旋转料斗、颗粒筛选和锥形离心机的简化模型。本例仅说明约束面上的轨道。该单质点方程中质量约去，不能单独推出按粒径或密度分选；真实分离还需流体阻力、接触等机制。
+\end{modernbox}
+\end{example}
+
+\begin{example}[旋转系中的两中心势：有效势不能代替全部拉格朗日量]
+两个主星绕共同质心以恒定角速度 $n$ 作圆周运动。取随其旋转、原点在质心的平面坐标 $(x,y)$，惯性速度的旋转基分量是 $(\dot x-ny,\dot y+nx)$。令 $V(x,y)=-GM_1m/r_1-GM_2m/r_2$，其中 $r_1,r_2$ 为到两主星的距离。由惯性系动能直接构造
+\[
+L=\tfrac12m(\dot x^2+\dot y^2)+mn(x\dot y-y\dot x)
++\tfrac12mn^2(x^2+y^2)-V.
+\]
+对 $x$，$p_x=m\dot x-mny$，$L_x=mn\dot y+mn^2x-V_x$，故
+\[
+\ddot x-2n\dot y=-\partial_x\Phi_{\rm eff},\qquad
+\ddot y+2n\dot x=-\partial_y\Phi_{\rm eff},
+\quad \Phi_{\rm eff}=V/m-\tfrac12n^2(x^2+y^2).
+\]
+速度一次项产生科里奥利项，不能把 $L$ 错写成仅有转动系相对动能减去有效势，否则会漏掉它。原来的动能已用惯性速度计算，也不能再额外加入惯性力重复计算。
+
+由于这个 $L$ 不显含时间，它的能量函数为
+\[
+E_L=\tfrac12m(\dot x^2+\dot y^2)+m\Phi_{\rm eff},\qquad
+C_J=-2E_L/m.
+\]
+$C_J$ 是常用的雅可比积分，不是粒子在惯性系中的普通机械能。平衡点仍由 $\nabla\Phi_{\rm eff}=0$ 给出，位置及稳定性已在第1章讨论。本例的目的，是看出速度耦合、离心势及守恒量如何同时从一个 $L$ 得到。
+\end{example}
+
+\subsection{冲量与广义冲量}
+
+突然的一下推力可能太短，来不及明显改变位置，却足以改变动量。把作用期间的广义力积分，就可直接求速度所对应的动量跳变。
+
+若系统在极短时间内受到冲力，位移可以忽略，但广义速度发生突变。对拉格朗日方程在 $[t_-,t_+]$ 上积分，仅忽略有界项 $\partial L/\partial q_a$ 及有限普通力的积分，保留冲力的 $Q_a$ 积分，得到
+\begin{equation}
+\left.\pdv{L}{\dot q_a}\right|_{t_+}
+-\left.\pdv{L}{\dot q_a}\right|_{t_-}
+=\widehat Q_a,
+\label{eq:impulsive-lagrange}
+\end{equation}
+其中 $\widehat Q_a=\int_{t_-}^{t_+}Q_a\,\dd t$ 称为\textbf{广义冲量}。这里假设冲击期间位形及约束几何不变，约束本身不突变；若存在非理想冲量或接触模式切换，还须给出冲击约束和恢复定律，不能仅靠该式决定所有末速度。
+
+\section{对称性与守恒律}
+
+如果改变某个角度或平移整个系统后，力学规律依旧一样，方程往往能给出一个沿运动保持不变的量。
+
+\subsection{循环坐标与广义动量}
+
+角度本身若不影响拉格朗日量，它对应的广义动量就没有来自这一项的变化。要判断它是否守恒，还需看有无额外广义力。
+
+式 \eqref{eq:generalized-momentum} 定义的广义动量在满足循环条件时给出守恒量 \eqref{eq:cyclic-integral}。本节进一步说明如何从对称性识别这些量。
+
+本小节的循环动量结论假设独立完整坐标且对应的额外广义力为零；非完整约束的反力将另行讨论。循环坐标不一定“看不见”。在中心力场中，极角 $\varphi$ 是循环坐标，对应的广义动量正是角动量。在均匀重力场中，水平坐标 $x$ 是循环坐标，对应水平动量守恒。在完整、理想约束下，循环坐标的本质是系统在某个连续变换下保持不变。
+
+\begin{example}[中心力场的角动量]
+质量为 $m$ 的质点在势 $V(r)$ 中运动。在极坐标下
+\[
+L=\frac12m\left(\dot r^2+r^2\dot\varphi^2\right)-V(r).
+\]
+$\varphi$ 不出现，故
+\[
+p_\varphi=mr^2\dot\varphi=\text{常量}.
+\]
+这正是角动量守恒。若用直角坐标，$L$ 同时含有 $x,y$，两个坐标都不是循环坐标，但组合 $xp_y-yp_x$ 守恒。拉格朗日方法自动把对称性对应的守恒量识别出来。
+\end{example}
+
+\subsection{能量函数与能量收支}
+旋转的导轨可以通过反力给小珠输入机械能，但选用适当坐标后，方程仍可能有另一个守恒量。先从拉格朗日量计算能量函数，再核对它和机械能是否相同。
+
+定义
+\begin{equation}\label{eq:energy-function}
+E_L(q,\dot q,t)=\sum_a\dot q_ap_a-L,\qquad p_a=L_{\dot q_a}.
+\end{equation}
+若有未包含于 $L$ 的广义力 $Q_a^{\rm nc}$，方程为 $\dot p_a-L_{q_a}=Q_a^{\rm nc}$。对 $E_L$ 逐项求导，含 $p_a\ddot q_a$ 的两项抵消，留下
+\begin{align}\label{eq:energy-function-derivative}
+\dot E_L
+&=\sum_a[\dot q_a\dot p_a+p_a\ddot q_a]
+-\sum_a[L_{q_a}\dot q_a+L_{\dot q_a}\ddot q_a]-L_t\nonumber\\
+&=\sum_a Q_a^{\rm nc}\dot q_a-L_t.
+\end{align}
+因此无额外广义力且 $L_t=0$ 时
+\begin{equation}\label{eq:energy-integral}
+E_L=\text{常量}.
+\end{equation}
+若参数化 $\br_i(q,t)$ 含时间，动能通常分为速度二次、一次、零次项 $T=T_2+T_1+T_0$。对位置势 $V(q,t)$，欧拉齐次函数公式给出
+\[
+\sum_a\dot q_aT_{\dot q_a}=2T_2+T_1,\qquad
+E_L=T_2-T_0+V.
+\]
+它与惯性系机械能 $T+V$ 一般不同。在惯性系的定常参数化下，若 $T=T_2$ 且势能与速度无关，则 $E_L=T+V$。这是常用充分条件。拉格朗日量的速度一次项在勒让德组合中抵消，例如本章的电磁耦合项。$L_t=0$ 是当前表示中 $E_L$ 守恒的充分条件，不能反过来断言任意显含时间的 $L$ 都没有任何能量守恒量；全导数或坐标变化也会改变显式时间依赖。
+
+\begin{example}[外部驱动旋转杆：守恒的 $E_L$ 与增长的机械能]
+水平光滑直杆由电机以恒定角速度 $\Omega$ 绕固定端转动。质量 $m$ 的滑块在杆上径向运动，弹簧势为 $kr^2/2$；忽略重力对水平运动的影响，取 $r>0$，不碰端点。惯性速度由 $\br=r(\cos\Omega t,\sin\Omega t)$ 求导，给出
+\[
+T=\tfrac12m(\dot r^2+\Omega^2r^2),\qquad
+L=\tfrac12m\dot r^2-\tfrac12(k-m\Omega^2)r^2.
+\]
+径向方程与能量函数是
+\[
+m\ddot r+(k-m\Omega^2)r=0,\qquad
+E_L=\tfrac12m\dot r^2+\tfrac12(k-m\Omega^2)r^2=\text{常量}.
+\]
+但物理机械能为 $E_{\rm mech}=m\dot r^2/2+(k+m\Omega^2)r^2/2$。由第一章极坐标加速度，杆的切向反力为 $N_\theta=2m\Omega\dot r$，故
+\[
+\dot E_{\rm mech}=2m\Omega^2r\dot r
+=N_\theta(\Omega r)=\Omega\frac{\dd}{\dd t}(mr^2\Omega).
+\]
+电机通过移动的理想约束交换能量；零虚功不等于零真实功。$\Omega\to0$ 时两个能量一致。$k=m\Omega^2$ 是径向恢复项退化的情况，不能继续套用非零振动频率。
+\end{example}
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth]
+\draw[->] (-.3,0)--(4,0) node[right]{$x$};\draw[->] (0,-.3)--(0,3) node[above]{$y$};
+\draw[very thick,blue!60!black] (0,0)--(3.2,1.84752);
+\fill (2,1.15470) circle (3pt) node[below right]{$m$};
+\draw[->,thick,red!70!black] (2,1.15470)--(1.5,2.020725) node[above]{$N_\theta$};
+\draw[->,thick,green!40!black] (2,1.15470)--(2.8,1.61658) node[right]{$\dot r\be_r$};
+\draw (.9,0) arc (0:30:.9);\node at (1.2,.3) {$\Omega t$};
+\draw[->] (1.6,0) arc (0:55:1.6);\node at (1.55,1.4) {$\Omega$};
+\end{tikzpicture}
+\caption{受驱动旋转杆的惯性系示意。对 $\dot r>0,\Omega>0$，切向反力沿正切向；它垂直冻结时刻的径向虚位移，却与实际速度的切向部分做正功。}
+\label{fig:lag-driven-rod}
+\end{figure}
+
+\subsection{诺特定理：把变换和边界项一同写清楚}
+有的变换让拉格朗日量本身不变，有的只让作用量增加端点上的一项。两种情况都可以给出守恒量，后一种必须把端点项一起算进去。
+
+本节限于具有独立坐标的完整系统、无额外非保守力。采用一阶点变换
+\begin{equation}\label{eq:one-parameter-transform}
+t_\epsilon=t+\epsilon\tau(q,t),\qquad
+q_{a,\epsilon}(t_\epsilon)=q_a(t)+\epsilon\xi_a(q,t)+O(\epsilon^2).
+\end{equation}
+总坐标变化的系数为 $\xi_a$，而在同一时间比较两条曲线的变化为
+\begin{equation}\label{eq:infinitesimal-variation}
+\eta_a=\xi_a-\dot q_a\tau.
+\end{equation}
+点表示沿原路径的全导数。由 $\dd t_\epsilon/\dd t=1+\epsilon\dot\tau$ 和 $\dd q_{a,\epsilon}/\dd t=\dot q_a+\epsilon\dot\xi_a$，速度按商法则展开：
+\[
+\frac{\dd q_{a,\epsilon}}{\dd t_\epsilon}
+=\frac{\dot q_a+\epsilon\dot\xi_a}{1+\epsilon\dot\tau}
+=\dot q_a+\epsilon(\dot\xi_a-\dot q_a\dot\tau)+O(\epsilon^2).
+\]
+在同一时间比较坐标时，还须扣掉原轨道随时间平移的 $\epsilon\dot q_a\tau$，这就给出式 \eqref{eq:infinitesimal-variation}。
+
+若对\textbf{任意邻近路径}而不只对运动方程的解，有恒等关系
+\begin{equation}\label{eq:symmetry-total-derivative}
+\sum_a\left[L_{q_a}\xi_a+p_a(\dot\xi_a-\dot q_a\dot\tau)\right]
++L_t\tau+L\dot\tau=\frac{\dd B(q,t)}{\dd t},
+\end{equation}
+则作用量只改变端点项，称为准对称性；$B=0$ 是严格不变的特例。必须比较 $L\dd t$，时间也变时不能只比较 $L$。
+
+定义欧拉方程左侧 $\mathcal E_a=\dot p_a-L_{q_a}$。利用能量函数的恒等关系
+$\dot E_L=\sum_a\dot q_a\mathcal E_a-L_t$
+以及上式，直接对以下组合求导：
+\begin{equation}\label{eq:noether-identity}
+\frac{\dd}{\dd t}\left(\sum_ap_a\xi_a-E_L\tau-B\right)
+=\sum_a\mathcal E_a(\xi_a-\dot q_a\tau).
+\end{equation}
+具体可写为
+\[
+\dot C=\sum_a(\dot p_a-L_{q_a})\xi_a-(\dot E_L+L_t)\tau
+=\sum_a\mathcal E_a(\xi_a-\dot q_a\tau).
+\]
+右边还没有使用运动方程；沿真实解 $\mathcal E_a=0$，故
+\begin{equation}\label{eq:noether-charge}
+\boxed{C=\sum_ap_a\xi_a-E_L\tau-B=\text{常量}.}
+\end{equation}
+这就是本章采用的诺特定理。固定时间的坐标对称性只需取 $\tau=0$；一维时间平移取 $\tau=1,\xi_a=0,B=0$，得到 $C=-E_L$，守恒量整体差一个负号不影响其意义。
+
+\begin{example}[三个对称性及一个边界项]
+\textbf{平移。} 若 $q_a$ 为循环坐标，取 $\xi_a=1$、其他生成元为零、$\tau=B=0$，则 $C=p_a$。但完整系统中仍有 $\dot p_a=L_{q_a}+Q_a^{\rm nc}$，存在额外广义力时须另检验。
+
+\textbf{转动。} 对 $L=m(\dot r^2+r^2\dot\varphi^2)/2-V(r)$，取 $\xi_\varphi=1$，得到 $C=mr^2\dot\varphi$。这与第一章零力矩证明是同一事实的两种表述，不能否定其中任何一种。
+
+\textbf{时间平移。} 自治系统给出 $E_L$ 守恒；在定常自然系统中才进一步识别为机械能。
+
+\textbf{伽利略匀速变换。} 一维自由粒子 $L=m\dot x^2/2$，取 $\xi=t,\tau=0$，则 $\delta L/\epsilon=m\dot x=\dd(mx)/\dd t$，所以 $B=mx$，守恒量为 $pt-mx$。直接用 $p=\text{常量}$、$x=x_0+pt/m$ 得 $pt-mx=-mx_0$。若漏掉边界项，会误将 $pt$ 当作守恒量。
+\end{example}
+\begin{physicsbox}
+诺特定理中的对称变换不是固定端点变分原理中的任意试探变分：对称变换可以移动端点。守恒律来自“作用量的变化是边界项”与运动方程的结合。先猜出一个量沿解为常数，也不等于已经证明对应变换在任意路径上是作用量对称性。
+\end{physicsbox}
+
+\subsection{全导数等价与它的边界}
+如果积分中多出某个函数的时间全导数，整个积分只增加该函数的终值与初值之差。固定端点的小改动就不受这一项影响。
+
+设 $G(q,t)$ 足够光滑，$L'=L+\dd G/\dd t$。固定时间和位置端点时，$S'-S=[G]_{t_1}^{t_2}$ 为固定数，不改变驻值方程。其动量和能量函数变为
+\[
+p_a'=p_a+G_{q_a},\qquad E_L'=E_L-G_t.
+\]
+因此它们的坐标表达未必不变。若边界位置自由，$[G]$ 会改变自然边界条件；若取依赖 $\dot q$ 的 $G$，固定位置并不固定该端点项，且 $\dd G/\dd t$ 引入高阶导数，不能直接冒充这里的同类一阶变分问题。
+
+\section{约束力恢复与非完整系统}
+选择最少的坐标能省去反力，但绳子会不会松、接触会不会失效仍要用反力来判断。这时要把约束条件和待求反力一起带回方程。
+
+\subsection{完整约束的乘子：求回被消去的反力}
+为了找回摆绳的拉力，可以暂时用两个直角坐标描述摆球，并另加长度不变的方程。乘子帮助写出拉力的方向和大小。
+
+若希望保留冗余坐标 $q$ 并求反力，设独立完整约束为 $f_\ell(q,t)=0$。对
+\[
+S_{\rm aug}=\int\left[L(q,\dot q,t)+\sum_\ell\lambda_\ell(t)f_\ell(q,t)\right]\dd t
+\]
+分别变分 $q$ 与乘子，得到
+\begin{equation}\label{eq:lag-holonomic-multipliers}
+\frac{\dd}{\dd t}L_{\dot q_a}-L_{q_a}
+=\sum_\ell\lambda_\ell f_{\ell,q_a}+Q_a^{\rm nc},\qquad f_\ell=0.
+\end{equation}
+反力的广义分量为 $R_a=\sum\lambda_\ell f_{\ell,q_a}$。乘子的单位取决于 $f$ 的归一化：把约束乘2会把同一反力对应的乘子除2，故不能不作换算就将乘子本身称为张力。
+
+\begin{example}[用直角坐标恢复单摆张力]
+取 $y$ 向上，$L=m(\dot x^2+\dot y^2)/2-mgy$，约束 $f=(x^2+y^2-l^2)/2=0$。上式给出
+\[
+m\ddot x=\lambda x,\qquad m\ddot y+mg=\lambda y.
+\]
+对约束二次求导，$x\ddot x+y\ddot y=-(\dot x^2+\dot y^2)=-v^2$，故
+\[
+\lambda=\frac{-mv^2+mgy}{l^2},\qquad
+\mathcal T=-\lambda l=m\left(\frac{v^2}{l}-\frac{gy}{l}\right).
+\]
+用 $y=-l\cos\theta$ 得 $\mathcal T=m(l\dot\theta^2+g\cos\theta)$，与第一章法向方程一致。轻绳只能拉，需 $\mathcal T\ge0$；若算出负值，圆周约束解对绳失效，但刚杆可承受轴向推力。
+\end{example}
+对显含时间的理想完整约束，真实速度满足 $\sum_a f_{\ell,q_a}\dot q_a=-f_{\ell,t}$，约束力功率为 $\sum_aR_a\dot q_a=-\sum_\ell\lambda_\ell f_{\ell,t}$。这再次说明零虚功不等于零真实功。
+
+\subsection{仿射速度约束与达朗贝尔乘子方程}
+某些约束直接告诉我们速度在某个方向上的分量。理想滚动的反力不会沿允许的虚位移做功，因此可用这些速度条件的系数来写反力。
+
+完整约束已由坐标消去后，若还存在满秩的仿射速度约束
+\begin{equation}\label{eq:nonholonomic-constraint}
+\sum_a A_{\ell a}(q,t)\dot q_a+B_\ell(q,t)=0,
+\qquad\ell=1,\ldots,k,
+\end{equation}
+本章采用理想达朗贝尔模型，其\emph{容许虚位移规则}是
+\begin{equation}\label{eq:nonholonomic-virtual}
+\sum_a A_{\ell a}\delta q_a=0.
+\end{equation}
+这是对约束反力方向的物理建模，不能不加论证地推广到任意非线性速度约束。对上式核空间中任意向量，达朗贝尔方程左端与之正交，因此其残量位于 $A$ 的行空间：
+\begin{equation}\label{eq:lagrange-multipliers}
+\boxed{\frac{\dd}{\dd t}L_{\dot q_a}-L_{q_a}
+=Q_a^{\rm nc}+\sum_\ell\lambda_\ell A_{\ell a}.}
+\end{equation}
+连同速度约束、相容初始条件求解。$s$ 仍是位形维数，$s-k$ 是当前容许速度方向的维数，不代表总能消去成 $s-k$ 个独立位置坐标。
+
+齐次约束 $B_\ell=0$ 时反力功率为零；仿射约束则为 $-\sum\lambda_\ell B_\ell$。即使 $L$ 自治，后者也可改变 $E_L$。循环坐标的动量满足 $\dot p_a=Q_a^{\rm nc}+\sum\lambda_\ell A_{\ell a}$，一般不守恒；若对称生成元还满足 $A\xi=0$，相应约束反力投影才消失。
+
+\subsection{滚动圆盘：完整的求解与守恒检查}
+直立圆盘可以改变朝向，但无滑动要求盘心的速度沿盘面。先沿盘面投影加速度，再看垂直盘面的反力怎样让轨迹转弯。
+
+\begin{example}[保持竖直的理想滚动盘]
+盘质量 $m$、半径 $R$，模型额外限制盘始终竖直、中心高度为 $R$，只允许平面位移 $(x,y)$、朝向角 $\theta$ 与自转角 $\varphi$。可将保持竖直的支承视为理想约束；这不是允许自由倾斜的真实圆盘的一般运动。取转动惯量 $I,J>0$ 分别对应自转与朝向转动，
+\[
+L=T=\tfrac12m(\dot x^2+\dot y^2)+\tfrac12I\dot\varphi^2+\tfrac12J\dot\theta^2,
+\]
+\[
+\dot x=R\dot\varphi\cos\theta,\qquad
+\dot y=R\dot\varphi\sin\theta.
+\]
+乘子方程逐项为
+\begin{align}
+m\ddot x&=\lambda_1,& m\ddot y&=\lambda_2,\\
+I\ddot\varphi&=-R(\lambda_1\cos\theta+\lambda_2\sin\theta),&
+J\ddot\theta&=0.
+\end{align}
+对速度约束求导后，沿朝向投影得 $\lambda_1\cos\theta+\lambda_2\sin\theta=mR\ddot\varphi$，于是
+\[
+(I+mR^2)\ddot\varphi=0,\qquad \ddot\theta=0.
+\]
+令 $\dot\varphi=\omega,\dot\theta=\Omega$ 为常数，则
+\[
+(\lambda_1,\lambda_2)=mR\omega\Omega(-\sin\theta,\cos\theta).
+\]
+$\Omega=0$ 时中心走直线，$\Omega\ne0$ 时走半径 $|R\omega/\Omega|$ 的圆。这说明虽然 $L$ 不含 $x,y$，$m\dot x,m\dot y$ 仍可改变；不是所有循环坐标都给独立守恒动量。
+
+反力功率为 $\lambda_1\dot x+\lambda_2\dot y-R(\lambda_1\cos\theta+\lambda_2\sin\theta)\dot\varphi=0$，故总动能守恒。还必须确认静摩擦等真实支承能提供所需反力；本题未给摩擦系数，不能无条件断言任意 $\omega,\Omega$ 均可实现。
+\end{example}
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth]
+\draw[->] (-.2,0)--(4.3,0) node[right]{$x$};\draw[->] (0,-.3)--(0,3.2) node[above]{$y$};
+\coordinate (C) at (1.6,1.1);
+\draw[very thick,blue!70!black] (.8,.63812)--(2.4,1.56188);
+\fill (C) circle (2pt) node[below]{$C$};
+\draw[dashed] (C)--(3,1.1);
+\draw[->,thick,green!40!black] (C)--(3,1.90829) node[right]{$\bv_C=R\omega\be$};
+\draw[->,thick,red!70!black] (C)--(1,2.13923) node[above]{$\boldsymbol\lambda$};
+\draw (2.25,1.1) arc (0:30:.65);\node at (2.5,1.3) {$\theta$};
+\end{tikzpicture}
+\caption{竖直滚动盘的俯视运动学：粗线为盘平面与地面的交线方向，$\be=(\cos\theta,\sin\theta)$ 为朝向单位矢量；当 $\omega\Omega>0$ 时，合水平反力垂直朝向向左。此图不把俯视平面误画成圆盘的侧面。}
+\label{fig:rolling-disk}
+\end{figure}
+
+\subsection{为什么不能直接把速度约束加进作用量？}
+限制瞬时可移动的方向，与在整条试探路径上强制满足速度条件，会改变可作的变分。把两种模型各写一遍，就能比较它们给出的方程。
+
+若把上述约束作为 $L_{\rm aug}=L+\mu_1(\dot x-R\dot\varphi\cos\theta)+\mu_2(\dot y-R\dot\varphi\sin\theta)$，再对所有路径作普通固定端点变分，$\theta$ 方程变为
+\[
+J\ddot\theta=R\dot\varphi(\mu_1\sin\theta-\mu_2\cos\theta),
+\]
+一般不同于达朗贝尔模型的 $J\ddot\theta=0$。这种对受限路径作用量求驻值的方法称为变分约束方法（vakonomic）；它可对应某些最优控制问题，但不能自动代替真实理想滚动的动力学。
+
+差别来自允许的变分：若一族路径都满足 $A(q,t)\dot q+B(q,t)=0$，其线性化包含 $A\dot\eta$、$A_{,q}\eta\dot q$ 和 $B_{,q}\eta$，并不等价于每个时刻仅要求 $A\eta=0$。而达朗贝尔虚位移正是后一类力学投影。该区分是处理非完整系统的核心，不是乘子符号的选择问题。
+
+\begin{modernbox}[title={进一步探索：不可积性与工程多体方法}]
+滚动盘的容许速度由 $X_1=\partial_\theta$ 与 $X_2=R\cos\theta\partial_x+R\sin\theta\partial_y+\partial_\varphi$ 张成。先改变朝向再滚动与反序操作并不等效；其交换子为 $[X_1,X_2]=-R\sin\theta\partial_x+R\cos\theta\partial_y$，不在两者张成的空间内。由弗罗贝尼乌斯判据，该速度分布不能积分为二维位形曲面。
+
+阿佩尔和凯恩方法也沿独立运动方向投影动力学。对独立完整坐标，$\mathcal S=\sum_i m_i|\ba_i|^2/2$ 给出 $\partial\mathcal S/\partial\ddot q_a=\sum_i m_i\ba_i\cdot\partial\br_i/\partial q_a=Q_a$。非完整模型须先选相容独立速度。
+\end{modernbox}
+
+\section{带电粒子、广义动量与规范等价}
+同一电磁场可以由不同的势来描述。先用势求粒子怎样受力，再看换一种势时哪些量会改变、哪些仍有相同的物理含义。
+
+\subsection{从势耦合逐分量导出洛伦兹力}
+磁力侧向推转粒子，因此速度的方向可能改变。拉格朗日量通过一个与速度有关的项，产生这种仅用位置势能无法描述的力。
+
+设非相对论粒子质量 $m$ 恒定、电荷为 $e$（可正可负），外场给定，不计辐射反作用。定义
+\[
+\bE=-\nabla\phi-\partial_t\bA,\qquad \bB=\nabla\times\bA,
+\]
+\begin{equation}\label{eq:em-lagrangian}
+L=\tfrac12m\bv^2-e\phi+e\bA\cdot\bv.
+\end{equation}
+广义动量与机械动量不同：
+\begin{equation}\label{eq:canonical-momentum-em}
+\bp=\frac{\partial L}{\partial\bv}=m\bv+e\bA.
+\end{equation}
+对第 $i$ 个分量，取坐标偏导时保持速度独立，
+\[
+\frac{\dd}{\dd t}(mv_i+eA_i)=-e\partial_i\phi+e\sum_j v_j\partial_i A_j.
+\]
+用全导数 $\dd A_i/\dd t=\partial_t A_i+\sum_jv_j\partial_jA_i$ 展开，得
+\[
+m\dot v_i=e(-\partial_i\phi-\partial_tA_i)
++e\sum_jv_j(\partial_iA_j-\partial_jA_i).
+\]
+最后一项正是 $e(\bv\times\bB)_i$，于是
+\begin{equation}\label{eq:lag-lorentz-force}
+m\dot\bv=e(\bE+\bv\times\bB).
+\end{equation}
+对速度点乘，磁力不做功，$\dot T=e\bE\cdot\bv$。能量函数为 $E_L=T+e\phi$；若所选势不显含时间，它守恒。外场若随时间变化则可能向粒子传能，完整“粒子加场及场源”的能量平衡不应只对测试粒子闭合计算。
+
+\subsection{规范变换为什么不改变轨道？}
+两个势若给出同一组电场和磁场，就可描述同一粒子轨道。计算时检查拉格朗日量的差是否为一个时间全导数。
+
+取单值光滑函数 $\chi(\br,t)$，势变为
+\begin{equation}\label{eq:gauge-transform}
+\bA'=\bA+\nabla\chi,\qquad \phi'=\phi-\partial_t\chi.
+\end{equation}
+梯度的旋度为零、混合偏导相消，故场强不变，而
+\[
+L'=L+e\frac{\dd\chi}{\dd t},\qquad
+\bp'=\bp+e\nabla\chi,\qquad E_L'=E_L-e\partial_t\chi.
+\]
+这正是 $G=e\chi$ 的全导数等价。固定时空端点时轨道不变，动量和能量函数的表示可以改变。不可把“改变规范”说成一种产生新轨道或新力的物理操作；它是同一外场的描述冗余。
+
+\begin{example}[均匀磁场的同一平移守恒量，两种规范]
+取 $\bB=B\kk$、$\phi=0$。在 $\bA=(-By,0,0)$ 下，
+\[
+L=\tfrac12m(\dot x^2+\dot y^2+\dot z^2)-eBy\dot x,
+\]
+$x$ 为循环坐标，所以 $C=m\dot x-eBy$ 守恒。作 $\chi=Bxy$，新势为 $\bA'=(0,Bx,0)$，新 $L'$ 显含 $x$，但 $x\to x+\epsilon$ 给出
+\[
+\delta L'/\epsilon=eB\dot y=\frac{\dd(eBy)}{\dd t}.
+\]
+因此诺特边界项为 $B_{\rm N}=eBy$，守恒量为 $p'_x-B_{\rm N}=m\dot x-eBy$，与先前相同。机械动量 $m\dot x$ 一般不守恒；广义动量是否直接显为守恒，依赖所用规范和边界项。洛伦兹方程也直接给出 $m\ddot x-eB\dot y=0$，形成独立核验。
+\end{example}
+\begin{modernbox}[title={进一步探索：从势到场，而非把所有场都叫规范场}]
+场是在时空各点定义的量。电磁势具有规范冗余，场强由其导数给出；温度场等一般标量场不能因此称为规范联络。局域规范冗余与普通机械坐标的整体诺特对称性不同。进一步讨论需电磁场本身的作用量与边界条件，超出本章。
+\end{modernbox}
+
+\section{通向小振动与哈密顿力学}
+第三章的方程有两个常用的下一步。研究轻微偏离平衡时可保留最低阶的项；研究完整状态时，可用广义动量替换速度。
+
+对定常自然系统，$L=\dot q^{\mathsf T}M(q)\dot q/2-V(q)$。在平衡 $q_0$ 附近令 $q=q_0+\eta$，$\nabla V(q_0)=0$，保留二阶拉格朗日量为
+\[
+L^{(2)}=\tfrac12\dot\eta^{\mathsf T}M(q_0)\dot\eta
+-\tfrac12\eta^{\mathsf T}K(q_0)\eta,
+\qquad K_{ab}=\left.\frac{\partial^2V}{\partial q_a\partial q_b}\right|_{q_0}.
+\]
+它直接给出 $M\ddot\eta+K\eta=0$。第\ref{ch:oscillation}章将以等质量等长双摆（式 \eqref{eq:osc-double-pend}）说明稳定性、简正模和质量加权正交性，而非只把复杂摆都当作单个简谐振子。
+
+几何上，广义坐标是位形空间的局部参数，$(q,\dot q)$ 包含位置与速度信息。第六章在速度海森矩阵可逆等条件下用勒让德变换把速度换成 $p=L_{\dot q}$；这里的 $E_L$ 才转成相空间上的哈密顿函数。不要提前把所有约束模型、奇异速度势或非完整投影都直接当作普通可逆的哈密顿系统。
+
+\section{计算与模拟：检查方程，而非只看动画}
+数值求解后，先用方程预测该有怎样的能量变化，再和实际输出比较。不同模型允许的能量收支不同，不能对每一题都要求机械能恒定。
+
+对无驱动双摆，先从式 \eqref{eq:lag-double-pendulum} 求解 $2\times2$ 线性系统得到 $\ddot\theta$，再将状态写成 $(\theta_1,\theta_2,\dot\theta_1,\dot\theta_2)$ 积分。用同一组初值和物理参数，比较步长 $h$ 与 $h/2$；记录能量 $E=T+V$ 的误差，并确认质量矩阵在沿途可逆。四阶Runge--Kutta方法的短时收敛可作检验，但它不是严格能量保持算法，不能由一段看似合理的动画推断长期保真。
+
+对阻尼摆应检查 $E(t)-E(0)=\int_0^t[-b\dot\theta^2+\tau\dot\theta]\dd t$，不能仍要求 $E$ 恒定；对受驱动旋转杆则分别记录 $E_L$ 与 $E_{\rm mech}$。随附数值脚本为
+\begin{center}\texttt{review/verify\_ch03.py}\end{center}
+它对本章解析模型作独立检查，输出误差和收敛记录。所有模拟参数为教学设定，不代表实际机器人或航天器。
+
+\section*{关键概念与常见误区}
+\begin{itemize}[leftmargin=1.8em]
+\item 选坐标时，可试着逐个改变它们，看看能否独立变化。用坐标数减去约束数前，先检查这些约束是否独立。
+\item 算虚位移时先固定时刻。若导轨自己在移动，它的反力可能对真实运动做功，即使对允许的虚位移不做功。
+\item 用惯性系速度写过动能后，坐标变换造成的效应已包含在方程里。再加一遍惯性力会重复计算。
+\item 重力和弹簧常可用 $L=T-V$。带电粒子还可能有随速度变化的耦合项，此时广义动量要从 $L$ 重新求。
+\item 对转动导轨一类题，分别写出能量函数、物体机械能和电机功率，再用方程检查各自怎样变。
+\item 用诺特定理时，要检查整个作用量的变化，包含时间积分的测度与可能出现的端点项。
+\item 滚动约束能让循环坐标的动量受到反力改变。先确定采用的是达朗贝尔投影还是受限路径变分，再写方程。
+\end{itemize}
+
+\section*{本章小结}
+\addcontentsline{toc}{section}{本章小结}
+本章从约束几何选坐标，以达朗贝尔原理投影牛顿方程，得到包含非保守广义力的拉格朗日方程；在合适的完整系统中，第二章的固定端点变分给出等价的作用量表述。乘子法用于恢复反力，不能把它与独立坐标消元混淆。对称性及其边界项组织守恒律，能量收支则检验受驱动和受阻尼模型。第四章将在这一框架内系统展开稳定平衡附近的小振动。
+
+\section*{分层习题}
+\addcontentsline{toc}{section}{分层习题}
+先数独立坐标，并把各质点的位置写成这些坐标的函数。求出运动后，若还需张力或支持力，再把相应的约束方程带回来。
+
+\begin{bookexercises}
+\item \exlevel{基础} \textbf{约束与秩。} 三维双摆的两个杆长约束在杆长非零时有多少独立约束和位形自由度？若另限制两球在同一固定竖直平面中，如何恢复平面双摆的两个自由度？
+\item \exlevel{基础} \textbf{虚位移。} 质点在 $x^2+y^2=R(t)^2$ 的受驱动圆周上运动。写出虚位移和真实速度必须满足的两个关系，并说明为何径向反力可零虚功而非零功率。
+\item \exlevel{基础} \textbf{推导训练。} 对 $\br_i(q,t)$ 逐项验证式 \eqref{eq:kinematic-identities}，再从动能导出拉格朗日惯性项，不把“偏导和全导总可交换”作为理由。
+\item \exlevel{综合} \textbf{平衡分支。} 两杆例题中取 $P_1=P_2=P,F=9P/8$。写出稳定支的两组正弦余弦，并分析只把一根杆反向会得到极小、极大还是鞍点。
+\item \exlevel{综合} \textbf{阿特伍德机。} 在正文忽略滑轮惯量的假设下求绳张力；再令滑轮有给定转动惯量 $I$、半径 $a$，且无滑动，求加速度并说明两侧张力是否仍相等。
+\item \exlevel{综合} \textbf{双摆。} 独立导出双摆第二方程，核对 $-D\sin\Delta\dot\theta_1^2$ 的符号；在最低平衡附近写出 $M_0,K_0$，而不直接把两角看成独立单摆。
+\item \exlevel{综合} \textbf{弹簧摆。} 在 $x_0=mg/k,\theta_0=0$ 附近线性化，求径向和角向频率，说明为什么应使用伸长后的摆长。
+\item \exlevel{综合} \textbf{转动杆滑块。} 对正文带有质量杆和弹簧的两坐标系统，用角动量定理核验 $2m_2r\dot r\dot\theta$ 项；说明令 $\theta=\Omega t$ 给定时为什么必须另有外部驱动力矩。
+\item \exlevel{综合} \textbf{耗散。} 对无驱动阻尼摆，证明 $E$ 单调不增；若希望保持非零匀速 $\dot\theta=\omega_c$，写出所需力矩随角度的函数，不可只令平均驱动补偿阻尼。
+\item \exlevel{综合} \textbf{驱动能量。} 对恒速旋转水平杆上的弹簧滑块，验证 $\dot E_L=0$、$\dot E_{\rm mech}=\Omega\dot J_z$；讨论 $k-m\Omega^2$ 为正、零、负时的径向行为及有限杆端点的限制。
+\item \exlevel{综合} \textbf{乘子归一化。} 用 $f=x^2+y^2-l^2$ 而非 $f/2$ 重算单摆反力，比较乘子数值和物理张力；判断什么时候轻绳约束会失效。
+\item \exlevel{综合} \textbf{诺特边界项。} 对自由粒子匀速变换 $\xi=t$，证明守恒的是 $pt-mx$，并解释为何 $pt$ 本身不守恒。再取时间平移 $\tau=1,\xi=0$ 核对诺特荷的符号。
+\item \exlevel{综合} \textbf{全导数。} 取 $L'=L+\dd G(q,t)/\dd t$，独立算出 $p'$、$E_L'$。若 $G=atq$（$a$ 为常数且单位使 $G$ 为作用量），显式时间依赖是否必然意味着原物理系统没有能量守恒量？
+\item \exlevel{综合} \textbf{非完整滚动。} 用正文约束与乘子方程推出 $\ddot\varphi=\ddot\theta=0$，给出 $\Omega\ne0$ 时圆心轨迹，并核验反力功率；说明圆盘 $x$ 坐标循环却动量不守恒的原因。
+\item \exlevel{拓展} \textbf{两种受限变分。} 将正文滚动盘的速度约束直接加入作用量，计算增广模型的 $\theta$ 方程，再与达朗贝尔模型比较。仅仅给乘子改名能消掉差异吗？
+\item \exlevel{综合} \textbf{规范与守恒量。} 在均匀磁场两种规范下，分别由诺特边界项和洛伦兹方程验证同一个 $m\dot x-eBy$ 守恒；机械动量和广义动量各有什么不同？
+\item \exlevel{综合} \textbf{小振动与旋转系。} (a) 对旋转圆环的小珠推导非竖直平衡支的小振动频率。(b) 对两中心旋转系求 $E_L$，说明为何仅用有效势构造 $L$ 会漏掉科里奥利项。
+\item \exlevel{拓展} \textbf{计算检查。} 运行双摆两步长模拟，比较相同短时区间的能量误差；对受驱动杆同时输出两种能量。说明本章各模型应检验的量为何不同，不把不守恒的物理量误当成算法误差。
+\end{bookexercises}
+
+\section*{习题解答}
+先用同一题号找到解答。核对时，从第一条方程开始比较自己的做法，再检查最后的符号、单位和适用条件。
+\begin{bookexercises}
+\item 六个位置坐标、两个独立杆长约束，位形维数为4。再各加一个离开指定平面的坐标约束，剩2；若约束奇异或重复，不能简单照数相减。
+
+约束可取 $|\br_1|^2-l_1^2=0$、$|\br_2-\br_1|^2-l_2^2=0$。在关于 $\br_2$ 的三列中，第一行全零，第二行有非零向量 $2(\br_2-\br_1)$，而第一行关于 $\br_1$ 的梯度也非零，故秩为2。选平面为 $xz$ 平面，另两条 $y_i=0$ 的梯度只在法向列非零，与杆长约束独立。
+\item 冻结时间给 $\br\cdot\delta\br=0$，真实速度给 $\br\cdot\bv=R\dot R$。若反力为 $N\br/R$，功率为 $N\dot R$，虚功为零。
+
+对 $f=\br^2-R(t)^2$，固定 $t$ 变分得 $\delta f=2\br\cdot\delta\br=0$。沿实际路径则有 $\dot f=2\br\cdot\bv-2R\dot R=0$。在 $R>0$ 时，第二式给出真实速度的径向分量 $\dot R$。
+\item 速度是 $\bv_i=\sum_b\br_{i,q_b}\dot q_b+\br_{i,t}$。第一式从 $\dot q_a$ 的系数直接读出；第二式两边分别为
+\[
+\sum_b\br_{i,q_bq_a}\dot q_b+\br_{i,tq_a},\qquad
+\sum_b\br_{i,q_aq_b}\dot q_b+\br_{i,q_at}.
+\]
+在 $\br_i$ 二阶偏导连续时二者相等。由 $\partial T/\partial\dot q_a=\sum_i m_i\bv_i\cdot\br_{i,q_a}$ 得
+\[
+\frac{\dd}{\dd t}\frac{\partial T}{\partial\dot q_a}
+=\sum_i m_i\ba_i\cdot\br_{i,q_a}
+ +\sum_i m_i\bv_i\cdot\bv_{i,q_a}.
+\]
+第二项恰是 $\partial T/\partial q_a$，相减即得到惯性投影。
+\item 第一杆 $\cos\alpha=-3/5,\sin\alpha=-4/5$；第二杆 $\cos\beta=-9/\sqrt{97},\sin\beta=-4/\sqrt{97}$。只反向一根杆使势能海森矩阵一正一负，是鞍点。
+
+两个角各自的势能为 $l(A_j\sin\psi_j+F\cos\psi_j)$，其中 $A_1=3P/2,A_2=P/2$。驻点单位向量 $(\cos\psi_j,\sin\psi_j)$ 必与 $(F,A_j)$ 共线。取反向使势能极小，曲率为 $l\sqrt{F^2+A_j^2}$。将任一杆反向只翻转对应曲率的符号，混合导数仍为零。
+\item 无惯量时 $\mathcal T=2m_1m_2g/(m_1+m_2)$。有惯量时有效质量增为 $m_1+m_2+I/a^2$，加速度为 $(m_1-m_2)g/(m_1+m_2+I/a^2)$；两侧张力差提供转矩，$\mathcal T_1-\mathcal T_2=I\ddot q/a^2$。
+
+取 $m_1$ 向下、$m_2$ 向上为正。两质点方程为 $m_1g-\mathcal T_1=m_1\ddot q$、$\mathcal T_2-m_2g=m_2\ddot q$。滑轮角加速度是 $\ddot q/a$，转矩平衡给 $(\mathcal T_1-\mathcal T_2)a=I\ddot q/a$。将三式相加消元，再令 $I=0$ 便可求共同张力。
+\item 对 $\cos\Delta\dot\theta_1$ 求导后与坐标偏导相减，混合速度项抵消。最低点处
+\[
+M_0=\begin{pmatrix}(m_1+m_2)l_1^2&m_2l_1l_2\\m_2l_1l_2&m_2l_2^2\end{pmatrix},\quad
+K_0=\begin{pmatrix}(m_1+m_2)gl_1&0\\0&m_2gl_2\end{pmatrix}.
+\]
+
+令 $\Delta=\theta_1-\theta_2$。对 $\partial L/\partial\dot\theta_2=m_2l_2^2\dot\theta_2+D\cos\Delta\,\dot\theta_1$ 求导，再减去 $\partial L/\partial\theta_2=D\sin\Delta\,\dot\theta_1\dot\theta_2-m_2gl_2\sin\theta_2$，得
+\[
+m_2l_2^2\ddot\theta_2+D\cos\Delta\,\ddot\theta_1
+-D\sin\Delta\,\dot\theta_1^2+m_2gl_2\sin\theta_2=0.
+\]
+在最低点取 $\cos\Delta=1$、$\sin\theta_j\simeq\theta_j$，速度二次项高于线性阶。
+\item 径向频率 $\omega_r=\sqrt{k/m}$，角向频率 $\omega_\theta=\sqrt{g/(l+mg/k)}$。径向和角向在这一平衡的线性阶解耦，有限振幅仍耦合。
+
+取 $r=l+x$，则 $V=k(r-l)^2/2-mgr\cos\theta$。平衡半径 $r_*=l+mg/k$ 由 $k(r_*-l)=mg$ 给出。令 $\rho=r-r_*$，二次动能为 $m(\dot\rho^2+r_*^2\dot\theta^2)/2$，二次势能为 $(k\rho^2+mgr_*\theta^2)/2$，于是 $m\ddot\rho+k\rho=0$、$mr_*^2\ddot\theta+mgr_*\theta=0$。
+\item 关于固定点的角动量为 $(I+m_2r^2)\dot\theta$，求导产生该耦合项；重力矩为
+\[-(m_1l/2+m_2r)g\sin\theta.\]
+给定 $\dot\theta=\Omega$ 时，驱动力矩应补足耦合项与重力矩，不是把自由转动方程直接置零。
+
+具体地，$\dot J=(I+m_2r^2)\ddot\theta+2m_2r\dot r\dot\theta$。弹簧力沿杆，对铰点的力矩为零。因此维持恒速所需电机力矩为 $2m_2r\dot r\Omega+(m_1l/2+m_2r)g\sin\theta$。
+\item $\dot E=-b\dot\theta^2\le0$。精确匀速要求 $\tau(\theta)=b\omega_c+mgl\sin\theta$，不仅是常量 $b\omega_c$。
+
+由 $ml^2\ddot\theta=-mgl\sin\theta-b\dot\theta+\tau$，乘以 $\dot\theta$ 得 $\dd[ml^2\dot\theta^2/2+mgl(1-\cos\theta)]/\dd t=-b\dot\theta^2+\tau\dot\theta$。求匀速驱动力矩时应在原方程置 $\ddot\theta=0$。
+\item 用径向方程代入能量导数；$J_z=mr^2\Omega$。有效刚度为正时数学解振荡，为零时径向匀速，为负时有指数模。仅在不穿过原点、不碰杆端、驱动可提供所需力矩的区段使用这些解。
+
+记 $k_*=k-m\Omega^2$，径向方程为 $m\ddot r=-k_*r$。故 $\dot E_L=(m\ddot r+k_*r)\dot r=0$。又 $E_{\rm mech}=E_L+m\Omega^2r^2=E_L+\Omega J_z$，恒定 $\Omega$ 下直接求导即给出电机功率。$k_*$ 的三种符号分别对应特征根 $\pm i\sqrt{k_*/m}$、重根0和 $\pm\sqrt{-k_*/m}$。
+\item 新乘子是正文乘子的一半，反力仍为原来的 $\lambda\br$，张力不变。轻绳要求张力非负；它失去拉紧时必须更换运动模型。
+
+用新约束 $f$ 时，方程为 $m\ba=-mg\hat{\boldsymbol y}+2\lambda_{\rm new}\br$。由 $\br\cdot\ba=-v^2$ 得 $2\lambda_{\rm new}l^2=-mv^2+mgy$，因此 $\mathcal T=-2l\lambda_{\rm new}=m(l\dot\theta^2+g\cos\theta)$。
+\item $B=mx$，$C=pt-mx=-mx_0$；直接求导 $\dd(pt)/\dd t=p$ 一般不为零。时间平移荷为 $-E_L$，其相反数同样守恒。
+
+自由粒子 $L=m\dot x^2/2$ 在 $\delta x=\epsilon t$ 下有 $\delta L/\epsilon=m\dot x$，正好为 $\dd(mx)/\dd t$。时间平移取 $B=0$，代入 $C=p\xi-E_L\tau-B$ 得 $-E_L$。
+\item $p'=p+G_q,E_L'=E_L-G_t$。$G=atq$ 时 $E_L'=E_L-aq$，所以原守恒量在新表示为 $E_L'+aq$；不能只看 $L'$ 是否显含时间作物理判断。
+
+展开 $L'=L+G_q\dot q+G_t$。速度偏导增加 $G_q$，代入 $p'\dot q-L'$ 后两个 $G_q\dot q$ 项相消。多坐标情形用 $\sum_a G_{q_a}\dot q_a$ 作同样计算。
+\item 令 $\theta=\theta_0+\Omega t$、$\dot\varphi=\omega$，则
+\[
+x=x_0+\frac{R\omega}{\Omega}(\sin\theta-\sin\theta_0),\quad
+y=y_0-\frac{R\omega}{\Omega}(\cos\theta-\cos\theta_0).
+\]
+反力与容许速度配对总功率为零，但 $x,y$ 方向单独不在约束核内，故相应动量可变。
+
+先对两个速度约束求导，再乘 $\cos\theta,\sin\theta$ 相加，得 $\ddot x\cos\theta+\ddot y\sin\theta=R\ddot\varphi$。乘子方程给 $I\ddot\varphi=-mR^2\ddot\varphi$、$J\ddot\theta=0$，从而两个角速度均为常量。反力功率为
+\[
+\lambda_1(\dot x-R\dot\varphi\cos\theta)
++\lambda_2(\dot y-R\dot\varphi\sin\theta)=0.
+\]
+\item 变分约束给 $J\ddot\theta=R\dot\varphi(\mu_1\sin\theta-\mu_2\cos\theta)$，物理投影给零右端。差异来自变分集合，不是乘子记号。
+
+增广项中含 $\theta$ 的部分可合写成
+\[
+-R\dot\varphi(\mu_1\cos\theta+\mu_2\sin\theta).
+\]
+对它求角度偏导即得上式右端，而 $\partial L_{\rm aug}/\partial\dot\theta=J\dot\theta$。达朗贝尔约束的虚位移系数在 $\delta\theta$ 列为零，因而没有这个广义反力矩。
+\item 旧规范直接循环，新规范 $x$ 平移只差 $\dd(eBy)/\dd t$，均给同一个荷；洛伦兹式 $m\ddot x=eB\dot y$ 直接核验。$m\bv$ 规范不变，$\bp=m\bv+e\bA$ 随规范变化。
+
+对 $\bA=(-By,0,0)$，有 $p_x=m\dot x-eBy$；对 $\bA'=(0,Bx,0)$，有 $p_x'=m\dot x$。后一规范平移时的边界项为 $B_{\rm N}=eBy$，由 $p_x'-B_{\rm N}$ 恢复同一荷。从 $m\ddot x=eB\dot y$ 也直接得到 $\dd(m\dot x-eBy)/\dd t=0$。
+\item (a) 对右端 $\sin\theta(\Omega^2\cos\theta-g/R)$ 求导，在新平衡点得 $-\Omega^2\sin^2\theta_0$，所以 $\omega_{\rm small}=|\Omega\sin\theta_0|$。(b) $E_L=m(\dot x^2+\dot y^2)/2+m\Phi_{\rm eff}$，速度一次项不出现在该积分中，但其变分产生科里奥利项，不能从 $L$ 中删去。
+
+(b) 正文的速度一次项为 $mn(x\dot y-y\dot x)$。它对速度偏导后再与坐标偏导相减，在 $x,y$ 的方程左端分别贡献 $-2mn\dot y$ 与 $2mn\dot x$。求能量函数时，同一项又从 $\dot xL_{\dot x}+\dot yL_{\dot y}$ 和 $L$ 中等量抵消。因此能量式里不出现它，运动方程中仍须保留它。
+\item 双摆用相同初值和终止时刻，按 $\max_t|E(t)-E(0)|/|E(0)|$ 统计，$h=0.01$ 时为 $1.54\times10^{-11}$，$h=0.005$ 时为 $1.04\times10^{-12}$，比约 $14.84$。受驱动杆每步可同时计算 $E_L$ 和 $E_{\rm mech}=E_L+m\Omega^2r^2$；后者的差值应与 $\Omega[J_z(t)-J_z(0)]$ 一致。伴随脚本的瞬时功率测试给出 $3.36$（所用单位制），其计算式为 $2m\Omega^2r\dot r$。阻尼摆则比较能量变化与 $\int(-b\dot\theta^2+\tau\dot\theta)\dd t$，这些检查分别对应各模型的能量收支。
+\end{bookexercises}
+
+\section*{进一步阅读与来源}
+链接复核：2026-11-08。算例按本书坐标与符号重建；无具体任务数据的模型不视为真实装置预测。
+\begin{bookreading}
+\item David Tong，\textit{The Lagrangian Formalism}：\href{https://davidtong.org/pdfs/teaching/classical-dynamics/clas2.pdf}{剑桥公开讲义}，进一步学习广义坐标、对称性、双摆和电磁耦合。
+\item MIT 8.09，\href{https://ocw.mit.edu/courses/8-09-classical-mechanics-iii-fall-2014/pages/syllabus/}{Classical Mechanics III官方大纲}：完整与非完整约束、达朗贝尔与哈密顿原理、守恒律是相关本科进阶教学主题。本书以本章明确的模型假设为准，不从课程简介推断定理细节。
+\item A. D. Lewis、R. M. Murray，\textit{Variational Principles for Constrained Systems: Theory and Experiment}：\href{https://authors.library.caltech.edu/records/2pdbe-k1104}{Caltech原始研究记录及全文入口}，用于继续区分非完整力学与变分约束理论。所需基础是本章约束投影、变分法及常微分方程。
+\end{bookreading}

@@ -1,0 +1,84 @@
+{
+  "checks_passed": [
+    "位形相关惯性精确方程的EL有限差分",
+    "阻尼响应相位、周期功率与精确半功率带宽",
+    "交叉项频率与同相/反相振型配对",
+    "不等质量的正交、初值能量分解与坐标标度不变性",
+    "耦合摆弹簧几何二次项与拍包络",
+    "双摆模态、Rayleigh界、振幅误差与积分步长分离",
+    "三质点平移零模、两伸缩模及质心约束",
+    "非比例阻尼矩阵、模态力与功率不变性",
+    "吸振器反共振零点与两质量本征极点",
+    "周期/固定端链本征残差、模数与长波二阶误差",
+    "四次势能准确周期积分与首阶幅频移动",
+    "单周期Floquet乘子、行列式、阻尼阈值与步长核查"
+  ],
+  "beat_first_transfer_dimensionless_time": 32.91517489658542,
+  "double_pendulum": {
+    "amplitudes": [
+      {
+        "angle": 0.08,
+        "max_angle_error": 0.0029979893506232383,
+        "relative_energy_error": 9.719634164606074e-12
+      },
+      {
+        "angle": 0.04,
+        "max_angle_error": 0.0003761056611484709,
+        "relative_energy_error": 8.952366721276765e-12
+      },
+      {
+        "angle": 0.02,
+        "max_angle_error": 4.705447311145576e-05,
+        "relative_energy_error": 9.159645270594625e-12
+      }
+    ],
+    "amplitude_error_ratios": [
+      7.971135934164407,
+      7.9929842218742255
+    ],
+    "RK4_step_error_ratio": 15.863345772348904
+  },
+  "long_wave_relative_errors": [
+    0.0016658335317184525,
+    0.00041661458643338367,
+    0.00010416341150676356
+  ],
+  "duffing": [
+    {
+      "A": 0.4,
+      "energy_integral_frequency": 1.0119172703931918,
+      "first_order_frequency": 1.012,
+      "error": 8.272960680821839e-05
+    },
+    {
+      "A": 0.2,
+      "energy_integral_frequency": 1.0029947701482578,
+      "first_order_frequency": 1.003,
+      "error": 5.2298517421167645e-06
+    },
+    {
+      "A": 0.1,
+      "energy_integral_frequency": 1.000749672191007,
+      "first_order_frequency": 1.00075,
+      "error": 3.278089930613959e-07
+    }
+  ],
+  "floquet": {
+    "inside": {
+      "max_multiplier_modulus": 1.0816815518886953,
+      "growth_rate": 0.02499268091928973,
+      "determinant": 1.0000000000000007
+    },
+    "outside": {
+      "max_multiplier_modulus": 1.0000000000000007,
+      "growth_rate": 2.2263882770244613e-16,
+      "determinant": 1.0000000000000016
+    },
+    "damped": {
+      "max_multiplier_modulus": 0.9844056860810478,
+      "growth_rate": -0.005002935143215714,
+      "determinant": 0.828204181306899
+    },
+    "step_refinement_growth_difference": 1.027164464595387e-13
+  }
+}

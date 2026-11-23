@@ -1,0 +1,1015 @@
+\chapter{狭义相对论}\label{ch:relativity}
+\begin{guidebox}
+设想两站各有一盏灯。要判断灯是不是同时闪，得先约定两站怎样对表。狭义相对论从这种可操作的测量出发，重新问时间、距离和速度怎样在不同惯性系之间换算。
+
+做题先写出正在比较的两个事件，例如杆头和杆尾各经过探测器一次。再标出每个事件的位置和时刻由哪一套钟和标尺测量。掌握这一步后，再用间隔与四动量处理旅行、衰变和碰撞。
+\end{guidebox}
+
+\section{事件、同步与相对性原理}
+想比较两地的闪光是否同时，先得让两地的钟有共同的对时办法。本节用光信号约定怎样给每一次闪光标上时间。
+
+\subsection{先规定怎样测量}
+一盏灯何时闪，与我们何时收到它的光，是两次不同的事件。要给第一次事件定时间，可以读灯旁边已经同步的钟。
+
+一次闪光、两粒子相遇或一只钟的一次滴答，都发生在确定地点和时刻，称为\textbf{事件}（event）。惯性系 $S$ 用 $(t,x,y,z)$ 标记事件：空间坐标由静止标尺网络确定，$t$ 由事件发生地点的静止钟读取。这里的时间不是远处观察者看到闪光的时刻；后者还包含信号传播所需的时间。
+
+怎样使空间分离的钟同步？设钟 $A,B$ 相对静止，$A$ 在 $t_1$ 发光，光在 $B$ 反射后于 $t_2$ 返回 $A$。采用\textbf{爱因斯坦同步约定}，把反射事件的 $B$ 钟读数设为 $(t_1+t_2)/2$，两钟距离为 $c(t_2-t_1)/2$。在惯性系中，这与各方向相同的真空光速相容。同步约定针对同一惯性系的静止钟网络；不能不加说明地沿用到转动参考系。
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,x=1.2cm,y=0.9cm]
+\draw[->] (-.5,0)--(4.7,0) node[right]{$x$};
+\draw[->] (0,-.2)--(0,4.8) node[above]{$ct$};
+\draw[thick] (3,0)--(3,4.5) node[above]{钟 $B$};
+\node[below left] at (0,0){钟 $A$};
+\draw[blue,very thick,->] (0,.6)--(3,2.1);
+\draw[blue,very thick,->] (3,2.1)--(0,3.6);
+\draw[dashed] (0,2.1)--(3,2.1);
+\fill (0,.6) circle(2pt) node[left]{$ct_1$};
+\fill (0,3.6) circle(2pt) node[left]{$ct_2$};
+\fill (3,2.1) circle(2pt) node[right]{反射};
+\node[left] at (0,2.1){$c(t_1+t_2)/2$};
+\node[blue,above,sloped] at (1.6,1.4){发出};
+\node[blue,above,sloped] at (1.6,2.9){返回};
+\end{tikzpicture}
+\caption{静止钟的雷达同步。此图为光路示意，横纵绘图比例不同；不以图上斜率读取光速。}\label{fig:sr-sync}
+\end{figure}
+
+\subsection{为什么要改变时间变换}
+如果照常认为不同惯性系共用同一时间，追着光跑的人会算出较小的光速。要让每个惯性系都测得同一真空光速，就必须重新考虑时间和位置怎样换算。
+
+第\ref{ch:particle}章的伽利略变换（式 \eqref{eq:galilean}）$x'=x-vt,t'=t$ 导出 $u'_x=u_x-v$。若 $u_x=c$，另一惯性系就得到 $c-v$，与真空光速不变冲突。需要改变的是时空变换，而不是在牛顿方程中临时更换一个质量函数。
+\begin{keybox}
+\textbf{相对性原理：}物理定律在所有惯性系中具有相同形式。\quad
+\textbf{光速不变原理：}真空光速为 $c$，与光源运动状态无关，在所有惯性系中相同。
+
+本章讨论平直时空。$c$ 是时空结构的不变速度，也是局域因果信号的极限速度；介质中的光速不用于定义洛伦兹变换。
+\end{keybox}
+狭义相对论可以描述加速粒子，只需在惯性坐标中写出它的世界线。排除引力时空曲率，不等于排除加速度；涉及引力钟差时则需要额外理论。
+
+\section{洛伦兹变换：从原理到公式}
+变换公式要告诉我们，同一次事件在两套钟和标尺网络中各得到什么读数。先约定两个原点何时重合，以及它们相对运动的方向。
+
+\subsection{标准构型与逐步推导}
+把两个惯性系的轴对齐，只让它们沿一条轴相对滑动。先用移动原点的轨迹确定位置变换的形式，再用光信号确定时间变换。
+
+取坐标轴平行的惯性系 $S,S'$，$S'$ 沿 $S$ 的 $+x$ 方向以恒速 $v$ 运动；两原点在 $t=t'=0$ 重合。时空均匀性要求坐标差的映射不依赖基点，故变换为线性；原点世界线 $x=vt$ 又要求
+\[
+x'=A(v)(x-vt),\qquad t'=B(v)t+D(v)x.
+\]
+原点沿正、负 $x$ 发出的光分别满足 $x=\pm ct,x'=\pm ct'$，所以
+\[
+A(c-v)=cB+c^2D,\qquad A(c+v)=cB-c^2D.
+\]
+相加、相减得 $B=A,D=-Av/c^2$。反转 $x$ 轴使 $v\to-v$，空间各向同性给出 $A(-v)=A(v)$。沿 $S$ 的原点世界线 $x=0$，有 $x'/t'=-v$。所以由相对性原理，逆变换应使用同一形式而取速度 $-v$，即 $x=A(-v)(x'+vt')$。将 $x'$ 与 $t'$ 代入，并用 $A(-v)=A(v)$，得到
+\[
+x=A^2(1-v^2/c^2)x.
+\]
+选择从 $v=0$ 恒等变换连续延伸的正根，定义 $\beta=v/c$ 与 $\gamma=(1-\beta^2)^{-1/2}$，得到
+\begin{equation}\label{eq:sr-lorentz}
+\boxed{\begin{aligned}
+x'&=\gamma(x-vt),& ct'&=\gamma(ct-\beta x),\\
+y'&=y,&z'&=z.
+\end{aligned}}
+\end{equation}
+其中 $|v|<c$。这种只改变惯性系相对速度的变换称为\textbf{洛伦兹推进}（boost）。横向变换由绕运动轴的对称性可写为 $y'=a(v)y,z'=a(v)z$；互易与各向同性给出 $a^2=1$，连续性选 $a=1$。这里采用相同的标尺单位，并排除了额外的空间转动。
+
+逆变换只需交换撇号并令 $v\to-v$：
+\[
+x=\gamma(x'+vt'),\qquad t=\gamma(t'+vx'/c^2).
+\]
+不能只改空间公式的符号，而让时间保持不变。对事件坐标差也使用同样的线性变换。
+
+\begin{example}[先变换，再反变换]
+用 $\ell$ 为长度单位，设事件在 $S$ 中为 $(ct,x)=(5\ell,3\ell)$，取 $v=0.6c,\gamma=5/4$。则 $ct'=4\ell,x'=0$；这正是运动原点上的事件。逆变换给出 $ct=5\ell,x=3\ell$。两系均有 $c^2t^2-x^2=16\ell^2$，已显露出比坐标更稳定的几何量。
+
+直接代入为 $ct'=(5/4)(5-0.6\times3)\ell$、$x'=(5/4)(3-0.6\times5)\ell$。在逆变换中 $x'=0$，于是 $ct=\gamma ct'$、$x=\gamma\beta ct'$。
+\end{example}
+
+\subsection{低速极限需要什么条件}
+日常车速与光速相比很小，许多相对论修正可以忽略。但若比较相隔很远的两次事件，位置对时间变换的贡献也应单独估计。
+
+用 $\gamma-1=\beta^2/2+O(\beta^4)$，写出相对于伽利略变换的差：
+\[
+x'-(x-vt)=(\gamma-1)(x-vt),\qquad
+t'-t=-\frac{vx}{c^2}+(\gamma-1)(t-vx/c^2).
+\]
+第一项 $-vx/c^2$ 是同时性修正。后一项来自 $\gamma$，若精度达到 $\beta^2$ 量级，也须保留。若研究过程的典型长度、时间为 $L,T$，除了 $|v|/c\ll1$，还须在要求的精度内有 $|v|L/c^2\ll T$，才能把时间也近似看作绝对时间。对长距离精密授时，即使速度不大，同时性修正仍可能重要。
+
+\section{同时性、钟慢和尺缩：每次都选择事件}
+钟慢、尺缩和同时性用的是不同的事件对。先写清两次事件发生在哪里、由哪套钟读数，再决定用哪条关系。
+
+\subsection{同时不等于同时看见}
+近处和远处的灯即使同时发光，光也可能先后到达同一观察者。比较发光时刻时，应查看各盏灯旁已经同步的钟。
+
+对两个事件作差：
+\[
+\Delta t'=\gamma(\Delta t-v\Delta x/c^2).
+\]
+$S$ 中同时而异地的事件满足 $\Delta t=0,\Delta x\ne0$，通常有 $\Delta t'\ne0$。这是同步钟读数的差异，已经与光到达眼睛的先后区分开。
+\begin{example}[两灯闪光]
+实验室两灯位于 $x=0,L$，在 $t=0$ 闪光。对向右运动的 $S'$，右灯事件减左灯事件的时间差为 $-\gamma vL/c^2$，右灯先闪。若改问运动观察者何时收到两束光，则还须求其世界线与光线的交点，不能直接用这个时间差回答。
+\end{example}
+
+\subsection{同一只钟：时间膨胀}
+让同一只钟在两次滴答时留下记录。钟自己的参考系里两次滴答发生在同一位置，这就是推导时间膨胀需要的事件条件。
+
+静止于 $S'$ 原点的一只钟，两次滴答的事件差满足 $\Delta x'=0$。这只钟自身记录的时间称为\textbf{固有时}（proper time）$\Delta\tau=\Delta t'$。由逆变换
+\begin{equation}\label{eq:sr-time}
+\boxed{\Delta t=\gamma\Delta\tau.}
+\end{equation}
+实验室的 $\Delta t$ 由经过的不同位置处的同步钟比较，$\Delta\tau$ 则由同一只移动钟记录。两种测量操作并不对称。
+
+光钟给出直观推导。两镜在钟的静止系中沿横向相距 $h$，一次往返周期为 $\Delta\tau=2h/c$。实验室看到钟横向运动，半周期光路为斜线，故
+\[
+(c\Delta t/2)^2=h^2+(v\Delta t/2)^2
+\quad\Longrightarrow\quad \Delta t=\gamma\Delta\tau.
+\]
+这里比较下镜发射与下一次返回下镜的两个事件。
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,scale=.95]
+\begin{scope}
+\draw[thick] (-.4,0)--(.4,0);\draw[thick] (-.4,2.4)--(.4,2.4);
+\draw[blue,->,very thick] (-.1,.1)--(-.1,2.3);
+\draw[blue,->,very thick] (.1,2.3)--(.1,.1);
+\draw[<->] (-.8,0)--(-.8,2.4) node[midway,left]{$h$};
+\node at (0,-.6){钟静止系};
+\end{scope}
+\begin{scope}[xshift=4cm]
+\draw[dashed] (0,0)--(0,2.4);\draw[dashed] (1.8,0)--(1.8,2.4);
+\draw[thick] (-.3,0)--(.3,0);\draw[thick] (1.5,2.4)--(2.1,2.4);
+\draw[thick] (3.3,0)--(3.9,0);
+\draw[blue,->,very thick] (0,0)--(1.8,2.4);
+\draw[blue,->,very thick] (1.8,2.4)--(3.6,0);
+\draw[<->] (0,-.35)--(1.8,-.35) node[midway,below]{$v\Delta t/2$};
+\node[above left,blue] at (.9,1.3){$c\Delta t/2$};
+\node at (1.8,-1.05){实验室中的空间光路};
+\end{scope}
+\end{tikzpicture}
+\caption{横向光钟。右图按 $v=0.6c$ 绘制，半周期光路、横移、镜距构成 $5:3:4$ 直角三角形；它是空间路径图，不是时空图。}\label{fig:sr-lightclock}
+\end{figure}
+
+\begin{example}[寿命与飞行距离]
+一种模型粒子的固有平均寿命为 $\tau_0$，实验室速率为 $0.8c$，忽略能损。实验室平均寿命为 $5\tau_0/3$，平均飞行距离为 $4c\tau_0/3$。若固有时衰变律为 $N=N_0e^{-\tau/\tau_0}$，实验室飞行距离 $d$ 后的存活比例为 $e^{-d/(\gamma u\tau_0)}$。平均距离不是所有粒子的共同飞行终点；此例未采用实际实验数据。
+\end{example}
+
+\subsection{同一时刻的两个端点：长度收缩}
+测运动的杆有多长，应在测量者的同一时刻读出两端位置。换到杆的静止系，这两次读数对应的事件一般不再同时。
+
+杆静止于 $S'$，端点为 $x'_L=0,x'_R=L_0$，$L_0$ 为\textbf{固有长度}。实验室必须在同一 $t$ 记录两端位置。令两测量事件差 $\Delta t=0$，便有 $L_0=\gamma L$，所以
+\[
+\boxed{L=L_0/\gamma.}
+\]
+表中选 $t=0$ 的测量事件，清楚显示它们在杆系并不同时：
+\begin{center}\begin{tabular}{c c c c c}\toprule
+事件&$t$&$x$&$t'$&$x'$\\\midrule
+$A$：记录左端&$0$&$0$&$0$&$0$\\
+$B$：记录右端&$0$&$L_0/\gamma$&$-vL_0/c^2$&$L_0$\\\bottomrule
+\end{tabular}\end{center}
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,scale=1.05]
+\draw[->] (-.5,0)--(5.1,0) node[right]{$x$};
+\draw[->] (0,-.4)--(0,4.1) node[above]{$ct$};
+\draw[thick,blue] (0,0)--(2,4) node[above]{$x'_L=0$};
+\draw[thick,blue] (2,0)--(4,4) node[above]{$x'_R=L_0$};
+\draw[red,thick] (0,0)--(2.667,1.333) node[right]{$t'=0$};
+\fill (0,0) circle(2pt) node[below left]{$A$};
+\fill (2,0) circle(2pt) node[below]{$B$};
+\fill (2.667,1.333) circle(2pt) node[above left]{$C$};
+\draw[<->] (0,-.25)--(2,-.25) node[midway,below]{$L=L_0/\gamma$};
+\node[right] at (3.4,2.2){杆端世界线};
+\end{tikzpicture}
+\caption{运动杆的两种事件选择。$AB$ 是实验室同时测量，$AC$ 是杆系同时测量；不能把 $AC$ 的水平投影当作实验室杆长。取 $v=0.5c$，横纵轴等尺度。}\label{fig:sr-rod}
+\end{figure}
+
+\begin{example}[杆通过一个探测器]
+固有长 $L_0$ 的杆以 $0.6c$ 通过实验室固定探测器。实验室杆长为 $0.8L_0$，两端经过探测器的时间差为 $\Delta t=L/u=4L_0/(3c)$。这两个事件在实验室同地，故探测器记录的固有时就是 $\Delta t$。在杆系它们的时间差为 $\gamma\Delta t=5L_0/(3c)=L_0/u$。辨认同地条件后，钟慢关系没有矛盾。
+\end{example}
+\begin{physicsbox}
+“各看对方钟慢”比较的是不同同时切片选出的事件对。若两只钟最后真正重逢，则比较沿两条完整世界线累积的固有时。长度收缩也由同时切片定义；一张照片所记录的是到达相机同一时刻的光，仍需处理光行时，不能直接读作收缩长度。
+\end{physicsbox}
+
+\section{闵可夫斯基时空与固有时}
+同一次旅行的时间差与空间位移会随参考系改变，但可以组合成大家都算出同一值的间隔。它帮助判断两事件能否用光或物体的运动联系起来。
+
+\subsection{不变间隔与因果分类}
+先计算由时间差和空间位移组成的量，再根据它的正、零、负分类。类时、类光和类空分别对应不同的因果联系可能性。
+
+代入洛伦兹变换并展开，有
+\[
+\begin{aligned}
+c^2\Delta t'^2-\Delta x'^2
+&=\gamma^2\big[(c\Delta t-\beta\Delta x)^2-(\Delta x-\beta c\Delta t)^2\big]\\
+&=c^2\Delta t^2-\Delta x^2.
+\end{aligned}
+\]
+因此四维间隔
+\begin{equation}\label{eq:sr-interval}
+\boxed{\Delta s^2=c^2\Delta t^2-|\Delta\br|^2}
+\end{equation}
+不依赖惯性系。本章固定采用 $(+,-,-,-)$ 号差。粒子的事件轨迹称\textbf{世界线}（worldline）。沿 $x$ 的时空图取 $x,ct$ 相同尺度时，真空光线为 $45^\circ$，有质量粒子的未来世界线位于未来光锥内。
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,scale=.85]
+\fill[blue!8] (0,0)--(-3,3)--(3,3)--cycle;
+\fill[blue!8] (0,0)--(-3,-3)--(3,-3)--cycle;
+\draw[->] (-3.7,0)--(3.8,0) node[right]{$x$};
+\draw[->] (0,-3.4)--(0,3.7) node[above]{$ct$};
+\draw[orange,thick] (-3.2,-3.2)--(3.2,3.2);
+\draw[orange,thick] (-3.2,3.2)--(3.2,-3.2);
+\draw[blue,very thick,->] (0,0)--(1.1,2.8);
+\fill (1.1,2.8) circle(2pt) node[above]{$T$：类时};
+\fill (2.8,.9) circle(2pt) node[right]{$Q$：类空};
+\node at (-.5,2.4){未来};\node at (.6,-2.5){过去};
+\node[below left] at (0,0){$O$};
+\node[orange,rotate=-45] at (-2.5,2.8){类光};
+\end{tikzpicture}
+\caption{光锥按相同横纵尺度绘制。$O$ 与 $T$ 可由亚光速信号连接；$O$ 与 $Q$ 不能建立这样的因果联系。图仅显示一个空间方向。}\label{fig:sr-cone}
+\end{figure}
+
+沿分离方向取 $\Delta x>0$，三种情形可用变换直接判断：
+\begin{center}\begin{tabular}{p{3.1cm}p{4.1cm}p{6cm}}\toprule
+间隔&可选择的参考系&物理含义\\\midrule
+类时：$\Delta s^2>0$&$v=\Delta x/\Delta t$ 使 $\Delta x'=0$&存在两事件同地的惯性系；未来先后对所有惯性系相同。\\
+类空：$\Delta s^2<0$&$v=c^2\Delta t/\Delta x$ 使 $\Delta t'=0$&存在同时系；先后可反转，但不存在亚光速因果连接。\\
+类光：$\Delta s^2=0$&使其同地需 $|v|=c$，不是惯性系&没有光子的静止系；沿光线固有时间隔为零。\\\bottomrule
+\end{tabular}\end{center}
+因果次序不变还需限制于保持时间方向的洛伦兹变换，本章使用的连续标准推进满足此条件。
+
+\begin{example}[事件先后何时能反转？]
+设 $\Delta x=4\ell,c\Delta t=2\ell$，则 $\Delta s^2=-12\ell^2$，在 $v=0.5c$ 的系中同时，$v>0.5c$ 时 $\Delta t'<0$。若改为 $\Delta x=2\ell,c\Delta t=4\ell$，则类时；$\Delta t'=\gamma(4-2\beta)\ell/c>0$ 对所有 $|\beta|<1$ 成立。坐标先后能变的恰是没有亚光速因果关联的事件对。
+\end{example}
+
+\subsection{倾斜坐标轴也需要校准}
+时空图上的斜线可以画出运动观察者的坐标轴。为了用它量长度或时间，还要确定斜轴上一格对应多少单位。
+
+在 $S$ 的时空图上，$ct'$ 轴满足 $x'=0$，即 $x=\beta ct$；$x'$ 轴满足 $t'=0$，即 $ct=\beta x$。二者向光线方向倾斜。图上并非欧氏直角坐标，不能作垂足读出撇号坐标。
+
+若原系长度单位为 $\ell$，则 $ct'=\ell,x'=0$ 的单位点为 $(ct,x)=(\gamma\ell,\gamma\beta\ell)$；$ct'=0,x'=\ell$ 的单位点为 $(\gamma\beta\ell,\gamma\ell)$。前者位于 $c^2t^2-x^2=\ell^2$，后者位于 $x^2-c^2t^2=\ell^2$。不变双曲线校准了新坐标轴。
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,scale=2.25]
+\draw[->] (-.15,0)--(2.2,0) node[right]{$x/\ell$};
+\draw[->] (0,-.15)--(0,2.2) node[above]{$ct/\ell$};
+\draw[dashed,gray] (0,0)--(2,2);
+\draw[blue,thick,->] (0,0)--(1,2) node[above]{$ct'$};
+\draw[red,thick,->] (0,0)--(2,1) node[right]{$x'$};
+\draw[blue!60,domain=0:1.5,samples=60] plot (\x,{sqrt(1+\x*\x)});
+\draw[red!60,domain=0:1.5,samples=60] plot ({sqrt(1+\x*\x)},\x);
+\fill[blue] (.57735,1.1547) circle(.025) node[left]{$ct'=\ell$};
+\fill[red] (1.1547,.57735) circle(.025) node[below right]{$x'=\ell$};
+\fill (0,1) circle(.018) node[left]{$1$};
+\fill (1,0) circle(.018) node[below]{$1$};
+\end{tikzpicture}
+\caption{取 $\beta=1/2$ 的校准坐标图。新轴单位点的欧氏距离并非原轴单位长度；虚线为光线，双曲线分别校准时间与空间单位。}\label{fig:sr-axes}
+\end{figure}
+
+\subsection{变速世界线与双生子}
+变速旅行可分成许多小段，每一段用当时的速率计算旅行者钟走了多少。把这些时间加起来，就是出发到重逢的固有时间。
+
+对有质量粒子，把相邻事件的间隔除以 $c^2$，定义
+\begin{equation}\label{eq:sr-proper}
+\dd\tau=\dd t\sqrt{1-u^2(t)/c^2},\qquad
+\boxed{\tau=\int_{t_A}^{t_B}\sqrt{1-u^2(t)/c^2}\,\dd t.}
+\end{equation}
+这使用粒子相对所选惯性系的瞬时速率 $u(t)$。理想钟测量此固有时；积分对任意亚光速光滑世界线成立，分段光滑运动可分段积分。
+
+\begin{example}[双生子的年龄和同时性切换]
+地球钟留在 $x=0$，旅行者以 $u=\beta c$ 出发，在地球时刻 $T/2$、位置 $uT/2$ 瞬时掉头，再于 $T$ 回到原点。忽略掉头所占时间是极限模型。地球累积 $T$，旅行者累积 $T/\gamma$；取 $T=20$ 年、$\beta=0.8$，分别为 $20$ 年与 $12$ 年。
+
+为何旅行者不能在整个旅程中使用一个惯性系，反说地球年轻？掉头事件处，出发段共动系的同时线给地球时刻
+\[
+t_-=\frac{T}{2}-\frac{u(uT/2)}{c^2}=\frac{T}{2}(1-\beta^2),
+\]
+返回段共动系的同时线则给
+\[
+t_+=\frac{T}{2}+\frac{u(uT/2)}{c^2}=\frac{T}{2}(1+\beta^2).
+\]
+二者相差 $\beta^2T$，是更换惯性系时对远处同时事件的重新归属，不是地球钟突然跳动。$\beta=0.8$ 时为 $3.6$ 年与 $16.4$ 年。实际看到的光信号连续传播，也不会出现这种读数跳跃。
+\end{example}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,scale=1.2]
+\draw[->] (-.4,0)--(2.8,0) node[right]{$x/(cT)$};
+\draw[->] (0,-.2)--(0,4.5) node[above]{$ct/(cT)$};
+\draw[blue,very thick] (0,0)--(0,4);
+\draw[red,very thick,->] (0,0)--(1.6,2);
+\draw[red,very thick,->] (1.6,2)--(0,4);
+\draw[dashed] (0,.72)--(2.3,2.56);
+\draw[dashed] (0,3.28)--(2.3,1.44);
+\fill (1.6,2) circle(2pt) node[right]{掉头 $(0.4,0.5)$};
+\fill (0,.72) circle(2pt) node[left]{$0.18$};
+\fill (0,3.28) circle(2pt) node[left]{$0.82$};
+\node[left] at (0,4){$1$};\node[below left] at (0,0){$0$};
+\node[red,right] at (1,3.3){返回段};
+\end{tikzpicture}
+\caption{双生子世界线与掉头处两套同时线，$\beta=0.8$。坐标以 $cT$ 归一化，图上每单位对应四个绘图单位；两轴等尺度。地球钟两交点为 $0.18T,0.82T$。}\label{fig:sr-twins}
+\end{figure}
+
+\begin{mathbox}[title={数学注记：直线世界线使固有时最大}]
+在同一惯性系中，固定两端事件、总坐标时间 $T$ 和位移 $\Delta\br$。函数 $f(\bu)=\sqrt{1-|\bu|^2/c^2}$ 在 $|\bu|<c$ 内严格凹。由凹函数的积分不等式，
+\[
+\tau=\int_0^T f(\bu)\,\dd t
+\le T f\!\left(\frac1T\int_0^T\bu\,\dd t\right)
+=T\sqrt{1-\frac{|\Delta\br|^2}{c^2T^2}}.
+\]
+等号仅在速度恒定时成立。因此平直时空中固定类时端点之间，惯性直线具有最大固有时。双生子年龄差取决于路径；加速度使路径改变，却不是在钟旁额外扣除时间的独立项。
+\end{mathbox}
+
+\begin{modernbox}[title={进一步探索：快度把同向速度合成变成加法}]
+令\textbf{快度} $\chi=\operatorname{artanh}\beta$，则 $\gamma=\cosh\chi,\gamma\beta=\sinh\chi$，推进写为
+\[
+\begin{pmatrix}ct'\\x'\end{pmatrix}
+=\begin{pmatrix}\cosh\chi&-\sinh\chi\\-\sinh\chi&\cosh\chi\end{pmatrix}
+\begin{pmatrix}ct\\x\end{pmatrix}.
+\]
+双曲函数加法公式表明，同一直线上的连续推进快度相加，速度则为 $c\tanh(\chi_1+\chi_2)$。它揭示洛伦兹推进是保持双曲型间隔的变换。只需矩阵乘法和双曲函数即可验证；非共线推进还会涉及空间转动，不能直接推广成三维速度的逐分量相加。
+\end{modernbox}
+
+\section{速度合成、光行差与多普勒效应}
+改变参考系后，速度、光的传播方向和频率都可能变。下面分别从事件坐标的变化和光波相位的变化求出它们。
+
+\subsection{对坐标变换取微分}
+速度是位移除以时间。洛伦兹变换会同时改变这个分式的分子和分母，因此连横向速度分量也需要重新计算。
+
+设粒子在 $S$ 中速度为 $\bu$，用 $\dd t'=\gamma(1-vu_x/c^2)\dd t$ 作分母，得到
+\begin{equation}\label{eq:sr-velocity}
+\boxed{u'_x=\frac{u_x-v}{1-vu_x/c^2},\quad
+u'_y=\frac{u_y}{\gamma(1-vu_x/c^2)},\quad
+u'_z=\frac{u_z}{\gamma(1-vu_x/c^2)}.}
+\end{equation}
+横向速度也会改变，因为时间间隔改变。反解时 $v\to-v$。沿粒子世界线，间隔可写为 $\dd s^2=c^2\dd t^2(1-u^2/c^2)$，在 $S'$ 中则为 $c^2\dd t'^2(1-u'^2/c^2)$。两式相等，再代入 $\dd t'/\dd t$，得到
+\[
+1-\frac{u'^2}{c^2}=\frac{1-u^2/c^2}{\gamma^2(1-vu_x/c^2)^2}.
+\]
+因此亚光速仍为亚光速，光速仍为光速。若有人使用 $u_x+v$ 作为高速合成，便破坏这个性质。
+\begin{example}[飞船发射探测器]
+飞船相对实验室以 $0.6c$ 向右运动，探测器在飞船系中也以 $0.6c$ 向右运动。使用逆速度变换，实验室速度为
+\[
+u_x=\frac{0.6c+0.6c}{1+0.36}=\frac{15}{17}c,
+\]
+小于 $c$。对应快度为两倍 $\operatorname{artanh}(0.6)$，结果相同。
+\end{example}
+
+\subsection{光的方向怎样改变}
+一束光在某个惯性系中垂直于运动方向，在另一个系中可能变斜。把它的速度分量重新算一遍，合起来的大小仍为光速。
+
+光在 $S$ 中沿与 $+x$ 夹角 $\theta$ 的方向传播，取 $u_x=c\cos\theta,u_y=c\sin\theta$，则
+\[
+\cos\theta'=\frac{\cos\theta-\beta}{1-\beta\cos\theta},\qquad
+\sin\theta'=\frac{\sin\theta}{\gamma(1-\beta\cos\theta)}.
+\]
+这是\textbf{光行差}（aberration），两个角各自属于不同参考系。对一般象限应同时使用正弦、余弦判别方向。
+\begin{example}[横向光并非在另一系仍横向]
+在 $S$ 中沿 $+y$ 传播的光有 $\theta=\pi/2$。对 $v=0.6c$ 的 $S'$，$\cos\theta'=-0.6,\sin\theta'=0.8$。合成后仍有 $u'^2=c^2$，但光线向 $-x'$ 偏斜；只变纵向速度而保留横向速度会给出错误光速。
+\end{example}
+
+\subsection{由波相位推导频率变换}
+同一波峰到达某个事件时，两系应认出同一个波峰。利用相位一致，就能把频率和传播方向放在同一套变换中求解。
+
+平面光波相位为 $\Phi=\omega t-\boldsymbol{k}\cdot\br$。同一事件的相位不依赖坐标标记，把逆洛伦兹变换代入得
+\[
+\omega'=\gamma(\omega-vk_x),\quad
+k'_x=\gamma(k_x-v\omega/c^2),\quad k'_y=k_y,\quad k'_z=k_z.
+\]
+真空光波 $|\boldsymbol{k}|=\omega/c$，若 $\theta$ 是\emph{光传播方向在 $S$ 中}与 $+x$ 的夹角，便有
+\begin{equation}\label{eq:sr-doppler}
+\boxed{\omega'=\gamma\omega(1-\beta\cos\theta).}
+\end{equation}
+这里 $S'$ 中静止的观察者测得 $\omega'$。若沿 $+x$ 追赶光，即 $\theta=0,v>0$，则
+\[
+\omega'=\omega\sqrt{\frac{1-\beta}{1+\beta}}.
+\]
+迎光运动则频率升高。波矢与角度也要一起变换。
+\begin{example}[两种“横向”条件]
+若 $\theta=\pi/2$，则 $\omega'=\gamma\omega$。若要求接收系中光线横向，即 $\theta'=\pi/2$，光行差给出 $\cos\theta=\beta$，从而 $\omega'=\omega/\gamma$。两结果并不冲突：横向条件属于不同参考系，所选光线不同。使用“横向多普勒”一词时必须注明这个条件。
+\end{example}
+
+\section{四矢量、四动量与不变质量}
+能量和动量在换参考系时会相互混合。把它们合起来处理，能找出所有观察者都同意的质量。
+
+\subsection{不定内积与四速度}
+在普通空间里，向量的各分量平方相加。时空中时间和空间项的符号不同，这使光的方向能够有零间隔，也使四速度有固定的长度平方。
+
+定义位置四矢量 $x^\mu=(ct,x,y,z)$，指标 $\mu=0,1,2,3$。对任意四矢量 $A,B$，约定
+\[
+A\cdot B=\eta_{\mu\nu}A^\mu B^\nu=A^0B^0-\boldsymbol{A}\cdot\boldsymbol{B},\qquad
+\eta=\operatorname{diag}(1,-1,-1,-1).
+\]
+重复指标求和，空间三维点积仍为欧氏点积。矩阵条件 $\Lambda^{\mathsf T}\eta\Lambda=\eta$ 保证四维内积不变。降指标 $A_\mu=\eta_{\mu\nu}A^\nu$，所以 $A_\mu=(A^0,-\boldsymbol{A})$；指标位置在此有实际符号意义。
+
+有质量粒子的四速度为
+\[
+U^\mu=\frac{\dd x^\mu}{\dd\tau}=\gamma_u(c,\bu),\qquad U\cdot U=c^2,
+\quad \gamma_u=(1-u^2/c^2)^{-1/2}.
+\]
+不变量 $\tau$ 作分母保证 $U$ 按四矢量变换。光线没有以自身固有时定义的四速度，不能代入 $u=c$ 强行计算。
+
+\subsection{能量与动量属于同一个四矢量}
+把四速度乘以粒子的质量，时间分量与能量有关，空间分量就是相对论动量。把它们组成不变间隔式，就得到能量和动量的关系。
+
+对自由有质量粒子定义不变质量 $m$ 和四动量
+\begin{equation}\label{eq:sr-p4}
+P^\mu=mU^\mu=(E/c,\bp),\quad
+\boxed{E=\gamma_umc^2,\quad \bp=\gamma_um\bu.}
+\end{equation}
+$m$ 与惯性系无关。本书不把 $\gamma_um$ 称作随速度变化的质量。四动量的时间分量为 $P^0=E/c$，其物理归一化由静止能 $mc^2$ 确定；后面将从作用量重新得到这些量。
+\begin{equation}\label{eq:sr-mass-shell}
+P\cdot P=m^2c^2\quad\Longrightarrow\quad
+\boxed{E^2=p^2c^2+m^2c^4,\quad\bu=\frac{c^2\bp}{E}.}
+\end{equation}
+固定 $m$ 时，式中的能量--动量约束曲面称为\textbf{质量壳}。对正能量自由粒子取正根。动能 $K=E-mc^2$，低速展开为
+\[
+K=\tfrac12mu^2+\tfrac38mu^4/c^2+O(mu^6/c^4),\qquad
+\bp=m\bu\,[1+u^2/(2c^2)+O(u^4/c^4)].
+\]
+动量小参数形式则为 $E=mc^2+p^2/(2m)-p^4/(8m^3c^2)+\cdots$，不要把两个不同自变量的展开混用。
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}
+\begin{axis}[width=.81\textwidth,height=5.3cm,xlabel={$p/(mc)$},ylabel={$E/(mc^2)$},xmin=0,xmax=3,xtick={0,0.5,1,1.5,2,2.5,3},ymin=0,ymax=4,legend pos=north west,grid=major]
+\addplot[blue,thick,domain=0:3,samples=100]{sqrt(1+x*x)};\addlegendentry{有质量粒子}
+\addplot[orange,thick,dashed,domain=0:3]{x};\addlegendentry{光子 $E=pc$}
+\addplot[red,dotted,thick,domain=0:2.3]{1+x*x/2};\addlegendentry{低动量近似}
+\end{axis}\end{tikzpicture}
+\caption{正能量质量壳。图用一个固定的非零参考质量 $m$ 归一化，光子曲线也使用该参考单位；光子自身的质量为零。低动量近似只在 $p\ll mc$ 时可靠。}\label{fig:sr-mass-shell}
+\end{figure}
+
+\begin{example}[动能和动量不能使用同一个修正因子]
+粒子速率为 $0.8c$，则 $E=5mc^2/3,K=2mc^2/3,p=4mc/3$。若把牛顿动能 $mu^2/2$ 简单乘 $\gamma$，得到 $8mc^2/15$，并非正确动能。正确方式是先用总能量，再减静止能。
+
+由 $\gamma_u=(1-0.8^2)^{-1/2}=5/3$，分别代入 $E=\gamma_umc^2$、$K=(\gamma_u-1)mc^2$、$p=\gamma_umu$。将 $E$ 和 $p$ 放回 $E^2-p^2c^2$，得到 $(25-16)m^2c^4/9=m^2c^4$。
+\end{example}
+
+\subsection{能动量变换与观察者的能量}
+迎着粒子运动的观察者与追着粒子运动的观察者，测得的能量可能不同。选定观察者的速度后，就能从粒子的四动量读出这个能量。
+
+四动量变换与位置相同：
+\[
+E'=\gamma(E-vp_x),\quad p'_x=\gamma(p_x-vE/c^2),\quad p'_y=p_y,\quad p'_z=p_z.
+\]
+对指定观察者，设其四速度为 $W=\gamma_w(c,\boldsymbol{w})$，它测得的粒子能量可写为
+\[
+E_{\rm obs}=P\cdot W=\gamma_w(E-\bp\cdot\boldsymbol{w}).
+\]
+在观察者静止系中 $W=(c,0,0,0)$，这个式子就是该系能量，所以结论成立。$P\cdot W$ 对同时变换两个四矢量不变；更换观察者则改变 $W$，能量仍会改变。
+
+\begin{example}[追赶一个光子]
+自由光子取 $m=0$，故 $E=pc$，四动量为 $(E/c,(E/c)\boldsymbol{n})$。沿光方向以 $0.6c$ 运动的观察者测得 $E'=\gamma E(1-0.6)=E/2$。加上量子关系 $E=\hbar\omega$，即得到同方向多普勒结果。这个量子关系是额外物理输入，并非单由洛伦兹变换推出。
+\end{example}
+
+\subsection{系统的不变质量与质心系}
+研究一群粒子时，先把它们的能量和动量分别相加，再由总量求不变质量。若存在总动量为零的参考系，系统的不变质量就是该系总能量除以光速平方。
+
+孤立系统的总四动量守恒。对可视为互不作用的碰撞入射态或出射态，将全部粒子与辐射的四动量相加：$P_{\rm tot}=\sum_aP_a$。相互作用期间须按完整模型计入场或相互作用的能动量，不能只加粒子的机械四动量。与第\ref{ch:particle}章的动量收支相同，只取外场中的测试粒子通常得不到孤立系统。定义系统不变质量 $M$：
+\[
+\boxed{M^2c^4=E_{\rm tot}^2-c^2|\bP_{\rm tot}|^2.}
+\]
+若 $M>0$，取 $\bV=c^2\bP_{\rm tot}/E_{\rm tot}$ 可到总三动量为零的\textbf{质心系}（也称动量中心系）；此系总能量为 $Mc^2$。$M$ 包含内部相对运动能、辐射能和相互作用能，通常不等于各静质量的和。相互作用体系的总能动量还必须计入场。
+
+\begin{example}[两个无质量粒子组成有质量系统]
+两光子能量为 $E_1,E_2$，传播夹角为 $\theta$。将总能动量平方，得到
+\[
+M^2c^4=(E_1+E_2)^2-|E_1\boldsymbol{n}_1+E_2\boldsymbol{n}_2|^2
+=2E_1E_2(1-\cos\theta).
+\]
+等能反向光子有 $M=2E_1/c^2$，尽管每个光子质量都为零。同向光子系统 $M=0$，不存在总动量为零的惯性系；不能对所有粒子系统无条件指定质心静止系。
+\end{example}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,scale=1]
+\fill (0,0) circle(2pt);
+\draw[blue,very thick,->] (0,0)--(2.8,0) node[right]{$E_1\boldsymbol{n}_1/c$};
+\draw[red,very thick,->] (0,0)--(-1.4,2.425) node[above]{$E_2\boldsymbol{n}_2/c$};
+\draw[->] (.65,0) arc[start angle=0,end angle=120,radius=.65];
+\node at (.5,.7){$\theta$};
+\draw[dashed,gray] (2.8,0)--(1.4,2.425)--(-1.4,2.425);
+\draw[purple,thick,->] (0,0)--(1.4,2.425) node[right]{$\bP_{\rm tot}$};
+\end{tikzpicture}
+\caption{双光子三动量的矢量合成，图取等能光子与 $\theta=120^\circ$。系统不变质量由能量和动量共同决定，不能只将两个光子的静质量相加。}\label{fig:sr-photons}
+\end{figure}
+
+\section{相对论动力学与分析力学的衔接}
+在高速情况下，仍能用力求动量的变化，也能用功率求能量的变化。需要换掉的是低速下速度与动量之间的简单比例。
+
+\subsection{三力、功率和四力}
+先用实验室的时间定义三力和功率，再用粒子自己的钟定义四力。写方程时要分清导数对哪一种时间求。
+
+在所选惯性系中定义三力 $\bF=\dd\bp/\dd t$。对不变质量恒定的粒子，$\dd\gamma_u/\dd t=\gamma_u^3\bu\cdot\ba/c^2$，因而
+\begin{equation}\label{eq:sr-force}
+\bF=m\gamma_u\ba+\frac{m\gamma_u^3}{c^2}(\bu\cdot\ba)\bu.
+\end{equation}
+分解加速度为沿速度和垂直速度的分量，有
+\[
+F_\parallel=m\gamma_u^3a_\parallel,\qquad
+\bF_\perp=m\gamma_u\ba_\perp.
+\]
+同样大小的力在不同方向产生不同的加速度，所以不能保留 $\bF=m_{\rm eff}\ba$ 并用一个标量替代所有动力学。由能量动量关系微分，
+\[
+2E\dot E=2c^2\bp\cdot\dot{\bp}
+\quad\Longrightarrow\quad\boxed{\dot E=\bF\cdot\bu.}
+\]
+在 $m$ 不变时总能量和动能导数相同，功率关系保持熟悉的形式。
+
+四力定义为
+\[
+f^\mu=\frac{\dd P^\mu}{\dd\tau}
+=\gamma_u\left(\frac{\bF\cdot\bu}{c},\bF\right).
+\]
+由于 $P=mU$ 与 $U\cdot U=c^2$，有 $f\cdot U=0$。若粒子因吸热、辐射等改变自身不变质量，$\dd P/\dd\tau=m\dd U/\dd\tau+\frac{\dd m}{\dd\tau}U$，正交结论需要相应修正；此处动力学公式均以恒定 $m$ 为条件。
+
+\begin{example}[为什么磁场能弯曲轨迹而不做功]
+带电粒子处于均匀静磁场，忽略辐射与其他作用。洛伦兹力 $e\bu\times\bB$ 与速度垂直，故 $\dot E=0$，$u,\gamma_u$ 均不变。在垂直磁场的平面内运动时，$p=|e|B\rho$，角频率为 $|e|B/(\gamma_um)$。磁场改变动量方向，不能给粒子补充动能；加速器增加能量还需要电场。
+\end{example}
+
+\subsection{恒力运动与固有加速度}
+恒力能让动量随实验室时间匀速增加，但速度越接近光速，继续增加就越慢。先求动量，再换回速度和位置。
+
+粒子从实验室原点静止出发，受沿 $+x$ 的恒定三力 $F>0$。先积分动量方程而非猜测加速度：$p=Ft$。由质量壳求速度并积分：
+\begin{equation}\label{eq:sr-constant-force}
+\begin{aligned}
+u(t)&=\frac{Ft/m}{\sqrt{1+(Ft/mc)^2}},\\
+x(t)&=\frac{mc^2}{F}\left[\sqrt{1+(Ft/mc)^2}-1\right],\\
+E(t)&=mc^2\sqrt{1+(Ft/mc)^2}.
+\end{aligned}
+\end{equation}
+短时间 $Ft\ll mc$ 时恢复 $u=Ft/m,x=Ft^2/(2m)$；任意有限时间内 $u<c$。坐标加速度为 $\dd u/\dd t=(F/m)[1+(Ft/mc)^2]^{-3/2}$，逐渐减小。
+
+定义\textbf{固有加速度} $\alpha=\sqrt{-A\cdot A}$，其中 $A=\dd U/\dd\tau$。一维运动令 $u=c\tanh\chi$，则 $U=c(\cosh\chi,\sinh\chi)$，故 $\alpha=c|\dd\chi/\dd\tau|$。从静止开始、沿正向且恒定 $\alpha$ 的运动满足
+\[
+\chi=\alpha\tau/c,\quad
+t=\frac{c}{\alpha}\sinh\frac{\alpha\tau}{c},\quad
+x=\frac{c^2}{\alpha}\left(\cosh\frac{\alpha\tau}{c}-1\right).
+\]
+消去 $\tau$ 得 $(x+c^2/\alpha)^2-c^2t^2=(c^2/\alpha)^2$。与式 \eqref{eq:sr-constant-force} 比较，\emph{本例一维、恒质量情形}有 $\alpha=F/m$；恒固有加速度并不意味着恒坐标加速度。
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}
+\begin{axis}[width=.79\textwidth,height=5.2cm,xlabel={$z=Ft/(mc)$},ylabel={归一化物理量},xmin=0,xmax=4,ymin=0,ymax=4,legend pos=north west,grid=major]
+\addplot[blue,thick,domain=0:4,samples=100]{x/sqrt(1+x*x)};\addlegendentry{$u/c$}
+\addplot[red,thick,domain=0:4,samples=100]{sqrt(1+x*x)-1};\addlegendentry{$Fx/(mc^2)$}
+\addplot[gray,dashed,domain=0:4]{1};\addlegendentry{光速上界}
+\end{axis}\end{tikzpicture}
+\caption{恒力使动量持续线性增加，但速度趋近 $c$。横轴 $z$ 无量纲，纵轴分别表示速率和位移的无量纲值，不表示两者具有相同量纲。}\label{fig:sr-constant-force}
+\end{figure}
+
+\begin{example}[恒力做功的闭合核查]
+令 $Ft/(mc)=3/4$，则 $\gamma_u=5/4,u=3c/5,x=mc^2/(4F)$，于是 $Fx=mc^2/4=E-mc^2$。同一时刻固有时满足 $F\tau/(mc)=\operatorname{arsinh}(3/4)=\ln2$。由双曲形式计算 $t,x$ 又得到同一结果，验证了坐标时间与固有时两种描述。
+\end{example}
+
+\subsection{自由粒子的作用量与哈密顿量}
+前几章从作用量求运动方程。在相对论里，先用各惯性系都同意的固有时间写自由粒子的作用量，再用同一套变分和变量变换求动力学。
+
+前面使用了能动量的四矢量结构；现在回到第2、3、6章的方法。自由粒子作用量应是洛伦兹标量，取世界线固有长度的一次积分：
+\[
+S=-mc^2\int\dd\tau=\int L\,\dd t,\qquad
+L=-mc^2\sqrt{1-u^2/c^2}.
+\]
+系数和符号由低速展开 $L=-mc^2+mu^2/2+\cdots$ 与牛顿动能匹配确定。对坐标速度求偏导，得到正则动量
+\[
+p_i=\frac{\partial L}{\partial u_i}=m\gamma_uu_i.
+\]
+自由粒子的正则动量与机械动量相同。勒让德变换给出
+\[
+H=\bp\cdot\bu-L
+=m\gamma_uu^2+\frac{mc^2}{\gamma_u}
+=\gamma_umc^2=\sqrt{m^2c^4+c^2p^2}.
+\]
+于是哈密顿方程直接导出 $\dot{\br}=c^2\bp/H=\bu,\dot{\bp}=0$，与自由直线世界线一致。式 \eqref{eq:hamilton-momentum} 定义的速度海森矩阵在这里为
+\[
+\frac{\partial^2L}{\partial u_i\partial u_j}
+=m\gamma_u\delta_{ij}+\frac{m\gamma_u^3}{c^2}u_iu_j.
+\]
+在 $m>0,u<c$ 内正定，纵横本征值分别为 $m\gamma_u^3,m\gamma_u$，所以此区域的勒让德反解良好。它同时解释了式 \eqref{eq:sr-force} 的方向差别。
+
+\begin{physicsbox}[title={物理图像与理解：作用量驻值与最大固有时}]
+自由惯性世界线在固定类时端点之间使固有时最大，而 $S=-mc^2\tau$ 有负系数，因此该作用量取最小值，当然也满足驻值条件。低速时常数 $-mc^2$ 不影响欧拉--拉格朗日方程，可以从计算运动的拉格朗日量中略去；若把自由粒子哈密顿量解释为总能量 $E=cP^0$，就要恢复静止能的归一化。不能一边任意平移能量零点，一边仍把平移后的量直接代入质量壳。
+\end{physicsbox}
+
+\begin{modernbox}[title={进一步探索：带电粒子的哈密顿量}]
+沿用第6章电荷符号 $e$ 和给定外场势 $(\phi,\bA)$，最小耦合为
+\[
+L=-mc^2\sqrt{1-u^2/c^2}+e\bA\cdot\bu-e\phi.
+\]
+正则动量（即第\ref{ch:hamilton}章的 $\bp$） $\bp_{\rm can}=\gamma_um\bu+e\bA$ 与机械动量 $\boldsymbol{\pi}=\gamma_um\bu$ 不同。勒让德变换给出
+\[
+H=\sqrt{m^2c^4+c^2|\bp_{\rm can}-e\bA|^2}+e\phi.
+\]
+由欧拉--拉格朗日方程可得
+\[
+\dot\pi_i=e(-\partial_i\phi-\partial_t A_i)
++e\sum_j u_j(\partial_i A_j-\partial_j A_i),
+\]
+即 $\dot{\boldsymbol{\pi}}=e(\bE+\bu\times\bB)$，机械能变化为 $\dd(\gamma_umc^2)/\dd t=e\bE\cdot\bu$。这里只处理给定外场且忽略辐射反作用；外场可对粒子交换能量，粒子单独未必是孤立系统。所需数学是偏导与向量恒等式，可结合第\ref{ch:hamilton}章的规范变换进一步学习。
+在 $|\boldsymbol\pi|\ll mc$ 时，根号展开为 $mc^2+|\boldsymbol\pi|^2/(2m)+O(|\boldsymbol\pi|^4/(m^3c^2))$。减去静止能后，恢复式 \eqref{eq:em-hamiltonian}。
+\end{modernbox}
+自由光子的 $H=c|\bp|$ 可给出速率 $c$，但不能直接在 $-mc^2\int\dd\tau$ 中令 $m=0$ 来推导光子运动：该作用量此时退化。无质量粒子的变分描述需要另引约束形式，留待后续课程。
+
+\section{碰撞、衰变与反应阈能}\label{sec:sr-collision}
+碰撞和衰变题通常可先用总能量和总动量求一个不变量，再到总动量为零的系里做较简单的计算。
+
+第\ref{sec:newton-collision}节用质心系分离整体运动；高速时仍可用这一思路，但守恒量要换成总四动量。
+\subsection{先求不变量，再选最简单的系}
+若题目给的是实验室里的入射量，先在实验室写出总四动量。它的平方在换系时保持不变，因而可直接用于求复合质量或反应阈值。
+
+碰撞前后把所有粒子与逸出辐射计入，使用
+\[
+\sum_{\rm in}P_a^\mu=\sum_{\rm out}P_b^\mu.
+\]
+实际求解可按四步进行：列出初态四动量；求总不变质量；在质心系或某粒子静止系求解；需要时再变回实验室。若把不变质量守恒误写成各粒子静质量总和守恒，就会排除内部能和新粒子的产生。
+
+\begin{example}[完全非弹性碰撞：动能去了哪里？]
+两个静质量均为 $m$ 的粒子在质心系以速率 $u$ 相向运动，碰后黏成一个静止复合体，不释放辐射。初态总动量为零，总能量 $2\gamma_umc^2$，所以复合体质量
+\[
+M=2\gamma_um>2m.
+\]
+相对运动动能成为内部能，增加复合体的不变质量；不是能量消失。若有光子逸出，则应将光子的能动量列入守恒，剩余复合体质量会不同。
+
+具体地，$\Delta E_{\rm int}=(M-2m)c^2=2(\gamma_u-1)mc^2$，正好等于两粒子碰前在质心系的总动能。
+\end{example}
+
+\begin{example}[固定靶黏合与复合体速度]
+一粒子质量 $m$、总能量 $E$，与实验室静止的同质量粒子黏合，无辐射。初态总能量为 $E+mc^2$，入射动量满足 $p^2c^2=E^2-m^2c^4$。因此
+\[
+M^2=2m^2+\frac{2mE}{c^2},\qquad V=\frac{pc^2}{E+mc^2}.
+\]
+取 $E=5mc^2/3$，得 $p=4mc/3,M=4m/\sqrt3,V=c/2$。复合体的机械动量为 $\gamma_VM V=4mc/3$，总能量为 $\gamma_VM c^2=8mc^2/3$，可复核两条守恒。
+\end{example}
+
+\subsection{两体衰变的通用解}
+一个静止粒子变成两个粒子时，末态动量必须等大反向。若两个粒子质量不同，用各自的能量关系就能确定怎样分配总能量。
+
+静止母粒子质量为 $M$，衰变为自由粒子 $1,2$，质量 $m_1,m_2$。母粒子静止系用星号标记，三动量反向且等大，$\bp_1^*=-\bp_2^*$。由 $P_2=P_0-P_1$ 两边各自平方，右侧为 $P_0^2+P_1^2-2P_0\cdot P_1$。在母粒子静止系，$P_0=(Mc,\boldsymbol0)$，所以 $P_0\cdot P_1=ME_1^*$。将三个质量壳代入得
+\[
+m_2^2c^2=M^2c^2+m_1^2c^2-2ME_1^*,
+\]
+所以
+\begin{equation}\label{eq:sr-decay}
+E_1^*=\frac{M^2+m_1^2-m_2^2}{2M}c^2,\quad
+E_2^*=\frac{M^2+m_2^2-m_1^2}{2M}c^2.
+\end{equation}
+再将 $p_*^2c^2=(E_1^*)^2-m_1^2c^4$ 因式分解，得到
+\[
+p_* =\frac{c}{2M}\sqrt{[M^2-(m_1+m_2)^2][M^2-(m_1-m_2)^2]}.
+\]
+阈值直接来自 $Mc^2=E_1^*+E_2^*$ 与 $E_i^*\ge m_i c^2$，故需 $M\ge m_1+m_2$。根号中的乘积即使在 $M<|m_1-m_2|$ 时也可为正，但那不满足此正能量条件。若有无质量末态，等号处的零能量仅表示阈值极限，不能认为一个非零能量光子在静止。
+
+\begin{example}[运动母粒子衰变为两光子]
+母粒子静止时两光子能量均为 $Mc^2/2$。若母粒子在实验室以 $V=\beta c$ 沿 $+x$ 运动，第一束光在母系的方向余弦为 $\cos\theta^*$，用逆变换得到
+\[
+E_1=\frac{\gamma Mc^2}{2}(1+\beta\cos\theta^*),\quad
+E_2=\frac{\gamma Mc^2}{2}(1-\beta\cos\theta^*).
+\]
+两能量之和为母粒子实验室总能量。若沿运动轴发射且 $\beta=0.6$，两光子分别为 $Mc^2$ 与 $Mc^2/4$；能量不等却仍满足总四动量守恒。仅由运动学不能推断发射角的概率分布。
+\end{example}
+
+\subsection{两体到两体散射的通用步骤}\label{sec:sr-two-to-two}
+两辆小车碰撞时，跟着质心一起走，就能把整个系统的平动扣掉。对高速散射也可以这样做。在质心系，两粒子从相反方向入射，散射后又沿相反方向飞出。能量守恒决定末态动量的大小。它们朝哪个方向飞，则用散射角来描述。
+
+把过程记为 $1+2\to3+4$，$P_i=(E_i/c,\bp_i)$，$m_i$ 为各粒子质量。设实验室系中粒子2静止，入射粒子1沿 $+x$ 方向。定义能量平方不变量 $\mathcal S$，并用 $W=\sqrt{\mathcal S}$ 表示质心系总能量。由 $(P_1+P_2)^2$ 得
+\begin{align}
+\mathcal S&=c^2(P_1+P_2)^2
+=(E_1+m_2c^2)^2-p_1^2c^2
+=m_1^2c^4+m_2^2c^4+2m_2c^2E_1,\nonumber\\
+\beta_{\rm cm}&=\frac{p_1 c}{E_1+m_2c^2},
+\qquad
+\gamma_{\rm cm}=\frac{E_1+m_2c^2}{W}.
+\label{eq:sr-scatter-fixed}
+\end{align}
+这里 $E_1$ 是入射粒子的\emph{总能量}，光子取 $m_1=0$、$p_1c=E_1$。$\beta_{\rm cm}$ 是使总纵向动量变成零的参考系速度除以 $c$。
+
+求末态时，把总四动量看成一个不变质量为 $W/c^2$ 的两体系统。用式 \eqref{eq:sr-decay} 的同一计算，有
+\begin{align}
+E_3^*&=\frac{\mathcal S+m_3^2c^4-m_4^2c^4}{2W},
+& E_4^*&=W-E_3^*,\nonumber\\
+p_f^*c&=\frac{\sqrt{[\mathcal S-(m_3+m_4)^2c^4]
+                              [\mathcal S-(m_3-m_4)^2c^4]}}{2W}.
+\label{eq:sr-scatter-cm}
+\end{align}
+公式用于正能量允许区 $W\ge(m_3+m_4)c^2$。用同一公式对初态质量 $m_1,m_2$ 计算，可得入射质心动量大小 $p_i^*$。若是弹性散射，即 $m_3=m_1,\ m_4=m_2$ 且粒子种类不变，则 $p_f^*=p_i^*=p_*$，散射只改变质心系动量的方向。
+
+以入射方向为基准，令粒子3在质心系的角为 $\theta^*$，选散射平面为 $xy$ 平面，使粒子3的横向动量非负。记 $\sigma_3=+1,\ \sigma_4=-1$，则两个末态粒子变回实验室系后满足
+\begin{align}
+ E_j&=\gamma_{\rm cm}\bigl(E_j^*
+        +\sigma_j\beta_{\rm cm}cp_f^*\cos\theta^*\bigr),\nonumber\\
+ p_{jx}&=\gamma_{\rm cm}\bigl(\sigma_jp_f^*\cos\theta^*
+                          +\beta_{\rm cm}E_j^*/c\bigr),&
+ p_{jy}&=\sigma_jp_f^*\sin\theta^*,\qquad j=3,4.
+\label{eq:sr-scatter-boost}
+\end{align}
+横向分量仍相消，纵向分量各自多了一项。因此在实验室系，两个粒子一般不再背对背。实验室极角可用 $\theta_j=\operatorname{atan2}(|p_{jy}|,p_{jx})$ 求出，范围为 $[0,\pi]$。这里 $\operatorname{atan2}(y,x)$ 按两个分量的符号选择象限。动量为零时没有出射方向。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth,scale=1.1]
+\node at (0,1.58) {质心系};
+\node at (5.7,1.58) {实验室系};
+\draw[gray,->] (-1.9,0)--(2.05,0) node[right]{$+x$};
+\draw[gray,->] (4.15,0)--(8.65,0) node[right]{$+x$};
+\fill (0,0) circle (1.5pt);
+\fill (5.7,0) circle (1.5pt);
+\draw[very thick,blue!75!black,->] (0,0)--(.72,1.247) node[above]{$\bp_3^*$};
+\draw[very thick,red!70!black,->] (0,0)--(-.72,-1.247) node[below]{$\bp_4^*$};
+\draw (.46,0) arc (0:60:.46);
+\node at (.73,.35) {$\theta^*$};
+\draw[very thick,blue!75!black,->] (5.7,0)--(8.345,1.247) node[above]{$\bp_3$};
+\draw[very thick,red!70!black,->] (5.7,0)--(6.582,-1.247) node[below]{$\bp_4$};
+\draw[gray,->] (2.6,.55)--(4,.55) node[midway,above]{$+\beta_{\rm cm}c$};
+\end{tikzpicture}
+\caption{同一次等质量弹性散射在两个参考系中的末态三动量。图中取 $K=m_Nc^2$、$\theta^*=60^\circ$。转回实验室系时，横向分量不变，两个纵向分量都朝前。}
+\label{fig:sr-two-to-two}
+\end{figure}
+
+\paragraph{用不变量记录动量转移}
+有时实验给的是四动量差的平方。按本书保留 $c$ 的单位，定义
+\[
+\mathcal T=c^2(P_1-P_3)^2,\qquad
+\mathcal U=c^2(P_1-P_4)^2,\qquad
+\mathcal S+\mathcal T+\mathcal U=(m_1^2+m_2^2+m_3^2+m_4^2)c^4 .
+\]
+最后一式由展开平方并用 $P_3+P_4=P_1+P_2$ 得到。在自然单位 $c=1$ 下，这三个量通常写成曼德尔斯塔姆变量 $s,t,u$。弹性散射时，粒子1与3在质心系的能量相同，故
+\begin{equation}\label{eq:sr-elastic-transfer}
+\mathcal T=-2(p_*c)^2(1-\cos\theta^*),
+\qquad -4(p_*c)^2\le\mathcal T\le0 .
+\end{equation}
+因而 $\mathcal T=0$ 是正向散射端点，$-\mathcal T$ 随偏转角增大。这里用 $\mathcal T$ 表示能量平方，用 $K$ 表示动能。
+
+\subsection{光子--核子弹性散射与康普顿运动学}
+光子偏转后，靶会得到反冲动量。用能量和动量守恒求出射光子的能量，若还要换成波长，再用光子的量子关系。
+
+一个能量为 $\varepsilon$ 的光子与初始静止、质量为 $m$ 的自由粒子散射，出射光子能量 $\varepsilon'$、实验室散射角为 $\theta$。光子四动量记为 $Q,Q'$，靶初态为 $P=(mc,\boldsymbol{0})$；末态靶满足 $(P+Q-Q')^2=m^2c^2$。因 $Q^2=Q'^2=0$，展开得
+\[
+2P\cdot(Q-Q')=2Q\cdot Q'
+\quad\Longrightarrow\quad
+m(\varepsilon-\varepsilon')=\frac{\varepsilon\varepsilon'}{c^2}(1-\cos\theta).
+\]
+因此
+\[
+\boxed{\varepsilon'=\frac{\varepsilon}{1+[\varepsilon/(mc^2)](1-\cos\theta)}}.
+\]
+再使用量子关系 $\varepsilon=hc/\lambda$，才得到 $\lambda'-\lambda=h(1-\cos\theta)/(mc)$。相对论给出能动量守恒，光子关系则来自量子物理；两者的作用要分清。这里不讨论散射概率，也不把束缚粒子无条件视作静止自由靶。
+\begin{example}[反向散射与低能极限]
+若 $\varepsilon=mc^2$ 且 $\theta=\pi$，则 $\varepsilon'=mc^2/3$，反冲靶的动能为 $2mc^2/3$，动量大小为 $(\varepsilon+\varepsilon')/c=4mc/3$，正好满足靶的质量壳。若 $\varepsilon\ll mc^2$，相对能量转移很小，与经典低能散射的运动学极限相容。
+
+出射与入射反向，故两光子动量差沿入射方向，大小为 $(\varepsilon+\varepsilon')/c$。靶的末能量是 $5mc^2/3$，其质量壳为 $[(5/3)^2-(4/3)^2]m^2c^4=m^2c^4$。
+\end{example}
+
+\paragraph{自由核子靶及其反冲}
+以自由质子或中子 $N$ 作固定靶，选定弹性道 $\gamma+N\to\gamma+N$。上面的康普顿运动学可直接使用，只需取 $m=m_N$。若核子束缚在原子核内，或末态另外产生粒子，须按实际初态与末态重列四动量。
+
+为看清两个参考系怎样对应，记 $a=m_Nc^2$。由式 \eqref{eq:sr-scatter-fixed} 和 \eqref{eq:sr-scatter-cm}，
+\[
+W=\sqrt{a^2+2a\varepsilon},\qquad
+\beta_{\rm cm}=\frac{\varepsilon}{a+\varepsilon},\qquad
+\varepsilon^*=p_*c=\frac{a\varepsilon}{W}.
+\]
+实验室中的光子角记为 $\theta_\gamma$。对光子的纵向动量除以能量，有
+\[
+\cos\theta_\gamma=\frac{\cos\theta^*+\beta_{\rm cm}}
+                       {1+\beta_{\rm cm}\cos\theta^*},\qquad
+\varepsilon'=\gamma_{\rm cm}\varepsilon^*(1+\beta_{\rm cm}\cos\theta^*)
+=\frac{\varepsilon}{1+(\varepsilon/a)(1-\cos\theta_\gamma)}.
+\]
+最后一式可通过消去 $\cos\theta^*$ 得到，与靶质量壳的结果一致。靶的反冲动能 $K_N=\varepsilon-\varepsilon'$，反冲动量是入射光子动量减去出射光子动量，因此
+\[
+p_{Nx}c=\varepsilon-\varepsilon'\cos\theta_\gamma,\qquad
+p_{Ny}c=-\varepsilon'\sin\theta_\gamma .
+\]
+另一个实用关系来自 $\mathcal T=c^2(P_N'-P_N)^2$。由于初态核子静止，展开得
+\begin{equation}\label{eq:sr-photon-recoil}
+-\mathcal T=2a K_N=2\varepsilon\varepsilon'(1-\cos\theta_\gamma).
+\end{equation}
+所以测得反冲核子的动能也能确定动量转移。
+
+\begin{example}[光子散射到 $60^\circ$ 时的核子反冲]
+取入射能量 $\varepsilon=a/3$，测得光子在实验室偏转 $60^\circ$。出射光子能量为 $(a/3)/(1+1/6)=2a/7$，核子动能为 $a/3-2a/7=a/21$。其纵、横动量分别为 $4a/(21c)$、$-\sqrt3a/(7c)$，所以 $|\bp_N|c=\sqrt{43}\,a/21$，反冲角为 $\arctan(3\sqrt3/4)\simeq52.4^\circ$，位于入射轴的另一侧。质量壳给 $(22a/21)^2-(\sqrt{43}a/21)^2=a^2$。再用 $\beta_{\rm cm}=1/4$ 反变换光子的方向，得 $\cos\theta^*=2/7$，可见 $60^\circ$ 只属于实验室系。
+\end{example}
+
+\subsection{核子--核子弹性散射}\label{sec:sr-nn-scatter}
+让一个核子打到静止核子上。两粒子在质心系中动量大小相同，散射后只改变方向。实验室还看到两者共同向前的运动，因此同一个质心散射角会对应不同的两支实验室角。
+
+以两个质子或两个中子的等质量情形为例，仍记 $a=m_Nc^2$，入射核子动能为 $K$，故 $E_1=a+K$。代入式 \eqref{eq:sr-scatter-fixed} 得
+\begin{align*}
+\mathcal S&=4a^2+2aK,& p_1c&=\sqrt{K(K+2a)},\\
+E_3^*&=E_4^*=\frac{W}{2},&
+p_*c&=\sqrt{aK/2},\\
+\beta_{\rm cm}&=\sqrt{\frac{K}{K+2a}},&
+\gamma_{\rm cm}&=\sqrt{1+\frac{K}{2a}} .
+\end{align*}
+这里 $p_*^2c^2=W^2/4-a^2$，并且 $\beta_{\rm cm}E_3^*/c=p_*$。因此式 \eqref{eq:sr-scatter-boost} 的两个纵向分量化为 $\gamma_{\rm cm}p_*(1\pm\cos\theta^*)$，均非负。两粒子动能和实验室极角为
+\begin{align}
+K_3&=\frac K2(1+\cos\theta^*),&
+K_4&=\frac K2(1-\cos\theta^*),\nonumber\\
+\tan\theta_3&=\frac{1}{\gamma_{\rm cm}}\tan\frac{\theta^*}{2},&
+\tan\theta_4&=\frac{1}{\gamma_{\rm cm}}\cot\frac{\theta^*}{2}.
+\label{eq:sr-nn-lab}
+\end{align}
+能量式可用 $\gamma_{\rm cm}W/2=(2a+K)/2$ 和 $\gamma_{\rm cm}\beta_{\rm cm}cp_*=K/2$ 复核。极角式适用于 $K>0$、$0<\theta^*<\pi$。在两个端点，有一个末态核子静止，不能给它定义散射角。对有两个出射方向的事件，横向动量反向，实验室两轨迹的夹角是 $\theta_3+\theta_4$。由于 $\tan\theta_3\tan\theta_4=1/\gamma_{\rm cm}^2<1$，夹角小于 $90^\circ$，在低速极限趋于熟悉的直角关系。
+
+\begin{example}[质心系直角散射怎样分配动能]
+取 $K=a$ 且 $\theta^*=90^\circ$。先得 $W=\sqrt6\,a$、$p_*c=a/\sqrt2$。回到实验室，两个核子各得动能 $a/2$，各有 $p_xc=\sqrt3\,a/2$，横向分量 $p_yc=\pm a/\sqrt2$。两极角均为 $\arctan\sqrt{2/3}\simeq39.2^\circ$，轨迹夹角约 $78.5^\circ$。两粒子纵向动量之和为 $\sqrt3\,a/c$，等于入射动量。每个粒子的 $E^2-p^2c^2=(3a/2)^2-5a^2/4=a^2$，也符合各自的质量壳。
+\end{example}
+
+若是质子--中子散射且需保留质量差，在通式中分别代入 $m_p,m_n$，不能沿用等质量时的半角和能量分配公式。对于 $pp$ 或 $nn$，末态3、4只是给两条出射轨迹贴的标签。交换两个标签相当于用 $\pi-\theta^*$ 描述另一支轨迹，$\mathcal T$ 和 $\mathcal U$ 也随之互换。上述计算给出允许的能量和角度。核子内部结构、自旋及相互作用决定各方向出现的概率，需要用散射动力学处理。
+
+\subsection{固定靶阈能与对撞机}
+同样的实验室输入能量，固定靶和对撞机可用于产生新粒子的能量不同。先算总动量，再比较质心系中的总能量。
+
+设质量 $m_a$ 的入射粒子总能量为 $E_a$，靶粒子质量 $m_b$ 且在实验室静止。沿用本节的能量平方不变量 $\mathcal S=E_{\rm tot}^2-c^2P_{\rm tot}^2$。利用入射粒子质量壳，
+\[
+\mathcal S=(E_a+m_bc^2)^2-p_a^2c^2
+=m_a^2c^4+m_b^2c^4+2m_bc^2E_a.
+\]
+若末态全为自由有质量粒子，质量和为 $M_f$，其质心系总能量在相对速度均趋零时最小，为 $M_fc^2$。因此吸能反应的运动学阈值为
+\begin{equation}\label{eq:sr-threshold}
+E_{a,\rm th}=\frac{M_f^2-m_a^2-m_b^2}{2m_b}c^2,\qquad
+K_{a,\rm th}=E_{a,\rm th}-m_ac^2.
+\end{equation}
+若代数阈值为负且末态包含至少两个自由有质量粒子，运动学上可取最低入射动能 $0$，剩余能量进入末态相对运动。若末态只有一个粒子，则必须恰有 $\mathcal S=M_f^2c^4$，不能用相对运动吸收剩余能量。含光子末态需单独讨论零能极限；“所有末态粒子在质心系静止”不能照搬给非零能量光子。满足运动学阈值也不保证实际反应会发生，还需相互作用与其他守恒量允许。
+
+\begin{example}[达到同一产生阈值，固定靶和对撞各需多少动能？]
+取 $m_a=m_b=m$，假想允许产生总静质量 $M_f=4m$ 的全有质量末态。固定靶需要 $E_a=7mc^2$，即入射动能 $6mc^2$；等能反向对撞只需每束总能量 $2mc^2$，总输入动能 $2mc^2$。固定靶的大部分额外能量被整个末态系统的平动占用，对撞可让总三动量为零，更多能量用于内部产生。反过来，若给定同样的总动能 $2mc^2$，固定靶的质心能量为 $\sqrt{8}\,mc^2$，等能对撞为 $4mc^2$。此处只比较碰撞运动学。
+
+固定靶的阈条件为 $2m^2c^4+2mc^2E_a=(4mc^2)^2$。若入射动能只有 $2mc^2$，则 $E_a=3mc^2$，左端为 $8m^2c^4$。对撞时总动量相消，质心能量就是两束总能量之和。
+\end{example}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Stealth,scale=.95]
+\node[anchor=west] at (-.3,2.3){固定靶：总动量不为零};
+\draw[blue,very thick,->] (0,1.5)--(2.2,1.5) node[midway,above]{$E_a,p_a$};
+\fill (2.6,1.5) circle(4pt) node[right]{靶 $m$ 静止};
+\draw[->,thick] (4.7,1.5)--(6.4,1.5) node[right]{末态整体运动};
+\node[anchor=west] at (-.3,.4){等能对撞：总动量为零};
+\draw[blue,very thick,->] (0,-.4)--(2.3,-.4) node[midway,above]{$E,p$};
+\draw[red,very thick,->] (5.2,-.4)--(2.9,-.4) node[midway,above]{$E,-p$};
+\node at (2.6,-1){质心系即实验室系};
+\end{tikzpicture}
+\caption{固定靶与等能反向对撞的初态动量。箭头只表示入射方向，不按两装置所需动量比例绘制；定量比较由 $\mathcal S$ 完成。}\label{fig:sr-collider}
+\end{figure}
+
+\begin{modernbox}[title={进一步探索：光子产生粒子对为什么需要第二个物体？}]
+单个自由光子在真空中不能变成两个有质量粒子：其初态总四动量平方为零，而两未来指向的有质量粒子总四动量为类时，无法相等。两光子可提供非零系统不变质量。产生两个质量均为 $m$ 的粒子，运动学条件为
+\[
+2E_1E_2(1-\cos\theta)\ge4m^2c^4.
+\]
+若光子打到质量为 $M_T$ 的静止靶上，靶参与反冲、末态靶质量保持 $M_T$，则总末态静质量至少为 $M_T+2m$，由同一不变量方法得到光子阈能
+\[
+\varepsilon_{\rm th}=2mc^2\left(1+\frac{m}{M_T}\right).
+\]
+有限靶反冲使阈值高于 $2mc^2$；反应概率仍需量子理论确定。
+\end{modernbox}
+
+\section{计算与模拟：沿世界线积累固有时}
+知道每个时刻的速率，就可以把旅行切成许多短时间片，逐片算旅行者的钟走了多少。加密时间片，检查总固有时间是否收敛。
+
+对平滑往返速度 $u(t)=u_0\sin(2\pi t/T)$，令 $s=t/T$，用复合辛普森求积计算
+\[
+\frac{\tau}{T}=\int_0^1\sqrt{1-(u_0/c)^2\sin^2(2\pi s)}\,\dd s.
+\]
+用偶数个子区间，减半步长比较结果，并检查位移积分为零。伴随脚本 \texttt{review/verify\_ch07.py} 给出核查值；使用 $c=1$ 时速度仍须小于1。
+
+\section*{关键概念与常见误区}
+
+写式子之前，先在草图上标明是谁相对谁运动。$v$ 表示两参考系的相对速度，$u$ 表示选定系中粒子的速度。做碰撞题时，再用 $m$ 和 $M$ 区分单粒子质量与系统质量，注明用的是总能量还是动能。若题里有角度，也应标出由哪一系测量。算完可用量纲、守恒和低速极限检验结果。
+
+\section*{本章小结}
+\addcontentsline{toc}{section}{本章小结}
+\begin{keybox}
+\textbf{事件与测量：}先选事件，再写变换。钟慢要求同一只钟的两个事件；测长要求所选系的同时端点事件；收到信号的时刻还要计算光行时。
+
+\textbf{时空与不变量：}$\Delta s^2=c^2\Delta t^2-\Delta r^2$，固有时沿世界线积分；惯性系对坐标值可有不同判断，对因果类型和同一条世界线的固有时一致。
+
+\textbf{动力学与守恒：}$P=(E/c,\bp)$，$E^2=p^2c^2+m^2c^4$。总四动量守恒，系统不变质量包括内部能；作用量和勒让德变换延续第2、3、6章的方法。
+\textbf{两体散射。}先由初态求 $W=\sqrt{\mathcal S}$，再在质心系求末态动量大小。选定质心散射角后，变回实验室系即可预测两条轨迹的能量和方向。
+\end{keybox}
+
+\Needspace{7\baselineskip}
+\section*{分层习题}
+\addcontentsline{toc}{section}{分层习题}
+先列事件及所属参考系。碰撞或衰变题可先把能量和三动量分别相加，再选择能简化计算的参考系。
+
+以下均忽略引力；有质量粒子的 $m$ 恒定，除非题目另有说明。
+\begin{bookexercises}
+\item \exlevel{基础} \textbf{事件与接收。}两盏实验室静止灯在 $x=\pm L$、$t=0$ 闪光。观察者从原点以 $v>0$ 匀速出发。求其接收左右光的实验室时刻及自身钟读数；说明这与两发光事件的坐标时间差有何不同。
+\item \exlevel{基础} \textbf{同步钟。}静止钟 $A$ 发光时为 $2t_0$，收回反射光时为 $8t_0$。求远处反射事件的同步时间及两钟距离。若改由运动观察者描述，是否仍可把这两个 $A$ 钟读数直接当作其坐标时间？
+\item \exlevel{基础} \textbf{洛伦兹变换。}取 $v=0.6c$，将 $(ct,x)=(5\ell,\ell)$ 变换到 $S'$，核查间隔并作逆变换。
+\item \exlevel{基础} \textbf{同时系与同地系。}分别对事件差 $(c\Delta t,\Delta x)=(3\ell,5\ell)$ 和 $(5\ell,3\ell)$，判断类型并找出同时系或同地系，求不变量大小。
+\item \exlevel{基础} \textbf{长度与通过时间。}静止长 $L_0$ 的杆以 $0.8c$ 经过实验室固定探测器，求实验室杆长和探测器记录的通过时间；再到杆系复核。
+\item \exlevel{基础} \textbf{寿命。}粒子按固有时作指数衰变，平均寿命为 $\tau_0$，实验室速率 $0.6c$。求经过距离 $d=c\tau_0$ 后的存活比例，并解释平均寿命与确定寿命的区别。
+\item \exlevel{基础} \textbf{双生子。}地球总历时 $10$ 年，旅行者以 $0.6c$ 对称往返。求旅行者固有时及瞬时掉头前后同时线在地球钟上的两个交点。
+\item \exlevel{基础} \textbf{速度与光行差。}飞船沿实验室 $+x$ 以 $0.6c$ 运动，两系坐标轴平行。在飞船系沿 $+y'$ 以 $0.8c$ 发射探测器，求实验室速度分量和速率。若改成光束，求其实验室方向。
+\item \exlevel{基础} \textbf{多普勒角度。}在 $S$ 中光线与 $+x$ 成 $60^\circ$，$S'$ 沿 $+x$ 以 $0.6c$ 运动，两系坐标轴平行。求 $\omega'/\omega,\cos\theta'$，并用反变换复核。
+\item \exlevel{基础} \textbf{能动量。}粒子动能为 $mc^2$，求 $E,p,u$。沿其运动方向以 $u$ 运动的观察者测得什么能量？
+\item \exlevel{基础} \textbf{双光子。}两光子等能 $\varepsilon$，夹角 $120^\circ$。求总能量、总动量大小、系统不变质量及质心系速度；若夹角趋零会怎样？
+\item \exlevel{基础} \textbf{恒力。}粒子从 $x=0$ 处静止释放后受沿 $+x$ 的恒力 $F>0$，在 $Ft/(mc)=1$ 时求速率、位移、动能、固有时与坐标加速度。
+\item \exlevel{综合} \textbf{作用量。}从自由粒子 $L$ 推导速度海森矩阵的纵横本征值，并从 $H$ 求 $\partial H/\partial p_i$，核查两种速度表达式互逆。解释为什么直接令 $m=0$ 的固有时作用量失效。
+\item \exlevel{综合} \textbf{黏合。}质量 $m$、总能量 $3mc^2$ 的粒子打到静止同质量靶并黏合，无辐射。求复合体质量与实验室速度，在复合体静止系检验总能量。
+\item \exlevel{综合} \textbf{不等质量衰变。}母粒子质量 $5m$，衰变为质量 $m,2m$ 的两个粒子。求母系两能量和动量大小，并说明两个能量一般不相等的原因。
+\item \exlevel{综合} \textbf{康普顿散射。}入射光子能量 $mc^2/2$、散射角 $90^\circ$。求出射光子能量、靶反冲动能与动量大小，核查质量壳。
+\item \exlevel{综合} \textbf{阈能。}质量均为 $m$ 的入射粒子和静止靶，产生允许的全有质量末态，末态静质量和为 $3m$。求固定靶入射动能阈值；比较等能反向对撞所需的总动能。
+\item \exlevel{拓展} \textbf{粒子对阈值。}两反向等能光子产生质量均为 $m$ 的一对粒子，各光子至少需多少能量？若光子改打质量 $M_T=10m$ 的静止靶且靶保持原质量，求光子阈能。
+\item \exlevel{拓展} \textbf{平滑掉头。}构造世界线 $u(t)=u_0\sin(2\pi t/T)$，$0<u_0<c$，$0\le t\le T$。证明回到出发位置；用数值积分算 $u_0=0.8c$ 时 $\tau/T$，比较同端点惯性钟及同样峰值速度的瞬时掉头模型。缩小积分步长检查收敛。
+\item \exlevel{拓展} \textbf{加速器。}均匀磁场中粒子垂直入射，忽略辐射。由轨迹半径 $\rho$ 推导 $E,\gamma_u$ 和回旋角频率；固定 $B$ 时增大能量，半径和角频率怎样变化？指出电场补充能量与磁场转向的区别。
+\item \exlevel{综合} \textbf{从反冲动能还原光子方向。} 能量 $\varepsilon=m_Nc^2/2$ 的光子打到自由静止核子，弹性散射后测得核子反冲动能为 $m_Nc^2/8$。求出射光子能量、实验室与质心系的散射角，以及 $-\mathcal T$。对同一入射能量，核子反冲动能最大是多少？
+\item \exlevel{综合} \textbf{固定靶核子--核子散射。} 等质量核子的入射动能为 $K=2m_Nc^2$，出射粒子3的质心散射角为 $60^\circ$。求两个末态核子的实验室动能和极角，计算 $\mathcal T,\mathcal U$。交换末态标签会怎样？
+\end{bookexercises}
+
+\section*{习题解答}
+先用同一题号找到解答。核对时，从第一条方程开始比较自己的做法，再检查最后的符号、单位和适用条件。
+\begin{bookexercises}
+\item 右灯光线 $x=L-ct$ 与 $x=vt$ 相交，$t_R=L/(c+v)$；左灯光线 $x=-L+ct$ 给 $t_L=L/(c-v)$。各接收时刻的固有时为 $t_{R,L}/\gamma$。发光事件则有 $t'_R=-\gamma vL/c^2,t'_L=+\gamma vL/c^2$，它们是另一组事件。
+
+上述固有时以观察者经过原点的出发事件为零点。由 $t'=\gamma(t-vx/c^2)$，在观察者的接收世界线上代入 $x=vt$ 得 $t'=t/\gamma$；在灯的发光事件上则应代入 $t=0,x=\pm L$。
+\item 反射时间 $5t_0$，距离 $3ct_0$。$A$ 钟只在其静止系中直接给该位置坐标时间；运动系需变换事件，不能照搬读数。
+
+静止系中去程与回程等长，所用时间均为 $(8-2)t_0/2=3t_0$。故反射时刻是两读数的中点 $(2+8)t_0/2$，距离是单程时间乘以 $c$。
+\item $ct'=11\ell/2,x'=-5\ell/2$，间隔为 $24\ell^2$；逆变换恢复原坐标。
+
+这里 $\gamma=5/4$。直接检查 $(11\ell/2)^2-(-5\ell/2)^2=24\ell^2$。逆变换给 $ct=(5/4)(11/2-3/2)\ell=5\ell$、$x=(5/4)(-5/2+33/10)\ell=\ell$。
+\item 第一组类空，$v=3c/5$ 使同时，此系空间间隔 $4\ell$；第二组类时，$v=3c/5$ 使同地，固有时为 $4\ell/c$。
+
+第一组令 $c\Delta t'=\gamma(c\Delta t-\beta\Delta x)=0$，故 $\beta=3/5$。第二组令 $\Delta x'=\gamma(\Delta x-\beta c\Delta t)=0$，也得 $\beta=3/5$。两组 $\Delta s^2$ 分别为 $-16\ell^2$ 和 $16\ell^2$，所以分别取纯空间和纯时间间隔时得到上述数值。
+\item $L=3L_0/5$，$\Delta t=3L_0/(4c)$。杆系探测器以 $0.8c$ 通过距离 $L_0$，$\Delta t'=5L_0/(4c)=\gamma\Delta t$。
+
+由 $\gamma=5/3$ 得 $L=L_0/\gamma$。固定探测器处两端经过同一位置，故实验室时间差为 $L/(0.8c)$，也是探测器的固有时间。杆系中的两次通过发生在不同位置，故其坐标时间差为 $\gamma\Delta t$。
+\item $\gamma u\tau_0=3c\tau_0/4$，故比例 $e^{-4/3}\simeq0.2636$。平均寿命是指数分布的均值，单个粒子衰变时刻不确定。
+
+实验室飞行时间为 $d/u=5\tau_0/3$，粒子钟只经过 $(d/u)/\gamma=4\tau_0/3$。对固有时指数衰变模型，存活概率为 $\exp[-(d/u)/(\gamma\tau_0)]$。
+\item 旅行者 $8$ 年；地球交点为 $5(1-0.36)=3.2$ 年与 $5(1+0.36)=6.8$ 年。
+
+地球系中掉头事件为 $(t_A,x_A)=(5\,\mathrm{yr},3\,\text{光年})$。旅行者的两段固有时各为 $5/\gamma=4$ 年。设地球钟交点为 $(t_E,0)$，与掉头事件同时要求 $(t_E-t_A)-v_{\rm leg}(0-x_A)/c^2=0$，分别用 $v_{\rm leg}=+0.6c$ 和 $-0.6c$，得到 $t_E=t_A\mp1.8\,\mathrm{yr}$。
+\item 探测器 $u_x=0.6c,u_y=0.64c$，速率 $\sqrt{0.7696}c\simeq0.8773c$。光束则 $u_x=0.6c,u_y=0.8c$，方向余弦为 $0.6$，仍为光速。
+
+逆速度变换给 $u_x=(u_x'+v)/(1+vu_x'/c^2)$、$u_y=u_y'/[\gamma(1+vu_x'/c^2)]$。这里 $u_x'=0$，所以分母分别为1和 $5/4$。光束情形用 $u_y'=c$，其在 $xy$ 平面内与 $+x$ 成 $\arccos(0.6)\simeq53.13^\circ$。
+\item 频率比 $7/8$，$\cos\theta'=-1/7$。反变换因子 $\gamma(1+\beta\cos\theta')=8/7$，乘积为 $1$。
+
+四维波矢变换给 $\omega'/\omega=\gamma(1-\beta\cos\theta)=(5/4)(1-0.6/2)$，而 $\cos\theta'=(\cos\theta-\beta)/(1-\beta\cos\theta)=(1/2-0.6)/(1-0.6/2)$。反向角变换给 $(\cos\theta'+\beta)/(1+\beta\cos\theta')=1/2$。
+\item $E=2mc^2,p=\sqrt3mc,u=\sqrt3c/2$。共动观察者测 $mc^2$，可用 $P\cdot U$ 直接核查。
+
+用 $p^2c^2=E^2-m^2c^4$ 得 $p$，再用 $u=pc^2/E$ 得速率。共动观察者的洛伦兹因子为2，故 $E'=2(E-up)=mc^2$。
+\item 总能量 $2\varepsilon$，总动量 $\varepsilon/c$，$M=\sqrt3\varepsilon/c^2,V=c/2$。夹角趋零时 $M\to0,V\to c$，不存在极限的惯性质心系。
+
+两动量沿角平分线叠加，大小为 $2(\varepsilon/c)\cos60^\circ=\varepsilon/c$。由 $M^2c^4=(2\varepsilon)^2-|\bp_{\rm tot}|^2c^2$ 得不变质量。沿角平分线作速度 $V=c^2|\bp_{\rm tot}|/E_{\rm tot}$ 的洛伦兹变换可使总动量为零。
+\item $u=c/\sqrt2,x=(\sqrt2-1)mc^2/F,K=(\sqrt2-1)mc^2$，$\tau=(mc/F)\ln(1+\sqrt2)$，$a=F/(2\sqrt2m)$。
+
+令 $z=Ft/(mc)$，有 $p=Ft$、$u/c=z/\sqrt{1+z^2}$。由 $x(0)=0$ 积分得
+\[
+x=\frac{mc^2}{F}\bigl(\sqrt{1+z^2}-1\bigr),
+\]
+动能也等于 $Fx$。因 $\gamma_u=\sqrt{1+z^2}$，积分 $\dd\tau=\dd t/\gamma_u$ 得 $\tau=(mc/F)\operatorname{arsinh}z$。对 $u$ 求导得 $a=(F/m)(1+z^2)^{-3/2}$，最后令 $z=1$。
+\item 海森矩阵为 $m\gamma_u I+m\gamma_u^3\bu\bu^{\mathsf T}/c^2$，作用在纵向给 $m\gamma_u^3$，横向给 $m\gamma_u$。$\partial H/\partial p_i=c^2p_i/H=u_i$。$m=0$ 的原作用量恒零，不能产生光子运动方程。
+
+从 $L=-mc^2\sqrt{1-|\bu|^2/c^2}$ 先求 $p_i=m\gamma_u u_i$。再用 $\partial\gamma_u/\partial u_j=\gamma_u^3u_j/c^2$ 即得海森矩阵。纵向本征值化简依赖 $1+\gamma_u^2|\bu|^2/c^2=\gamma_u^2$。反过来，$H=\sqrt{m^2c^4+c^2|\bp|^2}$ 给 $\bu=c^2\bp/H$，因此 $1-|\bu|^2/c^2=m^2c^4/H^2$，恢复 $\bp=m\gamma_u\bu$。
+\item $p=\sqrt8mc,M=\sqrt8m,V=c/\sqrt2$。质心能量为 $Mc^2$，$\gamma_V=\sqrt2$ 给回实验室总能量 $4mc^2$。
+
+碰前总能量 $4mc^2$、总动量 $\sqrt8mc$，故 $Mc^2=\sqrt{(4mc^2)^2-(\sqrt8mc^2)^2}$，而 $V=c^2p_{\rm tot}/E_{\rm tot}$。推动到复合体静止系，$p^*=\gamma_V(p_{\rm tot}-VE_{\rm tot}/c^2)=0$，$E^*=\gamma_V(E_{\rm tot}-Vp_{\rm tot})=\sqrt8mc^2$。
+\item $E_1^*=11mc^2/5,E_2^*=14mc^2/5,p_*=4\sqrt6mc/5$。相反等大的是三动量；质量不同使能量不同，且两能量和为 $5mc^2$。
+
+母粒子静止时两动量为 $\pm\bp_*$，故质量壳相减给 $(E_2^*)^2-(E_1^*)^2=3m^2c^4$，同时 $E_2^*+E_1^*=5mc^2$。解得 $E_2^*-E_1^*=3mc^2/5$，再由 $p_*c=\sqrt{(E_1^*)^2-m^2c^4}$ 得动量大小。
+\item $\varepsilon'=mc^2/3$，反冲 $K=mc^2/6$；$p=\sqrt{13}mc/6$，于是 $(mc^2+K)^2-p^2c^2=m^2c^4$。
+
+取入射沿 $+x$，出射沿 $+y$，则靶动量分量为 $(\varepsilon/c,-\varepsilon'/c)$，末能量为 $mc^2+\varepsilon-\varepsilon'$。代入质量壳并约去公共项，得 $mc^2(\varepsilon-\varepsilon')=\varepsilon\varepsilon'$，即 $\varepsilon'=\varepsilon/(1+\varepsilon/(mc^2))$。数值代入后，能量平方与动量项之差为 $(49-13)m^2c^4/36$。
+\item 固定靶 $E_a=7mc^2/2,K_a=5mc^2/2$；对撞每束 $E=3mc^2/2$，总动能 $mc^2$。两方案总初态静质量均为 $2m$。
+
+固定靶初态的不变量为 $E_{\rm cm}^2=2m^2c^4+2mc^2E_a$。令它达到 $(3mc^2)^2$ 求 $E_a$，再减去 $mc^2$ 得阈动能。对撞总动量为零，阈值是 $2E=3mc^2$，总动能由 $2E-2mc^2$ 给出。
+\item 两等能反向光子的总动量为零，阈条件 $2\varepsilon=2mc^2$ 给出每个光子至少需 $mc^2$。固定靶初态的不变量为
+\[
+E_{\rm cm}^2=(M_Tc^2+\varepsilon)^2-\varepsilon^2
+=M_T^2c^4+2M_Tc^2\varepsilon .
+\]
+阈值处末态各粒子在质心系没有相对运动，故令 $E_{\rm cm}=(M_T+2m)c^2$，解得 $\varepsilon_{\rm th}=2mc^2+2m^2c^2/M_T=2.2mc^2$。其中 $2mc^2$ 用于新增静质量，额外的 $0.2mc^2$ 是末态整体在实验室系运动所需的动能，包含原靶和新生粒子的动能。
+\item $\int_0^T u\,\dd t=0$。$\tau/T=\int_0^1\sqrt{1-0.64\sin^2(2\pi s)}\,\dd s\simeq0.81255$；介于地球钟 $1$ 和恒速绝对值 $0.8c$ 的往返模型 $0.6$ 之间。峰值相同并不意味着整段速率相同。
+
+以 $f(s)=\sqrt{1-0.64\sin^2(2\pi s)}$，等分 $[0,1]$，复合 Simpson 公式用权重 $1,4,2,\ldots,4,1$，加权和乘 $1/(3N)$。所得数值为
+\[
+\begin{array}{c|ccc}
+N & 16 & 32 & 64\\ \hline
+\tau/T & 0.812628877930 & 0.812549714011 & 0.812549610283
+\end{array}
+\]
+相邻差值由约 $7.92\times10^{-5}$ 缩小到 $1.04\times10^{-7}$。
+\item $p=|e|B\rho$，$E=\sqrt{m^2c^4+e^2B^2\rho^2c^2}$，$\gamma_u=E/(mc^2)$，$\omega_c=|e|B/(\gamma_um)$。固定 $B$ 下能量增加使半径增大、角频率降低；磁场本身不做功。
+
+磁力垂直速度，故 $E$、$p$ 的大小恒定。匀速转向使 $|\dot{\bp}|=pu/\rho$，与 $|e|uB$ 相等给磁刚度关系。再用 $\omega_c=u/\rho$、$p=\gamma_um u$ 得角频率。电场若沿运动方向有分量，功率为 $e\bE\cdot\bu$，可改变能量。
+\item 记 $a=m_Nc^2$。能量守恒给 $\varepsilon'=a/2-a/8=3a/8$。由康普顿关系，
+\[
+1-\cos\theta_\gamma=\frac{aK_N}{\varepsilon\varepsilon'}=\frac23 ,
+\qquad
+-\mathcal T=2aK_N=\frac{a^2}{4}.
+\]
+所以 $\theta_\gamma=\arccos(1/3)\simeq70.5^\circ$。由 $\beta_{\rm cm}=\varepsilon/(a+\varepsilon)=1/3$，逆光行差给 $\cos\theta^*=(\cos\theta_\gamma-\beta_{\rm cm})/(1-\beta_{\rm cm}\cos\theta_\gamma)=0$，即 $\theta^*=90^\circ$。光子在实验室反向散射时 $1-\cos\theta_\gamma$ 最大，$\varepsilon'$ 最小，为 $(a/2)/(1+1)=a/4$，故 $K_{N,\max}=a/4$。
+\item 记 $a=m_Nc^2$。有 $\gamma_{\rm cm}=\sqrt2$、$p_*c=a$。将 $\cos\theta^*=1/2$ 代入式 \eqref{eq:sr-nn-lab}，得 $K_3=3a/2,\ K_4=a/2$，两者之和为 $2a$。两极角满足
+\[
+\tan\theta_3=\frac1{\sqrt6},\qquad
+\tan\theta_4=\sqrt{\frac32},
+\]
+分别约为 $22.2^\circ$ 与 $50.8^\circ$，位于束轴两侧。由式 \eqref{eq:sr-elastic-transfer} 得 $\mathcal T=-a^2$，对粒子4用 $\pi-\theta^*$ 得 $\mathcal U=-3a^2$。亦可由 $\mathcal S=8a^2$ 核对 $\mathcal S+\mathcal T+\mathcal U=4a^2$。交换标签会交换两份动能、两个角度和 $\mathcal T,\mathcal U$，对应同一对末态轨迹。
+\end{bookexercises}
+
+\section*{进一步阅读与来源}
+本章采用事件表、世界线和不变量组织推导。以下为可核实的官方或作者原始资料，正文例题和插图按本书符号独立构造（链接复核：2026-11-08）：
+\begin{bookreading}
+\item \href{https://ocw.mit.edu/courses/8-033-introduction-to-relativity-and-spacetime-physics-fall-2024/mit8_033_f24_lec04.pdf}{MIT 8.033，2024，Lecture 4}：时空图与同时性。可比较不同事件选择如何改变时间和长度测量。
+\item \href{https://ocw.mit.edu/courses/8-033-introduction-to-relativity-and-spacetime-physics-fall-2024/mit8_033_f24_lec08.pdf}{MIT 8.033，2024，Lecture 8}：四动量应用与观察者能量。该资料采用 $(-,+,+,+)$，与本书号差相反；转换时需同时改变内积与质量壳的符号。
+\item \href{https://davidtong.org/pdfs/teaching/dynamics-and-relativity/dynrel7.pdf}{David Tong：Special Relativity}：本科相对论讲义。可选读快度与碰撞；后部旋量等内容超出本书要求。
+\item \href{https://pdg.lbl.gov/2024/reviews/rpp2024-rev-kinematics.pdf}{Particle Data Group，Kinematics，第49章}。可对照固定靶的质心系变换和两体散射不变量。该资料使用自然单位 $c=1$。
+\end{bookreading}
+牛顿力学并未被丢弃，而是在 $u/c\ll1$、测量精度允许时成为相对论的近似；变分法、拉格朗日和哈密顿方法则通过改变作用量继续适用。全书的共同线索是：先明确物理对象和可测量量，再选择合适变量，用对称性与不变量建立可检验的运动规律。

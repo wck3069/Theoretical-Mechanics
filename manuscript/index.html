@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>书稿 · 理论力学</title>
+<style>
+  /* 书稿门页 · 暗色编辑风：近黑底、冷白文字、蓝紫与金色微光。 */
+  :root{
+    --paper:#050506; --card:rgba(16,18,26,.66); --ink:#f5f5f7; --ink-soft:#c7c7cc;
+    --muted:#8e8e93; --hairline:rgba(255,255,255,.10); --hairline-2:rgba(255,255,255,.18);
+    --accent:#2997ff; --wash:rgba(41,151,255,.10);
+    --serif:"Noto Serif CJK SC","Source Han Serif SC","Songti SC",Georgia,"Times New Roman",serif;
+    --sans:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  html{background:#03050c}
+  canvas#starfield{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  *{box-sizing:border-box}
+  body{margin:0;background:transparent;color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.6;
+    -webkit-font-smoothing:antialiased}
+  .page{max-width:1060px;margin:0 auto;padding:34px 28px 72px;position:relative;z-index:1}
+
+  a{color:var(--ink)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+  /* ---- 顶部导航行 ---- */
+  .top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    padding-bottom:14px;border-bottom:1px solid var(--hairline)}
+  .back{font-family:var(--sans);font-size:13px;color:var(--muted);text-decoration:none;
+    padding:6px 2px}
+  .back:hover{color:var(--accent)}
+  .kicker{font-family:var(--sans);font-size:12px;letter-spacing:.22em;color:var(--muted)}
+
+  /* ---- 全书区（主行动区） ---- */
+  .hero{padding:52px 0 44px;border-bottom:1px solid var(--hairline)}
+  .eyebrow{margin:0 0 18px;font-family:var(--sans);font-size:12px;
+    letter-spacing:.22em;color:var(--muted)}
+  h1{margin:0;font-size:clamp(44px,6vw,72px);font-weight:700;line-height:1.15;
+    letter-spacing:.06em}
+  .lead{margin:18px 0 34px;max-width:640px;color:var(--ink-soft);font-size:17px}
+  .hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .btn-book{display:inline-block;background:var(--ink);color:var(--paper);
+    text-decoration:none;font-size:16.5px;padding:14px 30px;border-radius:4px;
+    border:1px solid var(--ink);transition:background .15s ease}
+  .btn-book:hover{background:#e8e8ed}
+  .src-link{font-family:var(--sans);font-size:13px;color:var(--muted);
+    text-decoration:none;border-bottom:1px solid var(--hairline-2);padding:4px 0}
+  .src-link:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  /* ---- 章节网格 ---- */
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    margin:56px 0 26px}
+  .sec-title{margin:0;font-size:26px;font-weight:700;letter-spacing:.05em}
+  .sec-note{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin:0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(292px,1fr));gap:18px}
+  .ch{display:flex;flex-direction:column;background:var(--card);
+    border:1px solid var(--hairline);border-radius:6px;padding:22px 22px 18px;
+    transition:border-color .15s ease,background .15s ease}
+  .ch:hover{border-color:var(--hairline-2);background:rgba(24,26,34,.8)}
+  .ch-no{margin:0 0 2px;color:var(--accent);font-size:14px;letter-spacing:.28em;
+    font-weight:400}
+  .ch-title{margin:0;font-size:23px;font-weight:700;letter-spacing:.04em;line-height:1.4}
+  .ch-pages{margin:8px 0 0;font-family:var(--sans);font-size:12.5px;color:var(--muted)}
+  .ch-acts{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    margin-top:18px;padding-top:16px;border-top:1px solid var(--hairline)}
+  .pdf-link{display:inline-block;text-decoration:none;font-family:var(--sans);
+    font-size:13.5px;color:var(--ink);border:1px solid var(--hairline-2);
+    border-radius:4px;padding:9px 16px;transition:background .15s ease,border-color .15s ease}
+  .pdf-link:hover{background:var(--wash);border-color:var(--accent);color:var(--accent)}
+  .tex-link{font-family:var(--sans);font-size:12.5px;color:var(--muted);
+    text-decoration:none;border-bottom:1px solid transparent;padding:6px 0}
+  .tex-link:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--hairline);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    font-family:var(--sans);font-size:12px;color:var(--muted)}
+
+  @media (max-width:640px){
+    .page{padding:24px 18px 56px}
+    .hero{padding:38px 0 34px}
+    .btn-book{display:block;text-align:center}
+    .grid{grid-template-columns:1fr;gap:14px}
+    .pdf-link{min-height:44px;display:inline-flex;align-items:center}
+  }
+</style>
+  <link rel="stylesheet" href="../assets/ui-liquid.css">
+<style>
+  body.ms-hub .top{position:static;margin:0;padding:14px 0;background:transparent;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  @media (max-width:640px){
+    body.ms-hub .sec-head{flex-direction:column;align-items:flex-start;gap:8px}
+  }
+</style>
+</head>
+<body class="ms-hub">
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="page">
+
+  <header class="top">
+    <a class="back" href="../index.html">← 返回首页</a>
+    <span class="kicker">理论力学 · 课程文稿</span>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">七章 · 全书 191 页</p>
+    <h1>书稿</h1>
+    <p class="lead">《理论力学》中文书稿。可按章阅读网页版，也可下载全书 PDF。</p>
+    <div class="hero-actions">
+      <a class="btn-book" href="#chapters">分章网页阅读 · 7 章</a>
+      <a class="src-link" href="main.pdf" download>下载全书 PDF（191 页）</a>
+    </div>
+  </section>
+
+  <section id="chapters" aria-label="章节">
+    <div class="sec-head">
+      <h2 class="sec-title">七章 · 按章阅读</h2>
+      <p class="sec-note">分章网页版可直接阅读、检索与复制公式。</p>
+    </div>
+    <div class="grid">
+      <article class="ch">
+        <p class="ch-no">第一章</p>
+        <h3 class="ch-title">牛顿力学</h3>
+        <p class="ch-pages">正文第 9–62 页 · 54 页</p>
+        <div class="ch-acts">
+          <a class="pdf-link" href="../chapters/01-newton/manuscripts/book.html">阅读本章网页</a>
+          <a class="tex-link" href="chapters/ch01.tex">tex 源</a>
+        </div>
+      </article>
+      <article class="ch">
+        <p class="ch-no">第二章</p>
+        <h3 class="ch-title">变分法</h3>
+        <p class="ch-pages">正文第 63–81 页 · 19 页</p>
+        <div class="ch-acts">
+          <a class="pdf-link" href="../chapters/02-variational/manuscripts/book.html">阅读本章网页</a>
+          <a class="tex-link" href="chapters/ch02.tex">tex 源</a>
+        </div>
+      </article>
+      <article class="ch">
+        <p class="ch-no">第三章</p>
+        <h3 class="ch-title">拉格朗日力学</h3>
+        <p class="ch-pages">正文第 82–106 页 · 25 页</p>
+        <div class="ch-acts">
+          <a class="pdf-link" href="../chapters/03-lagrangian/manuscripts/book.html">阅读本章网页</a>
+          <a class="tex-link" href="chapters/ch03.tex">tex 源</a>
+        </div>
+      </article>
+      <article class="ch">
+        <p class="ch-no">第四章</p>
+        <h3 class="ch-title">小振动</h3>
+        <p class="ch-pages">正文第 107–126 页 · 20 页</p>
+        <div class="ch-acts">
+          <a class="pdf-link" href="../chapters/04-oscillations/manuscripts/book.html">阅读本章网页</a>
+          <a class="tex-link" href="chapters/ch04.tex">tex 源</a>
+        </div>
+      </article>
+      <article class="ch">
+        <p class="ch-no">第五章</p>
+        <h3 class="ch-title">刚体力学</h3>
+        <p class="ch-pages">正文第 127–162 页 · 36 页</p>
+        <div class="ch-acts">
+          <a class="pdf-link" href="../chapters/05-rigid-body/manuscripts/book.html">阅读本章网页</a>
+          <a class="tex-link" href="chapters/ch05.tex">tex 源</a>
+        </div>
+      </article>
+      <article class="ch">
+        <p class="ch-no">第六章</p>
+        <h3 class="ch-title">哈密顿力学</h3>
+        <p class="ch-pages">正文第 163–182 页 · 20 页</p>
+        <div class="ch-acts">
+          <a class="pdf-link" href="../chapters/06-hamiltonian/manuscripts/book.html">阅读本章网页</a>
+          <a class="tex-link" href="chapters/ch06.tex">tex 源</a>
+        </div>
+      </article>
+      <article class="ch">
+        <p class="ch-no">第七章</p>
+        <h3 class="ch-title">狭义相对论</h3>
+        <p class="ch-pages">正文第 183–191 页 · 9 页</p>
+        <div class="ch-acts">
+          <a class="pdf-link" href="../chapters/07-relativity/manuscripts/book.html">阅读本章网页</a>
+          <a class="tex-link" href="chapters/ch07.tex">tex 源</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <span>书稿 · 七章网页版 · 全书 191 页</span>
+    <a class="back" href="../index.html">返回首页</a>
+  </footer>
+
+</div>
+  <script src="../assets/tm-i18n-data.js"></script>
+  <script src="../assets/tm-i18n.js"></script>
+  <script defer src="../assets/pdf-viewer.js"></script>
+
+<script src="../assets/ui-motion.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var canvas = document.getElementById('starfield');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var bgCanvas = document.createElement('canvas'), bgCtx = bgCanvas.getContext('2d');
+  var stars = [], nebulas = [], sprites = {};
+  var mouse = { x: 0, y: 0 };
+  var TAU = Math.PI * 2;
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function glowSprite(r, color) {
+    r = Math.max(4, Math.round(r));
+    var k = 'g' + r + color;
+    if (sprites[k]) return sprites[k];
+    var size = r * 2, c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    var g = c.getContext('2d'), rg = g.createRadialGradient(r, r, 0, r, r, r);
+    rg.addColorStop(0, hexA(color, .75));
+    rg.addColorStop(.3, hexA(color, .30));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    sprites[k] = { c: c, size: size };
+    return sprites[k];
+  }
+  function buildBg() {
+    var w = window.innerWidth, h = window.innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    bgCanvas.width = Math.ceil(w * dpr); bgCanvas.height = Math.ceil(h * dpr);
+    var g = bgCtx;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.fillStyle = '#03050c'; g.fillRect(0, 0, w, h);
+    nebulas.forEach(function (n) {
+      var rg = g.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+      rg.addColorStop(0, n.color + n.a + ')');
+      rg.addColorStop(1, n.color + '0)');
+      g.fillStyle = rg; g.fillRect(0, 0, w, h);
+    });
+    var vg = g.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .3, w / 2, h / 2, Math.max(w, h) * .75);
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, 'rgba(0,0,0,.55)');
+    g.fillStyle = vg; g.fillRect(0, 0, w, h);
+  }
+  function initStars() {
+    var w = window.innerWidth, h = window.innerHeight, mn = Math.min(w, h);
+    var count = w < 980 ? 170 : 300;
+    stars = [];
+    for (var i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * w, y: Math.random() * h, z: Math.floor(Math.random() * 3),
+        r: 0.4 + Math.random() * 1.3, phase: Math.random() * TAU,
+        speed: 0.3 + Math.random() * 1.2, base: 0.4 + Math.random() * 0.6
+      });
+    }
+    nebulas = [
+      { x: w * 0.3, y: h * 0.4, r: mn * 0.35, color: 'rgba(255,210,122,', a: 0.06 },
+      { x: w * 0.7, y: h * 0.3, r: mn * 0.4, color: 'rgba(127,224,255,', a: 0.05 },
+      { x: w * 0.6, y: h * 0.7, r: mn * 0.3, color: 'rgba(183,155,255,', a: 0.04 },
+      { x: w * 0.2, y: h * 0.8, r: mn * 0.25, color: 'rgba(127,240,207,', a: 0.03 }
+    ];
+    buildBg();
+  }
+  function draw(t) {
+    var w = window.innerWidth, h = window.innerHeight;
+    var mx = (mouse.x - w / 2) / (w / 2 || 1);
+    var my = (mouse.y - h / 2) / (h / 2 || 1);
+    ctx.clearRect(0, 0, w, h);
+    var bgX = mx * 5 - 8, bgY = my * 4 - 8;
+    for (var bx = -1; bx <= 1; bx++) {
+      for (var by = -1; by <= 1; by++) {
+        var tx = bgX + bx * w, ty = bgY + by * h;
+        if (tx > w || tx + w < 0 || ty > h || ty + h < 0) continue;
+        ctx.drawImage(bgCanvas, tx, ty, w + 16, h + 16);
+      }
+    }
+    var flowX = reduce ? 0 : (t * 0.004) % w;
+    var flowY = reduce ? 0 : (t * 0.0012) % h;
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 0 : Math.sin(t * 0.001 * st.speed + st.phase);
+      var a = reduce ? st.base : Math.max(0.08, Math.min(1, st.base + tw * 0.35));
+      var wobX = reduce ? 0 : Math.sin(t * 0.00009 * st.speed + st.phase) * 1.8;
+      var wobY = reduce ? 0 : Math.cos(t * 0.00007 * st.speed + st.phase) * 1.3;
+      var wx = ((st.x + mx * 5 + flowX + wobX) % w + w) % w;
+      var wy = ((st.y + my * 4 + flowY + wobY) % h + h) % h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = '#e8eeff';
+      ctx.beginPath(); ctx.arc(wx, wy, st.r, 0, TAU); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    for (var j = 0; j < stars.length; j += 37) {
+      var c = stars[j];
+      var gx = ((c.x + mx * 5 + flowX) % w + w) % w;
+      var gy = ((c.y + my * 4 + flowY) % h + h) % h;
+      var s = glowSprite(c.r * 5, '#7fe0ff');
+      ctx.globalAlpha = 0.10;
+      ctx.drawImage(s.c, gx - s.size / 2, gy - s.size / 2, s.size, s.size);
+      ctx.globalAlpha = 1;
+    }
+  }
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = window.innerWidth, h = window.innerHeight;
+    canvas.width = Math.ceil(w * dpr); canvas.height = Math.ceil(h * dpr);
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+    initStars();
+    draw(performance.now());
+  }
+  var resizeTimer = 0;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 150);
+  });
+  window.addEventListener('pointermove', function (e) { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+  resize();
+  if (!reduce) {
+    (function frame(now) {
+      requestAnimationFrame(frame);
+      if (document.hidden) return;
+      draw(now);
+    })(performance.now());
+  }
+})();
+</script>
+</body>
+</html>

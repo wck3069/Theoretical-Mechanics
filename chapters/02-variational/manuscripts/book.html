@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>变分法 · 理论力学</title>
+<link rel="stylesheet" href="../../../assets/manuscript.css">
+<link rel="stylesheet" href="../../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="../index.html">← 章节门户</a><a href="../../../manuscript/index.html">书稿</a><a href="../../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">书稿 · 网页阅读版</div>
+<h1>变分法</h1>
+<p class="ms-lead">本章书稿全文，可检索、可复制。</p>
+<div class="ms-links"><b>相关</b><a href="../index.html">变分法 章节</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#变分思想从费马原理开始">2.1变分思想：从费马原理开始</a></li>
+<li class="l3"><a href="#先说清楚比较哪些路径">2.1.1先说清楚比较哪些路径</a></li>
+<li class="l3"><a href="#费马原理及其适用范围">2.1.2费马原理及其适用范围</a></li>
+<li class="l3"><a href="#折射定律先做一个普通极值问题">2.1.3折射定律：先做一个普通极值问题</a></li>
+<li class="l3"><a href="#从有限个折射点走向一条未知曲线">2.1.4从有限个折射点走向一条未知曲线</a></li>
+<li class="l2"><a href="#泛函一阶变分与欧拉拉格朗日方程">2.2泛函、一阶变分与欧拉–拉格朗日方程</a></li>
+<li class="l3"><a href="#有限差变分与时间位移的区别">2.2.1有限差、变分与时间位移的区别</a></li>
+<li class="l3"><a href="#从链式法则到边界项">2.2.2从链式法则到边界项</a></li>
+<li class="l3"><a href="#离散化把路径看成很多个坐标">2.2.3离散化：把路径看成很多个坐标</a></li>
+<li class="l3"><a href="#首次积分与多个未知函数">2.2.4首次积分与多个未知函数</a></li>
+<li class="l2"><a href="#边界条件和约束容许变分决定答案">2.3边界条件和约束：容许变分决定答案</a></li>
+<li class="l3"><a href="#自然边界条件">2.3.1自然边界条件</a></li>
+<li class="l3"><a href="#移动端点与横截条件的推导">2.3.2移动端点与横截条件的推导</a></li>
+<li class="l3"><a href="#积分约束与乘子的条件">2.3.3积分约束与乘子的条件</a></li>
+<li class="l2"><a href="#二阶变分驻值为什么不一定是极小">2.4二阶变分：驻值为什么不一定是极小？</a></li>
+<li class="l3"><a href="#二次型必要条件与充分条件">2.4.1二次型、必要条件与充分条件</a></li>
+<li class="l3"><a href="#作用量随时间区间改变性质的例子">2.4.2作用量随时间区间改变性质的例子</a></li>
+<li class="l3"><a href="#进一步探索雅可比方程与共轭点">2.4.3进一步探索：雅可比方程与共轭点</a></li>
+<li class="l2"><a href="#几何与力学中的变分问题">2.5几何与力学中的变分问题</a></li>
+<li class="l3"><a href="#平面最短路径与曲面测地线">2.5.1平面最短路径与曲面测地线</a></li>
+<li class="l3"><a href="#悬链线坐标方向长度约束与张力">2.5.2悬链线：坐标方向、长度约束与张力</a></li>
+<li class="l3"><a href="#最速降线解端点与时间验证">2.5.3最速降线：解、端点与时间验证</a></li>
+<li class="l3"><a href="#作用量初步从变分返回牛顿方程">2.5.4作用量初步：从变分返回牛顿方程</a></li>
+<li class="l2"><a href="#进一步探索从几何光学到受约束优化">2.6进一步探索：从几何光学到受约束优化</a></li>
+<li class="l3"><a href="#梯度折射率中的光线方程">2.6.1梯度折射率中的光线方程</a></li>
+<li class="l3"><a href="#空间场振动弦的欧拉拉格朗日方程">2.6.2空间场：振动弦的欧拉–拉格朗日方程</a></li>
+<li class="l3"><a href="#动力学约束与最优控制的最简单例子">2.6.3动力学约束与最优控制的最简单例子</a></li>
+<li class="l2"><a href="#计算与模拟离散极值与连续解对照">2.7计算与模拟：离散极值与连续解对照</a></li>
+<li class="l2"><a href="#关键概念与常见误区">关键概念与常见误区</a></li>
+<li class="l2"><a href="#本章小结">本章小结</a></li>
+<li class="l2"><a href="#分层习题">分层习题</a></li>
+<li class="l2"><a href="#解题思路与结果">解题思路与结果</a></li>
+<li class="l2"><a href="#进一步阅读与来源">进一步阅读与来源</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<div class="tcolorbox"><div class="ms-callout-title">本章导读</div>
+<p>第一章从受力出发逐时刻求运动。对有约束的系统，逐个求反力往往费力；另一种办法是比较满足边界条件的整条路径，用一个标量泛函的驻值条件描述运动。本章建立这种方法的数学基础，第三章再系统应用于力学。</p>
+<p>主线为：泛函与容许路径 <span class="math inline">\(\longrightarrow\)</span> 一阶变分与边界项 <span class="math inline">\(\longrightarrow\)</span> 欧拉–拉格朗日方程 <span class="math inline">\(\longrightarrow\)</span> 约束与二阶变分 <span class="math inline">\(\longrightarrow\)</span> 几何、光学和力学应用。应能独立复现分部积分，区分真实位移与路径变分，判断一个结论只是驻值必要条件，还是已经证明了极小性。</p>
+</div>
+<h2 id="变分思想从费马原理开始"><span class="ms-secno">2.1</span>变分思想：从费马原理开始</h2>
+<h3 id="先说清楚比较哪些路径"><span class="ms-secno">2.1.1</span>先说清楚比较哪些路径</h3>
+<p>普通函数 <span class="math inline">\(f(z)\)</span> 的自变量是数，泛函（functional）的自变量是一整条函数。例如固定两端的曲线 <span class="math inline">\(y(x)\)</span>，其长度为 <span class="math display">\[\mathcal L[y]=\int_a^b\sqrt{1+y&#39;^2}\,\mathrm{d}x.\]</span> 不同曲线给出不同长度，即使它们在端点取相同数值。要问哪一条最短，必须先规定<strong>容许路径</strong>：定义区间、边界值、光滑性、是否允许自交，以及必须满足的约束。不同的容许集合可能产生不同的答案。</p>
+<p>本章先讨论标量图形 <span class="math inline">\(y=y(x)\)</span>，通常取 <span class="math inline">\(y\in C^2[a,b]\)</span>，扰动取满足端点条件的光滑函数；被积函数在路径邻域具有所需的连续偏导数。含尖点、无穷斜率或分段介质的问题，要单独说明分段求解和极限步骤。参数化曲线适用于不能由单个 <span class="math inline">\(y(x)\)</span> 覆盖的情形。</p>
+<h3 id="费马原理及其适用范围"><span class="ms-secno">2.1.2</span>费马原理及其适用范围</h3>
+<p>在静止、各向同性介质的几何光学近似下，设折射率为正函数 <span class="math inline">\(n(\mathbf{r})\)</span>，局部光速为 <span class="math inline">\(c/n\)</span>。沿路径的传播时间与光程为 <span class="math display">\[T[\gamma]=\frac1c\int_\gamma n(\mathbf{r})\,\mathrm{d}s,\qquad
+\mathcal L_{\rm opt}[\gamma]=\int_\gamma n\,\mathrm{d}s.
+\tag{2.1}\]</span> 对固定空间端点的邻近容许路径，费马原理给出 <span class="math display">\[\delta T=0\quad\Longleftrightarrow\quad\delta\mathcal L_{\rm opt}=0.
+\tag{2.2}\]</span> 这里暂把 <span class="math inline">\(\delta\)</span> 理解为“一阶路径变化”；严格定义将在下一节给出。驻值不预先保证全局最短时间，存在多条光线、焦点或反射约束时尤其如此。</p>
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>比较路径是理论中的操作，不是光线预先知道终点。在短波长近似中，邻近光学路径的相位由光程决定；远离驻相区域的贡献容易相消。这个图像说明几何光学与波动光学的联系，但不能用一句“自然总在优化”代替对容许路径和适用极限的规定。</p>
+</div>
+<h3 id="折射定律先做一个普通极值问题"><span class="ms-secno">2.1.3</span>折射定律：先做一个普通极值问题</h3>
+<div class="example">
+<p><strong>例 1.1</strong> (固定两端的平面折射).  <em>界面为 <span class="math inline">\(y=0\)</span>，<span class="math inline">\(A=(0,h_1)\)</span>、<span class="math inline">\(B=(d,-h_2)\)</span>，<span class="math inline">\(h_1,h_2,d&gt;0\)</span>，两侧均匀折射率为 <span class="math inline">\(n_1,n_2&gt;0\)</span>。先在各均匀介质中取直线段，令折射点 <span class="math inline">\(P=(\xi,0)\)</span>，则 <span class="math display">\[\mathcal L(\xi)=n_1\sqrt{\xi^2+h_1^2}+n_2\sqrt{(d-\xi)^2+h_2^2}.\]</span> 求导得到 <span class="math display">\[\mathcal L&#39;(\xi)=n_1\frac{\xi}{\sqrt{\xi^2+h_1^2}}
+-n_2\frac{d-\xi}{\sqrt{(d-\xi)^2+h_2^2}}.\]</span> 定义两侧光线与法线的夹角为 <span class="math inline">\(\theta_1,\theta_2\)</span>，驻值条件为 <span class="math display">\[\boxed{n_1\sin\theta_1=n_2\sin\theta_2.}\]</span> 而 <span class="math display">\[\mathcal L&#39;&#39;(\xi)=\frac{n_1h_1^2}{(\xi^2+h_1^2)^{3/2}}
++\frac{n_2h_2^2}{((d-\xi)^2+h_2^2)^{3/2}}&gt;0.\]</span> 因此本例在折射点这一变量上严格凸，驻点确为唯一最小值。并且 <span class="math inline">\(\mathcal L&#39;(0)&lt;0,\mathcal L&#39;(d)&gt;0\)</span>，可知它在两端垂足之间。<span class="math inline">\(n_1=n_2\)</span> 时两段接成同一直线，是结果的直接检验。</em></p>
+</div>
+<figure id="fig:var-refraction">
+<img src="figs/ch02-fig1.svg" style="width:86.0%" />
+<figcaption>按斯涅尔关系选取的折射示例。两角都从同一界面法线测量；图形斜率与标出的折射率相容。</figcaption>
+</figure>
+<h3 id="从有限个折射点走向一条未知曲线"><span class="ms-secno">2.1.4</span>从有限个折射点走向一条未知曲线</h3>
+<p>若把连续变化的介质切成许多薄层，未知量变成每个界面的折射点；层数趋于无穷时，未知量成为整个函数。最速降线也有相同结构：取 <span class="math inline">\(y\)</span> 向下、出发点为原点，均匀重力下无摩擦滑动且初速为零，则由第一章能量守恒，<span class="math inline">\(v=\sqrt{2gy}\)</span>。在 <span class="math inline">\(y&gt;0\)</span> 的曲线段上， <span class="math display">\[T[y]=\int_0^{x_B}\frac{\sqrt{1+y&#39;^2}}{\sqrt{2gy}}\,\mathrm{d}x.
+\tag{2.3}\]</span> 最短几何长度与最短时间权衡不同。出发点 <span class="math inline">\(y=0\)</span> 使被积函数奇异，因此不能不加说明地把下面的光滑定理直接用于端点；本章稍后将在内部推导，再检查时间积分的可积性。</p>
+<h2 id="泛函一阶变分与欧拉拉格朗日方程"><span class="ms-secno">2.2</span>泛函、一阶变分与欧拉–拉格朗日方程</h2>
+<h3 id="有限差变分与时间位移的区别"><span class="ms-secno">2.2.1</span>有限差、变分与时间位移的区别</h3>
+<p>考虑 <span class="math display">\[I[y]=\int_a^b F(x,y,y&#39;)\,\mathrm{d}x,\qquad y(a)=y_A,\quad y(b)=y_B.
+\tag{2.4}\]</span> <span class="math inline">\(F\)</span> 称为被积函数；这里的 <span class="math inline">\(x\)</span> 是独立变量，未必是位置，也可以是时间。取一条试探函数 <span class="math inline">\(y\)</span>，选定扰动形状 <span class="math inline">\(\eta(a)=\eta(b)=0\)</span>，组成路径族 <span class="math display">\[y_\epsilon(x)=y(x)+\epsilon\eta(x).\]</span> <span class="math inline">\(\epsilon\)</span> 是标记路径的小参数。严格定义<strong>一阶变分</strong>为对参数的方向导数： <span class="math display">\[\delta I[y;\eta]=\left.\frac{\mathrm{d}}{\mathrm{d}\epsilon}I[y_\epsilon]\right|_{\epsilon=0},
+\qquad \delta y=\eta,\quad \delta y&#39;=\eta&#39;.
+\tag{2.5}\]</span> 本章约定 <span class="math inline">\(\delta y\)</span> 表示单位参数的变分方向，不把 <span class="math inline">\(\epsilon\)</span> 重复包含其中。因此有限变化满足 <span class="math display">\[I[y+\epsilon\eta]-I[y]=\epsilon\delta I[y;\eta]
++\tfrac12\epsilon^2\delta^2I[y;\eta]+o(\epsilon^2).\]</span> <strong>驻值</strong>意味着对所有容许方向都有 <span class="math inline">\(\delta I[y;\eta]=0\)</span>；并非要求所有邻近曲线都给出完全相等的泛函值。</p>
+<figure id="fig:var-neighbor-paths">
+<img src="figs/ch02-fig2.svg" style="width:86.0%" />
+<figcaption>在同一个独立变量 <span class="math inline">\(x_*\)</span> 处比较两条路径，竖直差为 <span class="math inline">\(\epsilon\eta(x_*)\)</span>；两端相同。变分不是沿原路径从 <span class="math inline">\(x_*\)</span> 走到 <span class="math inline">\(x_*+\mathrm{d}x\)</span> 的真实位移。</figcaption>
+</figure>
+<h3 id="从链式法则到边界项"><span class="ms-secno">2.2.2</span>从链式法则到边界项</h3>
+<p>对参数 <span class="math inline">\(\epsilon\)</span> 求导，并在光滑条件下交换微分与积分： <span class="math display">\[\delta I=\int_a^b\left(F_y\eta+F_{y&#39;}\eta&#39;\right)\mathrm{d}x.\]</span> 其中各偏导沿未扰动路径 <span class="math inline">\(y(x)\)</span> 取值。<span class="math inline">\(y,y&#39;\)</span> 在求偏导时作为独立槽位；之后才代入 <span class="math inline">\(y&#39;=\mathrm{d}y/\mathrm{d}x\)</span>。关键的一步是分部积分： <span class="math display">\[\int_a^b F_{y&#39;}\eta&#39;\mathrm{d}x
+=[F_{y&#39;}\eta]_a^b-\int_a^b\frac{\mathrm{d}F_{y&#39;}}{\mathrm{d}x}\eta\mathrm{d}x.\]</span> 因此完整的一阶变分为 <span class="math display">\[\delta I=[F_{y&#39;}\eta]_a^b+
+\int_a^b\left(F_y-\frac{\mathrm{d}F_{y&#39;}}{\mathrm{d}x}\right)\eta\mathrm{d}x.
+\tag{2.6}\]</span> 先保留边界项，再根据端点条件处理。固定端点给出 <span class="math inline">\(\eta(a)=\eta(b)=0\)</span>，从而 <span class="math display">\[\delta I=\int_a^b\left(F_y-\frac{\mathrm{d}F_{y&#39;}}{\mathrm{d}x}\right)\eta\mathrm{d}x.
+\tag{2.7}\]</span> 若括号是连续函数且对所有内部光滑紧支扰动积分均为零，<strong>变分法基本引理</strong>保证括号逐点为零。理由是：若某点处括号为正，则附近仍为正，取支撑在该邻域的非负扰动即可得到正积分，与假设矛盾；负值同理。故驻值路径满足 <span class="math display">\[\boxed{F_y-\frac{\mathrm{d}}{\mathrm{d}x}F_{y&#39;}=0.}
+\tag{2.8}\]</span> 这就是欧拉–拉格朗日（Euler–Lagrange）方程，是内部驻值的必要条件，还须满足原边界条件及任何约束。</p>
+<div class="example">
+<p><strong>例 1.2</strong> (一个可直接检验的驻值函数).  <em>令独立变量与函数值均为无量纲量，求 <span class="math display">\[I[y]=\int_0^1(y&#39;^2+2xy)\mathrm{d}x,\qquad y(0)=0,\quad y(1)=1.\]</span> 有 <span class="math inline">\(F_y=2x,F_{y&#39;}=2y&#39;\)</span>，所以 <span class="math inline">\(y&#39;&#39;=x\)</span>。两次积分得 <span class="math inline">\(y=x^3/6+C_1x+C_2\)</span>，端点给出 <span class="math inline">\(C_2=0,C_1=5/6\)</span>。对任意固定端点扰动 <span class="math inline">\(h\)</span>，精确展开为 <span class="math display">\[I[y+h]-I[y]=\int_0^1\bigl[2y&#39;h&#39;+2xh+h&#39;^2\bigr]\mathrm{d}x
+=\int_0^1h&#39;^2\mathrm{d}x&gt;0\quad(h\ne0).\]</span> 中间用 <span class="math inline">\(y&#39;&#39;=x\)</span> 及 <span class="math inline">\(h(0)=h(1)=0\)</span> 消去一次项。因此这个驻点还是整个图形容许类中的唯一全局极小，结论比仅解出方程更强。</em></p>
+</div>
+<h3 id="离散化把路径看成很多个坐标"><span class="ms-secno">2.2.3</span>离散化：把路径看成很多个坐标</h3>
+<p>令 <span class="math inline">\(h=(b-a)/N\)</span>、<span class="math inline">\(x_k=a+kh\)</span>，固定 <span class="math inline">\(y_0,y_N\)</span>，用 <span class="math display">\[I_N=\sum_{k=1}^NhF\left(x_k,y_k,\frac{y_k-y_{k-1}}h\right)
+\tag{2.9}\]</span> 近似积分。内部 <span class="math inline">\(y_k\)</span> 只影响第 <span class="math inline">\(k\)</span> 和 <span class="math inline">\(k+1\)</span> 项，普通偏导数给出 <span class="math display">\[\frac{\partial I_N}{\partial y_k}
+=hF_y|_k+F_{y&#39;}|_k-F_{y&#39;}|_{k+1}=0.
+\tag{2.10}\]</span> 除以 <span class="math inline">\(h\)</span>，差分形式趋近 <span class="math inline">\(F_y-\mathrm{d}F_{y&#39;}/\mathrm{d}x=0\)</span>。这解释连续方程与多元极值条件的联系，但不是一般的数值收敛定理；离散驻点是否逼近指定连续解，还依赖正则性、离散格式和解的稳定性。</p>
+<h3 id="首次积分与多个未知函数"><span class="ms-secno">2.2.4</span>首次积分与多个未知函数</h3>
+<p>沿驻值路径应用乘积法则，有 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}x}(F-y&#39;F_{y&#39;})
+=F_x+y&#39;\left(F_y-\frac{\mathrm{d}F_{y&#39;}}{\mathrm{d}x}\right)=F_x.\]</span> 若 <span class="math inline">\(F\)</span> 不显含 <span class="math inline">\(x\)</span>，则有<strong>贝尔特拉米恒等式</strong> <span class="math display">\[F-y&#39;F_{y&#39;}=C.
+\tag{2.11}\]</span> 这是沿解成立的首次积分，不是任意曲线上的恒等式；也不保证凡满足它的退化解均满足原欧拉–拉格朗日方程，应代回核验。</p>
+<p>若 <span class="math inline">\(I\)</span> 依赖多个函数 <span class="math inline">\(y_i(x)\)</span>，在无额外约束时各方向独立，故 <span class="math display">\[F_{y_i}-\frac{\mathrm{d}}{\mathrm{d}x}F_{y_i&#39;}=0,\qquad i=1,\ldots,n.
+\tag{2.12}\]</span> 若 <span class="math inline">\(F\)</span> 不显含某个 <span class="math inline">\(y_i\)</span>，则 <span class="math display">\[F_{y_i&#39;}=\text{常量}.
+\tag{2.13}\]</span> 第三章会把这解释为循环坐标与守恒动量。若再作 <span class="math inline">\(F\to F+\mathrm{d}G(x,y)/\mathrm{d}x\)</span>，泛函只改变 <span class="math inline">\([G]_a^b\)</span>；固定端点时它不改变内部方程，但自由端点时边界条件可能改变。</p>
+<h2 id="边界条件和约束容许变分决定答案"><span class="ms-secno">2.3</span>边界条件和约束：容许变分决定答案</h2>
+<h3 id="自然边界条件"><span class="ms-secno">2.3.1</span>自然边界条件</h3>
+<p>若 <span class="math inline">\(a,b\)</span> 固定，而 <span class="math inline">\(y(b)\)</span> 自由，则先取内部扰动得到欧拉–拉格朗日方程，再任取终点扰动，式 (2.6) 要求 <span class="math display">\[F_{y&#39;}(b)=0.
+\tag{2.14}\]</span> 起点自由时同理；仅自由的端点才有这条条件，不能在固定端点上额外强加它。若泛函另含端点代价 <span class="math inline">\(B(y(b))\)</span>，则条件改为 <span class="math inline">\(F_{y&#39;}(b)+B_y=0\)</span>。</p>
+<div class="example">
+<p><strong>例 1.3</strong> (到一条竖直直线的最短距离).  <em>取 <span class="math inline">\(I=\int_0^L\sqrt{1+y&#39;^2}\mathrm{d}x\)</span>，<span class="math inline">\(y(0)=0\)</span>，终点在 <span class="math inline">\(x=L&gt;0\)</span> 上自由滑动。内部方程给出直线 <span class="math inline">\(y=kx\)</span>，边界条件给出 <span class="math inline">\(k/\sqrt{1+k^2}=0\)</span>，所以 <span class="math inline">\(y=0\)</span>。它垂直目标直线；并且所有容许图形长度至少为 <span class="math inline">\(\int_0^L1\mathrm{d}x=L\)</span>，故确实达到全局最短。</em></p>
+</div>
+<h3 id="移动端点与横截条件的推导"><span class="ms-secno">2.3.2</span>移动端点与横截条件的推导</h3>
+<p>现在令终点横坐标也可变，<span class="math inline">\(b_\epsilon=b+\epsilon\Delta b\)</span>，终点总纵向变化为 <span class="math inline">\(\Delta y_B\)</span>。若 <span class="math inline">\(y_\epsilon(x)=y(x)+\epsilon\eta(x)\)</span>，则 <span class="math display">\[y_\epsilon(b_\epsilon)=y(b)+\epsilon[\eta(b)+y&#39;(b)\Delta b]+O(\epsilon^2),\]</span> 故 <span class="math inline">\(\eta(b)=\Delta y_B-y&#39;(b)\Delta b\)</span>。积分上限移动还产生 <span class="math inline">\(F(b)\Delta b\)</span>，于是内部方程满足后，终点贡献为 <span class="math display">\[\delta I\big|_B=F_{y&#39;}\Delta y_B+(F-y&#39;F_{y&#39;})\Delta b.
+\tag{2.15}\]</span> 若端点沿 <span class="math inline">\(y_B=\psi(b)\)</span> 移动，<span class="math inline">\(\Delta y_B=\psi&#39;(b)\Delta b\)</span>，由 <span class="math inline">\(\Delta b\)</span> 的任意性得到<strong>横截条件</strong> <span class="math display">\[\boxed{F+(\psi&#39;-y&#39;)F_{y&#39;}=0\quad\text{在终点成立}.}\]</span> 对长度泛函，化为 <span class="math inline">\(1+y&#39;\psi&#39;=0\)</span>，即两切线正交。目标竖直线应采用前面的固定 <span class="math inline">\(b\)</span> 情形，不应把无穷大的 <span class="math inline">\(\psi&#39;\)</span> 硬代入这个公式。</p>
+<figure id="fig:var-free-end">
+<img src="figs/ch02-fig3.svg" style="width:86.0%" />
+<figcaption>移动端点的容许位移沿目标线。最短连接段垂直目标线，正交条件来自终点边界项，而非内部微分方程。</figcaption>
+</figure>
+<h3 id="积分约束与乘子的条件"><span class="ms-secno">2.3.3</span>积分约束与乘子的条件</h3>
+<p>设还要求 <span class="math inline">\(J[y]=\int_a^bG(x,y,y&#39;)\mathrm{d}x=\ell\)</span>。在约束正则，即一阶线性泛函 <span class="math inline">\(\delta J\)</span> 不恒为零的条件下，受约束驻点满足存在<strong>常数</strong> <span class="math inline">\(\lambda\)</span> 使 <span class="math display">\[\delta(I-\lambda J)=0,
+\tag{2.16}\]</span> 也就是对 <span class="math inline">\(\widetilde F=F-\lambda G\)</span> 求 <span class="math display">\[\widetilde F_y-\frac{\mathrm{d}}{\mathrm{d}x}\widetilde F_{y&#39;}=0.
+\tag{2.17}\]</span> 乘子与积分上限无关，由边界值和积分约束共同确定。理由与有限维相同：若 <span class="math inline">\(\delta I\)</span> 在 <span class="math inline">\(\delta J\)</span> 的核空间上为零，选一个 <span class="math inline">\(\delta J\ne0\)</span> 的方向作为补方向，即可写 <span class="math inline">\(\delta I=\lambda\delta J\)</span>。若 <span class="math inline">\(\delta J\)</span> 处处为零，这个常规推理失效，需分析异常约束，不能直接套用归一化乘子形式。</p>
+<p>点态约束 <span class="math inline">\(g(x,y_1,\ldots,y_n)=0\)</span> 则在每个 <span class="math inline">\(x\)</span> 都施加条件，通常引入函数乘子 <span class="math inline">\(\lambda(x)\)</span>。积分约束的常数乘子和点态约束的函数乘子不要混淆。第三章还会说明：对非完整速度约束，简单把约束加入作用量未必给出物理运动。</p>
+<div class="example">
+<p><strong>例 1.4</strong> (圆弧面积问题：限制图形类后再求解).  <em>固定端点 <span class="math inline">\((0,0),(d,0)\)</span>，要求 <span class="math inline">\(y(x)\ge0\)</span> 且弧长为 <span class="math inline">\(\ell\)</span>。本例先限制为光滑图形，并取 <span class="math inline">\(d&lt;\ell&lt;\pi d/2\)</span>。最大化面积 <span class="math inline">\(A=\int_0^dy\mathrm{d}x\)</span>。令 <span class="math display">\[\widetilde F=y-\lambda\sqrt{1+y&#39;^2},
+\qquad
+1+\lambda\frac{y&#39;&#39;}{(1+y&#39;^2)^{3/2}}=0.\]</span> 曲率为常数，取上凸圆弧对应 <span class="math inline">\(\lambda=R&gt;0\)</span>。由对称性，圆心横坐标为 <span class="math inline">\(d/2\)</span>。用半圆心角 <span class="math inline">\(0&lt;\alpha&lt;\pi/2\)</span> 表示， <span class="math display">\[d=2R\sin\alpha,\qquad \ell=2R\alpha,\qquad
+\frac\ell d=\frac\alpha{\sin\alpha},\]</span> <span class="math display">\[y_*(x)=\sqrt{R^2-(x-d/2)^2}-R\cos\alpha.\]</span> 上述比例在此范围单调，端点与长度唯一确定 <span class="math inline">\(R,\alpha\)</span>。还可以证明极大性：<span class="math inline">\(-R\sqrt{1+p^2}\)</span> 对斜率 <span class="math inline">\(p\)</span> 严格凹，而 <span class="math inline">\(y\)</span> 项线性，故对任意同端点图形 <span class="math display">\[(A-R\mathcal L)[y]-(A-R\mathcal L)[y_*]
+\le\delta(A-R\mathcal L)[y_*;y-y_*]=0.\]</span> 若弧长相同，便有 <span class="math inline">\(A[y]\le A[y_*]\)</span>，等号只对应同一图形。</em></p>
+<p><em>不能把这个图形证明无条件用于任意大弧长：<span class="math inline">\(\ell\to\pi d/2\)</span> 时圆弧趋于半圆，端点斜率发散；再大的圆弧会有回折，不能由一个光滑 <span class="math inline">\(y(x)\)</span> 表示。闭合曲线等周定理需要参数化曲线的容许类，本例没有假装已证明它的全部版本。</em></p>
+</div>
+<h2 id="二阶变分驻值为什么不一定是极小"><span class="ms-secno">2.4</span>二阶变分：驻值为什么不一定是极小？</h2>
+<h3 id="二次型必要条件与充分条件"><span class="ms-secno">2.4.1</span>二次型、必要条件与充分条件</h3>
+<p>固定端点时，对同一族 <span class="math inline">\(y+\epsilon\eta\)</span> 再求一次参数导数，定义 <span class="math display">\[\delta^2 I[y;\eta]=\left.\frac{\mathrm{d}^2}{\mathrm{d}\epsilon^2}I[y+\epsilon\eta]\right|_0.\]</span> 注意在泰勒展开中它前面有 <span class="math inline">\(1/2\)</span>，这只是约定，不影响符号。直接求导两次： <span class="math display">\[\begin{aligned}
+\delta^2 I
+&amp;=\int_a^b(F_{yy}\eta^2+2F_{yy&#39;}\eta\eta&#39;+F_{y&#39;y&#39;}\eta&#39;^2)\mathrm{d}x\\
+&amp;=\int_a^b\left(P\eta&#39;^2+Q\eta^2\right)\mathrm{d}x,\qquad
+P=F_{y&#39;y&#39;},\quad Q=F_{yy}-\frac{\mathrm{d}F_{yy&#39;}}{\mathrm{d}x}.
+\end{aligned}\tag{2.18}\]</span> 第二步对 <span class="math inline">\(2F_{yy&#39;}\eta\eta&#39;=F_{yy&#39;}(\eta^2)&#39;\)</span> 分部积分，端点项因 <span class="math inline">\(\eta=0\)</span> 消失。各系数沿待检验的驻值路径取值。</p>
+<p>局部极小要求 <span class="math inline">\(\delta^2I\ge0\)</span> 对所有容许方向成立，这是必要条件；若存在正、负两种方向，则为鞍点。对正则标量问题，局部极小还必须满足勒让德条件 <span class="math inline">\(F_{y&#39;y&#39;}\ge0\)</span>。严格的 <span class="math inline">\(F_{y&#39;y&#39;}&gt;0\)</span> 常作为加强条件，但它<strong>单独并不保证极小</strong>，因为 <span class="math inline">\(Q\eta^2\)</span> 可能贡献负值。</p>
+<p>在无限维函数空间里，也不能不说明拓扑和余项控制，就将“每个方向二阶导数均正”直接当作统一邻域内的充分条件。一个实用的充分条件是：<span class="math inline">\(F\)</span> 在候选路径附近足够光滑，二次型有统一正下界 <span class="math display">\[\delta^2I[y;\eta]\ge c\int_a^b\eta&#39;^2\mathrm{d}x,\qquad c&gt;0,\]</span> 且泰勒余项相对于该范数可一致控制。例如连续系数满足 <span class="math inline">\(P\ge p_0&gt;0,Q\ge0\)</span> 时，配合固定端点的庞加莱不等式即可得到所需估计，因而在足够小的 <span class="math inline">\(C^1\)</span> 邻域内有严格弱极小。这里“弱”指函数值和一阶导数均接近，不是说极小结论不严格。</p>
+<div class="example">
+<p><strong>例 1.5</strong> (直线不仅驻值，而且全局最短).  <em>对 <span class="math inline">\(F=\sqrt{1+y&#39;^2}\)</span>，有 <span class="math inline">\(P=(1+y&#39;^2)^{-3/2}&gt;0,Q=0\)</span>。固定两端的驻值路径为直线，因此二阶变分为正。还可不依赖局部判据：对任意参数化路径，<span class="math inline">\(\int|\mathrm{d}\mathbf{r}|\ge|\mathbf{r}_B-\mathbf{r}_A|\)</span>，等号对应同向直线段。这个三角不等式给出全局最短，且说明同一直线若往返折返，虽仍落在一条直线上，却不达到等号。</em></p>
+</div>
+<h3 id="作用量随时间区间改变性质的例子"><span class="ms-secno">2.4.2</span>作用量随时间区间改变性质的例子</h3>
+<p>取谐振子作用量 <span class="math display">\[S[q]=\frac m2\int_0^T(\dot q^2-\omega^2q^2)\mathrm{d}t,
+\qquad q(0)=q(T)=0,\quad m,\omega&gt;0.\]</span> <span class="math inline">\(q_*=0\)</span> 对所有 <span class="math inline">\(T\)</span> 都是驻值路径。对固定端点扰动 <span class="math inline">\(\eta\)</span>， <span class="math display">\[\delta^2S=m\int_0^T(\dot\eta^2-\omega^2\eta^2)\mathrm{d}t.\]</span> 取 <span class="math inline">\(\eta=A\sin(n\pi t/T)\)</span>，利用正弦与余弦平方的积分均为 <span class="math inline">\(T/2\)</span>，得 <span class="math display">\[\delta^2S=\frac{mA^2T}{2}\left[\left(\frac{n\pi}{T}\right)^2-\omega^2\right].
+\tag{2.19}\]</span> 若 <span class="math inline">\(T&lt;\pi/\omega\)</span>，固定端点的庞加莱不等式 <span class="math inline">\(\int\dot\eta^2\mathrm{d}t\ge(\pi/T)^2\int\eta^2\mathrm{d}t\)</span> 保证所有非零方向均为正；本例是精确二次泛函，所以 <span class="math inline">\(q=0\)</span> 还是全局严格极小。若 <span class="math inline">\(T=\pi/\omega\)</span>，<span class="math inline">\(\eta=A\sin\omega t\)</span> 给出零二阶变分，而且这些路径的作用量确实全都为零，极小不严格。若 <span class="math inline">\(T&gt;\pi/\omega\)</span>，<span class="math inline">\(n=1\)</span> 给负方向，足够大的 <span class="math inline">\(n\)</span> 给正方向，故是鞍点。</p>
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>“最小作用量”是传统名称。即使 <span class="math inline">\(F_{\dot q\dot q}=m&gt;0\)</span>，谐振子在较长时间区间的作用量仍有负变分方向。作用量极小性也不等同于动力学稳定性：谐振子的轨道稳定，并不意味着任意两时刻之间的作用量都是最小值。</p>
+</div>
+<figure id="fig:var-second-sign">
+<img src="figs/ch02-fig4.svg" style="width:86.0%" />
+<figcaption>无量纲二阶变分系数 <span class="math inline">\(\Lambda_n=n^2/\tau^2-1\)</span>。第一个模在 <span class="math inline">\(T=\pi/\omega\)</span> 变号；一个负模已足以否定极小性。图线由式 (2.19) 直接绘出。</figcaption>
+</figure>
+<h3 id="进一步探索雅可比方程与共轭点"><span class="ms-secno">2.4.3</span>进一步探索：雅可比方程与共轭点</h3>
+<p>对二次型 <span class="math inline">\(\mathcal Q[\eta]=\int(P\eta&#39;^2+Q\eta^2)\mathrm{d}x\)</span> 作变分，内部驻值条件为 <span class="math display">\[-\frac{\mathrm{d}}{\mathrm{d}x}(P\eta&#39;)+Q\eta=0.
+\tag{2.20}\]</span> 它是<strong>零模方程</strong>；若要在 <span class="math inline">\(\int\eta^2\mathrm{d}x=1\)</span> 下最小化该二次型，则右边是 <span class="math inline">\(\lambda\eta\)</span>，不能漏掉归一化乘子。总存在零解，讨论共轭点时寻找的是非平凡解。</p>
+<p>在 <span class="math inline">\(P&gt;0\)</span> 且系数正则的标量问题中，固定起点 <span class="math inline">\(a\)</span>，若存在非平凡解满足 <span class="math inline">\(\eta(a)=\eta(c)=0\)</span>，则称 <span class="math inline">\(c&gt;a\)</span> 与 <span class="math inline">\(a\)</span> 共轭。它不是要求区间内完全不存在非零解，而是要求不存在具有指定两个零点的解。加强勒让德条件与区间 <span class="math inline">\((a,b]\)</span> 上无共轭点相结合，给出通常的固定端点严格弱极小判据；证明涉及二次型分解，作为进阶阅读，不用它替代前面已给出的直接检查。</p>
+<p>谐振子中 <span class="math inline">\(P=m,Q=-m\omega^2\)</span>，雅可比方程是 <span class="math inline">\(\ddot\eta+\omega^2\eta=0\)</span>，起点为零的非平凡解正比于 <span class="math inline">\(\sin\omega t\)</span>，首个共轭时刻正是 <span class="math inline">\(\pi/\omega\)</span>，与上面的模态计算一致。学习这个拓展需要二阶线性常微分方程和边值问题。</p>
+<h2 id="几何与力学中的变分问题"><span class="ms-secno">2.5</span>几何与力学中的变分问题</h2>
+<h3 id="平面最短路径与曲面测地线"><span class="ms-secno">2.5.1</span>平面最短路径与曲面测地线</h3>
+<p>长度泛函的被积函数不显含 <span class="math inline">\(y\)</span>，由式 (2.13) 得 <span class="math inline">\(y&#39;/\sqrt{1+y&#39;^2}=C\)</span>，所以 <span class="math inline">\(y&#39;\)</span> 为常数，端点确定直线。</p>
+<p>在曲面上，使用局部坐标 <span class="math inline">\(q^1,q^2\)</span>，定义正定度规 <span class="math display">\[\mathrm{d}s^2=g_{ij}(q)\mathrm{d}q^i\mathrm{d}q^j,\]</span> 重复指标求和，<span class="math inline">\(g_{ij}=g_{ji}\)</span>，逆矩阵为 <span class="math inline">\(g^{ij}\)</span>。用任意正则参数 <span class="math inline">\(u\)</span> 表示曲线，令 <span class="math display">\[N=\sqrt{g_{ij}q&#39;^iq&#39;^j},\qquad \mathcal L=\int N\mathrm{d}u,\]</span> 此处撇号表示 <span class="math inline">\(\mathrm{d}/\mathrm{d}u\)</span>，<span class="math inline">\(u\)</span> 不必是物理时间。先求偏导： <span class="math display">\[N_{q&#39;^k}=\frac{g_{kj}q&#39;^j}{N},\qquad
+N_{q^k}=\frac{\partial_kg_{ij}q&#39;^iq&#39;^j}{2N}.\]</span> 将它们代入欧拉–拉格朗日方程，乘以 <span class="math inline">\(N\)</span> 并展开： <span class="math display">\[g_{kj}q&#39;&#39;^j+\partial_i g_{kj}q&#39;^iq&#39;^j
+-\frac12\partial_kg_{ij}q&#39;^iq&#39;^j
+=\frac{N&#39;}N g_{kj}q&#39;^j.\]</span> 把二次速度项对称化，乘以 <span class="math inline">\(g^{mk}\)</span>，得到 <span class="math display">\[q&#39;&#39;^m+\Gamma^m_{ij}q&#39;^iq&#39;^j=\frac{N&#39;}Nq&#39;^m,\]</span> <span class="math display">\[\Gamma^m_{ij}=\frac12g^{mk}(\partial_i g_{kj}+\partial_j g_{ki}-\partial_k g_{ij}).
+\tag{2.21}\]</span> 若在导出方程后选择弧长 <span class="math inline">\(s\)</span> 或其仿射变换为参数，<span class="math inline">\(N\)</span> 为常数，右侧消失： <span class="math display">\[\boxed{\frac{\mathrm{d}^2q^m}{\mathrm{d}s^2}+\Gamma^m_{ij}\frac{\mathrm{d}q^i}{\mathrm{d}s}\frac{\mathrm{d}q^j}{\mathrm{d}s}=0.}
+\tag{2.22}\]</span> 不能先把 <span class="math inline">\(N=1\)</span> 代入被积函数再变分，那样会错误地把长度泛函变成常数。测地线是弧长驻值的曲线，只在足够短、未跨过相应共轭点的弧段上保证局部最短，未必全局最短。</p>
+<div class="example">
+<p><strong>例 1.6</strong> (球面：大圆长弧为何不是最短？).  <em>半径为 <span class="math inline">\(R\)</span> 的球面，取 <span class="math inline">\(q^1=\theta,q^2=\varphi\)</span>，有 <span class="math display">\[g_{\theta\theta}=R^2,\quad g_{\varphi\varphi}=R^2\sin^2\theta.\]</span> 唯一非零的度规偏导是 <span class="math inline">\(\partial_\theta g_{\varphi\varphi}=2R^2\sin\theta\cos\theta\)</span>。因此 <span class="math display">\[\Gamma^\theta_{\varphi\varphi}=-\sin\theta\cos\theta,\qquad
+\Gamma^\varphi_{\theta\varphi}=\Gamma^\varphi_{\varphi\theta}=\cot\theta,\]</span> <span class="math display">\[\theta&#39;&#39;-\sin\theta\cos\theta\,\varphi&#39;^2=0,\qquad
+\varphi&#39;&#39;+2\cot\theta\,\theta&#39;\varphi&#39;=0,\]</span> 撇号现表示对弧长求导。赤道解为 <span class="math inline">\(\theta=\pi/2,\varphi=\varphi_0\pm s/R\)</span>；系数须满足单位速率条件，不能任取。球面对称性及初值唯一性说明一般正则测地线是大圆的一段。</em></p>
+<p><em>两个非对跖点间存在同一大圆上的短弧和长弧，长度分别为 <span class="math inline">\(R\beta\)</span> 与 <span class="math inline">\(R(2\pi-\beta)\)</span>，<span class="math inline">\(0&lt;\beta&lt;\pi\)</span>。两者都满足测地线方程，只有短弧是全局最短。对跖点间则有无穷多等长的大圆半圆，最短路径不唯一。球坐标的极点奇异需换坐标，不是曲面本身有奇点。</em></p>
+</div>
+<figure id="fig:var-great-circle">
+<img src="figs/ch02-fig5.svg" style="width:86.0%" />
+<figcaption>在过球心的大圆平面中观察两端点。短、长两弧均是球面测地线；满足驻值方程不等于在所有连接路径中长度最小。</figcaption>
+</figure>
+<h3 id="悬链线坐标方向长度约束与张力"><span class="ms-secno">2.5.2</span>悬链线：坐标方向、长度约束与张力</h3>
+<div class="example">
+<p><strong>例 1.7</strong> (均匀柔绳的平衡形状).  <em>柔绳线密度为 <span class="math inline">\(\rho_\ell\)</span>，两端固定，绳长为 <span class="math inline">\(\ell\)</span>，不可伸长，忽略弯曲刚度，均匀重力竖直向下。本例取 <span class="math inline">\(y\)</span> 向上，故势能应为 <span class="math display">\[V[y]=\rho_\ell g\int y\mathrm{d}s
+=\rho_\ell g\int y\sqrt{1+y&#39;^2}\mathrm{d}x,\]</span> 不能写成与向上坐标相反的负号。固定长度 <span class="math inline">\(\mathcal L=\int\sqrt{1+y&#39;^2}\mathrm{d}x=\ell\)</span>，将常数 <span class="math inline">\(\rho_\ell g\)</span> 提出，并用长度量纲的乘子 <span class="math inline">\(\lambda\)</span>，得到 <span class="math display">\[\widetilde F=(y-\lambda)\sqrt{1+y&#39;^2}.\]</span> 由于不显含 <span class="math inline">\(x\)</span>，式 (2.11) 给出 <span class="math display">\[\frac{y-\lambda}{\sqrt{1+y&#39;^2}}=a.\]</span> 选择实际下垂、张力为正的分支 <span class="math inline">\(a&gt;0\)</span>。由平方关系 <span class="math display">\[y&#39;^2=\frac{(y-\lambda)^2-a^2}{a^2}\]</span> 分离变量。在最低点右侧取正斜率，左侧取负斜率，两支合起来为 <span class="math display">\[y=\lambda+a\cosh\frac{x-x_0}{a}
+=y_{\min}+a\left[\cosh\frac{x-x_0}{a}-1\right],
+\qquad y_{\min}=\lambda+a.
+\tag{2.23}\]</span> <span class="math inline">\(x_0\)</span>、<span class="math inline">\(a\)</span> 和高度常数须由两端位置及绳长确定，不能只通过“吸收常数”忽略物理支点高度。</em></p>
+<p><em>对等高支点 <span class="math inline">\((-d,H),(d,H)\)</span>，有 <span class="math inline">\(x_0=0\)</span>， <span class="math display">\[\ell=\int_{-d}^d\cosh(x/a)\mathrm{d}x=2a\sinh(d/a),\qquad
+H-y_{\min}=a[\cosh(d/a)-1].\]</span> 当 <span class="math inline">\(\ell&gt;2d\)</span>，长度方程给出唯一 <span class="math inline">\(a&gt;0\)</span>；<span class="math inline">\(\ell\downarrow2d\)</span> 时 <span class="math inline">\(a\to\infty\)</span>，绳近乎拉直，有限重量下张力趋大。若 <span class="math inline">\(\ell&lt;2d\)</span>，不可伸长绳根本无法连接支点。</em></p>
+<p><em>从第一章受力分析独立核验：设水平张力分量 <span class="math inline">\(H_T\)</span> 恒定，以最低点为弧长原点，带符号弧长为 <span class="math display">\[s=a\sinh(x/a).\]</span> 竖直张力分量为 <span class="math inline">\(\rho_\ell gs\)</span>，切线斜率为 <span class="math display">\[y&#39;=\frac{\rho_\ell gs}{H_T}=\sinh(x/a)
+\quad\Longrightarrow\quad H_T=\rho_\ell ga.\]</span> 这既确认了坐标符号，也说明 <span class="math inline">\(a\)</span> 的力学意义。变分方程给出平衡候选，实际悬挂支取正张力；这里没有仅凭一阶变分就宣称所有可能曲线类中的全局唯一稳定性。</em></p>
+</div>
+<figure id="fig:var-catenary">
+<img src="figs/ch02-fig6.svg" style="width:86.0%" />
+<figcaption>由解析双曲余弦函数绘制的下垂绳。<span class="math inline">\(y\)</span> 向上而重力向下；绳长是沿弧线的积分，不能误用水平跨度。</figcaption>
+</figure>
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>均匀绳的重量按<em>弧长</em>均匀分布，产生悬链线；若悬索负载主要按<em>水平长度</em>均匀分布，受力方程不同，可得到抛物线。曲线看起来接近不代表模型相同。悬链线在 <span class="math inline">\(|x-x_0|\ll a\)</span> 时也有局部展开 <span class="math inline">\(y\simeq y_{\min}+(x-x_0)^2/(2a)\)</span>。</p>
+</div>
+<h3 id="最速降线解端点与时间验证"><span class="ms-secno">2.5.3</span>最速降线：解、端点与时间验证</h3>
+<p>本例重新取 <span class="math inline">\(y\)</span> 向下。内部 <span class="math inline">\(y&gt;0\)</span> 时，令 <span class="math display">\[F=\frac{\sqrt{1+y&#39;^2}}{\sqrt{2gy}},
+\qquad F-y&#39;F_{y&#39;}=\frac1{\sqrt{2gy}\sqrt{1+y&#39;^2}}=C&gt;0.\]</span> 定义 <span class="math inline">\(a=1/(4gC^2)&gt;0\)</span>，得到 <span class="math display">\[y&#39;^2=\frac{2a-y}{y}.
+\tag{2.24}\]</span> 作 <span class="math inline">\(y=a(1-\cos\theta)\)</span>，可用参数化方式同时覆盖斜率换号： <span class="math display">\[\boxed{x=a(\theta-\sin\theta),\qquad y=a(1-\cos\theta).}
+\tag{2.25}\]</span> 当 <span class="math inline">\(0&lt;\theta&lt;\pi\)</span>，<span class="math inline">\(x_\theta=a(1-\cos\theta)&gt;0\)</span>、<span class="math inline">\(y_\theta=a\sin\theta&gt;0\)</span>，曲线下行；<span class="math inline">\(\pi&lt;\theta&lt;2\pi\)</span> 时 <span class="math inline">\(x\)</span> 仍增大而 <span class="math inline">\(y\)</span> 减小，曲线回升。故分离变量写 <span class="math inline">\(\mathrm{d}x=\sqrt{y/(2a-y)}\mathrm{d}y\)</span> 只适用于前一支，不能用正根覆盖整条摆线。</p>
+<p>由端点 <span class="math inline">\(B=(X,Y)\)</span>，<span class="math inline">\(X,Y&gt;0\)</span>，要求 <span class="math display">\[\frac XY=\frac{\theta_B-\sin\theta_B}{1-\cos\theta_B},\qquad
+ a=\frac Y{1-\cos\theta_B}.\]</span> 上述比值在首拱 <span class="math inline">\(0&lt;\theta_B&lt;2\pi\)</span> 上从0连续严格增至无穷，可由求导核验，故正端点唯一确定首拱参数解；若 <span class="math inline">\(X/Y&lt;\pi/2\)</span>，终点在下行段，若 <span class="math inline">\(X/Y&gt;\pi/2\)</span>，最速降线候选先降到终点以下再回升，不能始终描述成“先陡后平”。</p>
+<p>直接计算弧元和速度： <span class="math display">\[\frac{\mathrm{d}s}{\mathrm{d}\theta}=2a\sin(\theta/2),\qquad
+v=\sqrt{2gy}=2\sqrt{ga}\sin(\theta/2),\]</span> 于是 <span class="math display">\[\mathrm{d}t=\sqrt{a/g}\mathrm{d}\theta,\qquad T_B=\theta_B\sqrt{a/g}.
+\tag{2.26}\]</span> 尽管起点速度为零、切线竖直，二者的零因子相消后时间积分有限。这是对起点奇性的检查；曲线不是在端点具有有限导数的 <span class="math inline">\(C^2\)</span> 图形，前面的正则推导仅用于内部。</p>
+<div class="example">
+<p><strong>例 1.8</strong> (同一终点下与直线比较).  <em>取教学参数 <span class="math inline">\(X=Y=1\,\mathrm m\)</span>、<span class="math inline">\(g=9.8\,\mathrm{m/s^2}\)</span>。端点方程数值求得 <span class="math inline">\(\theta_B\simeq2.4120\)</span>、<span class="math inline">\(a\simeq0.5729\,\mathrm m\)</span>，故 <span class="math inline">\(T_B\simeq0.583\,\mathrm s\)</span>。直线长为 <span class="math inline">\(D=\sqrt{X^2+Y^2}\)</span>，沿线的恒定加速度为 <span class="math inline">\(gY/D\)</span>，所以 <span class="math display">\[T_{\rm line}=\sqrt{\frac{2D}{gY/D}}
+=\sqrt{\frac{2(X^2+Y^2)}{gY}}\simeq0.639\,\mathrm s.\]</span> 两条路径使用相同起点、终点、初速及重力模型，比较才有意义。该数值不是实际实验测量。</em></p>
+</div>
+<figure id="fig:var-brachistochrone">
+<img src="figs/ch02-fig7.svg" style="width:86.0%" />
+<figcaption>参数为 <span class="math inline">\(0\le\theta\le2.4\)</span> 的精确摆线及同端点直线。<span class="math inline">\(y\)</span> 轴向下，与能量关系 <span class="math inline">\(v^2=2gy\)</span> 的约定一致。</figcaption>
+</figure>
+<h5 id="何时已证明最速而非只求到驻值">何时已证明“最速”，而非只求到驻值？</h5>
+<p>对下行段 <span class="math inline">\(0&lt;\theta_B&lt;\pi\)</span>，可在单调深度的路径类中以 <span class="math inline">\(y\)</span> 为自变量，写 <span class="math inline">\(x=x(y)\)</span>。时间泛函变为 <span class="math display">\[T[x]=\int_0^Y f(y,w)\mathrm{d}y,\quad w=\frac{\mathrm{d}x}{\mathrm{d}y},\qquad
+f(y,w)=\frac{\sqrt{1+w^2}}{\sqrt{2gy}}.\]</span> <span class="math inline">\(f_{ww}&gt;0\)</span>，且摆线解上 <span class="math inline">\(f_w\)</span> 是常数。因此凸性给出 <span class="math display">\[T[x]-T[x_*]\ge\int_0^Y f_w(y,x_*&#39;)(x&#39;-x_*&#39;)\mathrm{d}y
+=C_x[x-x_*]_0^Y=0.\]</span> 在端点极限可积、同端点且有限时间的这类图形中，摆线达到严格最小。这里利用了一个比欧拉–拉格朗日方程更强的论证。对于允许深度回升的更大曲线类，或 <span class="math inline">\(\theta_B&gt;\pi\)</span> 的情形，本段单调深度证明不适用；完整最速降线理论需另作参数化比较，本章不将其冒充为已证明的结论。</p>
+<h3 id="作用量初步从变分返回牛顿方程"><span class="ms-secno">2.5.4</span>作用量初步：从变分返回牛顿方程</h3>
+<div class="example">
+<p><strong>例 1.9</strong> (固定时间端点的一维保守粒子).  <em>取质量恒定、势能 <span class="math inline">\(V(q)\)</span> 光滑的粒子，定义 <span class="math display">\[L(q,\dot q)=\tfrac12m\dot q^2-V(q),\qquad
+S[q]=\int_{t_1}^{t_2}L\mathrm{d}t.\]</span> 固定 <span class="math inline">\(t_1,t_2\)</span> 及两端位置，取 <span class="math inline">\(q_\epsilon=q+\epsilon\eta\)</span>、<span class="math inline">\(\eta(t_1)=\eta(t_2)=0\)</span>。逐项变分并分部积分： <span class="math display">\[\delta S=\int_{t_1}^{t_2}(m\dot q\dot\eta-V&#39;(q)\eta)\mathrm{d}t
+=[m\dot q\eta]_{t_1}^{t_2}-\int_{t_1}^{t_2}(m\ddot q+V&#39;)\eta\mathrm{d}t.\]</span> 由扰动的任意性得 <span class="math inline">\(m\ddot q=-V&#39;(q)\)</span>。在此模型与边界条件下，牛顿方程与哈密顿驻作用量条件相互对应；不是对所有力学系统、非完整约束或耗散系统都无条件等价。</em></p>
+</div>
+<p>作用量的量纲是能量乘时间；它不是能量，也不要求沿真实轨道每时刻最小。给定 <span class="math inline">\(L\)</span> 是指定动力学模型，<span class="math inline">\(\delta S=0\)</span> 才是求其运动的规则。第三章将从约束与广义坐标系统展开这两件事。</p>
+<h2 id="进一步探索从几何光学到受约束优化"><span class="ms-secno">2.6</span>进一步探索：从几何光学到受约束优化</h2>
+<p>本节各项是拓展应用，不要求初学者掌握所有推导。它们分别展示多分量路径、空间场和动力学约束；不能把任意优化问题都笼统称为同一个物理原理。</p>
+<h3 id="梯度折射率中的光线方程"><span class="ms-secno">2.6.1</span>梯度折射率中的光线方程</h3>
+<p>设 <span class="math inline">\(\mathbf{r}(u)\)</span> 为正则路径，<span class="math inline">\(I=\int n(\mathbf{r})|\mathbf{r}&#39;|\mathrm{d}u\)</span>。对各坐标分量取偏导， <span class="math display">\[\frac{\partial F}{\partial r_i&#39;}=n\frac{r_i&#39;}{|\mathbf{r}&#39;|},\qquad
+\frac{\partial F}{\partial r_i}=|\mathbf{r}&#39;|\partial_i n.\]</span> 欧拉–拉格朗日方程给出 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}u}\left(n\frac{\mathbf{r}&#39;}{|\mathbf{r}&#39;|}\right)=|\mathbf{r}&#39;|\nabla n.\]</span> 导出后再取弧长 <span class="math inline">\(s\)</span> 为参数，得到 <span class="math display">\[\boxed{\frac{\mathrm{d}}{\mathrm{d}s}\left(n\frac{\mathrm{d}\mathbf{r}}{\mathrm{d}s}\right)=\nabla n.}
+\tag{2.27}\]</span> 令 <span class="math inline">\(\mathbf{e}_t=\mathrm{d}\mathbf{r}/\mathrm{d}s\)</span>，用 <span class="math inline">\(\mathrm{d}n/\mathrm{d}s=\mathbf{e}_t\cdot\nabla n\)</span> 分离出 <span class="math display">\[n\frac{\mathrm{d}\mathbf{e}_t}{\mathrm{d}s}=\nabla n-\mathbf{e}_t(\mathbf{e}_t\cdot\nabla n).\]</span> 只有折射率梯度的横向部分使光线弯曲；沿切向的梯度改变 <span class="math inline">\(n\mathbf{e}_t\)</span> 的大小。均匀介质中方向不变。</p>
+<div class="example">
+<p><strong>例 1.10</strong> (近轴梯度折射率模型).  <em>理想折射率在轴附近满足 <span class="math inline">\(n^2(x,y)=n_0^2[1-\alpha^2(x^2+y^2)]\)</span>，<span class="math inline">\(\alpha\)</span> 的量纲为逆长度。仅在 <span class="math inline">\(\alpha r\ll1\)</span> 且 <span class="math inline">\(|\mathrm{d}x/\mathrm{d}z|,|\mathrm{d}y/\mathrm{d}z|\ll1\)</span> 的近轴范围使用此模型，则 <span class="math inline">\(n\simeq n_0(1-\alpha^2r^2/2)\)</span>、<span class="math inline">\(\mathrm{d}s\simeq\mathrm{d}z\)</span>。保留线性横向项， <span class="math display">\[n_0\frac{\mathrm{d}^2x}{\mathrm{d}z^2}\simeq\partial_xn=-n_0\alpha^2x,
+\qquad \frac{\mathrm{d}^2y}{\mathrm{d}z^2}\simeq-\alpha^2y.\]</span> 给定 <span class="math inline">\(x(0)=x_0,x&#39;(0)=\beta_0\)</span>， <span class="math display">\[x(z)=x_0\cos\alpha z+\frac{\beta_0}{\alpha}\sin\alpha z.\]</span> 空间周期为 <span class="math inline">\(2\pi/\alpha\)</span>，不是时间周期；<span class="math inline">\(\alpha\to0\)</span> 恢复直线 <span class="math inline">\(x=x_0+\beta_0z\)</span>。对一般不同横向相位，三维光线不必落在一张平面中，不能一概称为平面正弦线。模型只处理给定光线的几何传播，不据此计算完整波导模或通信色散性能。</em></p>
+</div>
+<figure id="fig:var-grin">
+<img src="figs/ch02-fig8.svg" style="width:86.0%" />
+<figcaption>近轴平面光线的解析示意，<span class="math inline">\(\beta_0=0\)</span>，横轴按 <span class="math inline">\(\alpha z\)</span> 缩放。背景仅标示可用的轴附近区域，不表示已指定实际光纤的包层结构。</figcaption>
+</figure>
+<div class="example">
+<p><strong>例 1.11</strong> (折射率为 <span class="math inline">\(n(y)=y_0/y\)</span> 的理想介质).  <em>限定 <span class="math inline">\(y&gt;0,y_0&gt;0\)</span>，局部用 <span class="math inline">\(x=x(y)\)</span> 表示光线。<span class="math inline">\(F=y_0\sqrt{1+x&#39;^2}/y\)</span> 不显含 <span class="math inline">\(x\)</span>，故 <span class="math display">\[\frac{y_0x&#39;}{y\sqrt{1+x&#39;^2}}=C,\qquad k=C/y_0.\]</span> 若 <span class="math inline">\(k\ne0\)</span>，在 <span class="math inline">\(|ky|&lt;1\)</span> 的单调 <span class="math inline">\(y\)</span> 分支上，保留 <span class="math inline">\(k\)</span> 的符号得 <span class="math display">\[x&#39;=\frac{ky}{\sqrt{1-k^2y^2}},\qquad
+x-x_0=-\frac1k\sqrt{1-k^2y^2}.\]</span> 因此 <span class="math inline">\((x-x_0)^2+y^2=1/k^2\)</span>。完整光线可用参数拼接为上半平面的圆弧；另一侧分支需改变参数图，不是关于 <span class="math inline">\(x\)</span> 轴反射到禁用的 <span class="math inline">\(y&lt;0\)</span> 区域。若 <span class="math inline">\(C=0\)</span>，还存在 <span class="math inline">\(x=\mathrm{const}\)</span> 的竖直光线，除以 <span class="math inline">\(k\)</span> 时会漏掉它。<span class="math inline">\(y\to0\)</span> 处折射率发散，该理想模型不能无条件外推到实际材料边界。</em></p>
+</div>
+<h3 id="空间场振动弦的欧拉拉格朗日方程"><span class="ms-secno">2.6.2</span>空间场：振动弦的欧拉–拉格朗日方程</h3>
+<p>若未知量是 <span class="math inline">\(u(x,t)\)</span>，而非单一自变量的函数，可对时空积分作同样的分部积分。理想小振幅弦的线密度为 <span class="math inline">\(\rho_\ell\)</span>、恒定张力为 <span class="math inline">\(\mathcal T\)</span>，作用量为 <span class="math display">\[S[u]=\int_{t_1}^{t_2}\int_0^L
+\left(\tfrac12\rho_\ell u_t^2-\tfrac12\mathcal T u_x^2\right)\mathrm{d}x\mathrm{d}t.\]</span> 在时间端点和固定弦端令 <span class="math inline">\(\eta=0\)</span>。对两项分别按 <span class="math inline">\(t\)</span>、<span class="math inline">\(x\)</span> 分部积分： <span class="math display">\[\delta S=\iint(\rho_\ell u_t\eta_t-\mathcal T u_x\eta_x)\mathrm{d}x\mathrm{d}t
+=\iint(-\rho_\ell u_{tt}+\mathcal T u_{xx})\eta\mathrm{d}x\mathrm{d}t.\]</span> 边界项消失，故 <span class="math inline">\(\rho_\ell u_{tt}-\mathcal T u_{xx}=0\)</span>，波速为 <span class="math inline">\(\sqrt{\mathcal T/\rho_\ell}\)</span>。自由弦端则从空间边界项得到 <span class="math inline">\(\mathcal T u_x=0\)</span>，体现自然边界条件。这一拓展需要偏导数和二重积分，是进一步学习经典场论的入口。</p>
+<h3 id="动力学约束与最优控制的最简单例子"><span class="ms-secno">2.6.3</span>动力学约束与最优控制的最简单例子</h3>
+<p>令状态 <span class="math inline">\(x(t)\)</span> 满足 <span class="math inline">\(\dot x=u\)</span>，端点 <span class="math inline">\(x(0)=0,x(T)=D\)</span>，时间 <span class="math inline">\(T&gt;0\)</span> 固定。选择使 <span class="math inline">\(J=\frac12\int_0^Tu^2\mathrm{d}t\)</span> 最小的控制。引入函数乘子 <span class="math inline">\(\lambda(t)\)</span>，写 <span class="math display">\[\mathcal J=\int_0^T\left[\tfrac12u^2+\lambda(\dot x-u)\right]\mathrm{d}t.\]</span> 分别对 <span class="math inline">\(u,\lambda,x\)</span> 变分，固定状态端点后得到 <span class="math display">\[u-\lambda=0,\quad \dot x=u,\quad \dot\lambda=0.\]</span> 所以 <span class="math inline">\(u=D/T\)</span>，<span class="math inline">\(x=Dt/T\)</span>。用柯西–施瓦茨不等式独立验证： <span class="math display">\[D^2=\left(\int_0^Tu\mathrm{d}t\right)^2\le T\int_0^Tu^2\mathrm{d}t,\]</span> 故 <span class="math inline">\(J\ge D^2/(2T)\)</span>，等号正是恒定控制。本例没有加速度、推力限幅或障碍，不能直接当成真实飞行器最优轨道。更一般的问题还需要控制约束和端点条件，详见章末 MIT 最优控制讲义。</p>
+<h2 id="计算与模拟离散极值与连续解对照"><span class="ms-secno">2.7</span>计算与模拟：离散极值与连续解对照</h2>
+<p>回到 <span class="math inline">\(I[y]=\int_0^1(y&#39;^2+2xy)\mathrm{d}x\)</span>。令 <span class="math inline">\(h=1/N\)</span>，固定 <span class="math inline">\(y_0=0,y_N=1\)</span>，取一致的离散泛函 <span class="math display">\[I_N=\sum_{k=1}^N\frac{(y_k-y_{k-1})^2}{h}
++2h\sum_{k=1}^{N-1}x_ky_k.\]</span> 第二项的端点梯形修正只差一个固定常数，不改变驻点。逐个求偏导得三对角线性方程 <span class="math display">\[-y_{k-1}+2y_k-y_{k+1}=-h^2x_k,\qquad k=1,\ldots,N-1.\]</span> 矩阵正定，所以离散解是唯一极小。对本例，连续解是三次多项式，而中心差分二阶导数对三次多项式恰好精确，故节点值会直接重现解析解，不能用这个特例声称算法对一般问题没有截断误差。</p>
+<p>为检验一般二阶收敛，可另取 <span class="math inline">\(I=\frac12\int_0^1(y&#39;^2+y^2)\mathrm{d}x\)</span>，<span class="math inline">\(y(0)=0,y(1)=1\)</span>。连续解为 <span class="math inline">\(y=\sinh x/\sinh1\)</span>，离散方程为 <span class="math display">\[-y_{k-1}+(2+h^2)y_k-y_{k+1}=0.\]</span> 使用 <span class="math inline">\(N=20,40,80\)</span>，检查节点最大误差是否随步长减半约缩小4倍。随附数值脚本实现这两组检查。脚本位置为</p>
+<div class="center">
+<p><code>review/verify_ch02.py</code></p>
+</div>
+<p>它还核验悬链线、最速降线和二阶变分模型；计算检验不能代替对容许路径与边界条件的判断。</p>
+<h2 class="unnumbered" id="关键概念与常见误区">关键概念与常见误区</h2>
+<ul>
+<li><p>一阶变分是对路径族参数求导，有限泛函变化还包含二次及更高项。</p></li>
+<li><p>路径扰动比较相同独立变量处的不同函数；真实运动位移沿同一条路径前进，二者不同。</p></li>
+<li><p>固定端点使边界项消失；自由端点从边界项得到条件，而非把它丢掉。</p></li>
+<li><p>解欧拉–拉格朗日方程得到驻值候选，极小、极大和鞍点需另行检验。</p></li>
+<li><p>固定积分约束使用常数乘子；逐点施加的约束一般使用函数乘子。</p></li>
+<li><p>选择弧长参数应在变分方程导出后完成，不能先令长度被积函数等于1。</p></li>
+<li><p>曲线图形的表示可能只覆盖一支；最速降线竖直起点、圆弧回折和坐标奇点须单独处理。</p></li>
+</ul>
+<h2 class="unnumbered" id="本章小结">本章小结</h2>
+<p>变分法把问题组织成四步：规定容许函数及边界条件；对路径族求一阶导数；分部积分以分离内部方程和边界项；最后用二阶变分、凸性、几何不等式或独立物理方法判断候选的性质。费马光程、最速降线时间、绳的势能和粒子作用量有相似数学结构，但物理假设、量纲与容许路径不同。</p>
+<p>本章为下一章准备的是一套可复现的方法，而非一句“自然选择最优路径”。在第三章中，独立路径变量将换成广义坐标，固定端点变分将导出拉格朗日方程；本章的边界项、约束正则性和驻值判别仍然适用。</p>
+<h2 class="unnumbered" id="分层习题">分层习题</h2>
+<ol>
+<li><p><strong>基础概念。</strong> 对 <span class="math inline">\(I[y]=\int_0^1y&#39;^2\mathrm{d}x\)</span>、<span class="math inline">\(y=x\)</span>、<span class="math inline">\(\eta=x(1-x)\)</span>，求 <span class="math inline">\(I[y+\epsilon\eta]-I[y]\)</span>、一阶与二阶变分。解释一阶为零为何不等于有限变化为零。</p></li>
+<li><p><strong>反射。</strong> 两点在平面镜同一侧，高度 <span class="math inline">\(h_1,h_2&gt;0\)</span>，水平间距 <span class="math inline">\(d\)</span>。把镜面反射点作为变量，推导反射角等于入射角，并验证其极小性。</p></li>
+<li><p><strong>边值问题。</strong> 求 <span class="math inline">\(\int_0^1(y&#39;^2+2xy)\mathrm{d}x\)</span> 在 <span class="math inline">\(y(0)=0,y(1)=1\)</span> 下的驻值路径和泛函值，证明唯一极小。</p></li>
+<li><p><strong>首次积分。</strong> 推导贝尔特拉米恒等式，并对 <span class="math inline">\(F=\tfrac12 y&#39;^2\)</span> 说明：若只解 <span class="math inline">\(F-y&#39;F_{y&#39;}=C\)</span> 而允许不光滑折线，为什么会引入原正则问题不容许的候选？</p></li>
+<li><p><strong>自然边界。</strong> 求 <span class="math inline">\(I=\tfrac12\int_0^1(y&#39;^2+y^2)\mathrm{d}x\)</span> 在 <span class="math inline">\(y(0)=1\)</span>、<span class="math inline">\(y(1)\)</span> 自由时的极小路径。再加入端点项 <span class="math inline">\(\kappa y(1)^2/2\)</span>，<span class="math inline">\(\kappa\ge0\)</span>，写出新边界条件。</p></li>
+<li><p><strong>横截。</strong> 从固定点 <span class="math inline">\(A=(a_0,b_0)\)</span> 到直线 <span class="math inline">\(y=kx+c\)</span> 的最短连接，在能用单个图形覆盖且端点横坐标不受限制时，利用横截条件证明正交；再用矢量投影写出垂足，处理水平目标线导致最短连接竖直的情况。</p></li>
+<li><p><strong>积分约束。</strong> 令 <span class="math inline">\(I=\tfrac12\int_0^1y&#39;^2\mathrm{d}x\)</span>，<span class="math inline">\(y(0)=y(1)=0\)</span>，并固定 <span class="math inline">\(\int_0^1y\mathrm{d}x=A\)</span>。求驻值路径、乘子及最小值。对 <span class="math inline">\(A=0\)</span> 是否仍可使用常规乘子？</p></li>
+<li><p><strong>圆弧。</strong> 对 <span class="math inline">\(d&lt;\ell&lt;\pi d/2\)</span> 的图形面积问题，推导面积 <span class="math inline">\(A=R^2(\alpha-\sin\alpha\cos\alpha)\)</span>，并说明 <span class="math inline">\(\ell=\pi d/2\)</span> 为何不属于端点斜率有界的光滑类。</p></li>
+<li><p><strong>悬链线。</strong> 等高支点跨度 <span class="math inline">\(2d\)</span>、绳长 <span class="math inline">\(\ell&gt;2d\)</span>。证明 <span class="math inline">\(\sinh z/z=\ell/(2d)\)</span> 对 <span class="math inline">\(z=d/a&gt;0\)</span> 有唯一解，写出最低高度和水平张力。比较按水平距离均匀载荷与按弧长均匀自重的区别。</p></li>
+<li><p><strong>最速降线。</strong> 验证摆线在 <span class="math inline">\(0&lt;\theta&lt;2\pi\)</span> 满足驻值方程，求 <span class="math inline">\(\mathrm{d}t/\mathrm{d}\theta\)</span>，并在 <span class="math inline">\(\theta\to0\)</span> 展开 <span class="math inline">\(x,y\)</span>，解释初始竖直切线和有限时间。</p></li>
+<li><p><strong>二阶变分。</strong> 对谐振子零路径，分别在 <span class="math inline">\(T=\pi/(2\omega)\)</span>、<span class="math inline">\(T=\pi/\omega\)</span>、<span class="math inline">\(T=3\pi/(2\omega)\)</span> 判断极小或鞍点；给出最后一种情况中的一个负方向和一个正方向。</p></li>
+<li><p><strong>共轭点。</strong> 求谐振子雅可比方程满足 <span class="math inline">\(\eta(0)=0\)</span> 的非平凡解，列出所有正零点。解释“没有非零解”与“没有共轭点”为什么不同。</p></li>
+<li><p><strong>测地线。</strong> 从球面度规计算非零的克里斯托费尔符号；用赤道弧长条件确定 <span class="math inline">\(\varphi(s)\)</span> 的速率。为什么长大圆弧满足方程但不是最短路径？</p></li>
+<li><p><strong>光线。</strong> 对 <span class="math inline">\(n=y_0/y\)</span> 写出非竖直圆弧和竖直退化情形。对GRIN模型检查 <span class="math inline">\(\alpha\to0\)</span> 的极限，并说明导数是对空间坐标还是时间。</p></li>
+<li><p><strong>场与控制。</strong> (a) 在弦作用量中保留空间边界项，推导自由端的条件。(b) 固定 <span class="math inline">\(\dot x=u\)</span>、<span class="math inline">\(x(0)=0,x(T)=D\)</span>，在 <span class="math inline">\(|u|\le u_{\max}\)</span> 下，什么时候存在可行路径，什么时候恒定控制仍是全局最优？</p></li>
+<li><p><strong>数值分析。</strong> 独立推导本章两个离散线性系统，解释三次多项式特例的节点误差为何不能检验一般收敛阶。运行脚本检查双曲正弦模型的最大误差与误差比。</p></li>
+</ol>
+<h2 class="unnumbered" id="解题思路与结果">解题思路与结果</h2>
+<ol>
+<li><p><span class="math inline">\(\int_0^1\eta&#39;\mathrm{d}x=0\)</span>、<span class="math inline">\(\int_0^1\eta&#39;^2\mathrm{d}x=1/3\)</span>，因此有限变化为 <span class="math inline">\(\epsilon^2/3\)</span>，<span class="math inline">\(\delta I=0,\delta^2I=2/3\)</span>。这是区分差值与方向导数的直接例子。</p></li>
+<li><p>光程为 <span class="math inline">\(n[\sqrt{\xi^2+h_1^2}+\sqrt{(d-\xi)^2+h_2^2}]\)</span>。一次导数为零给出两角正弦相等，在 <span class="math inline">\([0,\pi/2)\)</span> 内角相等；二阶导数严格为正。也可将一个端点镜像后用直线最短验证。</p></li>
+<li><p><span class="math inline">\(y=x^3/6+5x/6\)</span>，代入得到 <span class="math inline">\(I_{\min}=74/45\)</span>。对同端点差函数 <span class="math inline">\(h\)</span>，<span class="math inline">\(I[y+h]-I[y]=\int h&#39;^2\mathrm{d}x\)</span>，故唯一极小。</p></li>
+<li><p>使用乘积法则消去 <span class="math inline">\(y&#39;&#39;F_{y&#39;}\)</span>。本例首次积分只给 <span class="math inline">\(y&#39;^2=\text{常量}\)</span>；允许斜率任意换号会产生折角，而正则欧拉–拉格朗日方程为 <span class="math inline">\(y&#39;&#39;=0\)</span>。解的光滑性和角点条件不能凭平方关系省略。</p></li>
+<li><p>内部 <span class="math inline">\(y&#39;&#39;=y\)</span>，自由端 <span class="math inline">\(y&#39;(1)=0\)</span>，故 <span class="math inline">\(y=\cosh(1-x)/\cosh1\)</span>。二次型严格为正，驻点是唯一极小。加端点代价后为 <span class="math inline">\(y&#39;(1)+\kappa y(1)=0\)</span>；不能仍取零斜率。</p></li>
+<li><p><span class="math inline">\(1+ky&#39;=0\)</span>（在 <span class="math inline">\(k\ne0\)</span> 的图形情形）。目标线法向为 <span class="math inline">\(\mathbf n=(-k,1)\)</span>，垂足为 <span class="math inline">\(B=A-\mathbf n(\mathbf n\cdot A-c)/(1+k^2)\)</span>。<span class="math inline">\(k=0\)</span> 时最短连接竖直，原来的 <span class="math inline">\(y(x)\)</span> 图形参数不适合，应使用矢量结果；若 <span class="math inline">\(A\)</span> 已在线上，最短长度为零。</p></li>
+<li><p>用 <span class="math inline">\(\widetilde F=y&#39;^2/2-\lambda y\)</span>，得 <span class="math inline">\(y&#39;&#39;=-\lambda\)</span>，因此 <span class="math inline">\(y=\lambda x(1-x)/2\)</span>。积分约束给 <span class="math inline">\(\lambda=12A\)</span>，<span class="math inline">\(I_{\min}=6A^2\)</span>。对约束差函数 <span class="math inline">\(h\)</span>，交叉项为 <span class="math inline">\(\lambda\int h\mathrm{d}x=0\)</span>，余项 <span class="math inline">\(\int h&#39;^2/2\)</span> 为正。<span class="math inline">\(\delta J=\int\eta\mathrm{d}x\)</span> 不恒为零，与 <span class="math inline">\(A=0\)</span> 无关，正则性仍成立。</p></li>
+<li><p>圆弓面积为扇形 <span class="math inline">\(R^2\alpha\)</span> 减去三角形 <span class="math inline">\(R^2\sin\alpha\cos\alpha\)</span>；<span class="math inline">\(\alpha\to\pi/2\)</span> 时端点切线竖直。再扩大圆弧须更换容许曲线的参数表示。</p></li>
+<li><p><span class="math inline">\(\mathrm{d}(\sinh z/z)/\mathrm{d}z=(z\cosh z-\sinh z)/z^2&gt;0\)</span>，因为分子从0起且导数为 <span class="math inline">\(z\sinh z&gt;0\)</span>。其值从1增至无穷；<span class="math inline">\(a=d/z\)</span>，<span class="math inline">\(y_{\min}=H-a(\cosh z-1)\)</span>、<span class="math inline">\(H_T=\rho_\ell ga\)</span>。</p></li>
+<li><p><span class="math inline">\(y&#39;=\sin\theta/(1-\cos\theta)\)</span>，平方满足原式，但在 <span class="math inline">\(\theta=\pi\)</span> 后符号改变。<span class="math inline">\(x\sim a\theta^3/6,y\sim a\theta^2/2\)</span>，故 <span class="math inline">\(\mathrm{d}y/\mathrm{d}x\sim2/\theta\)</span>；<span class="math inline">\(t\sim\sqrt{a/g}\theta\)</span>，起点有限时间可离开。</p></li>
+<li><p>前两种分别为严格极小、非严格极小；第三种为鞍点。取 <span class="math inline">\(\eta_1=\sin(\pi t/T)\)</span> 给负方向，<span class="math inline">\(\eta_2=\sin(2\pi t/T)\)</span> 给正方向。</p></li>
+<li><p><span class="math inline">\(\eta=C\sin\omega t\)</span>，<span class="math inline">\(C\ne0\)</span>，正零点为 <span class="math inline">\(n\pi/\omega\)</span>。非平凡解始终存在；共轭点要求同一非平凡解除起点外再次为零。</p></li>
+<li><p><span class="math inline">\(\Gamma^\theta_{\varphi\varphi}=-\sin\theta\cos\theta\)</span>，<span class="math inline">\(\Gamma^\varphi_{\theta\varphi}=\Gamma^\varphi_{\varphi\theta}=\cot\theta\)</span>；赤道有 <span class="math inline">\(R^2\varphi&#39;^2=1\)</span>，故 <span class="math inline">\(\varphi&#39;=\pm1/R\)</span>。长弧可被同端点短弧替代，驻值不保证全局最短。</p></li>
+<li><p><span class="math inline">\(C\ne0\)</span> 时为中心在 <span class="math inline">\(y=0\)</span> 的上半圆弧，<span class="math inline">\(C=0\)</span> 时 <span class="math inline">\(x\)</span> 恒定。GRIN解的导数对 <span class="math inline">\(z\)</span> 而非 <span class="math inline">\(t\)</span>，<span class="math inline">\(\alpha\to0\)</span> 得 <span class="math inline">\(x=x_0+\beta_0z\)</span>。</p></li>
+<li><p>(a) 边界项为 <span class="math inline">\([-\mathcal T u_x\eta]_0^L\)</span> 在时间上积分，自由端要求 <span class="math inline">\(\mathcal T u_x=0\)</span>。(b) 可行性要求 <span class="math inline">\(|D|\le u_{\max}T\)</span>；满足时 <span class="math inline">\(u=D/T\)</span> 可行，并由柯西–施瓦茨不等式达到全局最小，若不满足则不存在可行控制。</p></li>
+<li><p>两系统分别是对离散二次型求导得到的三对角方程。双曲正弦模型的误差表与检查记录由随附脚本生成；减半步长的误差比应接近4，而三次多项式例的误差主要为舍入误差。</p></li>
+</ol>
+<h2 class="unnumbered" id="进一步阅读与来源">进一步阅读与来源</h2>
+<p>查阅日期：2026-11-05。以上算例按本书符号重新推导，例题数值为教学设定。</p>
+<ol>
+<li><p>MIT 16.323，<em>Calculus of Variations</em>：<a href="https://ocw.mit.edu/courses/16-323-principles-of-optimal-control-spring-2008/resources/lec5/">官方讲义页面</a>。可进一步学习可变端点、横截条件及约束优化；课程层次高于本章，不要求照搬全部最优控制内容。</p></li>
+<li><p>MIT 18.086，<em>7.2 Calculus of Variations</em>：<a href="https://ocw.mit.edu/courses/18-086-mathematical-methods-for-engineers-ii-spring-2006/e94c05947ed036cd6ad0150102087062_am72.pdf">数学方法讲义</a>，用于继续理解连续变分与离散方程的联系。</p></li>
+<li><p>David Tong，<em>Classical Dynamics</em>：<a href="https://www.damtp.cam.ac.uk/user/tong/dynamics/dynhtml/S2.html">剑桥公开讲义</a>，进一步阅读驻作用量原理及其力学应用。</p></li>
+<li><p>Richard Fitzpatrick，<em>Conditional Variation</em>：<a href="https://farside.ph.utexas.edu/teaching/sm1/Thermalhtml/node132.html">得克萨斯大学公开讲义</a>，对照均匀链的势能及固定长度约束。</p></li>
+</ol>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>变分法 · 书稿网页版</span><span><a href="../index.html">返回章节</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
+<script src="../../../assets/tm-i18n-data.js"></script>
+<script src="../../../assets/tm-i18n.js"></script>
+<script src="../../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../../assets/ui-motion.js" defer></script>
+</body>
+</html>

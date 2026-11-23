@@ -340,6 +340,15 @@ details.mapping {
   background: rgba(127, 224, 255, .18);
   box-shadow: 0 0 10px rgba(127, 224, 255, .25);
 }
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
 
 @media (max-width: 820px) {
   .tm-orbit-nav {
@@ -362,6 +371,7 @@ details.mapping {
   .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
   .hud { max-width: calc(100% - 150px); }
   .brand { max-width: calc(100% - 24px); }
 }
@@ -472,6 +482,7 @@ window.TMART = (function () {
 <meta name="twitter:description" content="虚功原理与静力学 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
 </head>
 <body>
 <div class="app">
@@ -486,7 +497,7 @@ window.TMART = (function () {
       <span><span class="lg">摩擦系数 </span>μ <b id="hudMu">-</b></span>
       <span><span class="lg">临界角 </span>θ_min <b id="hudTheta">-</b></span>
       <span><span class="lg">墙面支持力 </span>N_w<span class="lg">（→0 即离墙）</span> <b id="hudNw">-</b></span>
-      <span class="hud-extra"><span class="lg">最大静摩擦 </span>f_crit<span class="lg">（=μ·P）</span> <b id="hudF">-</b></span>
+      <span class="hud-extra"><span class="lg">最大静摩擦 </span>$f_{\mathrm{crit}}=\mu P$ <b id="hudF">-</b></span>
       <span>状态 <b id="hudState">-</b></span>
     </div>
     <div id="notice" class="notice" hidden></div>
@@ -494,20 +505,20 @@ window.TMART = (function () {
   </div>
   <aside class="panel">
     <div class="eq">
-      <div><span class="num">梯子：</span> tan θ_min = 1/(2μ)（θ_min＝恰好不打滑的最小墙角；θ 压得更平时就打滑）</div>
-      <div><span class="num">虚功原理：</span> δW = 0（"虚"＝想象中符合约束的微小位移；若所有力的总虚功恒为 0，系统就平衡——不必逐个列力方程）</div>
-      <div><span class="num">势能：</span> δV = 0（保守系统版本：平衡＝势能驻值）</div>
-      <div><span class="num">打滑：</span> 三个未知量 θ̈、N_w、N_f 由牛顿–欧拉方程 + 库仑摩擦 f = μN_f 解 3×3 线性方程（Cramer），RK4 固定步长 1/120 s 积分。</div>
+      <div><span class="num">梯子：</span> $\tan\theta_{\min}=\dfrac{1}{2\mu}$（θ_min＝恰好不打滑的最小墙角；θ 压得更平时就打滑）</div>
+      <div><span class="num">虚功原理：</span> $\delta W=0$（"虚"＝想象中符合约束的微小位移；若所有力的总虚功恒为 0，系统就平衡——不必逐个列力方程）</div>
+      <div><span class="num">势能：</span> $\delta V=0$（保守系统版本：平衡＝势能驻值）</div>
+      <div><span class="num">打滑：</span> 三个未知量 θ̈、N_w、N_f 由牛顿–欧拉方程 + 库仑摩擦 $f=\mu N_f$ 解 3×3 线性方程（Cramer），RK4 固定步长 1/120 s 积分。</div>
     </div>
     <div class="group">
       <div class="row"><label for="param-mu">摩擦系数 μ（无量纲）</label><span class="val" id="val-mu">0.50</span></div>
       <input id="param-mu" type="range" min="0.05" max="2" step="0.01" value="0.5" aria-label="摩擦系数 mu">
-      <div class="hint">μ 越小，临界角 θ_min = atan(1/(2μ)) 越陡；θ 一旦低于 θ_min，梯子打滑倒下。</div>
+      <div class="hint">μ 越小，临界角 $\theta_{\min}=\arctan\!\bigl(1/(2\mu)\bigr)$ 越陡；θ 一旦低于 θ_min，梯子打滑倒下。</div>
     </div>
     <div class="group">
       <div class="row"><label for="param-theta">梯子与地面夹角 θ (°)</label><span class="val" id="val-theta">45.0</span></div>
       <input id="param-theta" type="range" min="5" max="85" step="1" value="45" aria-label="梯子角度">
-      <div class="hint">低于红色虚线（θ_min）即打滑；也可直接上下拖动梯子改变 θ。滑动时 N_w、N_f、f 由方程实时解出，N_w→0 时顶部离墙。</div>
+      <div class="hint">低于红色虚线（θ_min）即打滑；也可直接上下拖动梯子改变 θ。滑动时 N_w、N_f、f 由方程实时解出，$N_w\to0$ 时顶部离墙。</div>
     </div>
     <div class="group">
       <div class="row"><label for="param-speed">动画速度（×）</label><span class="val" id="val-speed">1.0</span></div>
@@ -518,18 +529,16 @@ window.TMART = (function () {
       <button id="btn-critical">临界角</button>
       <button id="btn-reset">重置</button>
     </div>
-    <div class="tag">本页采用无量纲演示单位：取梯子重 P = 1，故 N_w、N_f、f 均为相对 P 的无量纲值；角度单位为度。<br>
-    URL 可复现：<span>?mu=…&amp;theta=…&amp;speed=…</span><br>
-    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
-    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
-    <a class="doc" href="../04-variational/index.html">← 上一模块：变分原理与等时摆</a>
-    <a class="doc" href="../06-collisions/index.html">下一模块：碰撞与变质量 →</a>
+    <div class="tag">本页采用无量纲演示单位：取梯子重 $P=1$，故 $N_w$、$N_f$、$f$ 均为相对 $P$ 的无量纲值；角度单位为度。</div>
+    <a class="doc" href="note.html">阅读推导（网页版）</a>
+    <a class="doc" data-tm-doc="prev" href="../04-variational/index.html?mode=shortest">← 上一模块 M10：最短路径</a>
+    <a class="doc" data-tm-doc="next" href="../09-atwood-pulley/index.html">下一模块 M12：有转动惯量的 Atwood 机 →</a>
     <details class="mapping">
       <summary>作业映射（本模块覆盖：作业-7）</summary>
       <table>
         <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
         <tr><td>作业-7 Q4</td><td>梯子临界角</td><td>滑块 μ/θ，HUD 显示 θ_min</td></tr>
-        <tr><td>作业-7 Q1-Q3,Q5</td><td>虚功、势能驻值</td><td>先读下方『查看推导 PDF』(note.pdf)，再用本页梯子直观验证 f_crit</td></tr>
+        <tr><td>作业-7 Q1-Q3,Q5</td><td>虚功、势能驻值</td><td>先读下方『阅读推导（网页版）』，再用本页梯子直观验证 f_crit</td></tr>
       </table>
     </details>
   </aside>
@@ -1313,6 +1322,7 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
   <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
   <a data-tm-nav="prev" href="#">‹ 上一章</a>
   <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/03-lagrangian/index.html?ret=M11" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
   <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
 </nav>
 <script id="tm-theme-js">
@@ -1500,5 +1510,13 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
 <!-- TM-THEME-BODY:END -->
   <script src="../../assets/tm-i18n-data.js"></script>
   <script src="../../assets/tm-i18n.js"></script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

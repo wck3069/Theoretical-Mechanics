@@ -161,8 +161,8 @@ o.spin += 0.1 * (orbitalDays[i] / spinDays[i]) * dθ;
 |---|---|---|
 | 第 1 章 | `chapters/01-particle/manuscripts/hw1.html` | 作业一·第一章 26 页；6 张图 TikZ→SVG |
 | 第 1 章 | `chapters/01-particle/manuscripts/intro.html` | 绪论与第一章笔记 49 页 |
-| 第 2 章 | `chapters/02-system/manuscripts/chapter2.html` | 第二章笔记 59 页 |
-| 第 3 章 | `chapters/03-variational/manuscripts/variational.html` | 变分原理 27 页 |
+| 第 1 章 | `chapters/01-newton/manuscripts/chapter2.html` | 第二章笔记 59 页 |
+| 第 2 章 | `chapters/02-variational/manuscripts/variational.html` | 变分原理 27 页 |
 
 - 公式：本地 `assets/mathjax/tex-svg.js`（离线，无 CDN）；正文里的 `$...$`、`\[...\]` 由 MathJax 直接渲染。
 - 图：TikZ 图编译为 SVG；截图裁剪用 `vtracer` 转矢量 SVG。
@@ -238,10 +238,14 @@ python3 tools/layout_qa.py --viewport 1440x900 --viewport 390x844 index.html mod
 
 ## 8. 已知问题 / 下一步建议
 
-1. **AI 仍按 9 个模块工作**
-   - `tools/ai_server.py` 与离线 KB 仍是 M0–M8 说法。
-   - 首页/星表是七章；AI 的泛问题菜单可能仍列 9 个模块。
-   - 若要统一：把 AI 章节索引改成七章，同时保留 `[M#]` 引用到子模块。
+1. ~~AI 仍按 9 个模块工作~~ **已解决（2026-11-23）**
+   - knowledge.json 曾被遗留 build_kb.py 覆盖回 12 模块旧编号；已用新工具
+     `tools/recover_kb.py` 从 neural/data.js 快照恢复为 **28 单元（M0–M26 + S7）/ 300 chunks**，
+     重建 data.js 往返 diff 为空（无损证明）。
+   - ai_server.py 提示词/方程表/关键词、离线 KB FAQ 映射已全部对齐新编号；
+     8765 已重启并 HTTP 验证（kb_chunks=300，M24/M19/M26 检索命中）。
+   - build_kb.py 加防回退守卫（现有 KB 更大时拒绝覆盖，需 --force）。
+   - 证据：`qa/global/kb-recovery-2026-11-23.md`。
 
 2. **章节页是手写 HTML**
    - 7 个 `chapters/*/index.html` 直接写入，没有生成器；修改需直接改 HTML。

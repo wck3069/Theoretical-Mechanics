@@ -1,0 +1,180 @@
+{
+ "version": 2,
+ "built_at": "2026-11-10",
+ "chapters": [
+  {
+   "n": 1,
+   "slug": "chapter-01-newton",
+   "milestone": "C1",
+   "title": "牛顿力学",
+   "src": "运动的描述 · 参考系 · 牛顿定律 · 质点系 · 碰撞 · 中心力",
+   "tags": [
+    "牛顿定律",
+    "参考系",
+    "质点系",
+    "中心力"
+   ],
+   "summary": "第一章：运动的描述与分量表达式、牛顿三定律、功与能、质点系与质心、碰撞、中心力与轨道。",
+   "sim": "chapters/01-newton/index.html",
+   "color": "#b9b0a0",
+   "texture": "assets/textures/2k_mercury.webp",
+   "modules": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5",
+    "M6",
+    "M7"
+   ]
+  },
+  {
+   "n": 2,
+   "slug": "chapter-02-variational",
+   "milestone": "C2",
+   "title": "变分法",
+   "src": "费马原理 · 泛函与一阶变分 · 欧拉–拉格朗日方程",
+   "tags": [
+    "变分",
+    "泛函",
+    "欧拉-拉格朗日",
+    "最速降线"
+   ],
+   "summary": "第二章：费马原理、泛函与一阶变分、欧拉–拉格朗日方程、最速降线与等时摆。",
+   "sim": "chapters/02-variational/index.html",
+   "color": "#e6c98c",
+   "texture": "assets/textures/2k_venus_surface.webp",
+   "modules": [
+    "M8",
+    "M9",
+    "M10"
+   ]
+  },
+  {
+   "n": 3,
+   "slug": "chapter-03-lagrangian",
+   "milestone": "C3",
+   "title": "拉格朗日力学",
+   "src": "约束与广义坐标 · 虚功原理 · 达朗贝尔 · 拉格朗日方程",
+   "tags": [
+    "约束",
+    "广义坐标",
+    "虚功",
+    "拉格朗日方程"
+   ],
+   "summary": "第三章：约束与广义坐标、虚功原理与达朗贝尔原理、拉格朗日方程、对称性与守恒律。",
+   "sim": "chapters/03-lagrangian/index.html",
+   "color": "#6fb7ff",
+   "texture": "assets/textures/2k_earth_daymap.webp",
+   "modules": [
+    "M11",
+    "M12"
+   ]
+  },
+  {
+   "n": 4,
+   "slug": "chapter-04-oscillations",
+   "milestone": "C4",
+   "title": "小振动",
+   "src": "平衡与稳定 · 阻尼与受迫 · 简正坐标 · 非线性振动",
+   "tags": [
+    "平衡",
+    "简正坐标",
+    "受迫振动",
+    "非线性"
+   ],
+   "summary": "第四章：平衡与稳定性、阻尼与受迫响应、耦合系统与简正坐标、非线性振动初步。",
+   "sim": "chapters/04-oscillations/index.html",
+   "color": "#e07a4f",
+   "texture": "assets/textures/2k_mars.webp",
+    "modules": [
+      "M13",
+      "M14",
+      "M15",
+      "M16",
+      "M17",
+      "M27"
+    ]
+  },
+  {
+   "n": 5,
+   "slug": "chapter-05-rigid-body",
+   "milestone": "C5",
+   "title": "刚体力学",
+   "src": "刚体运动学 · 欧拉角 · 惯量张量 · 角动量",
+   "tags": [
+    "刚体",
+    "欧拉角",
+    "惯量张量",
+    "角动量"
+   ],
+   "summary": "第五章：刚体运动学与欧拉角、惯量张量与主轴、刚体动力学定理、欧拉方程与自由刚体。",
+   "sim": "chapters/05-rigid-body/index.html",
+   "color": "#d8b48a",
+   "texture": "assets/textures/2k_jupiter.webp",
+    "modules": [
+      "M18",
+      "M19",
+      "M28"
+    ]
+  },
+  {
+   "n": 6,
+   "slug": "chapter-06-hamiltonian",
+   "milestone": "C6",
+   "title": "哈密顿力学",
+   "src": "勒让德变换 · 正则方程 · 相空间 · 旋转参考系与磁场",
+   "tags": [
+    "哈密顿",
+    "正则方程",
+    "相空间",
+    "正则变换"
+   ],
+   "summary": "第六章：勒让德变换与正则方程、相空间、正则变换与 Routh 约化、旋转参考系与磁场中的正则动量。",
+   "sim": "chapters/06-hamiltonian/index.html",
+   "color": "#e7d39b",
+   "texture": "assets/textures/2k_saturn.webp",
+    "modules": [
+      "M20",
+      "M21",
+      "M22",
+      "M23",
+      "M29"
+    ]
+  },
+  {
+   "n": 7,
+   "slug": "chapter-07-relativity",
+   "milestone": "C7",
+   "title": "狭义相对论",
+   "src": "洛伦兹变换 · 同时性 · 时空间隔 · 四维动量",
+   "tags": [
+    "洛伦兹变换",
+    "时空间隔",
+    "四维动量",
+    "质能关系"
+   ],
+   "summary": "第七章：洛伦兹变换与同时性、时空间隔与光锥、速度合成与多普勒效应、四维动量与相对论碰撞。",
+   "sim": "chapters/07-relativity/index.html",
+   "color": "#9fe6e6",
+   "texture": "assets/textures/2k_uranus.webp",
+    "modules": [
+      "S7",
+      "M24",
+      "M25",
+      "M26",
+      "M30"
+    ]
+  }
+ ],
+ "slug_redirects": {
+  "chapter-01-particle": "chapter-01-newton",
+  "chapter-02-system": "chapter-02-variational",
+  "chapter-03-variational": "chapter-03-lagrangian",
+  "chapter-04-lagrangian": "chapter-04-oscillations",
+  "chapter-05-oscillations": "chapter-05-rigid-body",
+  "chapter-06-rigid-body": "chapter-06-hamiltonian",
+  "chapter-07-hamiltonian": "chapter-07-relativity"
+ }
+}

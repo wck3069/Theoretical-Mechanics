@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tm-cosmos 演示(临时文件,QA 后删除)</title>
+<link rel="stylesheet" href="tm-cosmos.css">
+<script defer src="tm-cosmos.js"></script>
+<style>
+  /* 仅演示排版,不属于设计系统 */
+  main { max-width: 880px; margin: 0 auto; padding: 8vh 24px 20vh; }
+  h1 { font-size: 2rem; margin: 0 0 1rem; }
+  section { margin-bottom: 6rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .cosmos-card { padding: 22px 24px; }
+  h2 { font-size: 1.15rem; margin: 0 0 .5rem; color: #ffd27a; }
+  p { line-height: 1.7; margin: 0; }
+  .hscroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+  .hscroll div { flex: 0 0 260px; padding: 14px 16px; border: 1px dashed rgba(232,193,90,.25); border-radius: 8px; }
+  .plain-reveal { border: 1px dashed rgba(232,193,90,.25); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
+</style>
+</head>
+<body data-cosmos="page" data-cosmos-nebula="pillars">
+  <main>
+    <section>
+      <h1>理论力学 · 星月夜背景系统演示</h1>
+      <p>共 3 个 .cosmos-card(带入场显现)+ 5 个纯 .cosmos-reveal 块 = 8 个入场块。
+      滚动查看显现;移动鼠标看近景视差;9–15 秒内应出现流星;右上为纯 CSS 弯月。
+      把 data-cosmos-nebula 改为 crab/xdf/omega/andromeda 可换星云。</p>
+    </section>
+    <section>
+      <div class="grid">
+        <div class="cosmos-card cosmos-reveal">
+          <h2>卡片 1 · 玻璃拟态</h2>
+          <p>rgba(12,16,34,.62) + blur(14px) saturate(1.15),不支持 backdrop-filter 时回退 .86。</p>
+        </div>
+        <div class="cosmos-card cosmos-reveal">
+          <h2>卡片 2 · 金边与内高光</h2>
+          <p>1px 金边 rgba(232,193,90,.18),顶部 inset 高光,阴影 0 8px 40px。</p>
+        </div>
+        <div class="cosmos-card cosmos-reveal">
+          <h2>卡片 3 · <a href="#anchor">链接色跟随 accent</a></h2>
+          <p>默认 #ffd27a;data-cosmos-accent 可整体换色(写入 --cosmos-accent)。</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="hscroll cosmos-hscroll-safe">
+        <div>横向滚动安全容器 1(overscroll-behavior-x: contain)</div>
+        <div>横向滚动安全容器 2</div>
+        <div>横向滚动安全容器 3</div>
+        <div>横向滚动安全容器 4</div>
+      </div>
+    </section>
+    <section id="anchor">
+      <div class="plain-reveal cosmos-reveal">入场块 4 · 万有引力与二体问题</div>
+      <div class="plain-reveal cosmos-reveal">入场块 5 · 拉格朗日方程</div>
+      <div class="plain-reveal cosmos-reveal">入场块 6 · 哈密顿正则方程</div>
+      <div class="plain-reveal cosmos-reveal">入场块 7 · 正则变换与哈密顿–雅可比方程</div>
+      <div class="plain-reveal cosmos-reveal">入场块 8 · 有心力与散射</div>
+    </section>
+    <p>页面足够高:星空背景 fixed,滚动时不应重绘,仅近景星 ±4px 视差。</p>
+  </main>
+</body>
+</html>

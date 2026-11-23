@@ -1,0 +1,135 @@
+{
+ "version": 2,
+ "modes": [
+  {
+   "id": "M5",
+   "module": "M5",
+   "chapter": "chapter-01-newton",
+   "page": "modules/08-kinematics/index.html",
+   "param": "mode",
+   "value": "cylinder",
+   "title": "圆柱脱离与运动学",
+   "order": 5
+  },
+  {
+   "id": "M8",
+   "module": "M8",
+   "chapter": "chapter-02-variational",
+   "page": "modules/04-variational/index.html",
+   "param": "mode",
+   "value": "cycloid",
+   "title": "等时摆（摆线）",
+   "order": 8
+  },
+  {
+   "id": "M9",
+   "module": "M8",
+   "chapter": "chapter-02-variational",
+   "page": "modules/04-variational/index.html",
+   "param": "mode",
+   "value": "refraction",
+   "title": "折射定律",
+   "order": 9
+  },
+  {
+   "id": "M10",
+   "module": "M8",
+   "chapter": "chapter-02-variational",
+   "page": "modules/04-variational/index.html",
+   "param": "mode",
+   "value": "shortest",
+   "title": "最短路径",
+   "order": 10
+  },
+  {
+   "id": "M13",
+   "module": "M11",
+   "chapter": "chapter-04-oscillations",
+   "page": "modules/10-coupled-systems/index.html",
+   "param": "scene",
+   "value": "wedge",
+   "title": "斜面上的滑块",
+   "order": 13
+  },
+  {
+   "id": "M14",
+   "module": "M11",
+   "chapter": "chapter-04-oscillations",
+   "page": "modules/10-coupled-systems/index.html",
+   "param": "scene",
+   "value": "spring",
+   "title": "弹簧摆",
+   "order": 14
+  },
+  {
+   "id": "M15",
+   "module": "M11",
+   "chapter": "chapter-04-oscillations",
+   "page": "modules/10-coupled-systems/index.html",
+   "param": "scene",
+   "value": "cart",
+   "title": "小车与单摆",
+   "order": 15
+  },
+  {
+   "id": "M16",
+   "module": "M12",
+   "chapter": "chapter-04-oscillations",
+   "page": "modules/08-kinematics/index.html",
+   "param": "mode",
+   "value": "pendulum",
+   "title": "单摆周期修正",
+   "order": 16
+  },
+  {
+   "id": "M17",
+   "module": "M12",
+   "chapter": "chapter-04-oscillations",
+   "page": "modules/08-kinematics/index.html",
+   "param": "mode",
+   "value": "double",
+   "title": "双摆混沌",
+   "order": 17
+  },
+  {
+   "id": "M20",
+   "module": "M20",
+   "chapter": "chapter-06-hamiltonian",
+   "page": "modules/11-rotation-and-field/index.html",
+   "param": "scene",
+   "value": "ring",
+   "title": "旋转圆环上的珠子",
+   "order": 20
+  },
+  {
+   "id": "M21",
+   "module": "M21",
+   "chapter": "chapter-06-hamiltonian",
+   "page": "modules/11-rotation-and-field/index.html",
+   "param": "scene",
+   "value": "cyclotron",
+   "title": "磁场中的带电粒子",
+   "order": 21
+  },
+  {
+   "id": "M22",
+   "module": "M22",
+   "chapter": "chapter-06-hamiltonian",
+   "page": "modules/18-phase-space/index.html",
+   "param": "scene",
+   "value": "phase",
+   "title": "相空间与刘维尔",
+   "order": 22
+  },
+  {
+   "id": "M23",
+   "module": "M23",
+   "chapter": "chapter-06-hamiltonian",
+   "page": "modules/18-phase-space/index.html",
+   "param": "scene",
+   "value": "integrator",
+   "title": "辛积分器比较",
+   "order": 23
+  }
+ ]
+}

@@ -232,7 +232,7 @@
       <textarea id="tmai-input" rows="2" placeholder="输入问题…" aria-label="输入问题"></textarea>
       <button id="tmai-send" type="button" aria-label="发送">发送</button>
     </div>
-    <div class="tmai-footer">本地起草 + 学校 API 审核 · 问题会发送到本机与学校模型<br>AI 可能出错，请以讲义推导（note.pdf）为准<br>离线模式：讲义原文检索 + 常见问题直答</div>
+    <div class="tmai-footer">AI 可能出错，请以讲义推导网页版为准。</div>
   </div>
 </div>
 <!-- TM-OFFLINE-KB -->
@@ -586,7 +586,7 @@
       var ans = best.a;
       if (gHit && normText(ans).indexOf(normText(gHit.t)) === -1) ans = gHit.d + '\n\n' + ans;
       var metaSec = /部署|离线|单位|学习路径|诺特/.test(best.sec || '');
-      ans += metaSec ? '\n\n（离线直答）' : '\n\n（离线直答 · ' + best.m + ' · 完整推导见 note.pdf）';
+      ans += metaSec ? '\n\n（离线直答）' : '\n\n（离线直答 · ' + best.m + ' · 完整推导见推导网页版）';
       return {answer: ans, sources: metaSec ? [] : [sourceFor(best.m, best.sec)], label: '离线直答'};
     }
 
@@ -606,7 +606,7 @@
       top.forEach(function (x) {
         lines.push('**' + x.c.m + ' · ' + x.c.sec + '**\n' + pickSentences(x.c.t, q, 2));
       });
-      lines.push('（离线检索：讲义原文摘录；完整推理请连接 AI 服务或看 note.pdf）');
+      lines.push('（离线检索：讲义原文摘录；完整推理请查看推导网页版）');
       return {answer: lines.join('\n\n'), sources: top.map(function (x) {
         return sourceFor(x.c.m, x.c.sec);
       }), label: '离线检索'};
@@ -762,6 +762,13 @@
   }
 
   launcher.addEventListener('click', togglePanel);
+  document.addEventListener('click', function (e) {
+    if (!isOpen) return;
+    var t = e.target;
+    if (panel.contains(t) || launcher.contains(t)) return;
+    if (t.closest && t.closest('[data-tm-nav="ask"]')) return;
+    closePanel();
+  });
   closeBtn.addEventListener('click', closePanel);
   sendBtn.addEventListener('click', sendQuestion);
   inputEl.addEventListener('keydown', function (e) {

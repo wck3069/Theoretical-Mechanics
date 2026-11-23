@@ -50,10 +50,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FILES = [
-    "chapters/01-particle/manuscripts/intro.html",
-    "chapters/01-particle/manuscripts/hw1.html",
-    "chapters/02-system/manuscripts/chapter2.html",
-    "chapters/03-variational/manuscripts/variational.html",
+    "chapters/01-newton/manuscripts/intro.html",
+    "chapters/01-newton/manuscripts/hw1.html",
+    "chapters/01-newton/manuscripts/chapter2.html",
+    "chapters/02-variational/manuscripts/variational.html",
 ]
 
 START = "<!-- MS-TOC:START -->"

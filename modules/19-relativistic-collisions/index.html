@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>相对论碰撞与不变质量 · 四动量守恒模拟</title>
+<style>
+  :root{
+    --bg:#03050c; --panel:rgba(9,14,30,.74); --line:rgba(146,182,255,.14);
+    --text:#e8eeff; --muted:#6d7ca4; --accent:#7fe0ff; --accent2:#ffd27a;
+    --good:#7fe3a0; --bad:#ff8a8a; --mc:#7ff0cf;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:transparent; color:var(--text);
+    font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+    overflow:hidden;}
+  .app{display:flex; height:100vh; width:100vw; position:relative; z-index:1}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas{display:block; width:100%; height:100%; touch-action:none}
+  .brand{position:absolute; top:18px; left:22px; pointer-events:none; max-width:min(540px, calc(100% - 130px))}
+  .brand h1{margin:0; font-size:19px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:5px 0 0; font-size:12.5px; color:var(--muted)}
+  .brand p .mid{color:var(--accent2)}
+  .hud{position:absolute; left:22px; bottom:16px; font-size:12px; color:var(--muted);
+       display:flex; gap:6px 14px; flex-wrap:wrap; pointer-events:none; max-width:calc(100% - 140px);
+       padding:5px 9px; border-radius:8px; background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.10)}
+  .hud b{color:var(--accent2); font-weight:600; font-variant-numeric:tabular-nums}
+  .panel{width:360px; flex:none; padding:18px 18px 14px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line); backdrop-filter:blur(14px);}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:rgba(183,155,255,.45);border-radius:4px}
+  .eq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px; line-height:1.85;
+    overflow-x:auto; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(6,10,22,.72); color:#cfe0ff; margin-bottom:14px;}
+  .eq .num{color:var(--accent2)}
+  .group{margin-bottom:12px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px}
+  .row label{font-size:13px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:13px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#2a4a8f,#16233f); outline:none}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(127,224,255,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent);
+    border:2px solid #0a1020; cursor:pointer}
+  .hint{font-size:11.5px; color:#6d7ba3; margin-top:5px; line-height:1.55}
+  .sub{margin:16px 0 8px; font-size:12px; letter-spacing:.06em; color:#9fb2dc;
+    border-bottom:1px solid var(--line); padding-bottom:4px}
+  .out{display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; margin:5px 0}
+  .out .k{color:#9fb2dc}
+  .out .v{font-family:ui-monospace,monospace; font-variant-numeric:tabular-nums; color:#dbe4ff}
+  .no{color:var(--bad)} .gold{color:var(--accent2)} .ok{color:var(--good)}
+  select{width:100%; font:inherit; font-size:13px; padding:8px 10px; border-radius:9px;
+    color:#cfefff; background:rgba(10,16,32,.8); border:1px solid rgba(127,224,255,.35); outline:none;}
+  select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:12px}
+  button{font:inherit; font-size:12.5px; padding:9px 10px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(127,224,255,.10); border:1px solid rgba(127,224,255,.35); transition:.15s;}
+  button:hover{background:rgba(127,224,255,.20)}
+  button.primary{grid-column:1/-1; background:linear-gradient(180deg,#ffd27a,#e6a84a); border-color:#ffd27a; color:#1a1206; font-weight:600}
+  button.primary:hover{filter:brightness(1.08)}
+  .tog{display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12.5px; color:#b9c6ea; cursor:pointer}
+  .tog input{width:16px; height:16px; accent-color:var(--mc); cursor:pointer}
+  .ibar{position:relative; height:10px; margin:18px 2px 24px; border-radius:5px;
+    background:rgba(127,224,255,.10); border:1px solid var(--line)}
+  .ibar .fill{position:absolute; top:0; bottom:0; left:0; border-radius:5px; background:linear-gradient(90deg,#7fe0ff,#b79bff)}
+  .ibar .tick{position:absolute; top:-4px; width:2px; height:18px; background:rgba(232,238,255,.55)}
+  .ibar em{position:absolute; font-style:normal; font-size:10.5px; color:var(--muted); white-space:nowrap}
+  .ibar em.l{left:-2px; top:14px} .ibar em.r{right:-2px; top:14px}
+  .ibar em.mk{top:14px; transform:translateX(-50%); color:#9fb2dc}
+  .notice{margin-top:10px; font-size:12px; line-height:1.6; color:#ffd7c2;
+    background:rgba(255,157,107,.10); border:1px solid rgba(255,157,107,.4); border-radius:9px; padding:8px 10px}
+  .notice[hidden]{display:none}
+  .tag{display:block; margin-top:14px; font-size:11.5px; color:var(--muted); line-height:1.6}
+  .tag span{color:var(--accent2)}
+  .selftest{white-space:pre-wrap; position:absolute; top:14px; right:14px; max-width:min(520px,64%); z-index:999;
+    padding:10px 14px; font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(126,200,255,.4); color:#e8ecf8}
+  .selftest.fail{border-color:rgba(255,122,158,.7); color:#ffd7e2}
+  @media (max-width:820px){
+    .brand .intro{display:none}
+    .app{flex-direction:column}
+    .panel{width:100%; height:47vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:53vh}
+    .brand{max-width:calc(100% - 120px)}
+    .hud{left:10px; bottom:8px; gap:5px 10px; font-size:10.5px; max-width:calc(100% - 110px)}
+    .selftest{max-width:calc(100% - 28px); font-size:10px}
+  }
+  @media (max-width:420px){ .brand{top:10px; left:12px} .brand h1{font-size:16px} }
+  @media (prefers-reduced-motion: reduce){ button, a.doc{transition:none} }
+</style>
+
+<!-- TM-SEO:START -->
+<meta name="description" content="相对论碰撞与不变质量 · 一维碰撞模拟：四动量守恒的弹性/完全非弹性碰撞，质心系速度、不变量 M_inv 能量条，与固定靶产生阈值动能 E_th=(M_f²-m_a²-m_b²)/2m_b。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/19-relativistic-collisions/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="相对论碰撞与不变质量 · 四动量守恒模拟">
+<meta property="og:description" content="相对论碰撞与不变质量 · 一维碰撞模拟：四动量守恒的弹性/完全非弹性碰撞，质心系速度、不变量 M_inv 能量条，与固定靶产生阈值动能 E_th=(M_f²-m_a²-m_b²)/2m_b。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/19-relativistic-collisions/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="相对论碰撞与不变质量 · 四动量守恒模拟">
+<meta name="twitter:description" content="相对论碰撞与不变质量 · 一维碰撞模拟：四动量守恒的弹性/完全非弹性碰撞，质心系速度、不变量 M_inv 能量条，与固定靶产生阈值动能 E_th=(M_f²-m_a²-m_b²)/2m_b。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+<style id="m26-over">
+  /* M26 覆盖层：控件强调色保持主题青；粒子在画布上用金/紫/青绿 */
+  input[type=range]{background:linear-gradient(90deg,#7fe0ff,#b79bff); box-shadow:0 0 8px rgba(127,224,255,.18)}
+  input[type=range]::-webkit-slider-thumb{background:#7fe0ff; box-shadow:0 0 12px rgba(127,224,255,.75)}
+  input[type=range]::-moz-range-thumb{background:#7fe0ff; box-shadow:0 0 12px rgba(127,224,255,.75)}
+  button{background:rgba(127,224,255,.10); border:1px solid rgba(127,224,255,.35); color:#d8e9ff}
+  button:hover{background:rgba(127,224,255,.20); transform:translateY(-1px); box-shadow:0 4px 14px rgba(127,224,255,.18)}
+  ::selection{background:rgba(127,224,255,.30); color:#e8eeff}
+</style>
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="brand">
+      <h1>相对论碰撞与不变质量</h1>
+      <p><span class="mid">模块 26</span> · 第7章 狭义相对论 · 四动量守恒</p>
+      <p class="intro">两条世界线在原点相遇：四动量 $P^\mu=(E,p)$ 严格守恒。弹性碰撞在质心系中只是动量翻转；完全非弹性则并成一个复合粒子——静质量变大，动能真的变成了惯性。</p>
+    </div>
+    <div class="hud">
+      <span><b id="h-mode">弹性</b></span>
+      <span>t <b id="h-t">0.00</b></span>
+      <span>E<sub>tot</sub> <b id="h-E">–</b></span>
+      <span>P<sub>tot</sub> <b id="h-P">–</b></span>
+      <span>M<sub>inv</sub> <b id="h-M">–</b></span>
+      <span>残差 <b id="h-res">–</b></span>
+    </div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+
+  <aside class="panel">
+    <div class="eq">
+      <div><span class="num">P^μ =</span> $P^\mu=(E,\,p)$,　$E^2=p^2+m^2$（$c=1$）</div>
+      <div><span class="num">守恒:</span> $\textstyle\sum P_i^\mu$ 碰前 = 碰后（四动量守恒）</div>
+      <div><span class="num">M_inv² =</span> $M_{\rm inv}^2=E_{\rm tot}^2-P_{\rm tot}^2=E_{\rm cm}^2$</div>
+      <div><span class="num">复合体:</span> $V=\dfrac{P_{\rm tot}}{E_{\rm tot}}$,　$M=M_{\rm inv}$</div>
+      <div><span class="num">阈值:</span> $E_{a,\rm th}=\dfrac{M_f^2-m_a^2-m_b^2}{2m_b}$</div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="p-m1">粒子 1 静质量 $m_1$（金）</label><span class="val" id="v-m1">1.0</span></div>
+      <input id="p-m1" type="range" min="0.2" max="5" step="0.1" value="1">
+      <div class="row" style="margin-top:6px"><label for="p-u1">粒子 1 速度 $u_1$</label><span class="val" id="v-u1">0.80</span></div>
+      <input id="p-u1" type="range" min="0" max="0.95" step="0.01" value="0.8">
+      <div class="row" style="margin-top:6px"><label for="p-m2">粒子 2 静质量 $m_2$（紫）</label><span class="val" id="v-m2">1.0</span></div>
+      <input id="p-m2" type="range" min="0.2" max="5" step="0.1" value="1">
+      <div class="row" style="margin-top:6px"><label for="p-u2">粒子 2 速度 $u_2$</label><span class="val" id="v-u2">-0.80</span></div>
+      <input id="p-u2" type="range" min="-0.95" max="0.95" step="0.01" value="-0.8">
+      <label class="tog"><input id="p-rest" type="checkbox">靶粒子静止（$u_2=0$，对应固定靶阈值）</label>
+      <div class="notice" id="notice" hidden>u₁ ≤ u₂：两粒子永不相遇，无法碰撞；仅显示入射前的能量—动量账目。</div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="p-mode">碰撞类型</label></div>
+      <select id="p-mode">
+        <option value="elastic">弹性散射（质心系中动量翻转）</option>
+        <option value="inelastic">完全非弹性（并成一个复合粒子）</option>
+      </select>
+      <div class="hint">弹性解的算法：把两粒子洛伦兹变换到质心系（$\beta_{\rm CM}=P/E$），动量取反，再变换回实验室系——守恒由构造保证。</div>
+    </div>
+    <div class="out"><span class="k">质心系速度 $v_{\rm CM}=P_{\rm tot}/E_{\rm tot}$</span><span class="v" id="o-vc">–</span></div>
+
+    <div class="sub">实验室系能量—动量账目</div>
+    <div class="out"><span class="k">$E_1=\gamma_1 m_1$</span><span class="v" id="l-E1">–</span></div>
+    <div class="out"><span class="k">$p_1=\gamma_1 m_1 u_1$</span><span class="v" id="l-p1">–</span></div>
+    <div class="out"><span class="k">$E_2=\gamma_2 m_2$</span><span class="v" id="l-E2">–</span></div>
+    <div class="out"><span class="k">$p_2=\gamma_2 m_2 u_2$</span><span class="v" id="l-p2">–</span></div>
+    <div class="out"><span class="k gold">$E_{\rm tot}=E_1+E_2$</span><span class="v gold" id="g-E">–</span></div>
+    <div class="out"><span class="k gold">$P_{\rm tot}=p_1+p_2$</span><span class="v gold" id="g-P">–</span></div>
+    <div class="out"><span class="k">$M_{\rm inv}=\sqrt{E_{\rm tot}^2-P_{\rm tot}^2}=E_{\rm cm}$</span><span class="v" id="g-M">–</span></div>
+    <div class="out"><span class="k">$K_{\rm cm}=E_{\rm cm}-m_1-m_2$（可转化为内部激发）</span><span class="v" id="g-Kc">–</span></div>
+    <div class="ibar" aria-hidden="true">
+      <div class="fill" id="barFill"></div>
+      <i class="tick" id="barT1"></i>
+      <em class="l">0</em>
+      <em class="mk" id="barLM">M</em>
+      <em class="r" id="barLE">E</em>
+    </div>
+    <div class="hint">不变质量条：条全长 = $E_{\rm tot}$（质心系总能量），彩色段 = $M_{\rm inv}$；白色刻度 = $m_1+m_2$。彩色段超出刻度的部分正是质心系动能 $K_{\rm cm}$——它随系统一起惯性运动。</div>
+
+    <div class="sub">固定靶产生阈值（入射 $m_1$ · 靶 $m_2$ 静止）</div>
+    <div class="group">
+      <div class="row"><label for="p-mf">末态总静质量 $M_f$</label><span class="val" id="v-mf">2.0</span></div>
+      <input id="p-mf" type="range" min="0.4" max="20" step="0.1" value="2">
+      <div class="hint">阈值 = 四动量守恒强制的运动学下限：质心系必须凑出 $E_{\rm cm}=M_f$。$M_f\le m_1+m_2$ 时阈值退化为入射粒子静止（$E_{a,\rm th}=m_a$）。</div>
+    </div>
+    <div class="out"><span class="k">$m_a\,(=m_1)$ · $m_b\,(=m_2)$</span><span class="v" id="t-mm">–</span></div>
+    <div class="out"><span class="k gold">$E_{a,\rm th}=(M_f^2-m_a^2-m_b^2)/(2m_b)$</span><span class="v gold" id="t-eth">–</span></div>
+    <div class="out"><span class="k">$K_{\rm th}=E_{a,\rm th}-m_a$（阈值动能）</span><span class="v" id="t-kth">–</span></div>
+    <div class="out"><span class="k">当前 $E_1$ 与 $E_{a,\rm th}$ 之差</span><span class="v" id="t-ea">–</span></div>
+    <div class="out"><span class="k">能量判据</span><span class="v" id="t-stat">–</span></div>
+    <div class="hint">若用对撞机（两束各带 $E/2$、$P_{\rm tot}=0$），达到同一 $M_f$ 只需束流能量 $M_f/2$ ——固定靶大部分能量被整体质心动能带走，造不了新粒子。</div>
+
+    <div class="btns">
+      <button id="btn-pause" type="button">暂停</button>
+      <button id="btn-reset" type="button">重置</button>
+    </div>
+    <div class="group" style="margin-top:10px">
+      <div class="row"><label for="p-speed">播放速度</label><span class="val" id="v-speed">1.0×</span></div>
+      <input id="p-speed" type="range" min="0.1" max="3" step="0.1" value="1">
+    </div>
+
+    <span class="tag">本页取自然单位 <span>c = 1</span>：质量、能量、动量同单位。所有粒子速度恒 |u| &lt; 1。</span>
+  </aside>
+</div>
+
+<script>
+'use strict';
+(function () {
+  function $(id){ return document.getElementById(id); }
+  var ART = window.TMART || {};
+  var GOLD='#ffd27a', VIOL='#b79bff', TEAL='#7ff0cf', DIM='#dbe4ff';
+
+  /* ===== 物理（c = 1，纯函数，供 selftest 调用） ===== */
+  function gammaOf(u){ return 1/Math.sqrt(1-u*u); }
+  function fourOf(m,u){ var g=gammaOf(u); return {E:g*m, p:g*m*u}; }        // 质量壳: E²-p²=m²
+  function invMass(E,P){ return Math.sqrt(Math.max(0, E*E-P*P)); }
+  // 弹性：变到质心系(β=P/E, γ=E/M)→动量翻转→变换回实验室系，守恒由构造保证
+  function elasticSolve(m1,u1,m2,u2){
+    var a=fourOf(m1,u1), b=fourOf(m2,u2);
+    var E=a.E+b.E, P=a.p+b.p, M=invMass(E,P);
+    if(M<=1e-12) return null;
+    var Bc=P/E, Gc=E/M;
+    var E1=Gc*(a.E-Bc*a.p), q1=Gc*(a.p-Bc*a.E);   // 质心系
+    var E2=Gc*(b.E-Bc*b.p), q2=Gc*(b.p-Bc*b.E);
+    return { M:M,
+      E1o:Gc*(E1-Bc*q1), p1o:Gc*(Bc*E1-q1),
+      E2o:Gc*(E2-Bc*q2), p2o:Gc*(Bc*E2-q2) };
+  }
+  // 完全非弹性：并成复合体，M=Minv，V=P/E（静质量增大，动能变惯性）
+  function inelasticSolve(m1,u1,m2,u2){
+    var a=fourOf(m1,u1), b=fourOf(m2,u2);
+    var E=a.E+b.E, P=a.p+b.p, M=invMass(E,P);
+    return { Ec:E, pc:P, M:M, V:(E>0?P/E:0) };
+  }
+  function thresholdEnergy(ma,mb,Mf){ return (Mf*Mf-ma*ma-mb*mb)/(2*mb); }
+
+  /* ===== 状态 ===== */
+  var st={ m1:1, m2:1, u1:0.8, u2:-0.8, mode:'elastic', mf:2, speed:1 };
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sim={ t:0, paused:false };
+  var WORLD=5.6, FLASH=1.0;
+
+  function kin(){
+    var k={ u1:st.u1, u2:st.u2,
+      a:fourOf(st.m1,st.u1), b:fourOf(st.m2,st.u2), post:null, collide:false };
+    k.E=k.a.E+k.b.E; k.P=k.a.p+k.b.p; k.M=invMass(k.E,k.P);
+    k.vcm=k.E>0?k.P/k.E:0;
+    k.tc=Math.min(5, 5.4/Math.max(Math.abs(st.u1),Math.abs(st.u2),0.08));
+    k.x10=-st.u1*k.tc; k.x20=-st.u2*k.tc;              // 碰撞事件固定在 (x=0, t=tc)
+    if(st.u1-st.u2>1e-9){ k.collide=true;
+      k.post = st.mode==='elastic' ? elasticSolve(st.m1,st.u1,st.m2,st.u2)
+                                   : inelasticSolve(st.m1,st.u1,st.m2,st.u2); }
+    return k;
+  }
+  function snapAt(k,t){
+    var s={ t:t, merged:false, gone:!k.collide };
+    if(!k.collide || t<=k.tc){
+      s.x1=k.x10+st.u1*t; s.x2=k.x20+st.u2*t;
+      s.E1=k.a.E; s.p1=k.a.p; s.E2=k.b.E; s.p2=k.b.p;
+    } else if(st.mode==='elastic'){
+      var d=t-k.tc;
+      s.E1=k.post.E1o; s.p1=k.post.p1o; s.E2=k.post.E2o; s.p2=k.post.p2o;
+      s.x1=(k.post.p1o/k.post.E1o)*d; s.x2=(k.post.p2o/k.post.E2o)*d;
+    } else {
+      var d2=t-k.tc; s.merged=true;
+      s.cE=k.post.Ec; s.cp=k.post.pc; s.cM=k.post.M; s.cV=k.post.V;
+      s.x1=s.x2=s.cV*d2; s.E1=s.E2=s.p1=s.p2=0;
+    }
+    return s;
+  }
+
+  /* ===== 画布 ===== */
+  var cv=$('cv'), ctx=cv.getContext('2d'), W=0,H=0,DPR=1;
+  function resize(){ DPR=Math.min(2,window.devicePixelRatio||1);
+    var r=cv.getBoundingClientRect(); W=Math.max(120,Math.round(r.width)); H=Math.max(120,Math.round(r.height));
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); draw(); }
+  function fmt(v,d){ if(!isFinite(v))return '–'; return (v<0?'-':'')+Math.abs(v).toFixed(d==null?2:d); }
+  function expo(v){ var a=Math.abs(v); return a<1e-9?'0':a.toExponential(0); }
+  function draw(){
+    if(!(W>0&&H>0))return;
+    var k=kin(), s=snapAt(k,sim.t);
+    var D0=Math.max(2.4,Math.max(Math.abs(k.x10),Math.abs(k.x20)));
+    var S=Math.min((W/2-30)/WORLD,(H-96)/(2*D0+2.2));
+    var cx=W/2, yb=H/2;
+    function PX(x){return cx+x*S;} function PY(y){return yb-y*S;}
+    var bg=ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#070c1a'); bg.addColorStop(1,'#04070f');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+    var i;
+    ctx.lineWidth=1; ctx.strokeStyle='rgba(122,162,255,.08)';
+    for(i=-5;i<=5;i++){ if(!i)continue;
+      ctx.beginPath(); ctx.moveTo(PX(i),yb-(D0+1.2)*S); ctx.lineTo(PX(i),yb+(D0+1.2)*S); ctx.stroke(); }
+    ctx.strokeStyle='rgba(232,238,255,.6)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(PX(-WORLD),yb); ctx.lineTo(PX(WORLD),yb); ctx.stroke();
+    ctx.fillStyle='rgba(232,238,248,.7)'; ctx.font='11px ui-sans-serif,system-ui,sans-serif';
+    ctx.textAlign='right'; ctx.fillText('x 轴（碰撞事件在原点）', PX(WORLD), yb+15);
+    var yTop=PY(D0)+30, yBot=PY(-D0);
+    ctx.setLineDash([3,5]); ctx.strokeStyle='rgba(146,182,255,.14)';
+    ctx.beginPath(); ctx.moveTo(PX(-WORLD),yTop); ctx.lineTo(PX(WORLD),yTop); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(PX(-WORLD),yBot); ctx.lineTo(PX(WORLD),yBot); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.textAlign='left'; ctx.fillStyle='rgba(146,182,255,.55)';
+    ctx.fillText('碰前', PX(-WORLD)+4, yTop-10); ctx.fillText('碰后', PX(-WORLD)+4, yBot+18);
+    if(k.collide){
+      var xcm=Math.max(-WORLD,Math.min(WORLD,k.vcm*(sim.t-k.tc)));
+      ctx.setLineDash([4,6]); ctx.strokeStyle='rgba(183,155,255,.42)';
+      ctx.beginPath(); ctx.moveTo(PX(xcm),yb-(D0+1)*S); ctx.lineTo(PX(xcm),yb+(D0+1)*S); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(183,155,255,.8)'; ctx.textAlign='center'; ctx.fillText('质心系 v=P/E', PX(xcm), yb-(D0+1)*S+12);
+    }
+    function part(x,y,m,u,p,color,tag){
+      var r=Math.min(26,Math.max(8,6+7*Math.sqrt(m))), px=PX(x);
+      if(ART.sphere){ ART.sphere(ctx,px,y,r,color,{glow:true,glowAlpha:.5,glowR:2.4}); }
+      else { ctx.fillStyle=color; ctx.beginPath(); ctx.arc(px,y,r,0,7); ctx.fill(); }
+      var len=Math.max(16,Math.min(46,Math.abs(p)*18)), dir=p>=0?1:-1;
+      ctx.strokeStyle='rgba(232,238,255,.85)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(px+r*dir,y); ctx.lineTo(px+(r+len)*dir,y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px+(r+len)*dir,y); ctx.lineTo(px+(r+len-6)*dir,y-4);
+      ctx.lineTo(px+(r+len-6)*dir,y+4); ctx.closePath(); ctx.fillStyle='rgba(232,238,255,.85)'; ctx.fill();
+      ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+      ctx.fillStyle=color; ctx.fillText(tag+' m='+fmt(m,1), px, y-r-16);
+      ctx.fillStyle='rgba(210,220,245,.75)'; ctx.fillText('u='+fmt(u,2)+' p='+fmt(p,2), px, y-r-4);
+      return r;
+    }
+    if(s.merged){
+      var r2=Math.min(34,Math.max(10,6+7*Math.sqrt(s.cM)));
+      if(ART.sphere){ ART.sphere(ctx,PX(s.x1),yBot,r2,TEAL,{glow:true,glowAlpha:.6,glowR:2.6}); }
+      else { ctx.fillStyle=TEAL; ctx.beginPath(); ctx.arc(PX(s.x1),yBot,r2,0,7); ctx.fill(); }
+      var dir2=s.cp>=0?1:-1, len2=Math.max(16,Math.min(46,Math.abs(s.cp)*18));
+      ctx.strokeStyle='rgba(232,238,255,.85)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(PX(s.x1)+r2*dir2,yBot); ctx.lineTo(PX(s.x1)+(r2+len2)*dir2,yBot); ctx.stroke();
+      ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center'; ctx.fillStyle=TEAL;
+      ctx.fillText('复合体 M='+fmt(s.cM,2), PX(s.x1), yBot-r2-16);
+      ctx.fillStyle='rgba(210,220,245,.75)'; ctx.fillText('V='+fmt(s.cV,2)+' E='+fmt(s.cE,2), PX(s.x1), yBot-r2-4);
+    } else {
+      var pre = !k.collide || sim.t<=k.tc;
+      if(pre){ part(s.x1,yTop,st.m1,st.u1,s.p1,GOLD,'1'); part(s.x2,yTop,st.m2,st.u2,s.p2,VIOL,'2'); }
+      else {
+        part(s.x1,yBot,st.m1,s.p1/s.E1,s.p1,GOLD,'1′');
+        part(s.x2,yBot,st.m2,s.p2/s.E2,s.p2,VIOL,'2′');
+      }
+    }
+    if(k.collide){
+      var dtc=sim.t-k.tc, r0=6+42*Math.max(0,dtc/FLASH);
+      if(dtc>=0 && dtc<=FLASH){
+        ctx.strokeStyle='rgba(255,226,150,'+(0.85*(1-dtc/FLASH)).toFixed(3)+')'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(PX(0),yb,r0,0,7); ctx.stroke();
+      }
+      if(dtc>=0){ ctx.fillStyle='rgba(255,226,150,.95)'; ctx.beginPath(); ctx.arc(PX(0),yb,3.2,0,7); ctx.fill(); }
+    }
+    updateReadouts(k,s);
+  }
+
+  /* ===== 读数 / 条 / 阈值 ===== */
+  function updateReadouts(k,s){
+    $('h-mode').textContent = st.mode==='elastic'?'弹性':'完全非弹性';
+    $('h-t').textContent=fmt(sim.t,2);
+    $('h-E').textContent=fmt(k.E,2); $('h-P').textContent=fmt(k.P,2); $('h-M').textContent=fmt(k.M,3);
+    var res='—';
+    if(s.merged){ res='Δ'+expo(s.cE-k.E)+' / '+expo(s.cp-k.P); }
+    else if(k.collide && sim.t>k.tc){ res='Δ'+expo((s.E1+s.E2)-k.E)+' / '+expo((s.p1+s.p2)-k.P); }
+    $('h-res').textContent=res;
+    $('o-vc').textContent=fmt(k.vcm,3);
+    $('l-E1').textContent=fmt(k.a.E,3); $('l-p1').textContent=fmt(k.a.p,3);
+    $('l-E2').textContent=fmt(k.b.E,3); $('l-p2').textContent=fmt(k.b.p,3);
+    $('g-E').textContent=fmt(k.E,3); $('g-P').textContent=fmt(k.P,3); $('g-M').textContent=fmt(k.M,3);
+    $('g-Kc').textContent=fmt(k.M-(st.m1+st.m2),3);   // K_cm = E_cm - m1 - m2 = Minv - m1 - m2
+    var pctM=Math.max(2,Math.min(100,k.M/k.E*100)), pctT=Math.max(0,Math.min(100,(st.m1+st.m2)/k.E*100));
+    $('barFill').style.width=pctM.toFixed(1)+'%';
+    $('barT1').style.left=pctT.toFixed(1)+'%';
+    var lm=$('barLM'); lm.textContent='M='+fmt(k.M,2); lm.style.left=Math.max(10,Math.min(90,pctM)).toFixed(1)+'%';
+    $('barLE').textContent='E='+fmt(k.E,2);
+    var eth=thresholdEnergy(st.m1,st.m2,st.mf), kth=eth-st.m1, gap=k.a.E-eth;
+    $('t-mm').textContent='m_a='+fmt(st.m1,1)+' · m_b='+fmt(st.m2,1);
+    $('t-eth').textContent=fmt(eth,3); $('t-kth').textContent=fmt(kth,3); $('t-ea').textContent=fmt(gap,3);
+    var stat=$('t-stat');
+    if(st.mf<=st.m1+st.m2+1e-9){ stat.textContent='M_f ≤ m₁+m₂：无需动能'; stat.className='v ok'; }
+    else if(gap>=-1e-9){ stat.textContent='能量充足（运动学允许）'; stat.className='v ok'; }
+    else { stat.textContent='能量不足：该末道打开不了'; stat.className='v no'; }
+    var nt=$('notice'); nt.hidden=k.collide;
+  }
+
+  /* ===== 控件 ===== */
+  function bind(id,vid,key){
+    var el=$(id);
+    el.addEventListener('input',function(){ st[key]=parseFloat(el.value);
+      if(vid)$(vid).textContent=el.value; draw(); });
+  }
+  bind('p-m1','v-m1','m1'); bind('p-m2','v-m2','m2');
+  bind('p-u1','v-u1','u1'); bind('p-u2','v-u2','u2');
+  bind('p-mf','v-mf','mf');
+  $('p-speed').addEventListener('input',function(){ st.speed=parseFloat(this.value); $('v-speed').textContent=this.value+'×'; });
+  $('p-mode').addEventListener('change',function(){ st.mode=this.value; sim.t=0; draw(); });
+  $('p-rest').addEventListener('change',function(){
+    var u2=$('p-u2'); u2.disabled=this.checked;
+    if(this.checked){ u2.value=0; st.u2=0; $('v-u2').textContent='0.00'; }
+    sim.t=0; draw();
+  });
+  $('btn-pause').addEventListener('click',function(){ sim.paused=!sim.paused; this.textContent=sim.paused?'继续':'暂停'; });
+  $('btn-reset').addEventListener('click',function(){ sim.t=0; draw(); });
+
+  /* ===== 动画循环 ===== */
+  var raf=null,last=0;
+  function frame(ts){
+    if(!last)last=ts; var dt=Math.min(0.05,(ts-last)/1000); last=ts;
+    if(!sim.paused){
+      sim.t+=dt*st.speed;
+      var k=kin(), lim=k.collide?k.tc+4.5:8;
+      if(sim.t>lim) sim.t=0;
+    }
+    draw();
+    raf=requestAnimationFrame(frame);
+  }
+
+  /* ===== 自检 (?selftest=1) ===== */
+  function selftest(){
+    var lines=[], ok=true;
+    function chk(name,cond){ lines.push((cond?'PASS':'FAIL')+' · '+name); if(!cond)ok=false; }
+    function cl(a,b,tol){ return Math.abs(a-b)<(tol||1e-12); }
+    [[1,0.5],[2.3,0.9],[0.5,-0.42]].forEach(function(p){ var f=fourOf(p[0],p[1]);
+      chk('质量壳 E²-p²=m² (m='+p[0]+')', cl(f.E*f.E-f.p*f.p,p[0]*p[0])); });
+    var a1=fourOf(1,0.8), a2=fourOf(1,-0.8);
+    var e=elasticSolve(1,0.8,1,-0.8);
+    chk('弹性 E 守恒', cl(e.E1o+e.E2o, a1.E+a2.E));
+    chk('弹性 P 守恒', cl(e.p1o+e.p2o, a1.p+a2.p));
+    chk('弹性出射仍在质量壳', cl(e.E1o*e.E1o-e.p1o*e.p1o,1)&&cl(e.E2o*e.E2o-e.p2o*e.p2o,1));
+    chk('弹性出射速度亚光速', Math.abs(e.p1o/e.E1o)<1&&Math.abs(e.p2o/e.E2o)<1);
+    var b1=fourOf(2,0.95), b2=fourOf(0.5,-0.3);
+    var e2=elasticSolve(2,0.95,0.5,-0.3);
+    chk('弹性非对称 E 守恒', cl(e2.E1o+e2.E2o, b1.E+b2.E));
+    chk('弹性非对称 P 守恒', cl(e2.p1o+e2.p2o, b1.p+b2.p));
+    chk('弹性 Minv 不变', cl(e2.M, invMass(b1.E+b2.E,b1.p+b2.p)));
+    var g=inelasticSolve(1,0.8,1,-0.8);
+    chk('非弹性 E 守恒', cl(g.Ec, a1.E+a2.E));
+    chk('非弹性 P 守恒', cl(g.pc, a1.p+a2.p));
+    chk('复合体质量 = M_inv', cl(g.M, invMass(g.Ec,g.pc)));
+    chk('复合体 V=P/E 亚光速', Math.abs(g.V)<1);
+    chk('非弹性静质量增大 M>2', g.M>2+1e-9);
+    chk('阈值 m_a=m_b=1,M_f=4 → E_th=7', cl(thresholdEnergy(1,1,4),7));
+    chk('阈值退化 M_f=m_a+m_b → E_th=m_a', cl(thresholdEnergy(1,1,2),1));
+    var kk=kin();
+    chk('v_CM=P/E 亚光速', Math.abs(kk.vcm)<1);
+    chk('默认参数可碰撞', kk.collide===true);
+    var el=$('selftestPanel'); el.hidden=false;
+    el.className='selftest'+(ok?'':' fail');
+    el.textContent=lines.join('\n')+'\n-- '+(ok?'ALL PASS':'FAILED');
+    console[ok?'log':'error']('[selftest]\n'+lines.join('\n'));
+  }
+
+  window.addEventListener('resize',resize); resize();
+  if(location.search.indexOf('selftest=1')>=0) selftest();
+  if(reduced){ sim.paused=true; var kr=kin(); sim.t=(kr.collide?kr.tc*1.6:6); draw(); }
+  else requestAnimationFrame(frame);
+})();
+</script>
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/07-relativity/index.html?ret=M26" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script>
+(function () {
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (nav && stage && nav.parentNode !== stage) stage.appendChild(nav);
+})();
+</script>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+  <script src="../../assets/tm-i18n-data.js"></script>
+  <script src="../../assets/tm-i18n.js"></script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+</html>

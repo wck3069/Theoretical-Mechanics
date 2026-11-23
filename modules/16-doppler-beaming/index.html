@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>相对论多普勒与车头灯效应 · 交互实验</title>
+<style>
+  :root{--bg:#03050c; --panel:rgba(9,14,30,.74); --line:rgba(146,182,255,.14);
+        --text:#e8eeff; --muted:#6d7ca4; --accent:#ff7a9e; --accent2:#ffd27a;
+        --good:#7fe3a0; --bad:#ff8a8a; --rose:#ff7a9e; --rose-soft:#ff9fc4;}
+  *{box-sizing:border-box}
+  html{background:#03050c}
+  body{margin:0; color:var(--text);
+    font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{position:relative; z-index:1; max-width:1160px; margin:0 auto; padding:0 clamp(12px,2.4vw,24px) 110px}
+  header.top{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px; padding:26px 0 6px}
+  header.top h1{margin:0; font-size:clamp(19px,2.3vw,26px); font-weight:700; letter-spacing:.5px; color:var(--rose-soft)}
+  header.top .sub{font-size:12.5px; color:var(--muted)}
+  .lede{margin:8px 0 0; max-width:66ch; font-size:13px; line-height:1.8; color:var(--muted)}
+  .hero{position:relative; margin-top:16px; border-radius:16px; overflow:hidden;
+        border:1px solid var(--line); background:#02030a; box-shadow:0 10px 40px rgba(0,0,0,.45)}
+  #sky{display:block; width:100%; aspect-ratio:16/9; min-height:480px}
+  .hero .hud{position:absolute; left:14px; bottom:12px; display:flex; gap:6px 16px; flex-wrap:wrap;
+    font-size:12px; color:#a9b8dc; background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.12);
+    border-radius:10px; padding:6px 11px; pointer-events:none}
+  .hero .hud b{color:var(--accent2); font-weight:600; font-variant-numeric:tabular-nums}
+  .hero .legend{position:absolute; right:14px; top:12px; font-size:11px; color:#8fa2cc; text-align:right;
+    background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.12); border-radius:10px;
+    padding:6px 10px; line-height:1.7; pointer-events:none}
+  .noscript{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#ffd7d7; font-size:14px}
+  .cards{display:grid; grid-template-columns:1.12fr .88fr; gap:16px; margin-top:16px}
+  @media (max-width:960px){.cards{grid-template-columns:1fr}}
+  .card{padding:18px 20px 16px; border:1px solid var(--line); border-radius:16px;
+    background:linear-gradient(160deg,rgba(26,36,66,.55),rgba(6,10,22,.78));
+    backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+  .card-title{margin:0 0 12px; font-size:14px; font-weight:650; color:#cfe0ff}
+  .group{margin-bottom:14px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px}
+  .row label{font-size:13px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:13px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  .hint{font-size:11.5px; color:#6d7ba3; margin-top:5px; line-height:1.6}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#3a5fbf,#1a2440); outline:none}
+  input[type=range]:focus-visible{outline:2px solid var(--rose); outline-offset:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--rose); border:2px solid #0a1020; box-shadow:0 0 10px rgba(255,122,158,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--rose);
+    border:2px solid #0a1020; cursor:pointer}
+  .ticks{position:relative; height:15px; margin-top:4px; font-size:10.5px; color:#6d7ba3;
+    font-family:ui-monospace,monospace}
+  .ticks i{position:absolute; top:0; width:1px; height:5px; background:rgba(146,182,255,.4)}
+  .ticks span{position:absolute; top:6px; transform:translateX(-50%)}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:6px}
+  .kv{display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; margin-top:14px}
+  .kv div{border:1px solid var(--line); border-radius:10px; padding:8px 11px; background:rgba(10,16,32,.5)}
+  .kv .k{display:block; font-size:11px; color:var(--muted); margin-bottom:3px}
+  .kv .v{font-family:ui-monospace,monospace; font-size:13px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  #plot{display:block; width:100%; height:196px}
+  section.formulas{margin-top:22px}
+  section.formulas h2{margin:0 0 12px; font-size:16px; color:#cfe0ff; font-weight:650}
+  .eqgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width:960px){.eqgrid{grid-template-columns:1fr}}
+  .eqbox{border:1px solid var(--line); border-radius:10px; padding:11px 13px; background:rgba(6,10,22,.72);
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; line-height:1.9; color:#cfe0ff}
+  .eqbox .eqlabel{font-family:ui-sans-serif,system-ui,sans-serif; font-size:11.5px; color:var(--muted); margin-bottom:5px}
+  .eqbox .muted{color:var(--muted); font-size:11.5px; line-height:1.6}
+  .eqnote{margin-top:12px; border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+    background:rgba(6,10,22,.55); font-size:12.5px; line-height:1.8; color:#a9b8dc}
+  .foot{margin-top:26px; font-size:11.5px; color:var(--muted); line-height:1.9}
+  .foot span{color:var(--accent2)}
+  .tm-orbit-nav{position:fixed}
+  .selftest{position:fixed; top:14px; left:14px; right:auto; bottom:auto; white-space:pre-wrap; z-index:999;
+    padding:10px 14px; font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6;
+    border-radius:10px; background:rgba(8,12,24,.92); border:1px solid rgba(146,182,255,.35); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,123,123,.7); color:#ffd7d7}
+  @media (max-width:560px){
+    .kv{grid-template-columns:1fr}
+    .hero .legend{font-size:10px}
+  }
+</style>
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+<!-- TM-SEO:START -->
+<meta name="description" content="相对论多普勒与车头灯效应 · 交互实验：以速度 β 穿行静止星场的可交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/16-doppler-beaming/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="相对论多普勒与车头灯效应 · 交互实验">
+<meta property="og:description" content="相对论多普勒与车头灯效应 · 交互实验：以速度 β 穿行静止星场的可交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/16-doppler-beaming/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="相对论多普勒与车头灯效应 · 交互实验">
+<meta name="twitter:description" content="相对论多普勒与车头灯效应 · 交互实验：以速度 β 穿行静止星场的可交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<style id="m16-over">
+  /* M16 覆盖层：只将控件强调色换为模块色 #ff7a9e */
+  input[type=range]{background:linear-gradient(90deg,#ff7a9e,#b79bff); box-shadow:0 0 8px rgba(255,122,158,.18)}
+  input[type=range]::-webkit-slider-thumb{background:#ff7a9e; box-shadow:0 0 12px rgba(255,122,158,.75)}
+  input[type=range]::-moz-range-thumb{background:#ff7a9e; box-shadow:0 0 12px rgba(255,122,158,.75)}
+  button{background:rgba(255,122,158,.10); border:1px solid rgba(255,122,158,.35); color:#ffd8e4}
+  button:hover{background:rgba(255,122,158,.20); transform:translateY(-1px); box-shadow:0 4px 14px rgba(255,122,158,.18)}
+  button.primary{background:linear-gradient(180deg,#ff9fc4,#ff7a9e); border-color:#ff7a9e; color:#2a0a14}
+  .tm-orbit-nav{position:fixed}
+  a.doc{background:rgba(255,122,158,.08); border:1px solid rgba(255,122,158,.28); color:#ff9fc4}
+  a.doc:hover{background:rgba(255,122,158,.16); box-shadow:0 0 12px rgba(255,122,158,.25)}
+  ::selection{background:rgba(255,122,158,.30); color:#e8eeff}
+  @media (prefers-reduced-motion: reduce){
+    button,a.doc,.tm-orbit-nav,.tm-orbit-nav a{transition:none}
+  }
+</style>
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>相对论多普勒与车头灯效应</h1>
+    <span class="sub">M22 · 第 7 章 狭义相对论 · ch07 · 多普勒效应与光行差</span>
+  </header>
+  <p class="lede">想象你驾驶飞船以速度 $\beta$（光速取 $c=1$）穿过一片静止、各向同性的星场。下方画布按手稿约定 $\omega'=\gamma\omega(1-\beta\cos\alpha)$ 与光行差公式实时重绘你「看到」的天空：正前方（画面中心）星光蓝移、增亮、汇聚，身后退行方向的星光红移、变暗，并被压缩到画面边缘。</p>
+
+  <div class="hero">
+    <canvas id="sky" aria-label="相对论性星场：观察者以速度 β 沿正前方运动，星光因光行差向前汇聚、因多普勒效应前方蓝移增亮"></canvas>
+    <noscript><div class="noscript">需要启用 JavaScript 才能显示星场模拟</div></noscript>
+    <div class="hud">
+      <span>β <b id="hhBeta">0.600</b></span>
+      <span>γ <b id="hhGamma">1.250</b></span>
+      <span>前方 D<sub>front</sub> <b id="hhDf">2.000</b></span>
+      <span>可见星 <b id="hhN">–</b></span>
+    </div>
+    <div class="legend">中心十字 = 正前方（前进方向）<br>圆周边缘 = 侧向 90°<br>边缘之外 = 身后（深度剔除）</div>
+  </div>
+
+  <div class="cards">
+    <aside class="card" aria-label="速度控制与读数">
+      <h2 class="card-title">观察者速度</h2>
+      <div class="group">
+        <div class="row"><label for="beta">$\beta=v/c$（$c=1$）</label><span class="val" id="vBeta">0.600</span></div>
+        <input id="beta" type="range" min="0" max="1" step="0.001" value="0.1327">
+        <div class="ticks" aria-hidden="true">
+          <i style="left:1.53%"></i><span style="left:1.53%">.1</span>
+          <i style="left:10.03%"></i><span style="left:10.03%">.5</span>
+          <i style="left:33.33%"></i><span style="left:33.33%">.9</span>
+          <i style="left:66.67%"></i><span style="left:66.67%">.99</span>
+          <i style="left:98.5%"></i><span style="left:98.5%">.999</span>
+        </div>
+        <div class="hint">滑块按 $1-\beta$ 的对数刻度：右侧每一格把「离光速的距离」缩小十倍（$\beta=0.999$ 时 $\gamma\approx22.4$）。</div>
+      </div>
+      <div class="btns">
+        <button id="btn-play" class="primary">播放加速</button>
+        <button id="btn-reset">重置</button>
+      </div>
+      <div class="hint">播放加速：β 从 0 到 0.999，历时 8 秒。</div>
+      <div class="kv">
+        <div><span class="k">洛伦兹因子 $\gamma=1/\sqrt{1-\beta^2}$</span><span class="v" id="rGamma">1.250</span></div>
+        <div><span class="k">前方蓝移因子 $\sqrt{\dfrac{1+\beta}{1-\beta}}$</span><span class="v" id="rDf">2.000</span></div>
+        <div><span class="k">后方红移因子 $\sqrt{\dfrac{1-\beta}{1+\beta}}$</span><span class="v" id="rDr">0.500</span></div>
+        <div><span class="k">光行差半角 $\arccos\beta$（$\alpha'=90^\circ$）</span><span class="v" id="rAb">53.1°</span></div>
+      </div>
+      <div class="hint">光行差半角：满足 $\cos\alpha=\beta$ 的那颗星——在你的天空里恰好位于侧向 $90^\circ$。$\beta\to1$ 时它压向 $0^\circ$：身后半个天球被压缩到画面边缘的一圈里。</div>
+    </aside>
+
+    <aside class="card" aria-label="多普勒因子随角度曲线">
+      <h2 class="card-title">$\omega'/\omega$ 随光线方向角 $\alpha$</h2>
+      <div class="plotwrap"><canvas id="plot" aria-label="观测频率比随角度 α 变化的曲线，标注 α 为 0 度、90 度、180 度处的值"></canvas></div>
+      <div class="hint">$\alpha$ 是光线方向与观察者速度的夹角：$\alpha=0$ 即纯退行（后方来光），$\dfrac{\omega'}{\omega}=\sqrt{\dfrac{1-\beta}{1+\beta}}$；$\alpha=90^\circ$ 是横向多普勒，$\dfrac{\omega'}{\omega}=1/\gamma$，纯粹的相对论时间膨胀；$\alpha=180^\circ$ 即正前方迎面来光，$\dfrac{\omega'}{\omega}=\sqrt{\dfrac{1+\beta}{1-\beta}}$。</div>
+    </aside>
+  </div>
+
+  <section class="formulas">
+    <h2>公式与约定</h2>
+    <div class="card">
+      <div class="eqgrid">
+        <div class="eqbox">
+          <div class="eqlabel">观测频率（ch07 · 多普勒效应与光行差）</div>
+          $\omega'=\gamma\omega(1-\beta\cos\alpha)$<br>
+          <span class="muted">$\alpha$：光线方向与观察者速度的夹角；$c=1$，$\gamma=1/\sqrt{1-\beta^2}$。观察者迎向光源时（来光方向与速度反向）括号内 $>1$：蓝移。</span>
+        </div>
+        <div class="eqbox">
+          <div class="eqlabel">纯退行（视线方向退行，$\alpha=0$）</div>
+          $\dfrac{\omega'}{\omega}=\gamma(1-\beta)=\sqrt{\dfrac{1-\beta}{1+\beta}}$<br>
+          <span class="muted">退行使频率整体降低；迎面 $\alpha=180^\circ$ 时为 $\sqrt{\dfrac{1+\beta}{1-\beta}}$。</span>
+        </div>
+        <div class="eqbox">
+          <div class="eqlabel">光行差（光线方向的变换）</div>
+          $\cos\alpha'=\dfrac{\cos\alpha-\beta}{1-\beta\cos\alpha}$<br>
+          <span class="muted">同一束光在两个惯性系里的方向不同；天体看起来向前进方向靠拢，这正是「车头灯效应」的几何来源。</span>
+        </div>
+        <div class="eqbox">
+          <div class="eqlabel">横向多普勒（$\alpha=90^\circ$）</div>
+          $\omega'=\omega/\gamma$　（按视位置）　$\omega'=\gamma\omega$　（按本页 $\alpha$ 约定）<br>
+          <span class="muted">两者的差别就是光行差本身：$\alpha=90^\circ$ 的来光在你的天空里出现在 $\alpha'=\arccos(-\beta)>90^\circ$，而「正侧方看到的星」（$\alpha'=90^\circ$）对应 $\cos\alpha=\beta$，收到的是 $\gamma\omega$。</span>
+        </div>
+      </div>
+      <div class="eqnote">天文学束流因子：$\delta=\dfrac{1}{\gamma(1-\beta\cos\theta_{\mathrm{obs}})}$，其中 $\theta_{\mathrm{obs}}$ 是喷流速度方向与「源 → 观测者」视线的夹角。它与本页 $D=\gamma(1-\beta\cos\alpha)$ 是同一个多普勒因子的两种记号约定（运动观测者与运动辐射源互换）。观测流量密度近似按 $\delta^3$（谱流量再乘一个 $\delta$，到 $\delta^4$）放大：接近侧被强烈增亮、退行侧几乎熄灭——射电星系与 blazar 喷流的「单侧性」由此而来。本页画布对每颗星按 $D^{2.5}$ 增亮、按 $D$ 的色移改色，就是这个束流因子的直观版。</div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <a class="doc" href="../../chapters/07-relativity/index.html">← 第 7 章：狭义相对论</a>
+    <a class="doc" href="../../index.html">✦ 星图</a><br>
+    约定：$c=1$；色彩按多普勒因子 $D=\gamma(1-\beta\cos\alpha)$ 映射（亮度 $\propto D^{2.5}$，色相向蓝/红推移）。
+    
+  </div>
+</div>
+
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/07-relativity/index.html?ret=M22" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
+    '11-rotation-and-field',
+    '13-lightcone-worldlines', '14-foucault-rose', '15-lagrange-points',
+    '16-doppler-beaming'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  var M16 = (folder === '16-doppler-beaming');
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (M16) {
+    setLink('prev', base + 'chapters/07-relativity/index.html', '‹ 第 7 章：狭义相对论');
+    setLink('next', base + 'index.html', '✦ 星图');
+  } else if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (!M16 && idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+  <script src="../../assets/tm-i18n-data.js"></script>
+  <script src="../../assets/tm-i18n.js"></script>
+<script>
+'use strict';
+(function () {
+  function $(id) { return document.getElementById(id); }
+  var TAU = Math.PI * 2, PI = Math.PI;
+
+  /* ---------- ch07 约定（c = 1）：alpha = 光线方向与观察者速度的夹角 ---------- */
+  function gammaOf(b) { return 1 / Math.sqrt(1 - b * b); }
+  function doppler(b, alpha) { return gammaOf(b) * (1 - b * Math.cos(alpha)); }
+  function abcos(b, ca) { return (ca - b) / (1 - b * ca); }   /* cos alpha' */
+
+  /* ---------- 固定种子的各向同性星场（均匀球面） ---------- */
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var rnd = mulberry32(0x4D16C05A);
+  var N = 1500, stars = [];
+  for (var i = 0; i < N; i++) {
+    var mu = 2 * rnd() - 1, phi = TAU * rnd();          /* 光线方向 n = (mu, ny, nz) */
+    var rho = Math.sqrt(Math.max(0, 1 - mu * mu));
+    var cls = rnd(), hue, sat, lum;
+    if (cls < 0.24) { hue = 200 + rnd() * 40; sat = 55 + rnd() * 25; lum = 80 + rnd() * 14; }     /* 蓝白 O/B */
+    else if (cls < 0.55) { hue = 46 + rnd() * 26; sat = 10 + rnd() * 20; lum = 85 + rnd() * 10; } /* 白 F/G */
+    else if (cls < 0.78) { hue = 25 + rnd() * 16; sat = 50 + rnd() * 30; lum = 70 + rnd() * 15; } /* 金橙 K */
+    else { hue = 0 + rnd() * 12; sat = 62 + rnd() * 28; lum = 55 + rnd() * 18; }                  /* 红 M */
+    stars.push({ mu: mu, ny: rho * Math.cos(phi), nz: rho * Math.sin(phi),
+      hue: hue, sat: sat, lum: lum,
+      a: 0.35 + rnd() * 0.6, sz: 0.6 + Math.pow(rnd(), 2.2) * 2.4 });
+  }
+
+  /* ---------- 波长代理：静止色相 -> 波长(nm)，判断是否移出可见区 ---------- */
+  function lambdaOf(h) { return h <= 60 ? 700 - h * 1.9 : 586 - (h - 60) * 0.605; }
+
+  /* ---------- 星点精灵缓存（软径向点） ---------- */
+  var sprites = {}, nSprites = 0, SPRITE = 24;
+  function sprite(h, s, l) {
+    s = Math.round(s / 15) * 15;
+    l = Math.round(l / 10) * 10;
+    var key = h + '|' + s + '|' + l;
+    var sp = sprites[key];
+    if (sp) return sp;
+    var c = document.createElement('canvas');
+    c.width = c.height = SPRITE * 2;
+    var g = c.getContext('2d');
+    g.scale(2, 2);
+    var m = SPRITE / 2;
+    var rg = g.createRadialGradient(m, m, 0, m, m, m);
+    rg.addColorStop(0, 'hsla(' + h + ',' + s + '%,' + Math.min(97, l + 16) + '%,1)');
+    rg.addColorStop(0.35, 'hsla(' + h + ',' + s + '%,' + l + '%,0.85)');
+    rg.addColorStop(1, 'hsla(' + h + ',' + s + '%,' + l + '%,0)');
+    g.fillStyle = rg; g.fillRect(0, 0, SPRITE, SPRITE);
+    sp = { c: c, size: SPRITE };
+    sprites[key] = sp; nSprites++;
+    return sp;
+  }
+
+  /* ---------- 主画布 ---------- */
+  var cv = $('sky'), ctx = cv.getContext('2d');
+  var W = 0, H = 0;
+  var state = { beta: 0.6 };
+
+  function drawField() {
+    if (!(W > 0 && H > 0)) return 0;
+    var b = state.beta, gam = gammaOf(b);
+    var cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 8;
+    ctx.clearRect(0, 0, W, H);
+    var bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.75);
+    bg.addColorStop(0, '#070c1a'); bg.addColorStop(0.6, '#04070f'); bg.addColorStop(1, '#01020a');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    var gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+    gl.addColorStop(0, 'rgba(150,200,255,' + (0.04 + 0.30 * b).toFixed(3) + ')');
+    gl.addColorStop(0.55, 'rgba(150,200,255,' + (0.02 + 0.10 * b).toFixed(3) + ')');
+    gl.addColorStop(1, 'rgba(150,200,255,0)');
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.fill();
+    var cnt = 0;
+    for (var i = 0; i < N; i++) {
+      var st = stars[i];
+      if (st.mu >= b) continue;                        /* 深度剔除：只保留前方（mu' < 0） */
+      var denom = 1 - b * st.mu;
+      var D = gam * denom;                             /* 多普勒因子 */
+      var py = st.ny / (gam * denom), pz = st.nz / (gam * denom); /* 像差后方向横向分量 */
+      var x = cx + R * py, y = cy - R * pz;
+      if (x < -8 || x > W + 8 || y < -8 || y > H + 8) continue;
+      var lam2 = lambdaOf(st.hue) / D;                 /* 观测波长 = 静止波长 / D */
+      var h = st.hue + 55 * Math.log(D);               /* HSL 色相推移近似 */
+      var s = Math.round(st.sat), l = Math.round(st.lum);
+      if (lam2 < 400) { h = 312; s = Math.max(10, s - 45); l = Math.min(96, l + 15); }     /* 紫白 */
+      else if (lam2 > 700) { h = 0; s = Math.min(90, s + 10); l = Math.round(l * 0.55); }  /* 深红 */
+      else { h = Math.round(Math.max(0, Math.min(322, h)) / 12) * 12; }
+      var br = st.a * Math.pow(D, 2.6);                /* 束流增亮 D^2..D^3 */
+      if (br < 0.02) continue;
+      var rad = Math.max(0.5, Math.min(7, st.sz * Math.pow(D, 0.45)));
+      var sp = sprite(h, s, l);
+      var dia = Math.max(2, Math.min(32, rad * 4));
+      ctx.globalAlpha = Math.min(1, br);
+      ctx.drawImage(sp.c, x - dia / 2, y - dia / 2, dia, dia);
+      cnt++;
+    }
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'rgba(146,182,255,0.12)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = 'rgba(146,182,255,0.30)';
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, cy); ctx.lineTo(cx + 8, cy);
+    ctx.moveTo(cx, cy - 8); ctx.lineTo(cx, cy + 8);
+    ctx.stroke();
+    return cnt;
+  }
+
+  /* ---------- 尺寸 ---------- */
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = Math.max(2, Math.round(r.width * dpr));
+    H = Math.max(2, Math.round(r.height * dpr));
+    cv.width = W; cv.height = H;
+  }
+
+  /* ---------- 读数 ---------- */
+  function fmt(x, d) { return x.toFixed(d); }
+  function setReadouts(n) {
+    var b = state.beta, gam = gammaOf(b);
+    var df = Math.sqrt((1 + b) / (1 - b)), dr = Math.sqrt((1 - b) / (1 + b));
+    $('vBeta').textContent = fmt(b, 3);
+    $('hhBeta').textContent = fmt(b, 3);
+    $('hhGamma').textContent = fmt(gam, 3);
+    $('hhDf').textContent = b > 0 ? fmt(df, 3) : '1.000';
+    $('hhN').textContent = String(n);
+    $('rGamma').textContent = b > 0 ? fmt(gam, 3) : '1.000';
+    $('rDf').textContent = b > 0 ? fmt(df, 3) : '1.000';
+    $('rDr').textContent = b > 0 ? fmt(dr, 3) : '1.000';
+    $('rAb').textContent = b > 0 ? fmt(Math.acos(b) * 180 / PI, 1) + '°' : '90.0°';
+  }
+
+  /* ---------- 曲线图：omega'/omega 随 alpha ---------- */
+  var pcv = $('plot'), pctx = pcv.getContext('2d');
+  function drawPlot() {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var r = pcv.getBoundingClientRect();
+    var w = Math.max(2, Math.round(r.width)), h = Math.max(2, Math.round(r.height));
+    var pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+    if (pcv.width !== pw || pcv.height !== ph) { pcv.width = pw; pcv.height = ph; }
+    pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    pctx.clearRect(0, 0, w, h);
+    var L = 42, Rr = 10, T = 10, B = 22;
+    var b = state.beta, gam = gammaOf(b);
+    var yMax = Math.max(1.2, b > 0 ? gam * (1 + b) : 2);
+    function px(a) { return L + (w - L - Rr) * a / PI; }
+    function py(v) { return T + (h - T - B) * (1 - v / yMax); }
+    pctx.strokeStyle = 'rgba(146,182,255,0.14)'; pctx.lineWidth = 1;
+    pctx.beginPath(); pctx.moveTo(L, py(0)); pctx.lineTo(w - Rr, py(0));
+    pctx.moveTo(L, T); pctx.lineTo(L, h - B); pctx.stroke();
+    pctx.setLineDash([4, 4]);
+    pctx.strokeStyle = 'rgba(232,238,255,0.35)';
+    pctx.beginPath(); pctx.moveTo(L, py(1)); pctx.lineTo(w - Rr, py(1)); pctx.stroke();
+    pctx.setLineDash([]);
+    pctx.strokeStyle = 'rgba(146,182,255,0.45)';
+    pctx.beginPath(); pctx.moveTo(L, py(1 / gam)); pctx.lineTo(w - Rr, py(1 / gam)); pctx.stroke();
+    pctx.strokeStyle = '#ff7a9e'; pctx.lineWidth = 1.8;
+    pctx.beginPath();
+    for (var i = 0; i <= 180; i++) {
+      var a = i * PI / 180, v = doppler(b, a);
+      if (i === 0) pctx.moveTo(px(a), py(v)); else pctx.lineTo(px(a), py(v));
+    }
+    pctx.stroke();
+    pctx.fillStyle = '#a9b8dc'; pctx.font = '10.5px ui-monospace, monospace';
+    pctx.textAlign = 'left';
+    pctx.fillText('ω′/ω', 4, T + 10);
+    pctx.fillText(fmt(yMax, 2), 4, T + 2);
+    pctx.fillText('1', 24, py(1) + 3);
+    if (b > 0) pctx.fillText('1/γ', 16, py(1 / gam) + 3);
+    pctx.textAlign = 'center';
+    pctx.fillText('0°', px(0), h - 8);
+    pctx.fillText('90°', px(PI / 2), h - 8);
+    pctx.fillText('180°', px(PI), h - 8);
+    var marks = [[0, doppler(b, 0)], [PI / 2, doppler(b, PI / 2)], [PI, doppler(b, PI)]];
+    for (var k = 0; k < marks.length; k++) {
+      var mx = px(marks[k][0]), my = py(marks[k][1]);
+      pctx.fillStyle = '#ffd27a';
+      pctx.beginPath(); pctx.arc(mx, my, 3, 0, TAU); pctx.fill();
+      pctx.textAlign = k === 2 ? 'right' : (k === 0 ? 'left' : 'center');
+      pctx.fillText(fmt(marks[k][1], 3), mx + (k === 2 ? -6 : 6), my - 6);
+    }
+  }
+
+  /* ---------- 控件 ---------- */
+  function betaToSlider(b) { return b <= 0 ? 0 : -Math.log(1 - b) / Math.LN10 / 3; }
+  function sliderToBeta(t) { return t <= 0 ? 0 : 1 - Math.pow(10, -3 * t); }
+  var sl = $('beta');
+  function render() {
+    var n = drawField();
+    setReadouts(n);
+    drawPlot();
+  }
+  function setBeta(b) {
+    state.beta = Math.max(0, Math.min(0.9995, b));
+    sl.value = String(betaToSlider(state.beta));
+    render();
+  }
+  sl.value = String(betaToSlider(state.beta));
+  sl.addEventListener('input', function () { stopAnim(); setBeta(sliderToBeta(parseFloat(sl.value) || 0)); });
+
+  var raf = 0, t0 = 0, DUR = 8000;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function stopAnim() { if (raf) { cancelAnimationFrame(raf); raf = 0; $('btn-play').textContent = '播放加速'; } }
+  function tick(ts) {
+    if (!t0) t0 = ts;
+    var u = Math.min(1, (ts - t0) / DUR);
+    setBeta(0.999 * (1 - Math.pow(1 - u, 2)));
+    if (u < 1) raf = requestAnimationFrame(tick); else stopAnim();
+  }
+  $('btn-play').addEventListener('click', function () {
+    if (raf) { stopAnim(); return; }
+    if (reduced) { setBeta(0.999); return; }
+    t0 = 0; $('btn-play').textContent = '停止';
+    raf = requestAnimationFrame(tick);
+  });
+  $('btn-reset').addEventListener('click', function () { stopAnim(); setBeta(0); });
+  window.addEventListener('resize', render);
+
+  /* ---------- 自测：index.html?selftest=1 ---------- */
+  if (/[?&]selftest=1/.test(location.search)) {
+    var lines = [], ok = true;
+    function chk(name, got, want) {
+      var pass = Math.abs(got - want) < 1e-9;
+      if (!pass) ok = false;
+      lines.push((pass ? 'PASS ' : 'FAIL ') + name + ' = ' + got.toFixed(6) + ' (期望 ' + want + ')');
+    }
+    var b = 0.6;
+    chk('γ(β=.6)', gammaOf(b), 1.25);
+    chk('D(α=0,β=.6)=γ(1−β)', doppler(b, 0), 0.5);
+    chk('√((1−β)/(1+β))', Math.sqrt((1 - b) / (1 + b)), 0.5);
+    chk('D(α=180,β=.6)=γ(1+β)', doppler(b, PI), 2);
+    chk('√((1+β)/(1−β))', Math.sqrt((1 + b) / (1 - b)), 2);
+    chk('D(α=90,β=.6)=γ', doppler(b, PI / 2), 1.25);
+    chk('光行差 abcos(.6,cos90°)', abcos(b, Math.cos(PI / 2)), -0.6);
+    chk('α′=90 ⇔ cos α=β', abcos(b, b), 0);
+    chk('D(α=0,β=.99)', doppler(0.99, 0), Math.sqrt(0.01 / 1.99));
+    chk('1/γ(β=.99)', 1 / gammaOf(0.99), Math.sqrt(1 - 0.99 * 0.99));
+    var div = document.createElement('div');
+    div.className = 'selftest' + (ok ? '' : ' fail');
+    div.textContent = 'SELFTEST ' + (ok ? 'PASS' : 'FAIL') + '\n' + lines.join('\n');
+    document.body.appendChild(div);
+  }
+
+  resize();
+  render();
+})();
+</script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+</html>

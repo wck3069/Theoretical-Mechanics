@@ -4,6 +4,14 @@
 (function () {
   'use strict';
   var DATA = window.TM_I18N_DATA || {};
+  var PAGE = window.TM_I18N_PAGE || {};
+  for (var plang in PAGE) {
+    if (!Object.prototype.hasOwnProperty.call(PAGE, plang)) continue;
+    var pdst = DATA[plang] || (DATA[plang] = {});
+    for (var pkey in PAGE[plang]) {
+      if (Object.prototype.hasOwnProperty.call(PAGE[plang], pkey) && pdst[pkey] == null) pdst[pkey] = PAGE[plang][pkey];
+    }
+  }
   var LANGS = [
     { code: 'zh-CN', name: '简体中文', flag: 'cn' },
     { code: 'zh-TW', name: '繁體中文', flag: 'cn' },
@@ -366,11 +374,9 @@
     var top = document.querySelector('.top');
     var ms = document.querySelector('.ms-header .in');
     var stage = document.querySelector('.stage');
-    var anchor = null;
     if (actions) {
-      anchor = document.getElementById('btnAbout');
-      if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
-      else actions.appendChild(wrap);
+      // 语言切换器固定在操作区最右侧（首页国旗标志排在“书稿”之后）
+      actions.appendChild(wrap);
     } else if (top) {
       wrap.className += ' tm-lang--header'; top.appendChild(wrap);
     } else if (ms) {
@@ -442,7 +448,14 @@
       setTimeout(function () { try { window.location.reload(); } catch (e) {} }, 60);
     }
   }
-  function setLocale(locale) { apply(locale, true); closeMenu(); }
+  function setLocale(locale) {
+    closeMenu();
+    if (locale !== 'zh-CN' && !window.TM_I18N_DATA) {
+      try { localStorage.setItem('tm-lang', locale); } catch (e) {}
+      try { window.location.reload(); return; } catch (e) {}
+    }
+    apply(locale, true);
+  }
   function storedLocale() {
     try {
       var v = localStorage.getItem('tm-lang');
@@ -481,7 +494,7 @@
     startObserver();
     window.TM_I18N = {
       lang: function () { return current; },
-      setLocale: function (lang) { apply(lang, true); },
+      setLocale: function (lang) { setLocale(lang); },
       closeMenu: closeMenu,
       translate: function (s) { return translate(s, current); }
     };

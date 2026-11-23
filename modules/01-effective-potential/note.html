@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>有效势与轨道稳定性 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>有效势与轨道稳定性</h1>
+<p class="ms-lead">本讲义处理质点在中心力场中的束缚运动与轨道稳定性问题：以角动量守恒为核心， 把二维轨道问题约化为一维径向运动，其等效势场即有效势 。我们依次导出保守力判据、 圆轨道存在与稳定条件、径向小振动频率 、幂律势的频率比 、高斯势的稳定窗口与最大角动量 、比奈方程下 与 微扰引起的每圈近心点进动、抛物线彗星在地球轨道内的停留时间、 角速度比与离心率的关系，以及位力定理与 。 全部解析结果由配套脚本 qa/numeric\_check.py （…</p>
+<div class="ms-links"><b>相关</b><a href="index.html">有效势与轨道稳定性 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#sec:map">1作业映射</a></li>
+<li class="l2"><a href="#sec:model">2模型与假设</a></li>
+<li class="l2"><a href="#sec:derive">3推导</a></li>
+<li class="l3"><a href="#sub:conservative">3.1保守力判据与势能的存在性（作业-2 Q1、Q2）</a></li>
+<li class="l3"><a href="#sub:veff">3.2角动量守恒与有效势</a></li>
+<li class="l3"><a href="#sub:circular">3.3圆轨道、稳定性与径向小振动（作业-2 Q4）</a></li>
+<li class="l3"><a href="#sub:gaussian">3.4高斯势的稳定窗口与最大角动量（作业-2 Q3）</a></li>
+<li class="l3"><a href="#sub:oscillator">3.5各向同性谐振子的椭圆轨道（作业-3 Q1）</a></li>
+<li class="l3"><a href="#sub:binet">3.6比奈方程与近心点进动（作业-2 Q7）</a></li>
+<li class="l3"><a href="#sub:comet">3.7抛物线彗星在地球轨道内的停留时间（作业-2 Q5）</a></li>
+<li class="l3"><a href="#sub:omegaratio">3.8角速度比与离心率（作业-2 Q6）</a></li>
+<li class="l3"><a href="#sub:virial">3.9位力定理与椭圆轨道的时间平均（作业-5 Q4）</a></li>
+<li class="l2"><a href="#sec:result">4解析结果</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l2"><a href="#sec:discuss">6讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="sec:map"><span class="ms-secno">1</span>作业映射</h2>
+<p>本模块覆盖以下作业题（题面为原文简述，记号与原文一致；公式均已在原文中给出或要求证明）：</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-2 Q1</td>
+<td style="text-align: left;">判断 <span class="math inline">\(\mathbf{F}(\mathbf{r})=F(r)\mathbf{e}_r\)</span> 是否保守</td>
+<td style="text-align: left;">保守力判据、旋度、环路做功</td>
+<td style="text-align: center;"><a href="#sub:conservative" data-reference-type="ref" data-reference="sub:conservative">3.1</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-2 Q2</td>
+<td style="text-align: left;">线性力场 <span class="math inline">\(F_i=\sum_j a_{ij}x_j\)</span>（<span class="math inline">\(a_{ij}\)</span> 常数）：满足什么条件才有势能？求其势能</td>
+<td style="text-align: left;">旋度为零 <span class="math inline">\(\Leftrightarrow\)</span> 系数矩阵对称</td>
+<td style="text-align: center;"><a href="#sub:conservative" data-reference-type="ref" data-reference="sub:conservative">3.1</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-2 Q3</td>
+<td style="text-align: left;">高斯势 <span class="math inline">\(V=-V_0\mathrm{e}^{-\lambda^2r^2}\)</span>：(a) 给定 <span class="math inline">\(L\)</span> 何时存在稳定圆轨道；(b) 证明 <span class="math inline">\(L\)</span> 过大时不存在圆轨道，求允许的最大角动量</td>
+<td style="text-align: left;">有效势极值与二阶判据、临界 <span class="math inline">\(L\)</span></td>
+<td style="text-align: center;"><a href="#sub:veff" data-reference-type="ref" data-reference="sub:veff">3.2</a>–<a href="#sub:gaussian" data-reference-type="ref" data-reference="sub:gaussian">3.4</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-2 Q4</td>
+<td style="text-align: left;">幂律势 <span class="math inline">\(V=\beta r^k\)</span>：求圆轨道半径 <span class="math inline">\(r_0\)</span> 与径向振动频率 <span class="math inline">\(\omega_r\)</span>；设 <span class="math inline">\(a=\omega_r/\omega_\theta\)</span>，求 <span class="math inline">\(a=1\)</span> 与 <span class="math inline">\(a=2\)</span> 对应的势能</td>
+<td style="text-align: left;">圆轨道、径向小振动、闭合条件</td>
+<td style="text-align: center;"><a href="#sub:circular" data-reference-type="ref" data-reference="sub:circular">3.3</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-2 Q5</td>
+<td style="text-align: left;">抛物线彗星近日点为地球轨道半径的 <span class="math inline">\(1/n\)</span>：证其在地球轨道内停留时间为 <span class="math inline">\(T_E\frac{2(n+2)}{3\pi n}\sqrt{\frac{n-1}{2n}}\)</span>，并证最长停留为 <span class="math inline">\(\frac{2}{3\pi}\)</span> 年</td>
+<td style="text-align: left;">面积定律、抛物线轨道几何</td>
+<td style="text-align: center;"><a href="#sub:comet" data-reference-type="ref" data-reference="sub:comet">3.7</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-2 Q6</td>
+<td style="text-align: left;">平方反比引力场中沿椭圆运动，最大角速度与最小角速度之比为 <span class="math inline">\(n\)</span>：证离心率 <span class="math inline">\(e=\frac{\sqrt n-1}{\sqrt n+1}\)</span></td>
+<td style="text-align: left;">角动量守恒、近/远心点</td>
+<td style="text-align: center;"><a href="#sub:omegaratio" data-reference-type="ref" data-reference="sub:omegaratio">3.8</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-2 Q7</td>
+<td style="text-align: left;"><span class="math inline">\(V=-\alpha/r\)</span>（轨道 <span class="math inline">\(r=p/(1+e\cos\theta)\)</span>）加小修正 <span class="math inline">\(\delta V\)</span> 后轨道不再闭合，每圈近心点改变小角度 <span class="math inline">\(\delta\theta\)</span>：求 (a) <span class="math inline">\(\delta V=\beta/r^2\)</span>；(b) <span class="math inline">\(\delta V=\gamma/r^3\)</span> 的 <span class="math inline">\(\delta\theta\)</span></td>
+<td style="text-align: left;">比奈方程、摄动法</td>
+<td style="text-align: center;"><a href="#sub:binet" data-reference-type="ref" data-reference="sub:binet">3.6</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-3 Q1</td>
+<td style="text-align: left;">中心力场 <span class="math inline">\(V(r)=kr^2/2\)</span>：证明质点轨迹是椭圆</td>
+<td style="text-align: left;">各向同性谐振子、闭合轨道</td>
+<td style="text-align: center;"><a href="#sub:oscillator" data-reference-type="ref" data-reference="sub:oscillator">3.5</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-5 Q4</td>
+<td style="text-align: left;">引力势 <span class="math inline">\(V=-k/r\)</span>、半长轴 <span class="math inline">\(a\)</span> 的椭圆轨道：(a) 证 <span class="math inline">\(\langle 1/r\rangle=1/a\)</span>；(b) 求 <span class="math inline">\(\langle V\rangle\)</span>、<span class="math inline">\(\langle T\rangle\)</span> 并验证位力定理</td>
+<td style="text-align: left;">时间平均、位力定理</td>
+<td style="text-align: center;"><a href="#sub:virial" data-reference-type="ref" data-reference="sub:virial">3.9</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:model"><span class="ms-secno">2</span>模型与假设</h2>
+<p>考虑质量为 <span class="math inline">\(m\)</span> 的质点在中心力场中运动。以力心为原点建立平面极坐标 <span class="math inline">\((r,\theta)\)</span> （角动量守恒保证运动限于一个平面，见 <a href="#sub:veff" data-reference-type="ref" data-reference="sub:veff">3.2</a> 小节）， 位矢 <span class="math inline">\(\mathbf{r}=r\mathbf{e}_r\)</span>，<span class="math inline">\(\mathbf{e}_r\)</span> 为径向单位矢量， <span class="math inline">\(\mathbf{e}_\theta\)</span> 为横向单位矢量。基本假设与适用条件如下：</p>
+<ol>
+<li><p><strong>有心力假设</strong>：<span class="math inline">\(\mathbf{F}=F(r)\mathbf{e}_r\)</span>，力的大小只依赖 <span class="math inline">\(r\)</span>。 这排除了各向异性与耗散性；何时这样的力存在势能，由 <a href="#sub:conservative" data-reference-type="ref" data-reference="sub:conservative">3.1</a> 小节的判据回答（作业-2 Q1/Q2）。</p></li>
+<li><p><strong>保守力假设</strong>：所考虑的力场在 <span class="math inline">\(r&gt;0\)</span> 的单连通区域内旋度为零， 从而存在势能 <span class="math inline">\(V(r)\)</span>，<span class="math inline">\(\mathbf{F}=-\nabla V\)</span>。 力心处的奇点（如 <span class="math inline">\(1/r\)</span> 型势）不影响 <span class="math inline">\(r&gt;0\)</span> 区域内的全部结论。</p></li>
+<li><p><strong>单位制</strong>：解析推导保留 <span class="math inline">\(m\)</span> 与各势参数（<span class="math inline">\(\alpha\)</span>、<span class="math inline">\(\beta\)</span>、<span class="math inline">\(k\)</span>、<span class="math inline">\(V_0\)</span>、<span class="math inline">\(\lambda\)</span> 等）； 数值验证统一取无量纲约定 <span class="math inline">\(m=1\)</span>、Kepler 强度 <span class="math inline">\(\alpha=1\)</span>、 高斯势 <span class="math inline">\(V_0=\lambda=1\)</span> 等，表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 同此约定。</p></li>
+<li><p><strong>记号约定</strong>：自然对数的底记作 <span class="math inline">\(\mathrm{e}\)</span>，离心率记作 <span class="math inline">\(e\)</span>； <a href="#sub:circular" data-reference-type="ref" data-reference="sub:circular">3.3</a> 小节的 <span class="math inline">\(a\)</span> 是频率比 <span class="math inline">\(\omega_r/\omega_\theta\)</span>（作业-2 Q4 的记号）， <a href="#sub:omegaratio" data-reference-type="ref" data-reference="sub:omegaratio">3.8</a>、<a href="#sub:virial" data-reference-type="ref" data-reference="sub:virial">3.9</a> 小节的 <span class="math inline">\(a\)</span> 是椭圆半长轴（作业-5 Q4 的记号）， 两处含义不同，各自在首次出现处重新定义；<span class="math inline">\(T\)</span> 表示动能（作业-5 Q4 记号）， 周期类量用 <span class="math inline">\(T_r\)</span>（径向）、<span class="math inline">\(T_E\)</span>（地球年）、<span class="math inline">\(\tau\)</span>（轨道周期）区分。</p></li>
+<li><p><strong>小振动线性化</strong>：径向小振动频率 <span class="math inline">\(\omega_r\)</span> 由 <span class="math inline">\(V_{\mathrm{eff}}\)</span> 在 <span class="math inline">\(r_0\)</span> 处的泰勒展开保留到二阶项得到，适用条件为径向偏移 <span class="math inline">\(|\delta r|\ll r_0\)</span>； 有限振幅带来的频率修正为 <span class="math inline">\(O(\delta^2)\)</span>（数值验证中 Kepler 势 <span class="math inline">\(\delta=0.01\)</span> 时测得偏差 <span class="math inline">\(1.47\times10^{-4}\approx\frac32\delta^2\)</span>，与此一致）。</p></li>
+<li><p><strong>微扰适用条件</strong>：近心点进动的一阶公式要求 <span class="math inline">\(|\delta V|\ll|V|\)</span> 在整个轨道上成立（近心点最苛刻），具体条件在 <a href="#sub:binet" data-reference-type="ref" data-reference="sub:binet">3.6</a> 小节给出。</p></li>
+</ol>
+<h2 id="sec:derive"><span class="ms-secno">3</span>推导</h2>
+<h3 id="sub:conservative"><span class="ms-secno">3.1</span>保守力判据与势能的存在性（作业-2 Q1、Q2）</h3>
+<p>力场保守的定义等价条件为：沿任意闭合路径做功为零， <span class="math display">\[\oint \mathbf{F}\cdot\mathrm{d}\mathbf{r}=0
+  \quad\Longleftrightarrow\quad
+  \nabla\times\mathbf{F}=\mathbf{0},
+  
+\tag{1}\]</span> 后者要求区域单连通。对中心力 <span class="math inline">\(\mathbf{F}=F(r)\mathbf{e}_r\)</span>（作业-2 Q1）： 球坐标下 <span class="math inline">\(\nabla\times\mathbf{F}\)</span> 的各分量只含 <span class="math inline">\(\partial F/\partial\theta\)</span> 与 <span class="math inline">\(\partial F/\partial\phi\)</span> 型的项，而 <span class="math inline">\(F\)</span> 只依赖 <span class="math inline">\(r\)</span>，故 <span class="math display">\[\nabla\times\bigl(F(r)\mathbf{e}_r\bigr)=\mathbf{0}
+  \qquad (r&gt;0),
+  
+\tag{2}\]</span> 即中心力在除去力心的任何单连通区域内保守，势能可取 <span class="math display">\[V(r)=-\int_{\infty}^{r}F(r&#39;)\,\mathrm{d}r&#39;,
+  
+\tag{3}\]</span> 积分下限对应 <span class="math inline">\(V(\infty)=0\)</span> 的约定（若积分发散，<span class="math inline">\(V\)</span> 可差一个任意常数）。 适用条件：<span class="math inline">\(F\)</span> 在所论区域内连续；力心若为奇点，需从区域中挖去。</p>
+<p>对线性力场（作业-2 Q2） <span class="math display">\[F_x=a_{11}x+a_{12}y+a_{13}z,\quad
+  F_y=a_{21}x+a_{22}y+a_{23}z,\quad
+  F_z=a_{31}x+a_{32}y+a_{33}z,
+  
+\tag{4}\]</span> 其中 <span class="math inline">\(a_{ij}\)</span> 为常数（<span class="math inline">\(i,j=1,2,3\)</span> 依次对应 <span class="math inline">\(x,y,z\)</span>）。旋度分量例如 <span class="math inline">\((\nabla\times\mathbf{F})_z=\partial F_y/\partial x-\partial F_x/\partial y
+=a_{21}-a_{12}\)</span>，故存在势能的充要条件是<strong>系数矩阵对称</strong>： <span class="math display">\[a_{ij}=a_{ji}\qquad (i,j=1,2,3),
+  
+\tag{5}\]</span> 此时 <span class="math display">\[V=-\frac12\sum_{i,j}a_{ij}x_ix_j
+  
+\tag{6}\]</span> 满足 <span class="math inline">\(\mathbf{F}=-\nabla V\)</span>：对 <span class="math inline">\(x_k\)</span> 求导得 <span class="math inline">\(\partial V/\partial x_k=-\frac12\sum_j(a_{kj}+a_{jk})x_j=-\sum_j a_{kj}x_j\)</span> （最后一步用了对称性 (5)），即 <span class="math inline">\(F_k=-\partial V/\partial x_k\)</span>。</p>
+<h3 id="sub:veff"><span class="ms-secno">3.2</span>角动量守恒与有效势</h3>
+<p>中心力对力心的力矩 <span class="math inline">\(\mathbf{r}\times F(r)\mathbf{e}_r=\mathbf{0}\)</span>，故角动量 <span class="math display">\[\mathbf{L}=m\mathbf{r}\times\dot{\mathbf{r}},\qquad
+  L\equiv m r^2\dot\theta=\text{常量}
+  
+\tag{7}\]</span> 守恒（即横向运动方程 <span class="math inline">\(\frac{\mathrm{d}}{\mathrm{d}t}(mr^2\dot\theta)=0\)</span> 的积分）。 <span class="math inline">\(\mathbf{L}\)</span> 方向不变同时保证运动限于垂直于 <span class="math inline">\(\mathbf{L}\)</span> 的固定平面， 二维极坐标自洽。机械能 <span class="math display">\[E=\frac12m\dot r^2+\frac{L^2}{2mr^2}+V(r)
+    \equiv \frac12m\dot r^2+V_{\mathrm{eff}}(r),
+  
+\tag{8}\]</span> 其中 <span class="math display">\[\boxed{\;V_{\mathrm{eff}}(r)=V(r)+\frac{L^2}{2mr^2}\;}
+  
+\tag{9}\]</span> 为<strong>有效势</strong>：<span class="math inline">\(L^2/(2mr^2)\)</span> 是离心势垒。于是二维轨道问题约化为 <span class="math inline">\(r\)</span> 在 <span class="math inline">\(V_{\mathrm{eff}}\)</span> 中的一维运动，<span class="math inline">\(\theta\)</span> 再由 (7) 积出 （<span class="math inline">\(\dot\theta=L/(mr^2)\)</span>）——这是本模块全部结论的统一框架。</p>
+<h3 id="sub:circular"><span class="ms-secno">3.3</span>圆轨道、稳定性与径向小振动（作业-2 Q4）</h3>
+<p>圆轨道 <span class="math inline">\(r(t)\equiv r_0\)</span> 要求 <span class="math inline">\(\dot r=\ddot r=0\)</span>，即 <span class="math inline">\(V_{\mathrm{eff}}\)</span> 取驻值： <span class="math display">\[V_{\mathrm{eff}}&#39;(r_0)=0,
+  \qquad
+  \omega_\theta\equiv\dot\theta=\frac{L}{mr_0^2},
+  
+\tag{10}\]</span> 其中 <span class="math inline">\(\omega_\theta\)</span> 为圆周运动角频率。给径向一个小扰动 <span class="math inline">\(r=r_0+\delta r\)</span> （<span class="math inline">\(|\delta r|\ll r_0\)</span>），把 (8) 中的 <span class="math inline">\(V_{\mathrm{eff}}\)</span> 在 <span class="math inline">\(r_0\)</span> 处 泰勒展开保留到二阶： <span class="math display">\[\frac12m\bigl(\dot{\delta r}\bigr)^2
+  +\frac12V_{\mathrm{eff}}&#39;&#39;(r_0)(\delta r)^2
+  =E-V_{\mathrm{eff}}(r_0),
+  
+\tag{11}\]</span> 即扰动以频率 <span class="math display">\[\boxed{\;\omega_r=\sqrt{V_{\mathrm{eff}}&#39;&#39;(r_0)/m}\;}
+  
+\tag{12}\]</span> 绕 <span class="math inline">\(r_0\)</span> 简谐振动。这正是<strong>稳定条件</strong> <span class="math display">\[V_{\mathrm{eff}}&#39;&#39;(r_0)&gt;0
+  
+\tag{13}\]</span> 的物理内容：<span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;(r_0)&lt;0\)</span> 时 (11) 左端第二项为负， 扰动按 <span class="math inline">\(\mathrm{e}^{|\omega_r|t}\)</span> 指数发散（不稳定）；<span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;(r_0)=0\)</span> 为临界情形。(12) 的适用条件是线性化 <span class="math inline">\(|\delta r|\ll r_0\)</span>； 有限振幅的频率修正为 <span class="math inline">\(O(\delta^2)\)</span>（见 <a href="#sec:numeric" data-reference-type="ref" data-reference="sec:numeric">5</a> 节的数值证据）。</p>
+<p>对幂律势 <span class="math inline">\(V=\beta r^k\)</span>（作业-2 Q4；<span class="math inline">\(\beta\)</span>、<span class="math inline">\(k\)</span> 为常数）： <span class="math inline">\(V_{\mathrm{eff}}&#39;=\beta k r^{k-1}-L^2/(mr^3)=0\)</span> 给出圆轨道半径 <span class="math display">\[r_0=\left(\frac{L^2}{mk\beta}\right)^{\!\!\frac{1}{k+2}},
+  
+\tag{14}\]</span> 要求 <span class="math inline">\(k\beta&gt;0\)</span>（势足够吸引，否则无圆轨道）。在 <span class="math inline">\(r_0\)</span> 处 <span class="math display">\[\omega_r^2=\frac{V_{\mathrm{eff}}&#39;&#39;(r_0)}{m}
+  =\frac{(k+2)\,k\beta}{m}\,r_0^{\,k-2},
+  
+\tag{15}\]</span> 与 <span class="math inline">\(\omega_\theta=L/(mr_0^2)\)</span> 之比为（用 (14) 消去 <span class="math inline">\(L\)</span>） <span class="math display">\[\boxed{\;a\equiv\frac{\omega_r}{\omega_\theta}=\sqrt{k+2}\;}
+  
+\tag{16}\]</span> （此处 <span class="math inline">\(a\)</span> 为频率比，作业-2 Q4 记号）。稳定要求 <span class="math inline">\(k&gt;-2\)</span>。 轨道闭合的条件是 <span class="math inline">\(a\)</span> 为有理数：<span class="math inline">\(a=1\)</span> 给 <span class="math inline">\(k=-1\)</span>，即 Kepler 势 <span class="math inline">\(V=\beta/r\)</span>（<span class="math inline">\(\beta&lt;0\)</span>，吸引）；<span class="math inline">\(a=2\)</span> 给 <span class="math inline">\(k=2\)</span>，即各向同性谐振子势 <span class="math inline">\(V=\beta r^2\)</span>（<span class="math inline">\(\beta&gt;0\)</span>）——这正是作业-2 Q4(c) 的答案。 顺带指出，Bertrand 定理保证：对所有初条件都闭合的幂律势仅有这两个 （<span class="math inline">\(k=-1\)</span> 与 <span class="math inline">\(k=2\)</span>），与上式 <span class="math inline">\(a\)</span> 取整数 1、2 完全对应。</p>
+<h3 id="sub:gaussian"><span class="ms-secno">3.4</span>高斯势的稳定窗口与最大角动量（作业-2 Q3）</h3>
+<p>高斯势 <span class="math inline">\(V=-V_0\mathrm{e}^{-\lambda^2r^2}\)</span>（<span class="math inline">\(V_0,\lambda&gt;0\)</span>）中 <span class="math inline">\(V&#39;=2V_0\lambda^2r\,\mathrm{e}^{-\lambda^2r^2}\)</span>，圆轨道条件 (10) 化为 <span class="math display">\[L^2=2mV_0\lambda^2r_0^4\,\mathrm{e}^{-\lambda^2r_0^2}
+  \equiv\varphi(r_0).
+  
+\tag{17}\]</span> 右端作为 <span class="math inline">\(r_0\)</span> 的函数在 <span class="math inline">\(\varphi&#39;(r_*)=0\)</span> 处取唯一极大， <span class="math display">\[r_*=\frac{\sqrt2}{\lambda},
+  \qquad
+  \varphi(r_*)=\frac{8mV_0}{\lambda^2\mathrm{e}^2}.
+  
+\tag{18}\]</span> 因此：<span class="math inline">\(L^2&gt;\varphi(r_*)\)</span> 时 (17) 无解——<span class="math inline">\(L\)</span> 过大时 <strong>不存在任何圆轨道</strong>（作业-2 Q3(b) 前半）；<span class="math inline">\(L^2&lt;\varphi(r_*)\)</span> 时 有两个圆轨道 <span class="math inline">\(r_0&lt;r_*\)</span> 与 <span class="math inline">\(r_0&gt;r_*\)</span>。稳定性由 (13) 判定： 把 (17) 代入 <span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;=V&#39;&#39;+3L^2/(mr^4)\)</span>（<span class="math inline">\(m\)</span> 消去）得 <span class="math display">\[V_{\mathrm{eff}}&#39;&#39;(r_0)=4V_0\lambda^2\,\mathrm{e}^{-\lambda^2r_0^2}
+  \bigl(2-\lambda^2r_0^2\bigr),
+  
+\tag{19}\]</span> 故稳定窗口为 <span class="math inline">\(\lambda^2r_0^2&lt;2\)</span>，即 <span class="math inline">\(r_0&lt;r_*\)</span>：两支圆轨道中内支稳定、外支不稳定， 临界处 <span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;=0\)</span>、<span class="math inline">\(\omega_r\to0\)</span>。于是存在稳定圆轨道的充要条件是 角动量小于<strong>最大角动量</strong>（作业-2 Q3 的完整答案）： <span class="math display">\[\boxed{\;L&lt;L_{\max},\qquad
+  L_{\max}=\frac{2\sqrt{2mV_0}}{\lambda\,\mathrm{e}}
+  =\sqrt{\frac{8mV_0}{\lambda^2\mathrm{e}^2}}\;}
+  
+\tag{20}\]</span> （<span class="math inline">\(L=L_{\max}\)</span> 时两支合并于 <span class="math inline">\(r_0=r_*\)</span>，临界稳定）。 数值验证取 <span class="math inline">\(m=V_0=\lambda=1\)</span>：<span class="math inline">\(L_{\max}=2\sqrt2/\mathrm{e}=1.0405202\)</span>， 二分法（外层对 <span class="math inline">\(L\)</span>、内层对 <span class="math inline">\(r\)</span>，判据 <span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;=0\)</span>）得 <span class="math inline">\(1.04052019005\)</span>，相对误差 <span class="math inline">\(4.5\times10^{-15}\)</span>；且 <span class="math inline">\(L=0.999\,L_{\max}\)</span> 时 稳定支 <span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;(r_0)&gt;0\)</span>，<span class="math inline">\(L=1.001\,L_{\max}\)</span> 时圆轨道不存在， 与上述窗口一致（表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a>）。</p>
+<h3 id="sub:oscillator"><span class="ms-secno">3.5</span>各向同性谐振子的椭圆轨道（作业-3 Q1）</h3>
+<p>各向同性谐振子 <span class="math inline">\(V=kr^2/2\)</span>（<span class="math inline">\(k&gt;0\)</span>）在直角坐标下是两个同频简谐方程 <span class="math inline">\(\ddot x=-(k/m)x\)</span>、<span class="math inline">\(\ddot y=-(k/m)y\)</span>，通解可写为 <span class="math display">\[x=A\cos\omega t,\qquad y=B\cos(\omega t-\varphi),
+  \qquad \omega=\sqrt{k/m},
+  
+\tag{21}\]</span> 其中 <span class="math inline">\(A\)</span>、<span class="math inline">\(B\)</span>、<span class="math inline">\(\varphi\)</span> 由初条件决定。消去 <span class="math inline">\(t\)</span>：由 <span class="math inline">\(x/A=\cos\omega t\)</span> 与 <span class="math inline">\(\sin\omega t=\bigl[y/B-(x/A)\cos\varphi\bigr]/\sin\varphi\)</span> 得 <span class="math display">\[\frac{x^2}{A^2}
+  +\frac{1}{\sin^2\varphi}\left(\frac{y}{B}-\frac{x}{A}\cos\varphi\right)^{\!2}=1,
+  
+\tag{22}\]</span> 左端是正定二次型，故轨迹是<strong>中心在力心（原点）的椭圆</strong>—— 作业-3 Q1 所证（<span class="math inline">\(\varphi=0,\pi\)</span> 时退化为过力心的线段）。 注意与 Kepler 椭圆的区别：谐振子椭圆的力心在<strong>中心</strong>，而非焦点。</p>
+<p>同一结论也可从 (16) 读出：<span class="math inline">\(k=2\)</span> 时 <span class="math inline">\(a=\sqrt{k+2}=2\)</span>， 径向振动频率是角频率的两倍，每完成一次径向振荡极角前进 <span class="math inline">\(\Delta\theta=2\pi/a=\pi\)</span>，轨道在 <span class="math inline">\(\Delta\theta=2\pi\)</span> 内径向完成两次振荡而闭合 ——正是中心在原点的椭圆：<span class="math inline">\(r\)</span> 每转一圈完成两次振荡，长轴两端都是远心点。</p>
+<h3 id="sub:binet"><span class="ms-secno">3.6</span>比奈方程与近心点进动（作业-2 Q7）</h3>
+<p>令 <span class="math inline">\(u\equiv1/r\)</span>，以 <span class="math inline">\(\theta\)</span> 为自变量。由 (7) 与径向运动方程 <span class="math inline">\(m(\ddot r-r\dot\theta^2)=-V&#39;(r)\)</span> 消去时间，得<strong>比奈方程</strong> <span class="math display">\[u&#39;&#39;+u=-\frac{m}{L^2u^2}\,F\!\left(\frac1u\right)
+       =\frac{m}{L^2u^2}\,V&#39;\!\left(\frac1u\right),
+  \qquad \bigl(\;&#39;=\tfrac{\mathrm{d}}{\mathrm{d}\theta}\bigr),
+  
+\tag{23}\]</span> 其中 <span class="math inline">\(F\)</span> 为径向力（<span class="math inline">\(F=-V&#39;\)</span>）。对 Kepler 势 <span class="math inline">\(V=-\alpha/r\)</span> （作业-2 Q7 的背景，<span class="math inline">\(\alpha&gt;0\)</span>）：<span class="math inline">\(V&#39;=\alpha/r^2=\alpha u^2\)</span>， (23) 成为线性方程 <span class="math inline">\(u&#39;&#39;+u=m\alpha/L^2\)</span>，其圆锥曲线解为 <span class="math display">\[r=\frac{p}{1+e\cos\theta},
+  \qquad p=\frac{L^2}{m\alpha},
+  
+\tag{24}\]</span> 其中 <span class="math inline">\(e\)</span> 为离心率、<span class="math inline">\(p\)</span> 为半正焦弦；近心点每圈回归（<span class="math inline">\(\Delta\theta=2\pi\)</span>， 轨道闭合）。</p>
+<h5 id="a-delta-vbetar2">(a) <span class="math inline">\(\delta V=\beta/r^2\)</span>。</h5>
+<p>此时 <span class="math inline">\(V&#39;=\alpha/r^2-2\beta/r^3\)</span>，(23) 仍为线性方程： <span class="math display">\[u&#39;&#39;+\kappa^2u=\frac{m\alpha}{L^2},
+  \qquad
+  \kappa=\sqrt{1+\frac{2m\beta}{L^2}},
+  
+\tag{25}\]</span> 通解 <span class="math inline">\(u=\frac{m\alpha}{L^2\kappa^2}\bigl[1+e\cos(\kappa\theta)\bigr]\)</span>： 近心点（<span class="math inline">\(\cos\kappa\theta=1\)</span>）相邻间隔 <span class="math inline">\(\Delta\theta=2\pi/\kappa\)</span>，每圈进动 <span class="math display">\[\boxed{\;\delta\theta=\frac{2\pi}{\kappa}-2\pi
+  =2\pi\!\left(\frac{1}{\sqrt{1+2m\beta/L^2}}-1\right)
+  \;\approx\;-\frac{2\pi m\beta}{L^2}=-\frac{2\pi\beta}{\alpha p}\;}
+  
+\tag{26}\]</span> （<span class="math inline">\(\beta&gt;0\)</span> 时 <span class="math inline">\(\delta\theta&lt;0\)</span>，近心点退行）。前两个等式对线性方程 (25) 是<strong>精确</strong>的；最后一个近似式要求 <span class="math inline">\(|2m\beta/L^2|\ll1\)</span>（一阶展开）。</p>
+<h5 id="b-delta-vgammar3">(b) <span class="math inline">\(\delta V=\gamma/r^3\)</span>。</h5>
+<p>此时 <span class="math inline">\(V&#39;=\alpha/r^2-3\gamma/r^4\)</span>， <span class="math display">\[u&#39;&#39;+u=\frac{m\alpha}{L^2}-\frac{3m\gamma}{L^2}u^2,
+  
+\tag{27}\]</span> 非线性。以 (24) 的 <span class="math inline">\(u_0=\frac1p(1+e\cos\theta)\)</span> 为零阶解 作摄动 <span class="math inline">\(u=u_0+\delta u\)</span>，右端 <span class="math inline">\(-\frac{3m\gamma}{L^2}u_0^2\)</span> 的展开中 与 <span class="math inline">\(\cos\theta\)</span> 共振的项 <span class="math inline">\(-\frac{6m\gamma e}{L^2p^2}\cos\theta\)</span> 驱动出久期项 <span class="math inline">\(\delta u_{\mathrm{sec}}
+=-\frac{3m\gamma e}{L^2p^2}\,\theta\sin\theta\)</span>。 把它并写成 <span class="math inline">\(e\cos(\theta+\delta\theta)\)</span> （<span class="math inline">\(\cos(\theta+\delta\theta)\approx\cos\theta-\delta\theta\sin\theta\)</span>）， 得相位漂移 <span class="math inline">\(\delta\theta(\theta)=\frac{3m\gamma}{L^2p}\,\theta\)</span>； 近心点条件 <span class="math inline">\(\theta+\delta\theta=2\pi n\)</span> 给出相邻近心点方位角间隔 <span class="math inline">\(\approx2\pi\bigl(1-\frac{3m\gamma}{L^2p}\bigr)\)</span>，即每圈进动 <span class="math display">\[\boxed{\;\delta\theta=-\frac{6\pi m\gamma}{L^2p}
+  =-\frac{6\pi\gamma}{\alpha p^2}\;}
+  
+\tag{28}\]</span> （<span class="math inline">\(\gamma&gt;0\)</span> 退行、<span class="math inline">\(\gamma&lt;0\)</span> 进动；第二个等号用了 <span class="math inline">\(L^2=m\alpha p\)</span>）。 作为交叉检验：广义相对论的太阳引力修正 <span class="math inline">\(\delta V=-GML^2/(mc^2r^3)\)</span> 代入 (28) （<span class="math inline">\(\gamma=-GML^2/(mc^2)\)</span>）给出著名的进动角 <span class="math inline">\(+6\pi GM/(c^2p)\)</span>，符号与量级都正确。 适用条件：一阶摄动要求 <span class="math inline">\(|\delta V|\ll|V|\)</span>，最苛刻处在近心点 <span class="math inline">\(r_{\mathrm p}=p/(1+e)\)</span>，即 <span class="math display">\[|\gamma|\ll\alpha r_{\mathrm p}^2=\frac{\alpha p^2}{(1+e)^2},
+  \qquad
+  |\beta|\ll\alpha r_{\mathrm p}=\frac{\alpha p}{1+e}.
+  
+\tag{29}\]</span> 数值验证取 <span class="math inline">\(m=\alpha=L=p=1\)</span>、<span class="math inline">\(e=0.3\)</span>、<span class="math inline">\(\gamma=0.002\)</span>： <span class="math inline">\(|\gamma|\bigm/\bigl(\alpha p^2/(1+e)^2\bigr)=3.4\times10^{-3}\)</span>， 一阶公式与数值之差 <span class="math inline">\(1.5\times10^{-2}\)</span> 为 <span class="math inline">\(O(\gamma)\)</span> 的二阶修正 （<span class="math inline">\(\gamma\)</span> 减半时偏差比 <span class="math inline">\(1.983\approx2\)</span>，见 <a href="#sec:numeric" data-reference-type="ref" data-reference="sec:numeric">5</a> 节），并非数值误差。</p>
+<h3 id="sub:comet"><span class="ms-secno">3.7</span>抛物线彗星在地球轨道内的停留时间（作业-2 Q5）</h3>
+<p>记太阳引力参数 <span class="math inline">\(\mu=GM\)</span>（单位质量引力势 <span class="math inline">\(-\mu/r\)</span>），地球轨道取半径 <span class="math inline">\(R\)</span> 的圆（一年 <span class="math inline">\(T_E=2\pi\sqrt{R^3/\mu}\)</span>）。抛物线轨道（机械能为零）近日点距离 <span class="math inline">\(q=R/n\)</span>（<span class="math inline">\(n&gt;1\)</span>），轨道方程与单位质量角动量 <span class="math inline">\(h=L/m\)</span> 为 <span class="math display">\[r=\frac{2q}{1+\cos\theta}=q\sec^2\frac{\theta}{2},
+  \qquad h=\sqrt{2\mu q},
+  
+\tag{30}\]</span> （<span class="math inline">\(h\)</span> 由近心点速度 <span class="math inline">\(v_p=\sqrt{2\mu/q}\)</span> 得到，<span class="math inline">\(E=0\)</span> 时 <span class="math inline">\(v^2=2\mu/r\)</span>）。 面积定律 <span class="math inline">\(\dot A=h/2\)</span>。彗星在 <span class="math inline">\(r\le R\)</span> 内对应的极角范围由 <span class="math inline">\(R=q\sec^2(\theta_R/2)\)</span> 给出： <span class="math display">\[\tan^2\frac{\theta_R}{2}=n-1.
+  
+\tag{31}\]</span> 停留时间 <span class="math inline">\(t=2A/h\)</span>，<span class="math inline">\(A\)</span> 为半径矢量在 <span class="math inline">\(-\theta_R\le\theta\le\theta_R\)</span> 内 扫过的面积。积分（换元 <span class="math inline">\(w=\theta/2\)</span>，<span class="math inline">\(\int\sec^4w\,\mathrm{d}w=\tan w+\frac13\tan^3w\)</span>）： <span class="math display">\[\begin{aligned}
+  A&amp;=\frac12\int_{-\theta_R}^{\theta_R}r^2\,\mathrm{d}\theta
+   =q^2\!\int_0^{\theta_R}\!\sec^4\frac{\theta}{2}\,\mathrm{d}\theta
+   =2q^2\left[\tan\frac{\theta}{2}+\frac13\tan^3\frac{\theta}{2}\right]_0^{\theta_R/2}
+   \\
+  &amp;=\frac{2q^2}{3}\,\sqrt{n-1}\,(n+2).
+  
+\end{aligned}\tag{32}\]</span> 于是 <span class="math display">\[t=\frac{2A}{h}
+  =\frac{1}{\sqrt{2\mu}}\left[\frac43(R-q)^{3/2}+4q\sqrt{R-q}\right]
+  =T_E\,\frac{2(n+2)}{3\pi n}\sqrt{\frac{n-1}{2n}},
+  
+\tag{33}\]</span> 其中第二式是径向积分的闭式（由 <span class="math inline">\(\dot r^2=2\mu(r-q)/r^2\)</span> 直接积分， 再代入 <span class="math inline">\(R=nq\)</span> 整理），第三式即作业-2 Q5 要求证明的公式。 对 <span class="math inline">\(n\)</span> 求极值（<span class="math inline">\(\frac{\mathrm{d}\ln t}{\mathrm{d}n}
+=\frac1{n+2}+\frac1{2(n-1)}-\frac3{2n}=0\)</span>）得 <span class="math inline">\(n=2\)</span>，此时停留时间最长： <span class="math display">\[t_{\max}=\frac{2}{3\pi}\,T_E\approx0.2122\ \text{年}\approx77.5\ \text{天},
+  
+\tag{34}\]</span> 即近日点恰为地球轨道半径一半时（<span class="math inline">\(q=R/2\)</span>）。 适用条件：地球轨道取圆近似、彗星轨道严格抛物线（<span class="math inline">\(E=0\)</span>）。 极限行为：<span class="math inline">\(n\to1^+\)</span> 时 <span class="math inline">\(t\to0\)</span>（掠射穿过）； <span class="math inline">\(n\to\infty\)</span>（<span class="math inline">\(q\to0\)</span>，轨道退化为过太阳的径向往返）时 <span class="math inline">\(t\to\frac{\sqrt2}{3\pi}T_E\approx0.150\,T_E\)</span>，仍为有限值。</p>
+<h3 id="sub:omegaratio"><span class="ms-secno">3.8</span>角速度比与离心率（作业-2 Q6）</h3>
+<p>平方反比引力场中角速度 <span class="math inline">\(\omega=\dot\theta=L/(mr^2)\)</span>（(7)）， 在近心点 <span class="math inline">\(r_{\mathrm p}=a(1-e)\)</span> 最大、远心点 <span class="math inline">\(r_{\mathrm a}=a(1+e)\)</span> 最小 （此处 <span class="math inline">\(a\)</span> 为半长轴、<span class="math inline">\(e\)</span> 为离心率，本小节与 <a href="#sub:virial" data-reference-type="ref" data-reference="sub:virial">3.9</a> 小节记号， 与 <a href="#sub:circular" data-reference-type="ref" data-reference="sub:circular">3.3</a> 小节的频率比 <span class="math inline">\(a\)</span> 无关）。故 <span class="math display">\[n\equiv\frac{\omega_{\max}}{\omega_{\min}}
+  =\left(\frac{r_{\mathrm a}}{r_{\mathrm p}}\right)^{\!2}
+  =\left(\frac{1+e}{1-e}\right)^{\!2},
+  
+\tag{35}\]</span> 解出离心率 <span class="math display">\[\boxed{\;e=\frac{\sqrt n-1}{\sqrt n+1}\;}
+  
+\tag{36}\]</span> （作业-2 Q6 所证；<span class="math inline">\(n&gt;1\)</span>：<span class="math inline">\(n\to1\)</span> 时 <span class="math inline">\(e\to0\)</span> 圆轨道， <span class="math inline">\(n\to\infty\)</span> 时 <span class="math inline">\(e\to1\)</span> 抛物线极限）。</p>
+<h3 id="sub:virial"><span class="ms-secno">3.9</span>位力定理与椭圆轨道的时间平均（作业-5 Q4）</h3>
+<p>对周期为 <span class="math inline">\(\tau\)</span> 的束缚运动，定义时间平均 <span class="math inline">\(\langle f\rangle\equiv\frac1\tau\int_0^\tau f\,\mathrm{d}t\)</span>。 由 <span class="math inline">\(\bigl\langle\frac{\mathrm{d}}{\mathrm{d}t}
+(m\mathbf{r}\cdot\dot{\mathbf{r}})\bigr\rangle=0\)</span> （周期函数全周期平均下导数的平均为零）得<strong>位力定理</strong> <span class="math display">\[2\langle T\rangle=\bigl\langle\mathbf{r}\cdot\nabla V\bigr\rangle,
+  
+\tag{37}\]</span> 其中 <span class="math inline">\(T=\frac12mv^2\)</span> 为动能（作业-5 Q4 记号）。对引力势 <span class="math inline">\(V=-k/r\)</span> （<span class="math inline">\(k&gt;0\)</span>）：<span class="math inline">\(\mathbf{r}\cdot\nabla V=k/r=-V\)</span>，故 <span class="math inline">\(2\langle T\rangle=-\langle V\rangle\)</span>。</p>
+<p><span class="math inline">\(\langle1/r\rangle\)</span> 用面积定律计算：<span class="math inline">\(\mathrm{d}t=(m/L)r^2\,\mathrm{d}\theta\)</span>， 轨道 (24)（<span class="math inline">\(p=a(1-e^2)\)</span>，半长轴 <span class="math inline">\(a\)</span>、半短轴 <span class="math inline">\(b=a\sqrt{1-e^2}\)</span>， 周期 <span class="math inline">\(\tau=2\pi ab\,m/L\)</span> 即面积除以面积速率），则 <span class="math display">\[\left\langle\frac1r\right\rangle
+  =\frac{m/L}{\tau}\int_0^{2\pi}\!r\,\mathrm{d}\theta
+  =\frac{1}{2\pi ab}\cdot\frac{2\pi p}{\sqrt{1-e^2}}
+  =\frac{1}{a},
+  
+\tag{38}\]</span> 其中用了标准积分 <span class="math inline">\(\int_0^{2\pi}\frac{\mathrm{d}\theta}{1+e\cos\theta}=\frac{2\pi}{\sqrt{1-e^2}}\)</span> （<span class="math inline">\(0\le e&lt;1\)</span>）。于是 <span class="math display">\[\langle V\rangle=-\frac{k}{a},
+  \qquad
+  \langle T\rangle=\frac{k}{2a},
+  \qquad
+  2\langle T\rangle=-\langle V\rangle,
+  
+\tag{39}\]</span> 位力定理得到验证，且 <span class="math inline">\(E=\langle T\rangle+\langle V\rangle=-k/(2a)\)</span>。 适用条件：束缚椭圆轨道（<span class="math inline">\(0\le e&lt;1\)</span>）、时间平均取整周期。</p>
+<h2 id="sec:result"><span class="ms-secno">4</span>解析结果</h2>
+<p>本模块核心解析结果汇总（编号指向 <a href="#sec:derive" data-reference-type="ref" data-reference="sec:derive">3</a> 节中的推导与适用条件）：</p>
+<ol>
+<li><p>中心力 <span class="math inline">\(F(r)\mathbf{e}_r\)</span> 在 <span class="math inline">\(r&gt;0\)</span> 保守；线性力场保守 <span class="math inline">\(\Leftrightarrow\)</span> <span class="math inline">\(a_{ij}=a_{ji}\)</span>，且 <span class="math inline">\(V=-\frac12\sum a_{ij}x_ix_j\)</span> （(2)、(5)、(6)）。</p></li>
+<li><p>有效势 <span class="math inline">\(V_{\mathrm{eff}}=V+L^2/(2mr^2)\)</span>（(9)）； 圆轨道 <span class="math inline">\(V_{\mathrm{eff}}&#39;(r_0)=0\)</span>、稳定 <span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;(r_0)&gt;0\)</span>、 径向小振动 <span class="math inline">\(\omega_r=\sqrt{V_{\mathrm{eff}}&#39;&#39;(r_0)/m}\)</span> （(10)、(13)、(12)； 适用条件 <span class="math inline">\(|\delta r|\ll r_0\)</span>）。</p></li>
+<li><p>幂律势 <span class="math inline">\(V=\beta r^k\)</span>：<span class="math inline">\(r_0=\bigl(L^2/(mk\beta)\bigr)^{1/(k+2)}\)</span>、 <span class="math inline">\(a=\omega_r/\omega_\theta=\sqrt{k+2}\)</span>（<span class="math inline">\(k&gt;-2\)</span>，<span class="math inline">\(k\beta&gt;0\)</span>）； <span class="math inline">\(a=1\Rightarrow k=-1\)</span>（Kepler），<span class="math inline">\(a=2\Rightarrow k=2\)</span>（谐振子） （(14)、(16)）。</p></li>
+<li><p>高斯势 <span class="math inline">\(V=-V_0\mathrm{e}^{-\lambda^2r^2}\)</span>：稳定窗口 <span class="math inline">\(\lambda^2r_0^2&lt;2\)</span>，最大角动量 <span class="math inline">\(L_{\max}=2\sqrt{2mV_0}/(\lambda\mathrm{e})\)</span>；<span class="math inline">\(L&gt;L_{\max}\)</span> 时无任何圆轨道（(19)、(20)）。</p></li>
+<li><p>进动：<span class="math inline">\(\delta V=\beta/r^2\)</span> 给 <span class="math inline">\(\delta\theta=2\pi\bigl(1/\sqrt{1+2m\beta/L^2}-1\bigr)
+        \approx-2\pi\beta/(\alpha p)\)</span>（对线性方程精确，近似式要求 <span class="math inline">\(|2m\beta/L^2|\ll1\)</span>）；<span class="math inline">\(\delta V=\gamma/r^3\)</span> 给 <span class="math inline">\(\delta\theta\approx-6\pi\gamma/(\alpha p^2)\)</span> （一阶，要求 <span class="math inline">\(|\gamma|\ll\alpha p^2/(1+e)^2\)</span>） （(26)、(28)、(29)）。</p></li>
+<li><p>各向同性谐振子 <span class="math inline">\(V=kr^2/2\)</span>：轨迹为中心在力心的椭圆 （(22)），对应 <span class="math inline">\(a=2\)</span> 的闭合条件。</p></li>
+<li><p>抛物线彗星（<span class="math inline">\(q=R/n\)</span>）在地球轨道内停留 <span class="math inline">\(t=T_E\frac{2(n+2)}{3\pi n}\sqrt{\frac{n-1}{2n}}\)</span>， 最大 <span class="math inline">\(t_{\max}=\frac{2}{3\pi}T_E\)</span> 在 <span class="math inline">\(n=2\)</span> 取得 （(33)、(34)）。</p></li>
+<li><p>角速度比 <span class="math inline">\(n=\omega_{\max}/\omega_{\min}\)</span> 对应离心率 <span class="math inline">\(e=(\sqrt n-1)/(\sqrt n+1)\)</span>（(36)）。</p></li>
+<li><p>位力定理 <span class="math inline">\(2\langle T\rangle=\langle\mathbf{r}\cdot\nabla V\rangle\)</span>； Kepler 椭圆 <span class="math inline">\(\langle1/r\rangle=1/a\)</span>、 <span class="math inline">\(\langle V\rangle=-k/a\)</span>、<span class="math inline">\(\langle T\rangle=k/(2a)\)</span> （(37)、(38)、(39)）。</p></li>
+</ol>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>全部数值实验由配套脚本 <code>modules/01-effective-potential/qa/numeric_check.py</code> 完成： 四阶 Runge–Kutta（定步长，步长按周期归一化，如 <span class="math inline">\(h=2\pi/4000\)</span>）、 二分法与牛顿法求根、三点抛物线顶点细化定位周期与拱点， 仅依赖 numpy（不依赖 scipy）。 角动量守恒在约化系统（<span class="math inline">\(r\)</span>、<span class="math inline">\(\dot r\)</span>、<span class="math inline">\(\theta\)</span>，<span class="math inline">\(\dot\theta=L/(mr^2)\)</span>） 中严格成立，能量漂移则在直角坐标全系统（<span class="math inline">\(x,y,v_x,v_y\)</span>）上独立监测。 相对误差按下式定义： <span class="math display">\[\varepsilon_{\mathrm{rel}}
+  =\frac{\left|x_{\mathrm{num}}-x_{\mathrm{ana}}\right|}
+        {\left|x_{\mathrm{ana}}\right|}.
+  
+\tag{40}\]</span> 表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 的每一行都来自脚本的实际输出</p>
+<p>单位制为 <a href="#sec:model" data-reference-type="ref" data-reference="sec:model">2</a> 节第 3 条的无量纲约定（<span class="math inline">\(m=1\)</span> 等）。</p>
+<div id="tab:numeric">
+<table>
+<caption>数值验证汇总（解析值 / 数值值 / 相对误差）。全部数值取自 <code>qa/numeric_check.py</code> 的实际输出，参数与单位制见正文。</caption>
+<thead>
+<tr>
+<th style="text-align: left;">物理量（参数）</th>
+<th style="text-align: center;">解析值</th>
+<th style="text-align: center;">数值值</th>
+<th style="text-align: center;">相对误差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(r_0\)</span>（Kepler，牛顿法，<span class="math inline">\(L=1.2\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1.44\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.44\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.54198\times10^{-16}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\omega_r\)</span>（Kepler 近圆，<span class="math inline">\(\delta=0.01\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.999853\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.47041\times10^{-4}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\omega_r\)</span>（高斯势近圆，<span class="math inline">\(\delta=0.005\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1.21306\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.21297\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(7.20765\times10^{-5}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(a=\omega_r/\omega_\theta\)</span>（幂律 <span class="math inline">\(k=-1\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(8.30003\times10^{-13}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(a=\omega_r/\omega_\theta\)</span>（幂律 <span class="math inline">\(k=1\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1.73205\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.73207\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(8.22324\times10^{-6}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(a=\omega_r/\omega_\theta\)</span>（幂律 <span class="math inline">\(k=2\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.23124\times10^{-13}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\delta\theta\)</span>（<span class="math inline">\(\delta V=\beta/r^2\)</span>，<span class="math inline">\(\beta=0.004\)</span>，精确式）</td>
+<td style="text-align: center;"><span class="math inline">\(-0.0249829\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-0.0249829\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(8.68165\times10^{-11}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\delta\theta\)</span>（<span class="math inline">\(\delta V=\gamma/r^3\)</span>，<span class="math inline">\(\gamma=0.002\)</span>，一阶式）</td>
+<td style="text-align: center;"><span class="math inline">\(-0.0376991\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-0.037135\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.49626\times10^{-2}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">能量相对漂移（直角坐标，20 周期）</td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(2.56487\times10^{-14}\)</span></td>
+<td style="text-align: center;">目标 <span class="math inline">\(&lt;10^{-6}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(L_{\max}\)</span>（高斯势，二分法）</td>
+<td style="text-align: center;"><span class="math inline">\(1.04052\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.04052\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(4.48135\times10^{-15}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">彗星停留时间 <span class="math inline">\(t\)</span>（<span class="math inline">\(n=2\)</span>，<span class="math inline">\(T_E=2\pi\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1.33333\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.33333\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.07081\times10^{-13}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">彗星停留时间 <span class="math inline">\(t\)</span>（<span class="math inline">\(n=4\)</span>，<span class="math inline">\(T_E=2\pi\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1.22474\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.22474\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(6.65478\times10^{-10}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\langle 1/r\rangle\)</span>（<span class="math inline">\(a=1\)</span>，<span class="math inline">\(e=0.5\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(9.54792\times10^{-15}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\langle T\rangle\)</span>（<span class="math inline">\(a=1\)</span>，<span class="math inline">\(e=0.5\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(0.5\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.5\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.4877\times10^{-14}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>各项的实验设置与要点：</p>
+<ul>
+<li><p><strong><span class="math inline">\(r_0\)</span>（牛顿法）</strong>：对 <span class="math inline">\(V_{\mathrm{eff}}&#39;(r)=\alpha/r^2-L^2/r^3=0\)</span> 牛顿迭代（<span class="math inline">\(\alpha=1\)</span>，<span class="math inline">\(L=1.2\)</span>，初值 <span class="math inline">\(0.8\)</span>，8 步）， 残差 <span class="math inline">\(|V_{\mathrm{eff}}&#39;(r_0)|=1.110\times10^{-16}&lt;10^{-9}\)</span>（机器精度）。</p></li>
+<li><p><strong><span class="math inline">\(\omega_r\)</span>（近圆轨道）</strong>：初始 <span class="math inline">\(r(0)=r_0+\delta\)</span>、<span class="math inline">\(\dot r(0)=0\)</span>， RK4 积分约 20 个径向周期，用抛物线顶点定位相邻 <span class="math inline">\(r\)</span> 极大， <span class="math inline">\(\omega_r=2\pi/T_r\)</span>。Kepler（<span class="math inline">\(r_0=L=\alpha=1\)</span>）解析值 <span class="math inline">\(\sqrt{V_{\mathrm{eff}}&#39;&#39;(r_0)}=1\)</span>；高斯势（<span class="math inline">\(r_0=1\)</span>， <span class="math inline">\(L=\sqrt{2/\mathrm{e}}\)</span>）解析值 <span class="math inline">\(2/\sqrt{\mathrm{e}}=1.2130613\)</span>。 两行偏差 <span class="math inline">\(1.47\times10^{-4}\)</span>、<span class="math inline">\(7.21\times10^{-5}\)</span> 是<strong>有限振幅的 <span class="math inline">\(O(\delta^2)\)</span> 修正</strong>（Kepler 行恰为 <span class="math inline">\(\frac32\delta^2=1.5\times10^{-4}\)</span>，见 <a href="#sec:derive" data-reference-type="ref" data-reference="sec:derive">3</a> 节 (12) 的适用条件），不是积分误差。</p></li>
+<li><p><strong>频率比 <span class="math inline">\(a\)</span></strong>：幂律势取 <span class="math inline">\(\beta=1/k\)</span>、<span class="math inline">\(L=1\)</span>、<span class="math inline">\(r_0=1\)</span> （此时 <span class="math inline">\(\omega_\theta=1\)</span>），<span class="math inline">\(\delta=0.01\)</span>，积分 10 个径向周期， <span class="math inline">\(a=2\pi/\Delta\theta\)</span>（<span class="math inline">\(\Delta\theta\)</span> 为相邻远心点极角差）。 <span class="math inline">\(k=-1\)</span>（Kepler）与 <span class="math inline">\(k=2\)</span>（谐振子）的轨道对所有振幅严格闭合， 误差为机器精度 <span class="math inline">\(10^{-13}\)</span>；<span class="math inline">\(k=1\)</span> 的 <span class="math inline">\(8.2\times10^{-6}\)</span> 同样是 <span class="math inline">\(O(\delta^2)\)</span> 修正。</p></li>
+<li><p><strong>进动 <span class="math inline">\(\delta\theta\)</span></strong>：直接积分比奈方程 （<span class="math inline">\(u(0)=(1+e)/p=1.3\)</span>，<span class="math inline">\(u&#39;(0)=0\)</span>，<span class="math inline">\(e=0.3\)</span>，<span class="math inline">\(p=1\)</span>， <span class="math inline">\(h_\theta=2\pi/5000\)</span>，12 圈），取相邻近心点极角间隔均值。 <span class="math inline">\(\beta/r^2\)</span> 行对<strong>精确</strong>公式 (26) 的误差 <span class="math inline">\(8.7\times10^{-11}\)</span>（积分精度）； <span class="math inline">\(\gamma/r^3\)</span> 行对<strong>一阶</strong>公式 (28) 的偏差 <span class="math inline">\(1.5\times10^{-2}\)</span> 是 <span class="math inline">\(O(\gamma)\)</span> 二阶修正： <span class="math inline">\(\gamma\)</span> 从 <span class="math inline">\(0.002\)</span> 减半到 <span class="math inline">\(0.001\)</span> 时偏差从 <span class="math inline">\(1.496\times10^{-2}\)</span> 降到 <span class="math inline">\(7.546\times10^{-3}\)</span>， 比值 <span class="math inline">\(1.983\approx2\)</span>，符合一阶摄动的误差结构。</p></li>
+<li><p><strong>能量漂移</strong>：直角坐标全系统（<span class="math inline">\(x,y,v_x,v_y\)</span>）， 近圆初值 <span class="math inline">\((1.01,0,0,1/1.01)\)</span>，<span class="math inline">\(h=2\pi/5000\)</span>，<span class="math inline">\(10^5\)</span> 步 （<span class="math inline">\(t\in[0,40\pi]\)</span>，20 个周期）： <span class="math inline">\(\max|\Delta E/E_0|=2.565\times10^{-14}\)</span>， 角动量漂移 <span class="math inline">\(1.266\times10^{-14}\)</span>，远优于 <span class="math inline">\(10^{-6}\)</span> 目标。</p></li>
+<li><p><strong><span class="math inline">\(L_{\max}\)</span>（二分法）</strong>：外层对 <span class="math inline">\(L\in[0.5,1.5]\)</span> 二分 （判据：稳定支 <span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;(r_0(L))\)</span> 的符号；无根即 <span class="math inline">\(L\)</span> 过大）， 内层对 <span class="math inline">\(r\in[0.05,\sqrt2]\)</span> 二分求 <span class="math inline">\(V_{\mathrm{eff}}&#39;=0\)</span>。 得 <span class="math inline">\(L_{\max}=1.04052019005\)</span>，与解析值 <span class="math inline">\(2\sqrt2/\mathrm{e}=1.04052019005\)</span> 一致（<span class="math inline">\(4.5\times10^{-15}\)</span>）；临界半径 <span class="math inline">\(r_*=1.41421356237=\sqrt2/\lambda\)</span> （对边际条件 <span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;=0\)</span> 沿圆轨道族直接二分）。 窗口两侧：<span class="math inline">\(L=0.999\,L_{\max}\)</span> 时稳定支 <span class="math inline">\(r_0=1.3827\)</span>、<span class="math inline">\(V_{\mathrm{eff}}&#39;&#39;=+0.0521&gt;0\)</span>； <span class="math inline">\(L=1.001\,L_{\max}\)</span> 时 <span class="math inline">\(V_{\mathrm{eff}}&#39;\)</span> 在窗口内无零点，圆轨道不存在。</p></li>
+<li><p><strong>彗星停留时间</strong>：<span class="math inline">\(\mu=R=1\)</span>，从近日点积分到 <span class="math inline">\(r=R\)</span> （<span class="math inline">\(h=10^{-4}\)</span>，线性插值定位穿越时刻，对称性取 <span class="math inline">\(t=2t_{\mathrm{out}}\)</span>）。 <span class="math inline">\(n=2\)</span>：<span class="math inline">\(t=1.333333333\)</span>（<span class="math inline">\(=4/3\)</span>，即 <span class="math inline">\(\frac{2}{3\pi}T_E=0.2122065908\)</span> 年， 最长停留）；<span class="math inline">\(n=4\)</span>：<span class="math inline">\(t=1.224744872\)</span>。两行误差 <span class="math inline">\(\le10^{-9}\)</span>。 脚本同时输出径向积分闭式 (33) 第二式， 与作业公式（第三式）逐位一致。</p></li>
+<li><p><strong>时间平均与位力</strong>：Kepler 椭圆（<span class="math inline">\(a=1\)</span>，<span class="math inline">\(e=0.5\)</span>， <span class="math inline">\(L=\sqrt{0.75}\)</span>，从近心点出发），积分一个周期 <span class="math inline">\(\tau=2\pi\)</span> （<span class="math inline">\(h=\tau/20000\)</span>），全周期梯形积分求平均： <span class="math inline">\(\langle1/r\rangle=1\)</span>、<span class="math inline">\(\langle T\rangle=0.5\)</span>、<span class="math inline">\(\langle V\rangle=-1\)</span>、 位力比 <span class="math inline">\(2\langle T\rangle/|\langle V\rangle|=1\)</span> （偏差 <span class="math inline">\(5.3\times10^{-15}\)</span>）。</p></li>
+</ul>
+<h2 id="sec:discuss"><span class="ms-secno">6</span>讨论</h2>
+<h5 id="极限行为">极限行为。</h5>
+<p><span class="math inline">\(k\to-2^+\)</span> 时 <span class="math inline">\(a=\sqrt{k+2}\to0\)</span>：径向振动频率趋于零， 圆轨道趋于临界稳定（这与高斯势 <span class="math inline">\(L\to L_{\max}^-\)</span> 时 <span class="math inline">\(\omega_r\to0\)</span>、<span class="math inline">\(r_0\to\sqrt2/\lambda\)</span> 的行为一致）。 <span class="math inline">\(e\to0\)</span> 时进动公式 (28) 仍有限 （一阶 <span class="math inline">\(\gamma/r^3\)</span> 进动与 <span class="math inline">\(e\)</span> 无关，与广义相对论进动仅依赖 <span class="math inline">\(p\)</span> 一致）。 彗星问题中 <span class="math inline">\(n\to1^+\)</span> 时 <span class="math inline">\(t\to0\)</span>（掠射），<span class="math inline">\(n\to\infty\)</span> 时 <span class="math inline">\(t\to\frac{\sqrt2}{3\pi}T_E\approx0.150\,T_E\)</span>（径向往返极限，有限值）； <span class="math inline">\(t_{\max}=\frac{2}{3\pi}T_E\)</span> 在 <span class="math inline">\(n=2\)</span> 取得，是货真价实的内部极大。</p>
+<h5 id="误差来源">误差来源。</h5>
+<p>三类偏差各有明确量级：(i) RK4 截断误差 <span class="math inline">\(O(h^4)\)</span>——20 个周期能量漂移 <span class="math inline">\(2.6\times10^{-14}\)</span>；(ii) 周期测量的抛物线顶点误差 <span class="math inline">\(O(h^2)\)</span>—— 被闭合轨道行的 <span class="math inline">\(10^{-13}\)</span> 水平证实；(iii) 模型本身的近似—— 小振动 <span class="math inline">\(O(\delta^2)\)</span>（Kepler 行 <span class="math inline">\(1.47\times10^{-4}\approx\frac32\delta^2\)</span>） 与一阶摄动 <span class="math inline">\(O(\gamma)\)</span>（<span class="math inline">\(\gamma/r^3\)</span> 行 <span class="math inline">\(1.5\times10^{-2}\)</span>， <span class="math inline">\(\gamma\)</span> 减半偏差比 <span class="math inline">\(1.983\)</span>）。数值验证的价值正在于把 (iii) 与 (i)(ii) 清楚地区分开。</p>
+<h5 id="与作业题的对照">与作业题的对照。</h5>
+<p>表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 覆盖了 <a href="#sec:map" data-reference-type="ref" data-reference="sec:map">1</a> 节全部 9 道题的核心结论： 作业-2 Q3 的 <span class="math inline">\(L_{\max}=2\sqrt{2mV_0}/(\lambda\mathrm{e})\)</span>（二分法复现到 <span class="math inline">\(4.5\times10^{-15}\)</span>）；Q4 的 <span class="math inline">\(a=\sqrt{k+2}\)</span> 与 <span class="math inline">\(a=1,2\)</span> 对应 <span class="math inline">\(k=-1,2\)</span>； Q5 的停留时间公式（<span class="math inline">\(10^{-13}\)</span> 复现）与最长停留 <span class="math inline">\(2/(3\pi)\)</span> 年； Q6 的 <span class="math inline">\(e=(\sqrt n-1)/(\sqrt n+1)\)</span>；Q7 的两个进动公式 （精确式 <span class="math inline">\(10^{-11}\)</span>、一阶式偏差 <span class="math inline">\(O(\gamma)\)</span> 且随 <span class="math inline">\(\gamma\)</span> 线性）； 作业-3 Q1 的中心在力心的椭圆（<span class="math inline">\(k=2\)</span> 行 <span class="math inline">\(a=2\)</span> 机器精度）； 作业-5 Q4 的 <span class="math inline">\(\langle1/r\rangle=1/a\)</span>、<span class="math inline">\(\langle T\rangle=k/(2a)\)</span> 与位力比 <span class="math inline">\(1\)</span>（<span class="math inline">\(10^{-14}\)</span>）。</p>
+<h5 id="可交互化方向">可交互化方向。</h5>
+<p>配套交互页 <code>index.html</code>（M1-T2）将提供：势能选择 （Kepler、谐振子、高斯、幂律）、<span class="math inline">\(L\)</span> 与能量滑块、左侧轨道积分与右侧 <span class="math inline">\(V_{\mathrm{eff}}(r)\)</span> 曲线联动、圆轨道半径与稳定/不稳定区标注、 径向振动包络，以及开普勒椭圆、圆轨道、临界 <span class="math inline">\(L\)</span>、进动轨道、 抛物线彗星等预设。</p>
+<div class="thebibliography">
+<p><span>9</span></p>
+<p>H. Goldstein, C. P. Poole, J. L. Safko, <em>Classical Mechanics</em>, 3rd ed., Pearson, 2002. （第 3 章中心力问题：有效势、圆轨道稳定性、比奈方程与进动。）</p>
+<p>L. D. Landau, E. M. Lifshitz, <em>Mechanics</em>, 3rd ed., Butterworth–Heinemann, 1976. （第 14、15 节中心场运动与圆轨道稳定性。）</p>
+<p>周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （有心力场、比奈方程与轨道闭合性的中文标准叙述。）</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>有效势与轨道稳定性 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

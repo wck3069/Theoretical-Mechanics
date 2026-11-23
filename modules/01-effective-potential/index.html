@@ -373,6 +373,15 @@ details.mapping {
   background: rgba(127, 224, 255, .18);
   box-shadow: 0 0 10px rgba(127, 224, 255, .25);
 }
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
 
 @media (max-width: 820px) {
   .tm-orbit-nav {
@@ -395,6 +404,7 @@ details.mapping {
   .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
   .hud { max-width: calc(100% - 150px); }
   .brand { max-width: calc(100% - 24px); }
 }
@@ -505,6 +515,7 @@ window.TMART = (function () {
 <meta name="twitter:description" content="有效势与轨道稳定性 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
 </head>
 <body>
 <div class="app">
@@ -514,7 +525,7 @@ window.TMART = (function () {
     <div class="brand">
       <h1>有效势与轨道稳定性</h1>
       <p>左图：质点轨道（拖动质点设初始位置）；右图：V_eff(r) 曲线、转折点与稳定圆轨道极小值</p>
-      <p class="intro">二维轨道的全部秘密，藏在一条一维曲线里：把角动量项 L²/2r² 当作「虚拟势能」加进 V(r)，粒子就变成在山谷里滚动的小球。第一步：选开普勒势，拖 E 滑块上下移动，看粒子从「束缚」变「逃逸」的那一刻。</p>
+      <p class="intro">二维轨道的全部秘密，藏在一条一维曲线里：把角动量项 $L^2/2r^2$ 当作「虚拟势能」加进 $V(r)$，粒子就变成在山谷里滚动的小球。第一步：选开普勒势，拖 E 滑块上下移动，看粒子从「束缚」变「逃逸」的那一刻。</p>
     </div>
     <div class="hud">
       <span>t <b id="hudT">0.00</b></span>
@@ -531,8 +542,8 @@ window.TMART = (function () {
   </div>
   <aside class="panel">
     <div class="eq">
-      V_eff = V_base(r) + <span class="num">L²</span>/2r² + <span class="num">γ</span>/r³<br>
-      r̈ = −dV_eff/dr（RK4）　θ̇ = <span class="num">L</span>/r²　单位：m=α=1 无量纲
+      $V_{\mathrm{eff}}=V_{\mathrm{base}}(r)+\dfrac{L^2}{2r^2}+\dfrac{\gamma}{r^3}$<br>
+      $\ddot r=-\dfrac{\mathrm{d}V_{\mathrm{eff}}}{\mathrm{d}r}$（RK4）　$\dot\theta=\dfrac{L}{r^2}$　单位：$m=\alpha=1$（无量纲）
     </div>
     <div class="hint">符号：V_eff=有效势、L=角动量、E=总能量、r=径向距离、γ=γ/r³ 微扰强度、ω_r=径向频率、ω_θ=角频率、ΔE/|E|=能量守恒检查（应≈0）。</div>
 
@@ -542,38 +553,38 @@ window.TMART = (function () {
         <option value="kepler">开普勒 V=−1/r（作业-2 Q6/Q7）</option>
         <option value="harm">谐振子 V=r²/2（作业-3 Q1）</option>
         <option value="gauss">高斯 V=−e^(−r²)（作业-2 Q3）</option>
-        <option value="pow">幂律 V=βr^k（作业-2 Q4）</option>
+        <option value="pow">幂律 $V=\beta r^k$（作业-2 Q4）</option>
       </select>
     </div>
 
     <div class="group">
       <div class="row"><label for="param-L">角动量 L</label><span class="val" id="val-L">1.20</span></div>
       <input type="range" id="param-L" min="0.05" max="3" step="0.01" value="1.2" aria-label="角动量 L">
-      <div class="hint">L²/2r² 像一堵「离心墙」（离心势垒）。高斯势 V=−exp(−r²/2) 的势垒只在 L<2√2/2.718≈1.04 时存在；L 超过它，势垒消失，粒子直坠中心。</div>
+      <div class="hint">$L^2/2r^2$ 像一堵「离心墙」（离心势垒）。高斯势 $V=-e^{-r^2/2}$ 的势垒只在 $L<2\sqrt2/2.718\approx1.04$ 时存在；L 超过它，势垒消失，粒子直坠中心。</div>
     </div>
 
     <div class="group">
       <div class="row"><label for="param-E">总能量 E</label><span class="val" id="val-E">-0.28</span></div>
       <input type="range" id="param-E" min="-2" max="2" step="0.01" value="-0.28" aria-label="总能量 E">
-      <div class="hint">水平线 E 与 V_eff 的交点即转折点（近/远日点）；越过势垒则逃逸。</div>
+      <div class="hint">水平线 $E$ 与 $V_{\mathrm{eff}}$ 的交点即转折点（近/远日点）；越过势垒则逃逸。</div>
     </div>
 
     <div class="group">
       <div class="row"><label for="param-r0">初始半径 r₀</label><span class="val" id="val-r0">1.00</span></div>
       <input type="range" id="param-r0" min="0.1" max="5" step="0.01" value="1" aria-label="初始半径 r0">
-      <div class="hint">初始 ṙ₀=√(2(E−V_eff(r₀)))（根号内为负自动截为 0）。也可在左图直接拖动质点。</div>
+      <div class="hint">初始 $\dot r_0=\sqrt{2\bigl(E-V_{\mathrm{eff}}(r_0)\bigr)}$（根号内为负自动截为 0）。也可在左图直接拖动质点。</div>
     </div>
 
     <div class="group">
       <div class="row"><label for="param-k">幂律指数 k</label><span class="val" id="val-k">2.00</span></div>
       <input type="range" id="param-k" min="-3" max="3" step="0.01" value="2" aria-label="幂律指数 k" disabled>
-      <div class="hint">仅对幂律势 V=βr^k 生效（β 是 k 的符号 ±1）。稳定圆轨道需 k&gt;−2；频率比 ω_r/ω_θ=√(k+2)。伯特兰定理：只有 k=−2（引力）与 k=2（弹簧）时轨道受扰后仍闭合。</div>
+      <div class="hint">仅对幂律势 $V=\beta r^k$ 生效（β 是 k 的符号 ±1）。稳定圆轨道需 $k>-2$；频率比 $\omega_r/\omega_\theta=\sqrt{k+2}$。伯特兰定理：只有 $k=-2$（引力）与 $k=2$（弹簧）时轨道受扰后仍闭合。</div>
     </div>
 
     <div class="group">
       <div class="row"><label for="param-gam">微扰 γ/r³</label><span class="val" id="val-gam">0.0000</span></div>
       <input type="range" id="param-gam" min="0" max="0.02" step="0.0002" value="0" aria-label="微扰 gamma">
-      <div class="hint">模拟作业-2 Q7 的 δV=γ/r³ 修正：轨道不再闭合，近心点每圈进动。</div>
+      <div class="hint">模拟作业-2 Q7 的 $\delta V=\gamma/r^3$ 修正：轨道不再闭合，近心点每圈进动。</div>
     </div>
 
     <div class="group">
@@ -595,26 +606,24 @@ window.TMART = (function () {
       <button id="btn-p-escape">逃逸（E&gt;0，双曲线）</button>
     </div>
 
-    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
-    <a class="doc" href="../00-binet/index.html">← 上一模块：比奈方程（样板）</a>
-    <a class="doc" href="../02-scattering/index.html">下一模块：散射与俘获 →</a>
+    <a class="doc" href="note.html">阅读推导（网页版）</a>
+    <a class="doc" data-tm-doc="prev" href="../00-binet/index.html">← 上一模块 M0：比奈方程（现有样板）</a>
+    <a class="doc" data-tm-doc="next" href="../02-scattering/index.html">下一模块 M2：散射与俘获 →</a>
 
     <details class="mapping">
       <summary>作业映射（本模块覆盖：作业-2 Q3–Q7、作业-3 Q1、作业-5 Q4）</summary>
       <table>
         <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
         <tr><td>作业-2 Q3</td><td>高斯势稳定圆轨道存在条件、L_max</td><td>势能=高斯；L 滑到 1.04 观察极小值消失</td></tr>
-        <tr><td>作业-2 Q4</td><td>幂律势 ω_r/ω_θ=√(k+2)，a=1/2 对应势</td><td>势能=幂律；HUD 直接显示频率比</td></tr>
+        <tr><td>作业-2 Q4</td><td>幂律势 $\omega_r/\omega_\theta=\sqrt{k+2}$，a=1/2 对应势</td><td>势能=幂律；HUD 直接显示频率比</td></tr>
         <tr><td>作业-2 Q6</td><td>椭圆轨道近/远日点角速度比</td><td>开普勒椭圆预设；转折点标记</td></tr>
-        <tr><td>作业-2 Q7</td><td>δV=γ/r³ 导致近心点进动、轨道不闭合</td><td>γ/r³ 滑块；轨迹进动可视化</td></tr>
-        <tr><td>作业-3 Q1</td><td>V=kr²/2 轨道为椭圆（中心在力心）</td><td>势能=谐振子预设</td></tr>
+        <tr><td>作业-2 Q7</td><td>$\delta V=\gamma/r^3$ 导致近心点进动、轨道不闭合</td><td>γ/r³ 滑块；轨迹进动可视化</td></tr>
+        <tr><td>作业-3 Q1</td><td>$V=kr^2/2$ 轨道为椭圆（中心在力心）</td><td>势能=谐振子预设</td></tr>
         <tr><td>作业-5 Q4</td><td>位力定理 ⟨T⟩、⟨V⟩ 验证</td><td>HUD 能量漂移列佐证 T+V 守恒</td></tr>
       </table>
     </details>
 
-    <div class="tag">URL 可复现：<span>?pot=…&amp;L=…&amp;E=…&amp;r0=…&amp;k=…&amp;gam=…&amp;speed=…</span><br>
-    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
-  </aside>
+    </aside>
 </div>
 <script>
 'use strict';
@@ -1223,6 +1232,7 @@ document.body.appendChild(metEl);
   <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
   <a data-tm-nav="prev" href="#">‹ 上一章</a>
   <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/01-newton/index.html?ret=M1" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
   <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
 </nav>
 <script id="tm-theme-js">
@@ -1410,5 +1420,13 @@ document.body.appendChild(metEl);
 <!-- TM-THEME-BODY:END -->
   <script src="../../assets/tm-i18n-data.js"></script>
   <script src="../../assets/tm-i18n.js"></script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

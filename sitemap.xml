@@ -3,17 +3,13 @@
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/</loc><lastmod>2026-11-02</lastmod></url>
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/catalog.html</loc><lastmod>2026-11-02</lastmod></url>
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/binet.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/01-particle/index.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/02-system/index.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/03-variational/index.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/04-lagrangian/index.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/05-oscillations/index.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/06-rigid-body/index.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/07-hamiltonian/index.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/01-particle/manuscripts/hw1.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/01-particle/manuscripts/intro.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/02-system/manuscripts/chapter2.html</loc><lastmod>2026-11-02</lastmod></url>
-  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/03-variational/manuscripts/variational.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/01-newton/index.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/02-variational/index.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/03-lagrangian/index.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/04-oscillations/index.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/05-rigid-body/index.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/06-hamiltonian/index.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/chapters/07-relativity/index.html</loc><lastmod>2026-11-02</lastmod></url>
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/00-binet/index.html</loc><lastmod>2026-11-02</lastmod></url>
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/01-effective-potential/index.html</loc><lastmod>2026-11-02</lastmod></url>
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/02-scattering/index.html</loc><lastmod>2026-11-02</lastmod></url>
@@ -26,4 +22,11 @@
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/09-atwood-pulley/index.html</loc><lastmod>2026-11-02</lastmod></url>
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/10-coupled-systems/index.html</loc><lastmod>2026-11-02</lastmod></url>
   <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/11-rotation-and-field/index.html</loc><lastmod>2026-11-02</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/13-lightcone-worldlines/index.html</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/14-foucault-rose/index.html</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/15-lagrange-points/index.html</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/16-doppler-beaming/index.html</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/17-free-rigid-body/index.html</loc><lastmod>2026-11-14</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/18-phase-space/index.html</loc><lastmod>2026-11-14</lastmod></url>
+  <url><loc>https://wck3069.github.io/Theoretical-Mechanics/modules/19-relativistic-collisions/index.html</loc><lastmod>2026-11-14</lastmod></url>
 </urlset>

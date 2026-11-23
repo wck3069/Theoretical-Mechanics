@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旋转参考系与磁场 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>旋转参考系与磁场</h1>
+<p class="ms-lead">本讲义合并作业-8 的最后两个单粒子问题：电机驱动的竖直圆环上的珠子（Q5）， 以及均匀磁场中的带电粒子（Q6）。前者用有效势研究相对平衡、稳定性与雅可比积分 ；后者说明机械动量与规范动量都不守恒，但平移对称性仍给出守恒的诺特荷， 它们正好锁定回旋圆心。两题都适合用拉格朗日方法一步写出运动方程。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">旋转参考系与磁场 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#作业映射">1作业映射</a></li>
+<li class="l2"><a href="#sec:ring">2旋转圆环上的珠子（Q5）</a></li>
+<li class="l3"><a href="#拉格朗日量">2.1拉格朗日量</a></li>
+<li class="l3"><a href="#运动方程与相对平衡">2.2运动方程与相对平衡</a></li>
+<li class="l3"><a href="#稳定性与临界角速度">2.3稳定性与临界角速度</a></li>
+<li class="l3"><a href="#雅可比积分-mathcal-e">2.4雅可比积分 \(\mathcal E\)</a></li>
+<li class="l2"><a href="#sec:cyc">3均匀磁场中的带电粒子（Q6）</a></li>
+<li class="l3"><a href="#拉格朗日量与运动方程">3.1拉格朗日量与运动方程</a></li>
+<li class="l3"><a href="#动量守恒与诺特荷">3.2动量守恒与诺特荷</a></li>
+<li class="l3"><a href="#守恒量与回旋圆心">3.3守恒量与回旋圆心</a></li>
+<li class="l2"><a href="#sec:numeric">4数值验证</a></li>
+<li class="l2"><a href="#讨论">5讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="作业映射"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-8 Q5</td>
+<td style="text-align: left;">圆环绕竖直直径以 <span class="math inline">\(\Omega\)</span> 转动，珠子沿环滑动</td>
+<td style="text-align: left;">有效势、相对平衡、稳定性、<span class="math inline">\(\mathcal E\)</span></td>
+<td style="text-align: center;"><a href="#sec:ring" data-reference-type="ref" data-reference="sec:ring">2</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-8 Q6</td>
+<td style="text-align: left;">带电粒子在均匀磁场中运动</td>
+<td style="text-align: left;">诺特荷、回旋圆心、规范动量</td>
+<td style="text-align: center;"><a href="#sec:cyc" data-reference-type="ref" data-reference="sec:cyc">3</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:ring"><span class="ms-secno">2</span>旋转圆环上的珠子（Q5）</h2>
+<h3 id="拉格朗日量"><span class="ms-secno">2.1</span>拉格朗日量</h3>
+<p>圆环半径 <span class="math inline">\(R\)</span>，绕竖直直径以恒定角速度 <span class="math inline">\(\Omega&gt;0\)</span> 转动；珠子质量 <span class="math inline">\(m\)</span>， <span class="math inline">\(\theta\)</span> 从最低点量起，圆心为重力势能零点。珠子的位置用球坐标描述： 到转轴的水平距离 <span class="math inline">\(R\sin\theta\)</span>，高度 <span class="math inline">\(-R\cos\theta\)</span>。 速度有两个正交分量：沿环的 <span class="math inline">\(R\dot\theta\)</span> 与随环转动的 <span class="math inline">\(\Omega R\sin\theta\)</span>，故 <span class="math display">\[T=\frac12mR^2\left(\dot\theta^2+\Omega^2\sin^2\theta\right),
+  \qquad
+  V=-mgR\cos\theta,
+  
+\tag{1}\]</span> <span class="math display">\[L=\frac12mR^2\dot\theta^2+\frac12mR^2\Omega^2\sin^2\theta+mgR\cos\theta .
+  
+\tag{2}\]</span></p>
+<h3 id="运动方程与相对平衡"><span class="ms-secno">2.2</span>运动方程与相对平衡</h3>
+<p>拉格朗日方程给出 <span class="math display">\[mR^2\ddot\theta=mR^2\Omega^2\sin\theta\cos\theta-mgR\sin\theta,
+\tag{3}\]</span> 即 <span class="math display">\[\boxed{\ \ddot\theta=\left(\Omega^2\cos\theta-\frac{g}{R}\right)\sin\theta\ }.
+  
+\tag{4}\]</span> 平衡条件 <span class="math inline">\(\ddot\theta=0\)</span> 给出两类解： <span class="math display">\[\sin\theta=0:\quad \theta=0\ (\text{最低点}),\quad \theta=\pi\ (\text{最高点});
+  
+\tag{5}\]</span> <span class="math display">\[\cos\theta=\frac{g}{\Omega^2R},\quad
+  \text{仅当}\ \Omega\ge\Omega_c\equiv\sqrt{\frac{g}{R}}\ \text{存在}.
+  
+\tag{6}\]</span> 记这个非平凡平衡为 <span class="math inline">\(\theta_{\rm eq}=\arccos\!\left(g/\Omega^2R\right)\)</span>。</p>
+<h3 id="稳定性与临界角速度"><span class="ms-secno">2.3</span>稳定性与临界角速度</h3>
+<p>定义有效势 <span class="math display">\[V_{\rm eff}(\theta)=-\frac12mR^2\Omega^2\sin^2\theta-mgR\cos\theta,
+  
+\tag{7}\]</span> 使 <span class="math inline">\(\ddot\theta=-\frac{1}{mR^2}V_{\rm eff}&#39;(\theta)\)</span>。其二阶导数为 <span class="math display">\[V_{\rm eff}&#39;&#39;(\theta)=-mR^2\Omega^2\cos2\theta+mgR\cos\theta .
+  
+\tag{8}\]</span> 在三个平衡点处： <span class="math display">\[\begin{aligned}
+  V_{\rm eff}&#39;&#39;(0)&amp;=mR\left(g-R\Omega^2\right)
+   \begin{cases}
+     &gt;0, &amp; \Omega&lt;\Omega_c\ (\text{稳定}),\\
+     &lt;0, &amp; \Omega&gt;\Omega_c\ (\text{不稳定});
+   \end{cases} \\
+  V_{\rm eff}&#39;&#39;(\pi)&amp;=-mR\left(g+R\Omega^2\right)&lt;0 \quad(\text{恒不稳定}); \\
+  V_{\rm eff}&#39;&#39;(\theta_{\rm eq})&amp;=mR^2\Omega^2\sin^2\theta_{\rm eq}&gt;0 \quad(\text{稳定}). 
+\end{aligned}\tag{9}\]</span> 所以 <span class="math inline">\(\Omega_c=\sqrt{g/R}\)</span> 是分岔点：低于它最低点稳定；高于它最低点失稳， 出现一对对称的稳定斜平衡 <span class="math inline">\(\pm\theta_{\rm eq}\)</span>。</p>
+<h3 id="雅可比积分-mathcal-e"><span class="ms-secno">2.4</span>雅可比积分 <span class="math inline">\(\mathcal E\)</span></h3>
+<p>由于 <span class="math inline">\(\partial L/\partial t=0\)</span>，雅可比积分守恒： <span class="math display">\[\mathcal E=\dot\theta\frac{\partial L}{\partial\dot\theta}-L
+  =\frac12mR^2\dot\theta^2-\frac12mR^2\Omega^2\sin^2\theta-mgR\cos\theta .
+  
+\tag{10}\]</span> 而惯性系中的机械能为 <span class="math display">\[E_{\rm mech}=\frac12mR^2\left(\dot\theta^2+\Omega^2\sin^2\theta\right)-mgR\cos\theta
+  =\mathcal E+mR^2\Omega^2\sin^2\theta .
+  
+\tag{11}\]</span> 二者不相等：差值 <span class="math inline">\(mR^2\Omega^2\sin^2\theta\)</span> 是珠子随环转动的方位动能， 由电机维持 <span class="math inline">\(\Omega\)</span> 时输入。<span class="math inline">\(\mathcal E\)</span> 是旋转约束下的有效能量，不是惯性系机械能。</p>
+<h2 id="sec:cyc"><span class="ms-secno">3</span>均匀磁场中的带电粒子（Q6）</h2>
+<h3 id="拉格朗日量与运动方程"><span class="ms-secno">3.1</span>拉格朗日量与运动方程</h3>
+<p>取 <span class="math inline">\(B\)</span> 沿 <span class="math inline">\(z\)</span> 轴、无电场，拉格朗日量 <span class="math display">\[L=\frac12m\left(\dot x^2+\dot y^2\right)+\frac{qB}{2}\left(x\dot y-y\dot x\right).
+  
+\tag{12}\]</span> 拉格朗日方程给出 <span class="math display">\[m\ddot x=qB\dot y,\qquad m\ddot y=-qB\dot x,
+  
+\tag{13}\]</span> 即 <span class="math inline">\(\ddot{\mathbf v}=\omega_c\,\mathbf v\times\hat z\)</span>，其中 <span class="math display">\[\omega_c=\frac{qB}{m}.
+  
+\tag{14}\]</span> 轨迹是半径 <span class="math inline">\(r_c=v_0/|\omega_c|\)</span> 的圆，周期 <span class="math inline">\(T=2\pi/|\omega_c|\)</span>。</p>
+<h3 id="动量守恒与诺特荷"><span class="ms-secno">3.2</span>动量守恒与诺特荷</h3>
+<p>机械动量 <span class="math inline">\(\mathbf p_{\rm mech}=m\mathbf v\)</span> 的方向不断改变，不守恒； 正则动量 <span class="math display">\[p_x=m\dot x-\frac{qB}{2}y,\qquad p_y=m\dot y+\frac{qB}{2}x
+  
+\tag{15}\]</span> 也不守恒，因为 <span class="math inline">\(L\)</span> 显含 <span class="math inline">\(x,y\)</span>。但 <span class="math inline">\(x,y\)</span> 平移只让 <span class="math inline">\(L\)</span> 改变一个全导数， 诺特荷仍然存在： <span class="math display">\[\begin{aligned}
+  Q_x&amp;=m\dot x-qBy, \\
+  Q_y&amp;=m\dot y+qBx. 
+\end{aligned}\tag{16}\]</span> 直接求导可验证 <span class="math inline">\(\dot Q_x=\dot Q_y=0\)</span>。</p>
+<h3 id="守恒量与回旋圆心"><span class="ms-secno">3.3</span>守恒量与回旋圆心</h3>
+<p>定义回旋圆心 <span class="math display">\[X_c=x+\frac{\dot y}{\omega_c},\qquad
+  Y_c=y-\frac{\dot x}{\omega_c}.
+  
+\tag{17}\]</span> 用 (16)–(16) 可得 <span class="math display">\[Q_y=m\omega_c X_c,\qquad Q_x=-m\omega_c Y_c .
+  
+\tag{18}\]</span> 所以两个守恒的诺特荷（相差常数因子）就是回旋圆心的坐标： 平移对称性锁定的是圆心，而不是粒子的瞬时动量。</p>
+<h2 id="sec:numeric"><span class="ms-secno">4</span>数值验证</h2>
+<p>交互页对圆环方程 (4) 作四阶 Runge–Kutta 积分（步长 <span class="math inline">\(2\times10^{-3}\,\mathrm{s}\)</span>）， 对磁场问题用解析解 (13) 采样。</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">量</th>
+<th style="text-align: left;">参数</th>
+<th style="text-align: left;">解析值</th>
+<th style="text-align: left;">数值/检查值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(\Omega_c\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(R=1.2\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(2.8592\ \mathrm{rad/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(2.8592\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(\theta_{\rm eq}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\Omega=3.0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(24.72^\circ\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(24.72^\circ\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(V_{\rm eff}&#39;&#39;(0)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\Omega&gt;\Omega_c\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(&lt;0\)</span></td>
+<td style="text-align: left;">失稳</td>
+</tr>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(V_{\rm eff}&#39;&#39;(\theta_{\rm eq})\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\Omega=3.0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(2.267&gt;0\)</span></td>
+<td style="text-align: left;">稳定</td>
+</tr>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(\Delta\mathcal E\)</span></td>
+<td style="text-align: left;">RK4，<span class="math inline">\(2\,\mathrm{s}\)</span></td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><span class="math inline">\(&lt;10^{-6}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q6 <span class="math inline">\(r_c\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(B=1.2,v_0=1\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(0.8333\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(0.8333\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q6 <span class="math inline">\(Q_x\)</span></td>
+<td style="text-align: left;">同上</td>
+<td style="text-align: left;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(1\)</span>（<span class="math inline">\(\Delta Q_x&lt;10^{-12}\)</span>）</td>
+</tr>
+<tr>
+<td style="text-align: left;">Q6 <span class="math inline">\(Q_y\)</span></td>
+<td style="text-align: left;">同上</td>
+<td style="text-align: left;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(0\)</span>（<span class="math inline">\(\Delta Q_y&lt;10^{-12}\)</span>）</td>
+</tr>
+<tr>
+<td style="text-align: left;">Q6 <span class="math inline">\(\Delta p_x\)</span></td>
+<td style="text-align: left;">一个回旋周期</td>
+<td style="text-align: left;"><span class="math inline">\(\neq0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(1.000\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q6 <span class="math inline">\(Q_y=m\omega_cX_c\)</span></td>
+<td style="text-align: left;">圆心 <span class="math inline">\((0,-0.8333)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: left;">一致</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="讨论"><span class="ms-secno">5</span>讨论</h2>
+<ol>
+<li><p><strong>两个“能量”.</strong> 圆环问题里 <span class="math inline">\(\mathcal E\)</span> 守恒而 <span class="math inline">\(E_{\rm mech}\)</span> 不守恒， 差值由电机做功补上；这与“约束随时间变化时机械能不守恒”是同一件事。</p></li>
+<li><p><strong>两个“动量”.</strong> 磁场问题里机械动量与规范动量都不守恒， 但平移导致的诺特荷守恒；守恒量对应回旋圆心，而非瞬时速度。</p></li>
+<li><p><strong>分岔.</strong> <span class="math inline">\(\Omega\)</span> 从下方穿过 <span class="math inline">\(\Omega_c\)</span> 时，<span class="math inline">\(\theta=0\)</span> 由稳定变不稳定， 一对斜平衡同时出现，是典型的超临界叉式分岔。</p></li>
+</ol>
+<div class="thebibliography">
+<p><span>9</span> L. D. Landau, E. M. Lifshitz, <em>Mechanics</em>, 3rd ed., Pergamon, 1976. H. Goldstein, C. Poole, J. Safko, <em>Classical Mechanics</em>, 3rd ed., Addison-Wesley, 2002. J. D. Jackson, <em>Classical Electrodynamics</em>, 3rd ed., Wiley, 1999.</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>旋转参考系与磁场 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

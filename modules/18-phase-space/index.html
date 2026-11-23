@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>相空间与刘维尔 · 辛积分器比较 · 哈密顿力学模拟</title>
+<style>
+  :root{
+    --bg:#05070f; --panel:rgba(12,16,34,.72); --line:rgba(120,160,255,.14);
+    --text:#e8ecf8; --muted:#8a98c0; --accent:#7ec8ff; --accent2:#ffd27a;
+    --good:#7ee787; --bad:#ff7a9e;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:transparent;
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+    overflow:hidden;
+  }
+  .app{display:flex; height:100vh; width:100vw; position:relative; z-index:1}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas#cv{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  .brand{position:absolute; top:22px; left:26px; pointer-events:none; max-width:calc(100% - 250px)}
+  .brand h1{margin:0; font-size:19px; letter-spacing:.5px; font-weight:650}
+  .brand p{margin:5px 0 0; font-size:12.5px; color:var(--muted)}
+  .brand p .mid{color:var(--accent2)}
+  .intro{margin:9px 0 0; font-size:12.5px; color:var(--muted); line-height:1.65; max-width:92%}
+  .hud{position:absolute; left:26px; bottom:22px; font-size:12.5px; color:var(--muted);
+       display:flex; gap:16px; flex-wrap:wrap; pointer-events:none; max-width:calc(100% - 300px)}
+  .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+
+  .panel{
+    width:340px; flex:none; padding:20px 20px 16px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line); backdrop-filter:blur(14px);
+  }
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:#2a3760;border-radius:4px}
+  .eq{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; line-height:1.9;
+    padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(10,16,32,.6); color:#cfe0ff; margin-bottom:16px;
+  }
+  .eq .num{color:var(--accent2)}
+  .group{margin-bottom:14px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px}
+  .row label{font-size:13px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:13px; color:var(--accent2); font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#2a4a8f,#16233f); outline:none}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(126,200,255,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent);
+    border:2px solid #0a1020; cursor:pointer}
+  .hint{font-size:11.5px; color:#6d7ba3; margin-top:5px; line-height:1.5}
+
+  .sub{margin:14px 0 8px; font-size:12px; letter-spacing:.06em; color:#9fb2dc;
+    border-bottom:1px solid var(--line); padding-bottom:4px}
+  .out{display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; margin:5px 0}
+  .out .k{color:#9fb2dc}
+  .out .v{font-family:ui-monospace,monospace; font-variant-numeric:tabular-nums}
+  .no{color:var(--bad)} .gold{color:var(--accent2)}
+
+  .scene-select{margin-bottom:14px}
+  .scene-select select{width:100%}
+  select{width:100%; font:inherit; font-size:12.5px; padding:7px 9px; border-radius:9px;
+    color:#cfdcff; background:#111a33; border:1px solid rgba(126,200,255,.35)}
+  select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .scene-group{display:none}
+  .scene-group.on{display:block}
+  .chk{display:flex; align-items:center; gap:8px; font-size:13px; color:#b9c6ea; margin:10px 0 4px; cursor:pointer}
+  .chk input{width:16px; height:16px; accent-color:#7ec8ff; cursor:pointer}
+
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px}
+  button{
+    font:inherit; font-size:12.5px; padding:9px 10px; border-radius:9px; cursor:pointer;
+    color:#cfdcff; background:rgba(58,95,191,.18); border:1px solid rgba(126,200,255,.35);
+    transition:.15s;
+  }
+  button:hover{background:rgba(126,200,255,.28)}
+  button.primary{grid-column:1/-1; background:linear-gradient(180deg,#ffd27a,#e6a84a); border-color:#ffd27a; color:#1a1206; font-weight:600}
+  button.primary:hover{filter:brightness(1.08)}
+  a.doc{display:inline-block; margin-top:14px; margin-right:10px; font-size:12.5px; color:var(--accent); text-decoration:none}
+  a.doc:hover{text-decoration:underline}
+  .tag{display:block; margin-top:14px; font-size:11.5px; color:var(--muted); line-height:1.6}
+  .tag span{color:var(--accent2)}
+  .selftest{white-space:pre-wrap;position:absolute; top:14px; right:14px; max-width:65%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(126,200,255,.4); color:#e8ecf8}
+  .selftest.fail{border-color:rgba(255,122,158,.7); color:#ffd7e2}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+    .brand{max-width:calc(100% - 24px)}
+    .brand .intro{display:none}
+    body[data-scene="integrator"] .hud{display:none}
+    .hud{left:14px; bottom:14px; gap:10px; font-size:11.5px; max-width:calc(100% - 150px);
+      padding:4px 8px; border-radius:8px; background:rgba(4,8,20,.58); border:1px solid rgba(146,182,255,.10)}
+  }
+  @media (prefers-reduced-motion: reduce){
+    button{transition:none}
+  }
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="相空间与刘维尔 · 辛积分器比较：拖拽初始点观察单摆相图（振动、分隔线、转动），面元随哈密顿流变形而面积不变；比较显式欧拉、辛欧拉与 Störmer–Verlet 的长期能量行为。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/18-phase-space/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="相空间与刘维尔 · 辛积分器比较 · 哈密顿力学模拟">
+<meta property="og:description" content="相空间与刘维尔 · 辛积分器比较：拖拽初始点观察单摆相图（振动、分隔线、转动），面元随哈密顿流变形而面积不变；比较显式欧拉、辛欧拉与 Störmer–Verlet 的长期能量行为。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/18-phase-space/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="相空间与刘维尔 · 辛积分器比较 · 哈密顿力学模拟">
+<meta name="twitter:description" content="相空间与刘维尔 · 辛积分器比较：拖拽初始点观察单摆相图（振动、分隔线、转动），面元随哈密顿流变形而面积不变；比较显式欧拉、辛欧拉与 Störmer–Verlet 的长期能量行为。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+<!-- TM-THEME-HEAD:END -->
+<style id="m18-over">
+  /* M18 覆盖层：模块强调色保持 cyan；选中态用面板底+边框，不用彩色侧边条 */
+  select{background:#0d1730; border:1px solid rgba(126,200,255,.35)}
+  input[type=range]{background:linear-gradient(90deg,#7ec8ff,#b79bff); box-shadow:0 0 8px rgba(126,200,255,.18)}
+  input[type=range]::-webkit-slider-thumb{background:#7ec8ff; box-shadow:0 0 12px rgba(126,200,255,.75)}
+  input[type=range]::-moz-range-thumb{background:#7ec8ff; box-shadow:0 0 12px rgba(126,200,255,.75)}
+  button{background:rgba(126,200,255,.10); border:1px solid rgba(126,200,255,.35); color:#d8e9ff}
+  button:hover{background:rgba(126,200,255,.20); transform:translateY(-1px); box-shadow:0 4px 14px rgba(126,200,255,.18)}
+  ::selection{background:rgba(126,200,255,.30); color:#e8eeff}
+</style>
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
+</head>
+<body>
+<div class="app">
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="brand">
+      <h1 id="brandTitle">相空间与刘维尔</h1>
+      <p><span class="mid" id="brandMid">M22</span> · <span id="brandSub">第 6 章 哈密顿力学 · 相空间流 · 刘维尔定理</span></p>
+      <p class="intro" id="brandIntro"></p>
+    </div>
+    <div class="hud">
+      <span><span id="l1">—</span> <b id="h1">-</b></span>
+      <span><span id="l2">—</span> <b id="h2">-</b></span>
+      <span><span id="l3">—</span> <b id="h3">-</b></span>
+      <span><span id="l4">—</span> <b id="h4">-</b></span>
+      <span><span id="l5">—</span> <b id="h5">-</b></span>
+    </div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+
+  <aside class="panel">
+    <div class="scene-select">
+      <div class="row"><label for="sel-scene">场景</label></div>
+      <select id="sel-scene">
+        <option value="phase">M22 · 相空间与刘维尔</option>
+        <option value="integrator">M23 · 辛积分器比较</option>
+      </select>
+    </div>
+    <div class="eq" id="eqBox"></div>
+
+    <div class="scene-group" data-scene="phase">
+      <div class="group">
+        <div class="row"><label for="p-q0">初始 q₀</label><span class="val" id="v-q0">0.80</span></div>
+        <input id="p-q0" type="range" min="-3.14159" max="3.14159" step="0.01" value="0.8">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-p0">初始 p₀</label><span class="val" id="v-p0">1.20</span></div>
+        <input id="p-p0" type="range" min="-3.5" max="3.5" step="0.01" value="1.2">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-csz">面元半尺寸 δ（q、p 各向）</label><span class="val" id="v-csz">0.45</span></div>
+        <input id="p-csz" type="range" min="0.05" max="1.2" step="0.05" value="0.45">
+        <div class="row" style="margin-top:6px"><label for="p-cc">面元网格细分数</label><span class="val" id="v-cc">100</span></div>
+        <input id="p-cc" type="range" min="3" max="100" step="1" value="100">
+        <label class="chk" for="p-cloud"><input id="p-cloud" type="checkbox" checked>显示面元（随哈密顿流演化的相空间区域）</label>
+        <div class="hint">直接拖动画布上的金色点改变 (q₀, p₀)；蓝色轨迹与紫色面元由同一个 RK4 流演化，网格被拉伸、剪切，但每格面积之和几乎不变。</div>
+      </div>
+    </div>
+
+    <div class="scene-group" data-scene="integrator">
+      <div class="group">
+        <div class="row"><label for="sel-method">积分方法</label></div>
+        <select id="sel-method">
+          <option value="euler">显式欧拉（非辛）</option>
+          <option value="seuler">辛欧拉（Euler–Verlet）</option>
+          <option value="verlet" selected>Störmer–Verlet</option>
+        </select>
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-h">步长 h（时间窗 T = 30）</label><span class="val" id="v-h">0.100</span></div>
+        <input id="p-h" type="range" min="0.01" max="0.5" step="0.005" value="0.1">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-iq0">初始 q₀</label><span class="val" id="v-iq0">1.00</span></div>
+        <input id="p-iq0" type="range" min="-2.5" max="2.5" step="0.05" value="1">
+      </div>
+      <div class="group">
+        <div class="row"><label for="p-ip0">初始 p₀</label><span class="val" id="v-ip0">0.00</span></div>
+        <input id="p-ip0" type="range" min="-2.5" max="2.5" step="0.05" value="0">
+        <div class="hint">能量误差图取对数横轴：显式欧拉每步把 (q, p) 映到 det = 1 + h² 的扩张椭圆（玫瑰线），|ΔH|/H₀ 指数增长；辛欧拉与 Verlet 保持 det = 1，误差只在有界小邻域内振荡，且 Verlet 幅度约小一个 h² 量级。</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="p-speed">动画速度（×）</label><span class="val" id="v-speed">1.0</span></div>
+      <input id="p-speed" type="range" min="0.1" max="3" step="0.1" value="1">
+    </div>
+    <div class="btns">
+      <button id="btn-pause" type="button">暂停</button>
+      <button id="btn-reset" type="button">重置</button>
+      <button id="btn-primary" type="button" class="primary">切换：辛积分器比较</button>
+    </div>
+
+    <span class="tag">本模块两景均取无量纲单位：相空间景 H = p²/2 + (1 − cos q)（I = K = 1）；积分器景 H = (q² + p²)/2。<span>时间由物理步长推进，不使用任何随机数。</span></span>
+    <a class="doc" href="../../chapters/06-hamiltonian/index.html">← 返回：第 6 章 哈密顿力学</a>
+    <span class="tag" id="docTag">ch06 · 正则方程、刘维尔定理与数值辛结构</span>
+  </aside>
+</div>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/06-hamiltonian/index.html?ret=M22" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script>
+(function () {
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (nav && stage && nav.parentNode !== stage) stage.appendChild(nav);
+})();
+</script>
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" id="tmStars" aria-hidden="true"></canvas>
+<!-- TM-THEME-BODY:END -->
+<script>
+'use strict';
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var cv = $('cv'), ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1, TAU = Math.PI * 2, PI = Math.PI;
+  var scene = 'phase', playing = true, speed = 1, last = 0;
+  var reduced = false, selftest = false;
+  try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function wrapPi(q) { q = (q + PI) % TAU; if (q < 0) q += TAU; return q - PI; }
+  function fmtSig(v) { var a = Math.abs(v); return a >= 1e5 ? v.toExponential(1) : v.toExponential(2); }
+
+  /* ================= 共享物理：单摆流（I = K = 1） ================= */
+  function pendH(q, p) { return 0.5 * p * p + (1 - Math.cos(q)); }
+  function rk4Pend(s, h) {
+    var a1 = s.p, b1 = -Math.sin(s.q);
+    var a2 = s.p + b1 * h / 2, b2 = -Math.sin(s.q + a1 * h / 2);
+    var a3 = s.p + b2 * h / 2, b3 = -Math.sin(s.q + a2 * h / 2);
+    var a4 = s.p + b3 * h, b4 = -Math.sin(s.q + a3 * h);
+    return { q: s.q + (a1 + 2 * a2 + 2 * a3 + a4) * h / 6,
+             p: s.p + (b1 + 2 * b2 + 2 * b3 + b4) * h / 6 };
+  }
+  function flowBox(pts, h, steps) {
+    for (var i = 0; i < pts.length; i++) pts[i] = rk4Pend(pts[i], h);
+    return pts;
+  }
+  function boxArea(pts, nx, ny) {
+    var A = 0, x, y;
+    for (y = 0; y < ny - 1; y++) for (x = 0; x < nx - 1; x++) {
+      var p0 = pts[y * nx + x], p1 = pts[y * nx + x + 1], p2 = pts[(y + 1) * nx + x + 1], p3 = pts[(y + 1) * nx + x];
+      A += 0.5 * Math.abs(p0.q * p1.p - p1.q * p0.p + p1.q * p2.p - p2.q * p1.p +
+                          p2.q * p3.p - p3.q * p2.p + p3.q * p0.p - p0.q * p3.p);
+    }
+    return A;
+  }
+
+  /* ================= 场景一：相空间与刘维尔 ================= */
+  var SUB = 0.004, TRAIL_MAX = 4000;
+  var view = { x0: 38, x1: 16, y0: 66, y1: 44, kx: 40, ky: 40 };
+  var ph = { q: 0.8, p: 1.2, sz: 0.45, cc: 100, cloud: true,
+             t: 0, trail: [], pts: [], nx: 1, ny: 1, A0: 0, A: 0 };
+  function phReset() {
+    ph.trail = [{ q: ph.q, p: ph.p }];
+    ph.t = 0;
+    ph.nx = ph.ny = ph.cc + 1;
+    ph.pts = [];
+    for (var iy = 0; iy < ph.ny; iy++) for (var ix = 0; ix < ph.nx; ix++)
+      ph.pts.push({ q: ph.q - ph.sz + 2 * ph.sz * ix / ph.cc, p: ph.p - ph.sz + 2 * ph.sz * iy / ph.cc });
+    ph.A0 = 4 * ph.sz * ph.sz;
+    ph.A = ph.A0;
+  }
+  function phStep(dt) {
+    var rem = Math.min(dt, 0.05);
+    while (rem > 1e-9) {
+      var h = Math.min(SUB, rem); rem -= h;
+      var s = rk4Pend({ q: ph.trail[ph.trail.length - 1].q, p: ph.trail[ph.trail.length - 1].p }, h);
+      ph.trail.push(s); ph.t += h;
+      if (ph.trail.length > TRAIL_MAX) ph.trail.shift();
+      ph.pts = flowBox(ph.pts, h, 1);
+    }
+    ph.A = boxArea(ph.pts, ph.nx, ph.ny);
+  }
+  function phLayout() {
+    view.x0 = 38; view.x1 = 16; view.y0 = 134; view.y1 = 44;
+    if (W <= 560) { view.x0 = 30; view.x1 = 10; view.y0 = 52; view.y1 = 30; }
+    view.kx = (W - view.x0 - view.x1) / TAU;
+    view.ky = (H - view.y0 - view.y1) / 7.8;
+  }
+  function phX(q) { return view.x0 + (q + PI) * view.kx; }
+  function phY(p) { return view.y0 + (3.9 - p) * view.ky; }
+  function phUQ(sx) { return (sx - view.x0) / view.kx - PI; }
+  function phUP(sy) { return 3.9 - (sy - view.y0) / view.ky; }
+  function phContour(h, sign, dash) {
+    ctx.beginPath();
+    var first = true, n = 240;
+    for (var i = 0; i <= n; i++) {
+      var q = -PI + TAU * i / n;
+      var rad = 2 * (h - 1 + Math.cos(q));
+      if (rad < 1e-9) { first = true; continue; }
+      var p = sign * Math.sqrt(rad);
+      if (first) { ctx.moveTo(phX(q), phY(p)); first = false; } else ctx.lineTo(phX(q), phY(p));
+    }
+    ctx.setLineDash(dash || []); ctx.stroke(); ctx.setLineDash([]);
+  }
+  function phDraw() {
+    phLayout();
+    var bg = ctx.createRadialGradient(W * .5, H * .45, 0, W * .5, H * .45, Math.max(W, H) * .72);
+    bg.addColorStop(0, '#0a0f1e'); bg.addColorStop(1, '#060a15');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    var px0 = phX(-PI), px1 = phX(PI), py0 = phY(3.9), py1 = phY(-3.9);
+    ctx.strokeStyle = 'rgba(146,182,255,.14)'; ctx.lineWidth = 1;
+    ctx.strokeRect(px0, py0, px1 - px0, py1 - py0);
+    ctx.lineWidth = 1;
+    var qs = [-PI, -PI / 2, 0, PI / 2, PI], i;
+    ctx.strokeStyle = 'rgba(122,162,255,.10)';
+    for (i = 0; i < qs.length; i++) { ctx.beginPath(); ctx.moveTo(phX(qs[i]), py0); ctx.lineTo(phX(qs[i]), py1); ctx.stroke(); }
+    for (i = -3; i <= 3; i++) { if (!i) continue;
+      ctx.beginPath(); ctx.moveTo(px0, phY(i)); ctx.lineTo(px1, phY(i)); ctx.stroke(); }
+    ctx.strokeStyle = 'rgba(122,162,255,.20)';
+    ctx.beginPath(); ctx.moveTo(px0, phY(0)); ctx.lineTo(px1, phY(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(phX(0), py0); ctx.lineTo(phX(0), py1); ctx.stroke();
+    ctx.fillStyle = 'rgba(170,190,235,.85)'; ctx.font = '11px ui-sans-serif,system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('−π', phX(-PI), py1 + 14); ctx.fillText('−π/2', phX(-PI / 2), py1 + 14);
+    ctx.fillText('0', phX(0), py1 + 14); ctx.fillText('π/2', phX(PI / 2), py1 + 14); ctx.fillText('π', phX(PI), py1 + 14);
+    ctx.textAlign = 'left';
+    for (i = -3; i <= 3; i++) if (i) ctx.fillText(String(i), px0 + 4, phY(i) - 3);
+    ctx.fillText('q', px1 - 10, phY(0) - 6); ctx.fillText('p', phX(0) + 6, py0 + 12);
+    if (W > 640) {
+      ctx.fillStyle = 'rgba(150,165,210,.55)'; ctx.font = '10.5px ui-sans-serif,system-ui,sans-serif';
+      ctx.fillText('q = ±π 为同一物理状态（周期认同）', px0 + 6, py0 - 6);
+    }
+    /* 能线族：振动 / 分隔线 / 转动 */
+    var libs = [0.3, 0.7, 1.1, 1.5, 1.8], rots = [2.3, 2.9, 3.8, 5.0];
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(127,224,255,.24)';
+    for (i = 0; i < libs.length; i++) { phContour(libs[i], 1); phContour(libs[i], -1); }
+    for (i = 0; i < rots.length; i++) { phContour(rots[i], 1); phContour(rots[i], -1); }
+    ctx.strokeStyle = 'rgba(255,210,122,.6)'; ctx.lineWidth = 1.4;
+    phContour(2, 1); phContour(2, -1);
+    /* 当前能量等值线（虚线） */
+    var Hc = pendH(ph.q, ph.p);
+    ctx.strokeStyle = 'rgba(255,210,122,.35)'; ctx.lineWidth = 1;
+    phContour(Hc, 1, [4, 4]); phContour(Hc, -1, [4, 4]);
+    /* 面元：网格 + 轮廓 + 点 */
+    if (ph.cloud && ph.pts.length) {
+      ctx.strokeStyle = 'rgba(183,155,255,' + (ph.nx > 50 ? '.12' : '.22') + ')'; ctx.lineWidth = .7;
+      var nx = ph.nx, ny = ph.ny, ix, iy;
+      for (iy = 0; iy < ny; iy++) {
+        ctx.beginPath();
+        for (ix = 0; ix < nx; ix++) { var a = ph.pts[iy * nx + ix];
+          if (ix === 0) ctx.moveTo(phX(a.q), phY(a.p)); else ctx.lineTo(phX(a.q), phY(a.p)); }
+        ctx.stroke();
+      }
+      for (ix = 0; ix < nx; ix++) {
+        ctx.beginPath();
+        for (iy = 0; iy < ny; iy++) { var b = ph.pts[iy * nx + ix];
+          if (iy === 0) ctx.moveTo(phX(b.q), phY(b.p)); else ctx.lineTo(phX(b.q), phY(b.p)); }
+        ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(201,184,255,.8)'; ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      for (ix = 0; ix < nx; ix++) { var c = ph.pts[ix]; if (ix === 0) ctx.moveTo(phX(c.q), phY(c.p)); else ctx.lineTo(phX(c.q), phY(c.p)); }
+      for (iy = 1; iy < ny; iy++) { var d = ph.pts[iy * nx + nx - 1]; ctx.lineTo(phX(d.q), phY(d.p)); }
+      for (ix = nx - 2; ix >= 0; ix--) { var e = ph.pts[(ny - 1) * nx + ix]; ctx.lineTo(phX(e.q), phY(e.p)); }
+      for (iy = ny - 2; iy >= 1; iy--) { var f = ph.pts[iy * nx]; ctx.lineTo(phX(f.q), phY(f.p)); }
+      ctx.closePath(); ctx.stroke();
+      if (nx <= 34) {
+        ctx.fillStyle = '#c9b8ff';
+        for (i = 0; i < ph.pts.length; i++) {
+          ctx.beginPath(); ctx.arc(phX(ph.pts[i].q), phY(ph.pts[i].p), 1.3, 0, TAU); ctx.fill();
+        }
+      }
+    }
+    /* 轨迹（q 周期认同：跨 ±π 断开线段） */
+    ctx.lineWidth = 1.6;
+    var prev = null;
+    for (i = 0; i < ph.trail.length; i++) {
+      var tp = ph.trail[i], wq = wrapPi(tp.q);
+      if (prev && Math.abs(wq - prev.wq) < PI) {
+        var age = ph.t - i * SUB;   // 仅用于视觉淡出（物理量不变）
+        var fade = clamp(age / 24 + .25, .05, 1);
+        ctx.strokeStyle = 'rgba(127,224,255,' + (0.75 * fade).toFixed(3) + ')';
+        ctx.beginPath(); ctx.moveTo(phX(prev.wq), phY(prev.p)); ctx.lineTo(phX(wq), phY(tp.p)); ctx.stroke();
+      }
+      prev = { wq: wq, p: tp.p };
+    }
+    /* 起点（暗）与当前点（金，可拖拽） */
+    ctx.fillStyle = 'rgba(255,210,122,.35)';
+    ctx.beginPath(); ctx.arc(phX(ph.q), phY(ph.p), 3.5, 0, TAU); ctx.fill();
+    var cur = ph.trail.length ? ph.trail[ph.trail.length - 1] : { q: ph.q, p: ph.p };
+    var cx = phX(wrapPi(cur.q)), cy = phY(cur.p);
+    ctx.fillStyle = '#ffd27a';
+    ctx.beginPath(); ctx.arc(cx, cy, 5.5, 0, TAU); ctx.fill();
+    ctx.strokeStyle = 'rgba(10,15,30,.9)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, 5.5, 0, TAU); ctx.stroke();
+    if (W > 640) {
+      ctx.fillStyle = 'rgba(201,184,255,.8)'; ctx.font = '10.5px ui-sans-serif,system-ui,sans-serif';
+      ctx.textAlign = 'left'; ctx.fillText('面元（' + ph.nx + '×' + ph.ny + ' 网格）', Math.min(cx + 10, px1 - 110), cy - 8);
+    }
+    var status;
+    if (Math.abs(Hc - 2) < 0.02) status = '分隔线附近（H ≈ 2，振动与转动的分界）';
+    else if (Hc < 2) status = '振动（libration）';
+    else status = '转动（rotation）';
+    setHud([
+      ['q', wrapPi(cur.q).toFixed(3)],
+      ['p', cur.p.toFixed(3)],
+      ['H', Hc.toFixed(4)],
+      ['面积 A/A₀', ph.A.toFixed(4) + ' / ' + ph.A0.toFixed(4) + '（偏差 ' + (Math.abs(ph.A - ph.A0) / ph.A0 * 100).toFixed(2) + '%）'],
+      ['状态', status]
+    ]);
+  }
+
+  /* ================= 场景二：辛积分器比较 ================= */
+  function oscH(q, p) { return 0.5 * (q * q + p * p); }
+  function stepEuler(q, p, h) { return { q: q + h * p, p: p - h * q }; }
+  function stepSEuler(q, p, h) { var pn = p - h * q; return { q: q + h * pn, p: pn }; }
+  function jacDet(map, h) {
+    var e = 1e-4, a = map(0.3, 0.7, h), bq = map(0.3 + e, 0.7, h), bp = map(0.3, 0.7 + e, h);
+    var j00 = (bq.q - a.q) / e, j01 = (bp.q - a.q) / e, j10 = (bq.p - a.p) / e, j11 = (bp.p - a.p) / e;
+    return j00 * j11 - j01 * j10;
+  }
+  var IT = 30; // 固定时间窗
+  var ig = { method: 'verlet', h: 0.1, q0: 1, p0: 0, pts: [], err: [], H0: 0, n: 0, reveal: 0, range: 1.8 };
+  function igRun() {
+    var h = ig.h, q = ig.q0, p = ig.p0, H0 = ig.H0 = oscH(q, p);
+    ig.n = Math.min(Math.round(IT / h), 6000);
+    ig.pts = [{ q: q, p: p }]; ig.err = [0];
+    var rmax = Math.max(Math.abs(q), Math.abs(p), 0.5);
+    if (ig.method === 'euler') {
+      for (var i = 0; i < ig.n; i++) { var a = stepEuler(q, p, h); q = a.q; p = a.p;
+        ig.pts.push({ q: q, p: p }); ig.err.push(H0 > 1e-12 ? Math.abs(oscH(q, p) - H0) / H0 : Math.abs(oscH(q, p) - H0));
+        rmax = Math.max(rmax, Math.abs(q), Math.abs(p)); }
+    } else if (ig.method === 'seuler') {
+      for (i = 0; i < ig.n; i++) { var b = stepSEuler(q, p, h); q = b.q; p = b.p;
+        ig.pts.push({ q: q, p: p }); ig.err.push(H0 > 1e-12 ? Math.abs(oscH(q, p) - H0) / H0 : Math.abs(oscH(q, p) - H0));
+        rmax = Math.max(rmax, Math.abs(q), Math.abs(p)); }
+    } else {
+      /* Velocity Verlet: half-kick, drift, half-kick; p is the physical
+         momentum at the integer step, so H is accurate at every sample. */
+      for (i = 0; i < ig.n; i++) {
+        var ph = p - 0.5 * h * q;
+        var qn = q + h * ph;
+        var pn = ph - 0.5 * h * qn;
+        q = qn; p = pn;
+        ig.pts.push({ q: q, p: p });
+        ig.err.push(H0 > 1e-12 ? Math.abs(oscH(q, p) - H0) / H0 : Math.abs(oscH(q, p) - H0));
+        rmax = Math.max(rmax, Math.abs(q), Math.abs(p));
+      }
+    }
+    ig.range = Math.min(Math.max(rmax * 1.12, 1.2), 14);
+    ig.reveal = 0;
+  }
+  function igReset() { igRun(); }
+  function igLayout() {
+    var padL = 44, padR = 18;
+    var chartW = Math.max(180, Math.min(340, W * 0.42));
+    ig.box = { x: padL, y: 132, s: Math.min(H - 150, W - padL - padR - chartW - 30) };
+    if (W <= 560) {
+      ig.box = { x: 40, y: 62, s: Math.min(H * 0.52, W - 70) };
+      ig.chx = 46; ig.chy = ig.box.y + ig.box.s + 26;
+      ig.chw = W - 66; ig.chh = Math.max(80, H - ig.chy - 40);
+    } else {
+      ig.chx = ig.box.x + ig.box.s + 34; ig.chy = 84;
+      ig.chw = W - ig.chx - padR - 6; ig.chh = H - 170;
+    }
+  }
+  function igDraw() {
+    igLayout();
+    var bg = ctx.createRadialGradient(W * .5, H * .45, 0, W * .5, H * .45, Math.max(W, H) * .72);
+    bg.addColorStop(0, '#0a0f1e'); bg.addColorStop(1, '#060a15');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    var R = ig.range, box = ig.box, s = box.s, cx = box.x + s / 2, cy = box.y + s / 2, k = s / (2 * R), i;
+    function X(q) { return cx + q * k; } function Y(p) { return cy - p * k; }
+    ctx.strokeStyle = 'rgba(146,182,255,.14)'; ctx.lineWidth = 1;
+    ctx.strokeRect(box.x, box.y, s, s);
+    ctx.strokeStyle = 'rgba(122,162,255,.10)';
+    var gmax = Math.floor(R);
+    for (i = -gmax; i <= gmax; i++) { if (!i) continue;
+      ctx.beginPath(); ctx.moveTo(X(i), box.y); ctx.lineTo(X(i), box.y + s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(box.x, Y(i)); ctx.lineTo(box.x + s, Y(i)); ctx.stroke(); }
+    ctx.strokeStyle = 'rgba(122,162,255,.20)';
+    ctx.beginPath(); ctx.moveTo(box.x, Y(0)); ctx.lineTo(box.x + s, Y(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(0), box.y); ctx.lineTo(X(0), box.y + s); ctx.stroke();
+    ctx.fillStyle = 'rgba(170,190,235,.85)'; ctx.font = '11px ui-sans-serif,system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(gmax), X(gmax), box.y + s + 14); ctx.fillText(String(-gmax), X(-gmax), box.y + s + 14);
+    ctx.textAlign = 'left';
+    ctx.fillText(String(gmax), X(0) + 4, Y(gmax) - 3); ctx.fillText(String(-gmax), X(0) + 4, Y(-gmax) - 3);
+    ctx.fillText('q', box.x + s - 10, Y(0) - 6); ctx.fillText('p', X(0) + 6, box.y + 12);
+    /* 精确解：同一初始条件的圆 */
+    ctx.strokeStyle = 'rgba(255,210,122,.85)'; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.arc(cx, cy, Math.sqrt(ig.H0) * k, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+    if (W > 640) { ctx.fillStyle = 'rgba(255,210,122,.85)'; ctx.fillText('虚线：精确解（圆，H 恒定）', box.x + 8, box.y + 14); }
+    /* 数值轨道 */
+    var col = ig.method === 'euler' ? '127,224,255' : (ig.method === 'seuler' ? '201,184,255' : '127,224,255');
+    var nShow = Math.min(ig.reveal, ig.pts.length);
+    ctx.strokeStyle = 'rgba(' + col + ',.85)'; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (i = 0; i < nShow; i++) { var pt = ig.pts[i];
+      if (Math.abs(pt.q) > R * 1.02 || Math.abs(pt.p) > R * 1.02) { continue; }
+      if (i === 0) ctx.moveTo(X(pt.q), Y(pt.p)); else ctx.lineTo(X(pt.q), Y(pt.p)); }
+    ctx.stroke();
+    if (nShow > 0) { var cp = ig.pts[nShow - 1];
+      if (Math.abs(cp.q) <= R * 1.02 && Math.abs(cp.p) <= R * 1.02) {
+        ctx.fillStyle = '#ffd27a'; ctx.beginPath(); ctx.arc(X(cp.q), Y(cp.p), 5, 0, TAU); ctx.fill();
+        ctx.strokeStyle = 'rgba(10,15,30,.9)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(X(cp.q), Y(cp.p), 5, 0, TAU); ctx.stroke(); } }
+    /* 能量误差图（对数纵轴） */
+    var cx0 = ig.chx, cy0 = ig.chy, cw = ig.chw, ch = ig.chh;
+    ctx.strokeStyle = 'rgba(146,182,255,.14)'; ctx.strokeRect(cx0, cy0, cw, ch);
+    var eMax = 1e0, eMin = 1e-12, lo = Math.log10(eMin), hi = Math.log10(eMax);
+    function CY(v) { var e = clamp(ig.err[v], eMin, eMax); return cy0 + (hi - Math.log10(e)) / (hi - lo) * ch; }
+    function CT(v) { return cx0 + (v / ig.n) * cw; }
+    ctx.strokeStyle = 'rgba(122,162,255,.10)';
+    for (i = 0; i >= -12; i -= 3) { var yy = cy0 + (hi - i) / (hi - lo) * ch;
+      ctx.beginPath(); ctx.moveTo(cx0, yy); ctx.lineTo(cx0 + cw, yy); ctx.stroke();
+      ctx.fillStyle = 'rgba(150,165,210,.7)'; ctx.font = '9.5px ui-monospace,monospace'; ctx.textAlign = 'right';
+      ctx.fillText('1e' + i, cx0 - 4, yy + 3); }
+    ctx.textAlign = 'center';
+    for (i = 0; i <= IT; i += 5) { var xx = cx0 + i / IT * cw;
+      ctx.beginPath(); ctx.moveTo(xx, cy0); ctx.lineTo(xx, cy0 + ch); ctx.stroke();
+      ctx.fillText(String(i), xx, cy0 + ch + 12); }
+    ctx.strokeStyle = ig.method === 'euler' ? 'rgba(255,122,158,.9)' : (ig.method === 'seuler' ? 'rgba(201,184,255,.9)' : 'rgba(127,224,255,.9)');
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (i = 0; i < Math.min(ig.reveal, ig.err.length); i++) { if (i === 0) ctx.moveTo(CT(0), CY(0)); else ctx.lineTo(CT(i), CY(i)); }
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(170,190,235,.85)'; ctx.font = '11px ui-sans-serif,system-ui,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('|ΔH|/H₀ vs t（log）', cx0 + 6, cy0 - 6);
+    if (W > 640) { ctx.fillStyle = 'rgba(150,165,210,.6)'; ctx.font = '10.5px ui-sans-serif,system-ui,sans-serif';
+      ctx.fillText('横轴单位：时间 t（0 → ' + IT + '）', cx0 + cw - 150, cy0 + ch + 24); }
+    var eShow = ig.err.length ? ig.err[Math.min(ig.reveal, ig.err.length - 1)] : 0;
+    var maxErr = 0; for (i = 0; i < ig.err.length; i++) if (ig.err[i] > maxErr) maxErr = ig.err[i];
+    var name = ig.method === 'euler' ? '显式欧拉' : (ig.method === 'seuler' ? '辛欧拉' : 'Störmer–Verlet');
+    setHud([
+      ['方法', name],
+      ['h', ig.h.toFixed(3) + ' × ' + ig.n + ' 步'],
+      ['H', ig.pts.length ? oscH(ig.pts[Math.min(ig.reveal, ig.pts.length - 1)].q, ig.pts[Math.min(ig.reveal, ig.pts.length - 1)].p).toFixed(5) : '-'],
+      ['H₀', ig.H0.toFixed(5)],
+      ['当前 / 峰值 |ΔH|/H₀', fmtSig(eShow) + ' / ' + fmtSig(maxErr)]
+    ]);
+  }
+
+  /* ================= HUD / 面板 / 场景切换 ================= */
+  function setHud(arr) {
+    for (var i = 0; i < 5; i++) {
+      $('l' + (i + 1)).textContent = arr[i] ? arr[i][0] : '';
+      $('h' + (i + 1)).textContent = arr[i] ? arr[i][1] : '';
+      $('l' + (i + 1)).style.display = arr[i] ? '' : 'none';
+      $('h' + (i + 1)).style.display = arr[i] ? '' : 'none';
+    }
+  }
+  var EQ = {
+    phase: [
+      ['<span class="num">(1)</span> 哈密顿量（无量纲，I = K = 1）', '\\(H(q,p)=\\dfrac{p^{2}}{2I}+K(1-\\cos q)\\)'],
+      ['<span class="num">(2)</span> 正则方程', '\\(\\dot q=\\dfrac{\\partial H}{\\partial p}=\\dfrac{p}{I},\\qquad \\dot p=-\\dfrac{\\partial H}{\\partial q}=-K\\sin q\\)'],
+      ['<span class="num">(3)</span> 相空间流无散度 ⇒ 刘维尔定理', '\\(\\nabla\\cdot(\\dot q,\\dot p)=\\dfrac{\\partial \\dot q}{\\partial q}+\\dfrac{\\partial \\dot p}{\\partial p}=0\\;\\Rightarrow\\;\\dfrac{dA}{dt}=0\\)'],
+      ['<span class="num">(4)</span> 若加入阻尼', '\\(\\dot p=-K\\sin q-\\gamma p\\;\\Rightarrow\\;\\nabla\\cdot=-\\gamma<0\\)，相体积收缩，刘维尔定理失效'],
+      ['<span class="num">观察</span>', '面元沿流被剪切拉长（沿轨道方向伸展、垂直方向压缩），面积不变——这就是 <i>dA/dt = 0</i> 的可视化']
+    ],
+    integrator: [
+      ['<span class="num">(1)</span> 谐振子', '\\(H=\\tfrac{1}{2}(q^{2}+p^{2}),\\qquad \\dot q=p,\\;\\dot p=-q\\)'],
+      ['<span class="num">(2)</span> 显式欧拉：每步放大', '\\(q_{n+1}=q_{n}+hp_{n},\\;\\; p_{n+1}=p_{n}-hq_{n},\\qquad \\det M=1+h^{2}>1\\)'],
+      ['<span class="num">(3)</span> 辛欧拉（先踢后漂）', '\\(p_{n+1}=p_{n}-hq_{n},\\;\\; q_{n+1}=q_{n}+hp_{n+1},\\qquad \\det M=1\\)'],
+      ['<span class="num">(4)</span> Störmer–Verlet：二阶、可逆', '\\(q_{n+1}=2q_{n}-q_{n-1}-h^{2}q_{n},\\qquad \\det M=1,\\;|h|<2\\)'],
+      ['<span class="num">警告</span>', '辛（保面积）<b>不等于</b>任意步长稳定：h ≥ 2 时 Verlet 数值解发散——图中把 h 拉到 0.5 以内仍安全，真正的失稳在 h = 2']
+    ]
+  };
+  var SCENE_TXT = {
+    phase: { title: '相空间与刘维尔', mid: 'M22', sub: '第 6 章 哈密顿力学 · 相空间流 · 刘维尔定理',
+      intro: '一个状态 = 相空间中一个点；演化 = 一条流。面元怎么变形都不改面积。',
+      primary: '切换：辛积分器比较', doc: 'ch06 · 刘维尔定理与相体积守恒' },
+    integrator: { title: '辛积分器比较', mid: 'M23', sub: '第 6 章 哈密顿力学 · 辛结构 · 长期能量行为',
+      intro: '同一个 H，三种离散步法：显式欧拉发散，辛方法有界。',
+      primary: '切换：相空间与刘维尔', doc: 'ch06 · 辛结构与数值稳定性' }
+  };
+  function eqHtml() {
+    var rows = EQ[scene], out = '';
+    for (var i = 0; i < rows.length; i++) out += '<div><b>' + rows[i][0] + '</b><br>' + rows[i][1] + '</div>';
+    $('eqBox').innerHTML = out;
+    if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise([$('eqBox')]).catch(function () {});
+  }
+  function syncLabels() {
+    var on = document.querySelectorAll('.scene-group');
+    for (var i = 0; i < on.length; i++) on[i].classList.toggle('on', on[i].getAttribute('data-scene') === scene);
+  }
+  function applyScene(s) {
+    scene = s === 'integrator' ? 'integrator' : 'phase';
+    $('sel-scene').value = scene;
+    var t = SCENE_TXT[scene];
+    $('brandTitle').textContent = t.title; $('brandMid').textContent = t.mid;
+    $('brandSub').textContent = t.sub; $('brandIntro').textContent = t.intro;
+    $('btn-primary').textContent = t.primary; $('docTag').textContent = t.doc;
+    syncLabels(); eqHtml(); document.body.setAttribute('data-scene', scene);
+    if (scene === 'phase') { phReset(); } else { igReset(); }
+    try { if (history && history.replaceState) history.replaceState(null, '', location.pathname + '?scene=' + scene + (selftest ? '&selftest=1' : '')); } catch (e) {}
+  }
+
+  /* ================= 输入绑定 ================= */
+  function bindSlider(id, valId, fmt, setter) {
+    var el = $(id);
+    el.addEventListener('input', function () {
+      var v = parseFloat(el.value);
+      $(valId).textContent = fmt(v); setter(v);
+    });
+  }
+  bindSlider('p-q0', 'v-q0', function (v) { return v.toFixed(2); }, function (v) { ph.q = v; phReset(); });
+  bindSlider('p-p0', 'v-p0', function (v) { return v.toFixed(2); }, function (v) { ph.p = v; phReset(); });
+  bindSlider('p-csz', 'v-csz', function (v) { return v.toFixed(2); }, function (v) { ph.sz = v; phReset(); });
+  bindSlider('p-cc', 'v-cc', function (v) { return String(v | 0); }, function (v) { ph.cc = v | 0; phReset(); });
+  $('p-cloud').addEventListener('change', function () { ph.cloud = $('p-cloud').checked; });
+  bindSlider('p-h', 'v-h', function (v) { return v.toFixed(3); }, function (v) { ig.h = v; igReset(); });
+  bindSlider('p-iq0', 'v-iq0', function (v) { return v.toFixed(2); }, function (v) { ig.q0 = v; igReset(); });
+  bindSlider('p-ip0', 'v-ip0', function (v) { return v.toFixed(2); }, function (v) { ig.p0 = v; igReset(); });
+  $('sel-method').addEventListener('change', function () { ig.method = $('sel-method').value; igReset(); });
+  bindSlider('p-speed', 'v-speed', function (v) { return v.toFixed(1); }, function (v) { speed = v; });
+  $('btn-pause').addEventListener('click', function () {
+    playing = !playing; $('btn-pause').textContent = playing ? '暂停' : '播放';
+  });
+  $('btn-reset').addEventListener('click', function () {
+    if (scene === 'phase') phReset(); else igReset();
+  });
+  $('btn-primary').addEventListener('click', function () { applyScene(scene === 'phase' ? 'integrator' : 'phase'); });
+  $('sel-scene').addEventListener('change', function () { applyScene($('sel-scene').value); });
+
+  /* 拖拽初始点（仅相空间景） */
+  var dragging = false;
+  function pointerPos(ev) {
+    var r = cv.getBoundingClientRect();
+    return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+  }
+  cv.addEventListener('pointerdown', function (ev) {
+    if (scene !== 'phase') return;
+    dragging = true; cv.setPointerCapture(ev.pointerId);
+    var u = pointerPos(ev);
+    ph.q = clamp(phUQ(u.x), -PI, PI); ph.p = clamp(phUP(u.y), -3.5, 3.5);
+    $('p-q0').value = ph.q; $('v-q0').textContent = ph.q.toFixed(2);
+    $('p-p0').value = ph.p; $('v-p0').textContent = ph.p.toFixed(2);
+    phReset();
+  });
+  cv.addEventListener('pointermove', function (ev) {
+    if (!dragging || scene !== 'phase') return;
+    var u = pointerPos(ev);
+    ph.q = clamp(phUQ(u.x), -PI, PI); ph.p = clamp(phUP(u.y), -3.5, 3.5);
+    $('p-q0').value = ph.q; $('v-q0').textContent = ph.q.toFixed(2);
+    $('p-p0').value = ph.p; $('v-p0').textContent = ph.p.toFixed(2);
+    phReset();
+  });
+  cv.addEventListener('pointerup', function () { dragging = false; });
+
+  /* ================= 尺寸 ================= */
+  function resize() {
+    DPR = window.devicePixelRatio || 1;
+    var r = cv.getBoundingClientRect();
+    W = Math.max(200, r.width | 0); H = Math.max(200, r.height | 0);
+    cv.width = W * DPR; cv.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+
+  /* ================= 自检（?selftest=1） ================= */
+  function runSelftest() {
+    var fail = 0, out = [];
+    function ok(name, pass, detail) {
+      out.push((pass ? '[PASS] ' : '[FAIL] ') + name + (detail ? '  (' + detail + ')' : ''));
+      if (!pass) fail++;
+    }
+    /* 1. 刘维尔：RK4 流保持面元面积 */
+    var nx = 9, ny = 9, pts = [], sz = 0.3;
+    for (var iy = 0; iy < ny; iy++) for (var ix = 0; ix < nx; ix++)
+      pts.push({ q: -sz + 2 * sz * ix / (nx - 1), p: 1.5 - sz + 2 * sz * iy / (ny - 1) });
+    var A0 = 4 * sz * sz;
+    for (var st = 0; st < 1000; st++) pts = flowBox(pts, 0.002, 1);
+    var A1 = boxArea(pts, nx, ny);
+    ok('phase-flow-area', Math.abs(A1 / A0 - 1) < 1e-3, 'A/A0 = ' + A1.toFixed(6));
+    /* 2. 单摆 H 守恒（RK4） */
+    var s = { q: 0.5, p: 1.5 }, H0 = pendH(s.q, s.p), dhMax = 0;
+    for (st = 0; st < 2000; st++) { s = rk4Pend(s, 0.001); dhMax = Math.max(dhMax, Math.abs(pendH(s.q, s.p) - H0)); }
+    ok('pendulum-H-conserved', dhMax < 1e-6, 'max |dH| = ' + dhMax.toExponential(1));
+    /* 3. 辛欧拉 det = 1 */
+    var dS = jacDet(stepSEuler, 0.1);
+    ok('symplectic-euler-det', Math.abs(dS - 1) < 5e-3, 'det = ' + dS.toFixed(5));
+    /* 4a. Verlet（速度形式）det = 1 */
+    function mapVerlet(q, p, h) { var ph2 = p - h * q / 2, qn = q + h * ph2; return { q: qn, p: ph2 - h * qn / 2 }; }
+    var dV = jacDet(mapVerlet, 0.1);
+    ok('verlet-det', Math.abs(dV - 1) < 5e-3, 'det = ' + dV.toFixed(5));
+    /* 4b. Verlet 时间反演 */
+    var x0 = 0.8, y0 = -0.4, h4 = 0.1, qa = x0, pa = y0;
+    for (st = 0; st < 200; st++) { var v1 = mapVerlet(qa, pa, h4); qa = v1.q; pa = v1.p; }
+    for (st = 0; st < 200; st++) { var v2 = mapVerlet(qa, pa, -h4); qa = v2.q; pa = v2.p; }
+    var rev = Math.max(Math.abs(qa - x0), Math.abs(pa - y0));
+    ok('verlet-time-reversible', rev < 1e-9, 'max |Δ| = ' + rev.toExponential(1));
+    /* 4c. Verlet 二阶收敛（误差 ~ h²） */
+    function gErr(h) { var q1 = 1, p1 = 0, n = Math.round(TAU / h), i2;
+      for (i2 = 0; i2 < n; i2++) { var v = mapVerlet(q1, p1, h); q1 = v.q; p1 = v.p; }
+      var tE = n * h;
+      return Math.max(Math.abs(q1 - Math.cos(tE)), Math.abs(p1 + Math.sin(tE))); }
+    var e1 = gErr(0.1), e2 = gErr(0.05), ratio = e1 / e2;
+    ok('verlet-2nd-order', ratio > 3 && ratio < 5.5, 'e(h)/e(h/2) = ' + ratio.toFixed(2));
+    /* 5. 显式欧拉能量增长 */
+    var qe = 1, pe = 0;
+    for (st = 0; st < 300; st++) { var ae = stepEuler(qe, pe, 0.1); qe = ae.q; pe = ae.p; }
+    ok('euler-energy-grows', oscH(qe, pe) > 2, 'H(30) = ' + oscH(qe, pe).toFixed(1) + ' > 2');
+    /* 汇总 */
+    var panel = $('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = out.join('\n') + (fail ? '\n-- FAIL ' + fail : '\n-- ALL PASS');
+    if (fail) panel.classList.add('fail');
+  }
+
+  /* ================= 主循环 ================= */
+  function draw() { if (scene === 'phase') phDraw(); else igDraw(); }
+  function frame(ts) {
+    if (!last) last = ts;
+    var dt = (ts - last) / 1000; last = ts;
+    if (playing && !reduced && !dragging) {
+      var sim = dt * speed;
+      if (scene === 'phase') { phStep(sim); }
+      else { ig.reveal = Math.min(ig.n, ig.reveal + Math.max(1, Math.round(ig.n * sim / IT))); }
+    }
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  /* ================= 启动 ================= */
+  resize();
+  var params = new URLSearchParams(location.search);
+  selftest = params.get('selftest') === '1';
+  applyScene(params.get('scene') || 'phase');
+  if (selftest) { runSelftest(); playing = false; $('btn-pause').textContent = '播放'; }
+  if (reduced) { playing = false; $('btn-pause').textContent = '播放';
+    if (scene === 'integrator') { ig.reveal = ig.n; } }
+  requestAnimationFrame(frame);
+})();
+</script>
+<script>
+/* 静态星场（确定性种子，无动画；prefers-reduced-motion 天然满足） */
+(function () {
+  var el = document.getElementById('tmStars');
+  if (!el) return;
+  var c = el.getContext('2d'), seed = 7;
+  function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  function draw() {
+    var w = el.width = window.innerWidth, h = el.height = window.innerHeight, i;
+    c.clearRect(0, 0, w, h);
+    for (i = 0; i < 170; i++) {
+      var r = rnd() * 1.1 + 0.25, a = rnd() * 0.5 + 0.15;
+      c.fillStyle = 'rgba(210,225,255,' + a.toFixed(3) + ')';
+      c.beginPath(); c.arc(rnd() * w, rnd() * h, r, 0, 6.2832); c.fill();
+    }
+  }
+  draw();
+  window.addEventListener('resize', draw);
+})();
+</script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script src="../../assets/tm-ai-panel.js"></script>
+<script src="../../assets/pdf-viewer.js"></script>
+<script src="../../assets/tm-seq.js"></script>
+<script src="../../assets/tm-modes.js"></script>
+<script src="../../assets/ui-motion.js"></script>
+<script>
+  window.MathJax = { svg: { fontCache: 'global' }, options: { enableMenu: false } };
+</script>
+<script id="MathJax-script" async src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+(function () {
+  'use strict';
+  if (document.getElementById('tm-ai-root')) return;
+  var CSS = "\n#tm-ai-root{\n  position:fixed; inset:0; z-index:60; pointer-events:none;\n  font-family:ui-sans-serif,system-ui,\"Noto Sans CJK SC\",\"PingFang SC\",\"Microsoft YaHei\",sans-serif;\n  --tmai-void:#03050c; --tmai-panel:rgba(9,14,30,.74); --tmai-line:rgba(146,182,255,.14);\n  --tmai-text:#e8eeff; --tmai-text2:#a9b8dc; --tmai-muted:#6d7ca4;\n  --tmai-solar:#ffd27a; --tmai-cyan:#7fe0ff; --tmai-violet:#b79bff;\n}\n#tm-ai-root *{box-sizing:border-box}\n#tm-ai-root .tmai-launcher{\n  position:fixed; right:18px; bottom:18px; height:54px; min-width:54px; padding:0 10px;\n  display:flex; align-items:center; justify-content:center; gap:6px;\n  border-radius:999px; cursor:pointer; pointer-events:auto;\n  color:var(--tmai-text); font-size:13px; font-weight:600; letter-spacing:.3px;\n  background:linear-gradient(160deg,rgba(26,36,66,.72),rgba(6,10,22,.88));\n  border:1px solid rgba(146,182,255,.28);\n  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);\n  box-shadow:0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(255,210,122,.12);\n  transition:transform .15s ease, box-shadow .15s ease;\n}\n#tm-ai-root .tmai-launcher:hover{transform:translateY(-2px)}\n#tm-ai-root .tmai-launcher::after{\n  content:''; position:absolute; inset:-5px; border-radius:inherit;\n  border:1px solid rgba(255,210,122,.32);\n  animation:tmai-pulse 2.6s ease-out infinite; pointer-events:none;\n}\n@keyframes tmai-pulse{\n  0%{transform:scale(1); opacity:.7}\n  70%{transform:scale(1.22); opacity:0}\n  100%{transform:scale(1.22); opacity:0}\n}\n#tm-ai-root .tmai-launcher-glyph{font-size:18px; color:var(--tmai-solar); line-height:1}\n#tm-ai-root .tmai-launcher-short{display:none}\n#tm-ai-root .tmai-launcher-full{display:none}\n@media (min-width:561px){\n  #tm-ai-root .tmai-launcher{padding:0 16px; min-width:150px}\n  #tm-ai-root .tmai-launcher-glyph{display:none}\n  #tm-ai-root .tmai-launcher-full{display:inline}\n}\n@media (max-width:979px){\n  #tm-ai-root .tmai-launcher{bottom:190px}\n}\n@media (max-width:560px){\n  #tm-ai-root .tmai-launcher{width:54px; padding:0; min-width:54px}\n  #tm-ai-root .tmai-launcher-full{display:none}\n  #tm-ai-root .tmai-launcher-glyph{display:inline}\n}\n#tm-ai-root .tmai-panel{\n  position:fixed; right:18px; bottom:84px; width:380px;\n  max-height:min(640px,78vh);\n  display:flex; flex-direction:column;\n  background:var(--tmai-panel);\n  border:1px solid var(--tmai-line);\n  border-radius:16px;\n  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);\n  box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(255,210,122,.06);\n  overflow:hidden; pointer-events:auto;\n  color:var(--tmai-text); font-size:14px;\n}\n#tm-ai-root .tmai-panel[hidden]{display:none !important}\n@media (max-width:560px){\n  #tm-ai-root .tmai-panel{\n    left:10px; right:10px; width:auto; bottom:76px; max-height:76vh;\n  }\n}\n#tm-ai-root .tmai-header{\n  display:flex; align-items:center; justify-content:space-between; gap:10px;\n  padding:12px 14px; border-bottom:1px solid var(--tmai-line);\n  background:linear-gradient(180deg,rgba(26,36,66,.35),transparent);\n}\n#tm-ai-root .tmai-title{font-size:15px; font-weight:650; color:var(--tmai-text); letter-spacing:.3px}\n#tm-ai-root .tmai-header-left{display:flex; flex-direction:column; gap:4px}\n#tm-ai-root .tmai-header-right{display:flex; align-items:center; gap:8px}\n#tm-ai-root .tmai-status{display:flex; align-items:center; font-size:11.5px; color:var(--tmai-text2)}\n#tm-ai-root .tmai-status-dot{width:8px; height:8px; border-radius:50%; margin-right:6px; background:var(--tmai-muted)}\n#tm-ai-root .tmai-status-dot.tmai-status-checking{background:var(--tmai-muted)}\n#tm-ai-root .tmai-status-dot.tmai-status-online{background:#7fe3a0; box-shadow:0 0 6px #7fe3a0}\n#tm-ai-root .tmai-status-dot.tmai-status-offline{background:#ffc46b}\n#tm-ai-root .tmai-status-dot.tmai-status-error{background:#ff8a8a}\n#tm-ai-root .tmai-seg{display:inline-flex; border:1px solid var(--tmai-line); border-radius:999px; overflow:hidden}\n#tm-ai-root .tmai-seg-btn{\n  background:transparent; border:none; color:var(--tmai-text2); padding:4px 10px;\n  font:inherit; font-size:12px; cursor:pointer; transition:.15s;\n}\n#tm-ai-root .tmai-seg-btn[aria-pressed=\"true\"]{background:rgba(255,210,122,.14); color:var(--tmai-solar)}\n#tm-ai-root .tmai-close{\n  width:28px; height:28px; border-radius:50%; border:1px solid var(--tmai-line);\n  background:rgba(6,10,22,.5); color:var(--tmai-text2); cursor:pointer; font-size:16px; line-height:1;\n  display:flex; align-items:center; justify-content:center;\n}\n#tm-ai-root .tmai-context{\n  margin:10px 14px 0; padding:6px 10px; border-radius:999px;\n  background:rgba(255,210,122,.10); border:1px solid rgba(255,210,122,.25);\n  color:var(--tmai-solar); font-size:12px;\n  display:flex; align-items:center; justify-content:space-between; gap:8px;\n}\n#tm-ai-root .tmai-context[hidden]{display:none !important}\n#tm-ai-root .tmai-context button{background:transparent; border:none; color:var(--tmai-solar); cursor:pointer; font-size:14px}\n#tm-ai-root .tmai-messages{\n  flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px;\n  min-height:120px;\n}\n#tm-ai-root .tmai-messages::-webkit-scrollbar{width:6px}\n#tm-ai-root .tmai-messages::-webkit-scrollbar-thumb{background:rgba(146,182,255,.2); border-radius:3px}\n#tm-ai-root .tmai-msg{display:flex; flex-direction:column; max-width:92%}\n#tm-ai-root .tmai-msg-user{align-self:flex-end; max-width:85%}\n#tm-ai-root .tmai-msg-assistant{align-self:flex-start}\n#tm-ai-root .tmai-msg-content{\n  padding:8px 12px; border-radius:12px; font-size:14px; line-height:1.65;\n  word-break:break-word;\n}\n#tm-ai-root .tmai-msg-user .tmai-msg-content{\n  background:rgba(127,224,255,.12); border:1px solid rgba(127,224,255,.22);\n  border-radius:12px 12px 4px 12px; color:var(--tmai-text);\n}\n#tm-ai-root .tmai-msg-assistant .tmai-msg-content{\n  background:rgba(26,36,66,.5); border:1px solid var(--tmai-line);\n  border-radius:12px 12px 12px 4px; color:var(--tmai-text);\n}\n#tm-ai-root .tmai-msg-content p{margin:0 0 8px}\n#tm-ai-root .tmai-msg-content p:last-child{margin-bottom:0}\n#tm-ai-root .tmai-msg-content ul{margin:4px 0 8px; padding-left:18px}\n#tm-ai-root .tmai-msg-content li{margin:2px 0}\n#tm-ai-root .tmai-msg-content code{\n  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px;\n  background:rgba(146,182,255,.10); padding:1px 5px; border-radius:4px; color:var(--tmai-cyan);\n}\n#tm-ai-root .tmai-math{font-family:\"STIX Two Math\",\"Cambria Math\",\"Latin Modern Math\",Cambria,Georgia,serif; color:var(--tmai-text); font-size:1.02em; line-height:1.55; white-space:normal}\n#tm-ai-root .tmai-mathblock{display:block; margin:8px 0; padding:8px 10px; border-left:2px solid var(--tmai-line); background:rgba(146,182,255,.06); text-align:center; overflow-x:auto; color:var(--tmai-text); font-family:\"STIX Two Math\",\"Cambria Math\",\"Latin Modern Math\",Cambria,Georgia,serif}\n#tm-ai-root .tex-frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .18em; line-height:1.1}\n#tm-ai-root .tex-num{border-bottom:1px solid currentColor; padding:0 .18em}\n#tm-ai-root .tex-den{padding:0 .18em}\n#tm-ai-root .tex-sqrt-wrap{white-space:nowrap}\n#tm-ai-root .tex-sqrt{border-top:1px solid currentColor; padding:0 .1em; margin-left:1px}\n#tm-ai-root .tex-text{font-family:inherit; font-style:normal; white-space:pre}\n#tm-ai-root .tex-b{font-weight:700}\n#tm-ai-root .tex-i{font-style:italic}\n#tm-ai-root .tex-vec,#tm-ai-root .tex-dot,#tm-ai-root .tex-ddot,#tm-ai-root .tex-hat,#tm-ai-root .tex-bar,#tm-ai-root .tex-overline,#tm-ai-root .tex-underline{position:relative; display:inline-block}\n#tm-ai-root .tex-vec::before{content:\"→\"; position:absolute; top:-.15em; left:50%; transform:translateX(-50%); font-size:.65em; line-height:1}\n#tm-ai-root .tex-dot::before{content:\"·\"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.9em; line-height:1}\n#tm-ai-root .tex-ddot::before{content:\"··\"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.9em; line-height:1}\n#tm-ai-root .tex-hat::before{content:\"^\"; position:absolute; top:-.35em; left:50%; transform:translateX(-50%); font-size:.8em; line-height:1}\n#tm-ai-root .tex-bar,#tm-ai-root .tex-overline{border-top:1px solid currentColor}\n#tm-ai-root .tex-underline{border-bottom:1px solid currentColor}\n#tm-ai-root .tmai-math sub,#tm-ai-root .tmai-math sup{font-size:.7em; line-height:0}\n#tm-ai-root .tex-cmd{color:var(--tmai-muted); font-size:.9em}\n#tm-ai-root .tmai-cite{\n  display:inline-block; padding:0 .4em; margin:0 .15em; border-radius:4px;\n  background:rgba(255,210,122,.12); color:var(--tmai-solar); font-size:11px;\n  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;\n}\n#tm-ai-root .tmai-msg-label{\n  margin-top:4px; font-size:11px; color:var(--tmai-muted); align-self:flex-start;\n}\n#tm-ai-root .tmai-typing{display:inline-flex; gap:4px; padding:2px 0}\n#tm-ai-root .tmai-typing span{\n  width:6px; height:6px; border-radius:50%; background:var(--tmai-text2);\n  animation:tmai-blink 1.2s infinite;\n}\n#tm-ai-root .tmai-typing span:nth-child(2){animation-delay:.2s}\n#tm-ai-root .tmai-typing span:nth-child(3){animation-delay:.4s}\n@keyframes tmai-blink{0%,80%,100%{opacity:.3} 40%{opacity:1}}\n#tm-ai-root .tmai-chips{display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 10px}\n#tm-ai-root .tmai-chips[hidden]{display:none !important}\n#tm-ai-root .tmai-chip{\n  font:inherit; font-size:12px; padding:5px 10px; border-radius:999px; cursor:pointer;\n  background:rgba(58,95,191,.14); border:1px solid rgba(146,182,255,.22); color:#cfdcff;\n  transition:.15s; text-align:left;\n}\n#tm-ai-root .tmai-chip:hover{background:rgba(94,162,255,.24)}\n#tm-ai-root .tmai-composer{\n  display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--tmai-line);\n  align-items:flex-end;\n}\n#tm-ai-root .tmai-composer textarea{\n  flex:1; resize:none; min-height:40px; max-height:120px;\n  background:rgba(6,10,22,.6); border:1px solid var(--tmai-line); border-radius:10px;\n  color:var(--tmai-text); font:inherit; font-size:14px; padding:8px 10px; line-height:1.5;\n}\n#tm-ai-root .tmai-composer textarea:focus-visible{outline:2px solid var(--tmai-cyan); outline-offset:1px}\n#tm-ai-root .tmai-composer button{\n  padding:0 14px; height:40px; border-radius:10px; border:1px solid #4f86ff;\n  background:linear-gradient(180deg,#3f7bff,#2b5fe0); color:#fff; cursor:pointer; font-weight:600;\n}\n#tm-ai-root .tmai-composer button:disabled{opacity:.5; cursor:not-allowed}\n#tm-ai-root .tmai-footer{\n  padding:6px 14px 10px; font-size:11.5px; color:var(--tmai-muted); text-align:center;\n}\n#tm-ai-root .tmai-sources{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}\n#tm-ai-root .tmai-src{\n  font-size:11px; padding:2px 8px; border-radius:999px; text-decoration:none;\n  border:1px solid rgba(146,182,255,.22); color:var(--tmai-text2);\n}\n#tm-ai-root .tmai-src:hover{color:var(--tmai-text); border-color:rgba(146,182,255,.4)}\n#tm-ai-root .tmai-src-pdf{border-color:rgba(255,210,122,.3); color:var(--tmai-solar)}\n#tm-ai-root .tmai-list{margin:4px 0 8px; padding-left:18px}\n@media (prefers-reduced-motion:reduce){\n  #tm-ai-root .tmai-launcher::after{animation:none}\n  #tm-ai-root .tmai-typing span{animation:none; opacity:.6}\n}\n";
+  var HTML = "<div id=\"tm-ai-root\">\n  <button id=\"tmai-launcher\" class=\"tmai-launcher\" type=\"button\" aria-expanded=\"false\" aria-label=\"打开问星助教\">\n    <span class=\"tmai-launcher-glyph\" aria-hidden=\"true\">✦</span>\n    <span class=\"tmai-launcher-short\">问星</span>\n    <span class=\"tmai-launcher-full\">✦ 问星 · AI 助教</span>\n  </button>\n  <div id=\"tmai-panel\" class=\"tmai-panel\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"tmai-title\" hidden>\n    <div class=\"tmai-header\">\n      <div class=\"tmai-header-left\">\n        <span class=\"tmai-title\" id=\"tmai-title\">星语 · 讲义助教</span>\n        <div class=\"tmai-status\">\n          <span class=\"tmai-status-dot\" id=\"tmai-status-dot\"></span>\n          <span class=\"tmai-status-text\" id=\"tmai-status-text\">检查中…</span>\n        </div>\n      </div>\n      <div class=\"tmai-header-right\">\n        <div class=\"tmai-seg\" role=\"group\" aria-label=\"模式\">\n          <button type=\"button\" class=\"tmai-seg-btn\" data-mode=\"quick\" aria-pressed=\"true\">快速</button>\n          <button type=\"button\" class=\"tmai-seg-btn\" data-mode=\"deep\" aria-pressed=\"false\">深空</button>\n        </div>\n        <button type=\"button\" class=\"tmai-close\" aria-label=\"关闭\">×</button>\n      </div>\n    </div>\n    <div id=\"tmai-context\" class=\"tmai-context\" hidden>\n      <span id=\"tmai-context-text\"></span>\n      <button type=\"button\" id=\"tmai-context-close\" aria-label=\"取消章节上下文\">×</button>\n    </div>\n    <div id=\"tmai-messages\" class=\"tmai-messages\" aria-live=\"polite\"></div>\n    <div id=\"tmai-chips\" class=\"tmai-chips\"></div>\n    <div class=\"tmai-composer\">\n      <textarea id=\"tmai-input\" rows=\"2\" placeholder=\"输入问题…\" aria-label=\"输入问题\"></textarea>\n      <button id=\"tmai-send\" type=\"button\" aria-label=\"发送\">发送</button>\n    </div>\n    <div class=\"tmai-footer\">AI 可能出错，请以讲义推导网页版为准。</div>\n  </div>\n</div>\n<!-- TM-OFFLINE-KB -->";
+  var style = document.createElement('style');
+  style.id = 'tm-ai-style';
+  style.textContent = CSS;
+  document.head.appendChild(style);
+  document.body.insertAdjacentHTML('beforeend', HTML);
+
+(function () {
+  'use strict';
+
+  var root = document.getElementById('tm-ai-root');
+  if (!root) return;
+  var API_BASE = (location.protocol === 'file:') ? 'http://127.0.0.1:8765' : '';
+  var KB = window.TM_OFFLINE_KB || null;
+  var healthOk = false;
+
+  var launcher = document.getElementById('tmai-launcher');
+  var panel = document.getElementById('tmai-panel');
+  var statusDot = document.getElementById('tmai-status-dot');
+  var statusText = document.getElementById('tmai-status-text');
+  var messagesEl = document.getElementById('tmai-messages');
+  var chipsEl = document.getElementById('tmai-chips');
+  var inputEl = document.getElementById('tmai-input');
+  var sendBtn = document.getElementById('tmai-send');
+  var contextEl = document.getElementById('tmai-context');
+  var contextText = document.getElementById('tmai-context-text');
+  var contextClose = document.getElementById('tmai-context-close');
+  var segBtns = root.querySelectorAll('.tmai-seg-btn');
+  var closeBtn = root.querySelector('.tmai-close');
+
+  var isOpen = false;
+  var inFlight = false;
+  var mode = 'quick';
+  var healthChecked = false;
+  var statusState = 'checking';
+  var modelName = '';
+  var moduleContext = null;
+  var conversation = [];
+  var typingEl = null;
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function unesc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+      .replace(/&amp;/g, '&');
+  }
+
+  var TEX_SYM = {
+    alpha:'α', beta:'β', gamma:'γ', delta:'δ', epsilon:'ε', varepsilon:'ϵ',
+    zeta:'ζ', eta:'η', theta:'θ', vartheta:'ϑ', iota:'ι', kappa:'κ',
+    lambda:'λ', mu:'μ', nu:'ν', xi:'ξ', pi:'π', varpi:'ϖ', rho:'ρ',
+    varrho:'ϱ', sigma:'σ', varsigma:'ς', tau:'τ', upsilon:'υ', phi:'φ',
+    varphi:'ϕ', chi:'χ', psi:'ψ', omega:'ω',
+    Gamma:'Γ', Delta:'Δ', Theta:'Θ', Lambda:'Λ', Xi:'Ξ', Pi:'Π',
+    Sigma:'Σ', Upsilon:'Υ', Phi:'Φ', Psi:'Ψ', Omega:'Ω',
+    times:'×', cdot:'·', pm:'±', mp:'∓', ast:'∗', star:'⋆',
+    approx:'≈', sim:'∼', simeq:'≃', cong:'≅', equiv:'≡', propto:'∝',
+    neq:'≠', ne:'≠', le:'≤', leq:'≤', ge:'≥', geq:'≥', ll:'≪', gg:'≫',
+    to:'→', rightarrow:'→', leftarrow:'←', Rightarrow:'⇒', Leftarrow:'⇐',
+    leftrightarrow:'↔', mapsto:'↦', infty:'∞', partial:'∂', nabla:'∇',
+    int:'∫', oint:'∮', sum:'∑', prod:'∏', angle:'∠', perp:'⊥',
+    parallel:'∥', in:'∈', notin:'∉', subset:'⊂', supset:'⊃',
+    cup:'∪', cap:'∩', emptyset:'∅', forall:'∀', exists:'∃',
+    langle:'⟨', rangle:'⟩', ldots:'…', cdots:'⋯', ddots:'⋱',
+    circ:'∘', degree:'°', prime:'′', hbar:'ℏ', ell:'ℓ',
+    Re:'ℜ', Im:'ℑ', aleph:'ℵ', therefore:'∴', because:'∵',
+    quad:'&#160;&#160;', qquad:'&#160;&#160;&#160;&#160;'
+  };
+
+  function texToHtml(tex) {
+    var src = String(tex == null ? '' : tex);
+    var i = 0, n = src.length;
+    function parseCommand() {
+      i++;
+      if (i >= n) return '';
+      var ch = src.charAt(i);
+      if (ch === '\\') { i++; return '<br>'; }
+      if (ch === ',') { i++; return '&#8201;'; }
+      if (ch === ';') { i++; return ' '; }
+      if (ch === '!') { i++; return ''; }
+      if (ch === ' ') { i++; return ' '; }
+      if (!/[A-Za-z]/.test(ch)) { i++; return esc(ch); }
+      var cmd = '';
+      while (i < n && /[A-Za-z]/.test(src.charAt(i))) { cmd += src.charAt(i); i++; }
+      if (cmd === 'frac' || cmd === 'dfrac' || cmd === 'tfrac') {
+        var a = parseArg(), b = parseArg();
+        return '<span class="tex-frac"><span class="tex-num">' + a + '</span><span class="tex-den">' + b + '</span></span>';
+      }
+      if (cmd === 'sqrt') {
+        if (src.charAt(i) === '[') {
+          var close = src.indexOf(']', i);
+          if (close !== -1) i = close + 1;
+        }
+        var a = parseArg();
+        return '<span class="tex-sqrt-wrap">√<span class="tex-sqrt">' + a + '</span></span>';
+      }
+      if (cmd === 'sin' || cmd === 'cos' || cmd === 'tan' || cmd === 'cot' || cmd === 'sec' || cmd === 'csc' || cmd === 'arcsin' || cmd === 'arccos' || cmd === 'arctan' || cmd === 'ln' || cmd === 'log' || cmd === 'exp' || cmd === 'max' || cmd === 'min' || cmd === 'lim' || cmd === 'det') {
+        return '<span class="tex-text">' + cmd + '</span> ';
+      }
+      if (cmd === 'text' || cmd === 'mathrm' || cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm' || cmd === 'mathit' || cmd === 'mathsf' || cmd === 'operatorname' || cmd === 'mathbb' || cmd === 'mathcal' || cmd === 'mathfrak') {
+        var a = parseArg();
+        var cls = (cmd === 'mathbf' || cmd === 'boldsymbol' || cmd === 'bm') ? 'tex-b' : (cmd === 'mathit' ? 'tex-i' : 'tex-text');
+        return '<span class="' + cls + '">' + a + '</span>';
+      }
+      if (cmd === 'vec' || cmd === 'dot' || cmd === 'ddot' || cmd === 'hat' || cmd === 'bar' || cmd === 'overline' || cmd === 'underline') {
+        var a = parseArg();
+        return '<span class="tex-' + cmd + '">' + a + '</span>';
+      }
+      if (cmd === 'left' || cmd === 'right' || cmd === 'big' || cmd === 'Big' || cmd === 'bigg' || cmd === 'Bigg' || cmd === 'displaystyle' || cmd === 'limits') return '';
+      if (cmd === 'begin' || cmd === 'end' || cmd === 'label' || cmd === 'tag') { parseArg(); return ''; }
+      if (TEX_SYM[cmd]) return TEX_SYM[cmd];
+      return '<span class="tex-cmd">' + esc(cmd) + '</span>';
+    }
+    function parseArg() {
+      while (i < n && /\s/.test(src.charAt(i))) i++;
+      if (i >= n) return '';
+      if (src.charAt(i) === '{') return parseGroup();
+      if (src.charAt(i) === '\\') return parseCommand();
+      var c = src.charAt(i); i++;
+      return esc(c);
+    }
+    function parseGroup() {
+      if (src.charAt(i) === '{') i++;
+      var out = parseSeq('}');
+      if (src.charAt(i) === '}') i++;
+      return out;
+    }
+    function parseSeq(end) {
+      var out = '';
+      while (i < n) {
+        var c = src.charAt(i);
+        if (end && c === end) break;
+        if (c === '\\') { out += parseCommand(); }
+        else if (c === '{') { out += parseGroup(); }
+        else if (c === '_') { i++; out += '<sub>' + parseArg() + '</sub>'; }
+        else if (c === '^') { i++; out += '<sup>' + parseArg() + '</sup>'; }
+        else if (c === '&' || c === '~') { i++; out += ' '; }
+        else { i++; out += esc(c); }
+      }
+      return out;
+    }
+    return parseSeq(null);
+  }
+
+  function formatInline(s) {
+    var out = esc(s);
+    out = out.replace(/\$\$([\s\S]+?)\$\$/g, function (_, m) {
+      return '<span class="tmai-mathblock">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\\\[([\s\S]+?)\\\]/g, function (_, m) {
+      return '<span class="tmai-mathblock">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\\\(([\s\S]+?)\\\)/g, function (_, m) {
+      return '<span class="tmai-math">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\$([^$\n]+?)\$/g, function (_, m) {
+      return '<span class="tmai-math">' + texToHtml(unesc(m)) + '</span>';
+    });
+    out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+    out = out.replace(/\[(M\d+)\]/g, '<span class="tmai-cite">[$1]</span>');
+    return out;
+  }
+
+  function formatBlock(block) {
+    var lines = block.split('\n');
+    var hasList = lines.some(function (l) {
+      var t = l.trim();
+      return t.indexOf('- ') === 0 || t.indexOf('* ') === 0;
+    });
+    var isList = hasList && lines.every(function (l) {
+      var t = l.trim();
+      return t === '' || t.indexOf('- ') === 0 || t.indexOf('* ') === 0;
+    });
+    if (isList) {
+      var items = lines.filter(function (l) { return l.trim() !== ''; }).map(function (l) {
+        var t = l.trim().replace(/^[-*]\s*/, '');
+        return '<li>' + formatInline(t) + '</li>';
+      });
+      return '<ul class="tmai-list">' + items.join('') + '</ul>';
+    }
+    return '<p>' + lines.map(function (l) { return formatInline(l); }).join('<br>') + '</p>';
+  }
+
+  function formatContent(text) {
+    return String(text == null ? '' : text).split(/\n{2,}/).map(formatBlock).join('');
+  }
+
+  function setStatus(state, model) {
+    statusState = state;
+    if (model) modelName = model;
+    if (statusDot) {
+      statusDot.className = 'tmai-status-dot tmai-status-' + state;
+    }
+    if (statusText) {
+      if (state === 'checking') statusText.textContent = '检查中…';
+      else if (state === 'online') statusText.textContent = 'AI 助教在线 · ' + (modelName || 'model');
+      else if (state === 'offline') statusText.textContent = '离线 · 本地检索模式';
+      else if (state === 'error') statusText.textContent = '连接错误';
+    }
+  }
+
+  function getModules() {
+    if (window.TM_MODULES && Array.isArray(window.TM_MODULES)) return window.TM_MODULES;
+    return null;
+  }
+
+  function findModule(milestone) {
+    var mods = getModules();
+    if (!mods) return null;
+    for (var i = 0; i < mods.length; i++) {
+      if (mods[i].milestone === milestone) return mods[i];
+    }
+    return null;
+  }
+
+  function setContext(moduleId) {
+    moduleContext = moduleId;
+    var title = moduleId;
+    var m = findModule(moduleId);
+    if (m && m.title) title = m.title;
+    if (contextText) contextText.textContent = '当前章节 ' + moduleId + ' · ' + title;
+    if (contextEl) contextEl.hidden = false;
+  }
+
+  function clearContext() {
+    moduleContext = null;
+    if (contextEl) contextEl.hidden = true;
+  }
+
+  function cjkBigrams(str) {
+    var out = [];
+    var s = String(str == null ? '' : str);
+    for (var i = 0; i < s.length - 1; i++) {
+      var a = s.charAt(i);
+      var b = s.charAt(i + 1);
+      if (/[\u4e00-\u9fff]/.test(a) && /[\u4e00-\u9fff]/.test(b)) {
+        out.push(a + b);
+      }
+    }
+    return out;
+  }
+
+  function latinTokens(str) {
+    return String(str == null ? '' : str).toLowerCase().split(/[^a-z0-9]+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function normText(x) {
+    return String(x == null ? '' : x).toLowerCase()
+      .replace(/[\s，。？！、；：""''（）()\[\]{}《》·—…!?.,;:'"`]/g, '');
+  }
+  var SYN = [
+    ['拉格朗日', 'lagrange euler'], ['欧拉', 'euler'], ['作用量', 'action'],
+    ['费马', 'fermat'], ['斯涅尔', 'snell'], ['折射', 'refraction'],
+    ['最短路径', 'brachistochrone shortest'], ['有效势', 'veff'],
+    ['离心', 'centrifugal'], ['约化', 'reduced'], ['恢复系数', 'restitution'],
+    ['转动惯量', 'moment inertia'], ['角动量', 'angular momentum'],
+    ['洛伦兹力', 'lorentz'], ['单摆', 'pendulum'], ['双摆', 'double pendulum'],
+    ['圆柱', 'cylinder'], ['碰撞', 'collision'], ['变分', 'variational'],
+    ['虚功', 'virtual work'], ['截面', 'cross section'], ['球壳', 'shell'],
+    ['甲虫', 'beetle'], ['平行轴', 'parallel axis'], ['阻尼', 'damping']
+  ];
+  function expandQuery(q) {
+    var out = q;
+    for (var i = 0; i < SYN.length; i++) {
+      if (q.indexOf(SYN[i][0]) !== -1) out += ' ' + SYN[i][1];
+    }
+    return out;
+  }
+  function overlapScore(a, b) {
+    var A = cjkBigrams(a), B = cjkBigrams(b);
+    if (!A.length || !B.length) return 0;
+    var hit = 0;
+    for (var i = 0; i < A.length; i++) if (B.indexOf(A[i]) !== -1) hit++;
+    return hit / Math.sqrt(A.length * B.length);
+  }
+  function latinHit(a, b) {
+    var A = latinTokens(a), B = latinTokens(b), n = 0;
+    for (var i = 0; i < A.length; i++) if (B.indexOf(A[i]) !== -1) n++;
+    return n;
+  }
+  function sourceFor(ms, sec) {
+    var m = null, mods = (KB && KB.modules) ? KB.modules : (getModules() || []);
+    for (var i = 0; i < mods.length; i++) {
+      if ((mods[i].m || mods[i].milestone) === ms) { m = mods[i]; break; }
+    }
+    if (!m) return { milestone: ms, title: ms, section: sec || '', href: '', pdf: '' };
+    return {
+      milestone: ms, title: m.title, section: sec || m.title,
+      href: m.href || m.sim || '', pdf: m.pdf || m.note || ''
+    };
+  }
+  function pickSentences(text, q, maxN) {
+    var parts = String(text || '').split(/[。；\n]+/).filter(function (x) {
+      if (x.trim().length <= 6) return false;
+      return (x.match(/\\/g) || []).length <= 4;
+    });
+    var scored = parts.map(function (x, i) {
+      return {s: x.trim(), i: i, sc: overlapScore(q, x) + latinHit(q, x) * 0.2};
+    });
+    scored.sort(function (a, b) { return b.sc - a.sc; });
+    var top = scored.slice(0, maxN || 2);
+    top.sort(function (a, b) { return a.i - b.i; });
+    return top.map(function (x) { return x.s; }).join('。') + '。';
+  }
+
+  function localAnswer(question) {
+    var q = normText(question);
+    var GREET = {你好:1, 您好:1, 哈喽:1, 嗨:1, hi:1, hello:1, hey:1, 在吗:1, 在不在:1, 老师好:1, 同学好:1};
+    if (GREET[q]) {
+      return {answer: '你好同学，有什么问题？', sources: [], label: '问候'};
+    }
+    var VAGUE = {方程:1, 公式:1, 定理:1, 物理:1, 力学:1, 理论力学:1, 怎么做:1, 怎么学:1, 是什么:1, 为什么:1, 讲讲:1, 介绍一下:1, 总结:1, 重点:1};
+    if (VAGUE[q] && KB) {
+      var menu = '你问得有点宽，想具体看哪一章？\n' + KB.modules.map(function (m) { return m.m + ' ' + m.title; }).join(' · ') + '\n可以直接问“M4 的拉格朗日方程是什么”。';
+      return {answer: menu, sources: KB.modules.map(function (m) {
+        return {milestone: m.m, title: m.title, section: m.title, href: m.href, pdf: m.pdf};
+      }), label: '章节索引'};
+    }
+    if (!KB) {
+      var mods0 = getModules();
+      if (!mods0) {
+        return {answer: '离线模式没有加载到知识库。请通过 http://127.0.0.1:8765 打开，或运行 tools/build_offline_kb.py 重新生成。', sources: [], label: '离线检索'};
+      }
+      var lines0 = mods0.slice(0, 3).map(function (m) {
+        return '**' + m.milestone + ' · ' + m.title + '**\n' + (m.summary || m.src || '');
+      });
+      return {answer: '离线检索（章节级）：\n\n' + lines0.join('\n\n'), sources: mods0.slice(0, 3).map(function (m) {
+        return {milestone: m.milestone, title: m.title, section: m.title, href: m.sim, pdf: m.note};
+      }), label: '离线检索'};
+    }
+
+    var gHit = null;
+    for (var gi = 0; gi < KB.glossary.length; gi++) {
+      if (q.indexOf(normText(KB.glossary[gi].t)) !== -1) { gHit = KB.glossary[gi]; break; }
+    }
+
+    var best = null, bestSc = 0;
+    for (var fi = 0; fi < KB.faq.length; fi++) {
+      var f = KB.faq[fi];
+      var sc = overlapScore(q, normText(f.q)) + latinHit(q, f.q) * 0.15;
+      if (sc > bestSc) { bestSc = sc; best = f; }
+    }
+    if (best && bestSc >= 0.55) {
+      var ans = best.a;
+      if (gHit && normText(ans).indexOf(normText(gHit.t)) === -1) ans = gHit.d + '\n\n' + ans;
+      var metaSec = /部署|离线|单位|学习路径|诺特/.test(best.sec || '');
+      ans += metaSec ? '\n\n（离线直答）' : '\n\n（离线直答 · ' + best.m + ' · 完整推导见推导网页版）';
+      return {answer: ans, sources: metaSec ? [] : [sourceFor(best.m, best.sec)], label: '离线直答'};
+    }
+
+    var qe = expandQuery(q);
+    var scored = KB.chunks.map(function (c) {
+      var corpus = c.t + ' ' + c.sec;
+      var sc = overlapScore(qe, corpus) * 2 + latinHit(qe, corpus) * 0.5;
+      var bad = (c.t.match(/\\/g) || []).length;
+      sc *= (1 - Math.min(0.6, bad / 30));
+      return {c: c, sc: sc};
+    });
+    scored.sort(function (a, b) { return b.sc - a.sc; });
+    var top = scored.filter(function (x) { return x.sc > 0.02; }).slice(0, 2);
+    if (top.length) {
+      var lines = [];
+      if (gHit) lines.push(gHit.d);
+      top.forEach(function (x) {
+        lines.push('**' + x.c.m + ' · ' + x.c.sec + '**\n' + pickSentences(x.c.t, q, 2));
+      });
+      lines.push('（离线检索：讲义原文摘录；完整推理请查看推导网页版）');
+      return {answer: lines.join('\n\n'), sources: top.map(function (x) {
+        return sourceFor(x.c.m, x.c.sec);
+      }), label: '离线检索'};
+    }
+
+    var mods = KB.modules.map(function (m) {
+      return {m: m, sc: overlapScore(q, normText(m.title + ' ' + m.tags.join(' ') + ' ' + m.summary))};
+    }).sort(function (a, b) { return b.sc - a.sc; }).slice(0, 2);
+    var fallback = ['离线模式只做讲义检索，没有理解到这个问题。换个更具体的关键词（如「有效势」「恢复系数」「Lorentz 力」「等时摆」），或连接 AI 服务获得完整推理。'];
+    if (mods.length && mods[0].sc > 0) {
+      fallback.push('可以先看：' + mods.map(function (x) { return x.m.m + ' ' + x.m.title; }).join('；'));
+    }
+    return {answer: fallback.join('\n\n'), sources: mods.map(function (x) {
+      return sourceFor(x.m.m, x.m.title);
+    }), label: '离线检索'};
+  }
+
+  function renderSources(container, sources) {
+    if (!sources || !sources.length) return;
+    var seen = {};
+    var wrap = document.createElement('div');
+    wrap.className = 'tmai-sources';
+    var count = 0;
+    for (var i = 0; i < sources.length && count < 5; i++) {
+      var s = sources[i];
+      var href = s.href || s.sim || '';
+      var key = href;
+      if (key && seen[key]) continue;
+      if (key) seen[key] = true;
+      if (href) {
+        var a = document.createElement('a');
+        a.className = 'tmai-src';
+        a.href = href;
+        a.textContent = (s.milestone ? s.milestone + ' · ' : '') + (s.section || s.title || '');
+        wrap.appendChild(a);
+        count++;
+      }
+      if (s.pdf && count < 5) {
+        var pdfKey = s.pdf;
+        if (!seen[pdfKey]) {
+          seen[pdfKey] = true;
+          var p = document.createElement('a');
+          p.className = 'tmai-src tmai-src-pdf';
+          p.href = s.pdf;
+          p.textContent = 'PDF';
+          wrap.appendChild(p);
+          count++;
+        }
+      }
+    }
+    if (wrap.childNodes.length) container.appendChild(wrap);
+  }
+
+  function appendMessage(msg) {
+    var el = document.createElement('div');
+    el.className = 'tmai-msg tmai-msg-' + (msg.role === 'user' ? 'user' : 'assistant');
+    var content = document.createElement('div');
+    content.className = 'tmai-msg-content';
+    if (msg.typing) {
+      content.innerHTML = '<span class="tmai-typing"><span></span><span></span><span></span></span>';
+    } else {
+      content.innerHTML = formatContent(msg.content);
+    }
+    el.appendChild(content);
+    if (msg.label) {
+      var badge = document.createElement('div');
+      badge.className = 'tmai-msg-label';
+      badge.textContent = msg.label;
+      el.appendChild(badge);
+    }
+    if (msg.sources && msg.sources.length) {
+      renderSources(el, msg.sources);
+    }
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return el;
+  }
+
+  function removeTyping() {
+    if (typingEl && typingEl.parentNode) typingEl.parentNode.removeChild(typingEl);
+    typingEl = null;
+  }
+
+  function openPanel() {
+    if (isOpen) return;
+    isOpen = true;
+    panel.hidden = false;
+    launcher.setAttribute('aria-expanded', 'true');
+    if (!healthOk) {
+      setStatus('checking');
+      fetch(API_BASE + '/api/health').then(function (res) {
+        if (!res.ok) throw new Error('bad');
+        return res.json();
+      }).then(function (data) {
+        if (data && data.ok && data.upstream) {
+          healthOk = true;
+          setStatus('online', data.model);
+        } else {
+          setStatus('offline');
+        }
+      }).catch(function () {
+        setStatus('offline');
+      });
+    }
+    setTimeout(function () { try { inputEl.focus(); } catch (e) {} }, 50);
+  }
+
+  function closePanel() {
+    if (!isOpen) return;
+    isOpen = false;
+    panel.hidden = true;
+    launcher.setAttribute('aria-expanded', 'false');
+  }
+
+  function togglePanel() {
+    if (isOpen) closePanel(); else openPanel();
+  }
+
+  function sendQuestion() {
+    if (inFlight) return;
+    var text = inputEl.value.trim();
+    if (text === '') return;
+    inFlight = true;
+    sendBtn.disabled = true;
+    appendMessage({ role: 'user', content: text });
+    conversation.push({ role: 'user', content: text });
+    inputEl.value = '';
+    typingEl = appendMessage({ role: 'assistant', content: '', typing: true });
+    var history = conversation.slice(-6);
+    fetch(API_BASE + '/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: text, module: moduleContext, mode: mode, history: history })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('bad');
+      return res.json();
+    }).then(function (data) {
+      removeTyping();
+      var answer = (data && data.answer) ? data.answer : '';
+      var sources = (data && data.sources) ? data.sources : [];
+      var lab = (data && data.reviewed === false) ? '本地草稿（未审核）' : ((data && data.pipeline === 'local_review') ? '学校审核' : '');
+      appendMessage({ role: 'assistant', content: answer, sources: sources, label: lab });
+      conversation.push({ role: 'assistant', content: answer });
+    }).catch(function () {
+      removeTyping();
+      var la = localAnswer(text);
+      appendMessage({ role: 'assistant', content: la.answer, sources: la.sources, label: la.label || '离线检索' });
+      conversation.push({ role: 'assistant', content: la.answer });
+    }).then(function () {
+      inFlight = false;
+      sendBtn.disabled = false;
+    });
+  }
+
+  launcher.addEventListener('click', togglePanel);
+  document.addEventListener('click', function (e) {
+    if (!isOpen) return;
+    var t = e.target;
+    if (panel.contains(t) || launcher.contains(t)) return;
+    if (t.closest && t.closest('[data-tm-nav="ask"]')) return;
+    closePanel();
+  });
+  closeBtn.addEventListener('click', closePanel);
+  sendBtn.addEventListener('click', sendQuestion);
+  inputEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      sendQuestion();
+    }
+    if (e.key === 'Escape') {
+      closePanel();
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen) closePanel();
+  });
+  contextClose.addEventListener('click', clearContext);
+  Array.prototype.forEach.call(segBtns, function (b) {
+    b.addEventListener('click', function () {
+      mode = b.getAttribute('data-mode');
+      Array.prototype.forEach.call(segBtns, function (x) {
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
+    });
+  });
+
+  var suggestions = [
+    '什么是有效势？它为什么能判断圆轨道稳定性？',
+    '伯特兰定理说明了什么？',
+    '两体问题怎么化成单体问题？',
+    '碰撞恢复系数在二维碰撞里怎么用？'
+  ];
+  suggestions.forEach(function (q) {
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'tmai-chip';
+    chip.textContent = q;
+    chip.addEventListener('click', function () {
+      inputEl.value = q;
+      sendQuestion();
+      if (chipsEl) chipsEl.hidden = true;
+    });
+    chipsEl.appendChild(chip);
+  });
+
+  appendMessage({ role: 'assistant', content: '你好，我是星语——理论力学讲义助教。可以问我有效势、轨道稳定性、两体问题、碰撞恢复系数等。' });
+
+  try {
+    var params = new URLSearchParams(location.search);
+    if (params.has('m')) setContext(params.get('m'));
+  } catch (e) {}
+
+  try {
+    var params2 = new URLSearchParams(location.search);
+    if (params2.get('ask') === '1') {
+      setTimeout(openPanel, 300);
+    }
+  } catch (e2) {}
+
+  window.TM_AI = {
+    open: function (opts) {
+      if (opts && opts.module) setContext(opts.module);
+      openPanel();
+    },
+    close: closePanel,
+    toggle: togglePanel
+  };
+  window.TM_AI.renderMath = formatInline;
+  window.TM_AI.localAnswer = localAnswer;
+
+  document.addEventListener('tm:open-ai', function (e) {
+    var opts = e && e.detail ? e.detail : null;
+    if (opts && opts.module) setContext(opts.module);
+    openPanel();
+  });
+})();
+
+})();

@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-WATCH_DIRS = ("assets", "chapters", "modules")
+WATCH_DIRS = ("assets", "chapters", "modules", "neural")
 WATCH_FILES = ("index.html", "catalog.html", "binet.html", "sitemap.xml", "robots.txt", "HOMEPAGE.md")
 SKIP_DIRS = {".git", "dist", "qa", "data", "deploy", "tools", "__pycache__", "node_modules"}
 SKIP_SUFFIX = (".log", ".aux", ".toc", ".out", ".fls", ".fdb_latexmk", ".xdv", ".synctex.gz")

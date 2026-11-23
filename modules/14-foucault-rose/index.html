@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>傅科摆与玫瑰线 · 交互实验</title>
+<style>
+  :root{
+    --bg:#05070f; --panel:rgba(9,14,30,.74); --line:rgba(146,182,255,.14);
+    --text:#e8eeff; --muted:#7f8fb8; --accent:#ffd76e; --accent2:#7fe0ff; --good:#7fe3a0; --bad:#ff8a8a;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  html{background:#03050c}
+  body{
+    margin:0; background:transparent;
+    color:var(--text); font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+    overflow:hidden;
+  }
+  .app{display:flex; height:100vh; width:100vw; position:relative; z-index:1}
+  .stage{position:relative; flex:1; min-width:0}
+  #cv{display:block; width:100%; height:100%; touch-action:none}
+  .brand{position:absolute; top:18px; left:22px; pointer-events:none; max-width:calc(100% - 260px)}
+  .brand h1{margin:0; font-size:19px; letter-spacing:.5px; font-weight:650; color:var(--accent)}
+  .brand p{margin:5px 0 0; font-size:12.5px; color:#a9b8dc; max-width:480px}
+  .intro{margin:7px 0 0; font-size:12.5px; color:var(--muted); line-height:1.65; max-width:480px}
+  .intro b{color:var(--accent); font-weight:600}
+  .hud{position:absolute; left:22px; bottom:18px; font-size:12px; color:var(--muted);
+       display:flex; gap:16px; flex-wrap:wrap; pointer-events:none; max-width:calc(100% - 380px)}
+  .hud b{color:var(--accent); font-weight:600; font-variant-numeric:tabular-nums}
+  .notice{position:absolute; top:14px; right:182px; max-width:40%; padding:7px 12px;
+    font-size:12px; color:#ffe6ae; border:1px solid rgba(255,215,110,.4);
+    border-radius:9px; background:rgba(30,24,8,.66); backdrop-filter:blur(10px)}
+  .inset{position:absolute; right:16px; bottom:16px; width:330px; padding:8px 10px 6px;
+    border:1px solid var(--line); border-radius:12px;
+    background:linear-gradient(160deg,rgba(26,36,66,.55),rgba(6,10,22,.8));
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px)}
+  .inset .cap{display:flex; justify-content:space-between; align-items:baseline; margin:2px 2px 6px;
+    font-size:11.5px; color:var(--muted)}
+  .inset .cap b{color:var(--accent); font-weight:600; font-family:ui-monospace,monospace}
+  #plot{display:block; width:100%; height:150px; touch-action:none}
+
+  .panel{width:345px; flex:none; padding:20px 20px 18px; overflow-y:auto;
+    background:var(--panel); border-left:1px solid var(--line);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px)}
+  .panel::-webkit-scrollbar{width:8px} .panel::-webkit-scrollbar-thumb{background:rgba(255,215,110,.35);border-radius:4px}
+  .back{display:inline-block; margin:0 0 14px; font-size:12px; color:var(--accent2); text-decoration:none}
+  .back:hover{text-decoration:underline}
+  .eq{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.8px; line-height:2;
+    padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(6,10,22,.72); color:#cfe0ff; margin-bottom:12px;
+  }
+  .eq .num{color:var(--accent)}
+  .eq .co{color:#ffbb77}
+  .group{margin-bottom:15px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px}
+  .row label{font-size:13px; color:#b9c6ea}
+  .row .val{font-family:ui-monospace,monospace; font-size:13px; color:var(--accent); font-variant-numeric:tabular-nums}
+  .hint{font-size:11.5px; color:#6d7ba3; margin-top:5px; line-height:1.55}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg,#8a6a2a,#1a2440); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); border:2px solid #0a1020; box-shadow:0 0 10px rgba(255,215,110,.65); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--accent);
+    border:2px solid #0a1020; cursor:pointer}
+  input[type=range]:focus-visible{outline:2px solid var(--accent2); outline-offset:2px}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:6px}
+  button{
+    font:inherit; font-size:12.5px; padding:9px 10px; border-radius:9px; cursor:pointer;
+    color:#e8dcc0; background:rgba(255,215,110,.09); border:1px solid rgba(255,215,110,.30);
+    transition:transform .15s, background .15s, box-shadow .15s;
+  }
+  button:hover{background:rgba(255,215,110,.19); transform:translateY(-1px); box-shadow:0 4px 14px rgba(255,215,110,.14)}
+  button.primary{background:linear-gradient(180deg,#ffd76e,#d9a83f); border-color:#ffd76e; color:#1a1206; font-weight:600}
+  button.primary:hover{filter:brightness(1.07)}
+  button:focus-visible{outline:2px solid var(--accent2); outline-offset:2px}
+  .wide{grid-column:1/-1}
+  .readout{display:grid; grid-template-columns:auto 1fr; gap:5px 12px; margin:16px 0 2px;
+    font-size:12.5px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:rgba(6,10,22,.55)}
+  .readout dt{color:var(--muted)}
+  .readout dd{margin:0; font-family:ui-monospace,monospace; color:var(--accent); text-align:right; font-variant-numeric:tabular-nums}
+  h2.sect{font-size:13.5px; margin:22px 0 8px; color:var(--accent); letter-spacing:.04em; font-weight:650}
+  table.lat{width:100%; border-collapse:collapse; font-size:12px; margin-top:6px}
+  table.lat th, table.lat td{padding:5px 7px; border:1px solid var(--line); text-align:left; color:#c3cfee}
+  table.lat th{color:#e8eeff; background:rgba(10,16,32,.5); font-weight:600}
+  table.lat td{font-family:ui-monospace,monospace}
+  .hist{font-size:12px; color:var(--muted); line-height:1.7; margin:10px 0 0}
+  .hist b{color:#e8d5a2}
+  .foot{margin-top:20px; padding-top:12px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; gap:10px; font-size:12px}
+  .foot a{color:#a9b8dc; text-decoration:none}
+  .foot a:hover{color:var(--accent)}
+  .selftest{white-space:pre-wrap; position:absolute; top:14px; right:182px; max-width:62%; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.6; border-radius:10px;
+    background:rgba(8,12,24,.92); border:1px solid rgba(255,215,110,.4); color:#dbe4ff}
+  .selftest.fail{border-color:rgba(255,138,138,.7); color:#ffd7d7}
+  @media (max-width:820px){
+    .app{flex-direction:column}
+    .panel{width:100%; height:44vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:56vh}
+    .inset{width:46vw; min-width:212px; right:8px; bottom:8px; padding:6px 8px 4px}
+    #plot{height:110px}
+    .hud{left:12px; bottom:10px; max-width:calc(54% - 20px); font-size:11px; gap:8px;
+      padding:4px 7px; border-radius:8px; background:rgba(4,8,20,.58); border:1px solid var(--line)}
+    .brand{max-width:calc(100% - 24px)}
+    .notice,.selftest{top:50px; right:8px; max-width:calc(100% - 180px)}
+  }
+  @media (prefers-reduced-motion: reduce){
+    button{transition:none}
+  }
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="傅科摆与玫瑰线 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/14-foucault-rose/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="傅科摆与玫瑰线 · 交互实验">
+<meta property="og:description" content="傅科摆与玫瑰线 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/14-foucault-rose/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="傅科摆与玫瑰线 · 交互实验">
+<meta name="twitter:description" content="傅科摆与玫瑰线 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+
+<!-- TM-THEME-HEAD:START -->
+<style id="tm-theme">
+:root {
+  /* —— 深空底色 —— */
+  --tm-void: #03050c;
+  --tm-deep: #060a17;
+  --tm-horizon: #0b1226;
+  --tm-nebula-a: rgba(38, 54, 120, .55);
+  --tm-nebula-b: rgba(12, 70, 96, .40);
+  --tm-nebula-c: rgba(84, 38, 110, .28);
+  /* —— 玻璃与描边 —— */
+  --tm-panel: rgba(9, 14, 30, .74);
+  --tm-panel-solid: #080d1c;
+  --tm-glass: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  --tm-line: rgba(146, 182, 255, .14);
+  --tm-line-2: rgba(176, 206, 255, .30);
+  --tm-glow: 0 0 24px rgba(127, 224, 255, .12);
+  /* —— 文字 —— */
+  --tm-text: #e8eeff;
+  --tm-text-2: #a9b8dc;
+  --tm-muted: #6d7ca4;
+  /* —— 恒星与星云强调色 —— */
+  --tm-solar: #ffd27a;
+  --tm-solar-hot: #ffb45e;
+  --tm-cyan: #7fe0ff;
+  --tm-violet: #b79bff;
+  --tm-teal: #7ff0cf;
+  --tm-rose: #ff9fc4;
+  --tm-amber: #ffc46b;
+  --tm-coral: #ff9d6b;
+  --tm-ice: #9fd8ff;
+  --tm-lav: #c9b8ff;
+  --tm-good: #7fe3a0;
+  --tm-bad: #ff8a8a;
+  /* —— 字体 —— */
+  --tm-font-ui: ui-sans-serif, system-ui, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tm-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* —— 几何 —— */
+  --tm-radius: 16px;
+  --tm-radius-sm: 10px;
+  --tm-track: rgba(146, 182, 255, .16);
+  /* —— 模块覆盖 token —— */
+  --bg: #03050c;
+  --panel: rgba(9, 14, 30, .74);
+  --line: rgba(146, 182, 255, .14);
+  --text: #e8eeff;
+  --muted: #6d7ca4;
+  --accent: #7fe0ff;
+  --accent2: #ffd27a;
+  --good: #7fe3a0;
+  --bad: #ff8a8a;
+}
+:root {
+  --tm-m0: var(--tm-solar);
+  --tm-m1: var(--tm-cyan);
+  --tm-m2: var(--tm-violet);
+  --tm-m3: var(--tm-teal);
+  --tm-m4: var(--tm-rose);
+  --tm-m5: var(--tm-amber);
+  --tm-m6: var(--tm-coral);
+  --tm-m7: var(--tm-lav);
+  --tm-m8: var(--tm-ice);
+}
+
+body {
+  background-color: #03050c;
+  background-image:
+    radial-gradient(1100px 620px at 16% 10%, rgba(255, 210, 122, .20), transparent 62%),
+    radial-gradient(920px 720px at 88% 26%, rgba(127, 224, 255, .17), transparent 64%),
+    radial-gradient(1000px 760px at 22% 92%, rgba(183, 155, 255, .15), transparent 66%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .06), transparent 2px),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .05), transparent 2px);
+  background-attachment: fixed;
+}
+
+.tm-stars {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .62;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(26, 36, 66, .55), rgba(6, 10, 22, .78));
+  border-left: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 155, 255, .45);
+  border-radius: 4px;
+}
+
+.brand h1 {
+  color: #ffd27a;
+  background: linear-gradient(90deg, #ffd27a 0%, #7fe0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not (background-clip: text) {
+  .brand h1 {
+    color: #ffd27a;
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+}
+
+.brand p {
+  color: #a9b8dc;
+}
+
+.hud {
+  color: #6d7ca4;
+}
+
+.hud b {
+  color: #ffd27a;
+}
+
+.eq {
+  background: rgba(6, 10, 22, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.row .val {
+  color: #ffd27a;
+}
+
+.tag span {
+  color: #ffd27a;
+}
+
+::selection {
+  background: rgba(127, 224, 255, .28);
+  color: #e8eeff;
+}
+
+input[type=range] {
+  background: linear-gradient(90deg, #7fe0ff, #b79bff);
+  box-shadow: 0 0 8px rgba(127, 224, 255, .18);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #7fe0ff;
+  box-shadow: 0 0 12px rgba(127, 224, 255, .75);
+}
+
+button {
+  background: rgba(127, 224, 255, .10);
+  border: 1px solid rgba(127, 224, 255, .35);
+  color: #cfefff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+
+button:hover {
+  background: rgba(127, 224, 255, .20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(127, 224, 255, .18);
+}
+
+button.primary {
+  background: linear-gradient(180deg, #ffd27a, #e6a84a);
+  border-color: #ffd27a;
+  color: #1a1206;
+}
+
+button.primary:hover {
+  filter: brightness(1.08);
+}
+
+.notice, .selftest {
+  background: rgba(9, 14, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-left: 3px solid #7fe0ff;
+}
+
+.notice.bad, .selftest.fail {
+  border-left-color: #ff8a8a;
+}
+
+a.doc {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .28);
+  color: #7fe0ff;
+  text-decoration: none;
+  transition: box-shadow .15s, background .15s;
+}
+
+a.doc:hover {
+  background: rgba(127, 224, 255, .16);
+  box-shadow: 0 0 12px rgba(127, 224, 255, .25);
+  text-decoration: none;
+}
+
+details.mapping {
+  background: rgba(9, 14, 30, .55);
+  border: 1px solid rgba(146, 182, 255, .14);
+  border-radius: 10px;
+  padding: 8px 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tm-orbit-nav {
+  position: absolute;
+  top: auto;
+  bottom: 10px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-width: calc(100vw - 24px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .62), rgba(6, 10, 22, .82));
+  border: 1px solid rgba(183, 155, 255, .35);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 6px 20px rgba(0, 0, 0, .35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.tm-orbit-nav a {
+  color: #cfefff;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, .08);
+  border: 1px solid rgba(127, 224, 255, .22);
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.brand { max-width: calc(100% - 250px); }
+.hud { max-width: calc(100% - 300px); }
+
+.tm-orbit-nav a:hover {
+  background: rgba(127, 224, 255, .18);
+  box-shadow: 0 0 10px rgba(127, 224, 255, .25);
+}
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
+
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    top: auto;
+    bottom: 8px;
+    left: auto;
+    right: 8px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    max-width: calc(100% - 16px);
+    padding: 4px 5px;
+  }
+  .tm-orbit-nav a {
+    font-size: 0;
+    padding: 3px 6px;
+  }
+  .tm-orbit-nav a[data-tm-nav="index"]::before { content: "✦"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
+  .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
+  .hud { max-width: calc(100% - 150px); }
+  .brand { max-width: calc(100% - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-stars {
+    opacity: .45;
+  }
+  button, a.doc, .tm-orbit-nav, .tm-orbit-nav a {
+    transition: none;
+  }
+}
+</style>
+
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return {sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+          shade: shade, easeOut: easeOut, clamp: clamp, TAU: TAU};
+})();
+</script>
+<!-- TM-THEME-HEAD:END -->
+<style id="m14-over">
+  /* M14 覆盖层：只将控件强调色换为模块色 #ffd76e */
+  input[type=range]{background:linear-gradient(90deg,#ffd76e,#b79bff); box-shadow:0 0 8px rgba(255,215,110,.18)}
+  input[type=range]::-webkit-slider-thumb{background:#ffd76e; box-shadow:0 0 12px rgba(255,215,110,.75)}
+  input[type=range]::-moz-range-thumb{background:#ffd76e; box-shadow:0 0 12px rgba(255,215,110,.75)}
+  button{background:rgba(255,215,110,.10); border:1px solid rgba(255,215,110,.35); color:#fff0cf}
+  button:hover{background:rgba(255,215,110,.20); transform:translateY(-1px); box-shadow:0 4px 14px rgba(255,215,110,.18)}
+  a.doc{background:rgba(255,215,110,.08); border:1px solid rgba(255,215,110,.28); color:#ffd76e}
+  a.doc:hover{background:rgba(255,215,110,.16); box-shadow:0 0 12px rgba(255,215,110,.25)}
+  ::selection{background:rgba(255,215,110,.30); color:#e8eeff}
+</style>
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
+</head>
+<body>
+<div class="app">
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="傅科摆三维模型：拖拽旋转视角，紫色箭头为地球自转轴 Ω，地面圆盘随地球匀速转动，摆锤的轨迹连续投影在盘面上"></canvas>
+    <div class="brand">
+      <h1>傅科摆与玫瑰线</h1>
+      <p>在转动参考系中积分傅科摆方程：科里奥利项令摆动平面缓慢进动，进动周期 $T=\dfrac{2\pi}{\omega|\sin\lambda|}$；摆动平面在空间中保持不动，而地面圆盘随地球匀速转动；摆的轨迹连续投影在盘面上、随盘面一起转动，纬度滑杆从赤道（不旋转）到极点（一个恒星日一圈）。3D 场景：拖拽旋转视角、滚轮缩放。紫色箭头是当地地球自转方向 Ω（与竖直夹角 90°−λ）。</p>
+      <p class="intro">摆动方程里的 <b>科里奥利力</b> −2m<b>Ω</b>×<b>v</b> 不做功、只偏转速度：北半球每时每刻把轨迹向右推，于是<b>摆动平面相对地面缓慢旋转</b>，速率 $\Omega\sin\lambda$。金线是摆尖投在盘面上的轨迹，随盘面一起转动；罗盘相对固定的摆动平面匀速转过，直观显示地球在摆下方自转。</p>
+    </div>
+    <div class="hud" id="hud">
+      <span>进动速率 <b id="h1">10.64 °/h</b></span>
+      <span>进动周期 T<sub>F</sub> <b id="h2">33.85 h</b></span>
+      <span>摆动平面 <b id="h3">0.0°</b></span>
+      <span>模拟时间 <b id="h4">0.00 恒星时</b></span>
+    </div>
+    <div class="notice" id="notice" hidden></div>
+    <div class="inset">
+      <div class="cap"><span>进动角 θ(t)（°）</span><b id="plotTag"></b></div>
+      <canvas id="plot" aria-label="进动角随时间曲线：每个 T_F 转过一整圈，图为锯齿状累计角"></canvas>
+    </div>
+  </div>
+  <aside class="panel">
+    <a class="back" href="../../chapters/01-newton/index.html">‹ 返回 · C1 牛顿力学</a>
+
+    <div class="eq">
+      <span class="co">$\ddot x=-\dfrac{g}{L}x+2\Omega\sin\lambda\,\dot y$</span><br>
+      <span class="co">$\ddot y=-\dfrac{g}{L}y-2\Omega\sin\lambda\,\dot x$</span><br>
+      进动速率 $=\Omega\sin\lambda$，$T_F=\dfrac{2\pi}{\Omega|\sin\lambda|}$<br>
+      $\Omega=7.292\times10^{-5}\ \mathrm{rad/s}$（恒星日自转）
+    </div>
+
+    <div class="group">
+      <div class="row"><label for="sLam">纬度 λ</label><span class="val" id="vLam">45.0°</span></div>
+      <input type="range" id="sLam" min="0" max="90" step="0.5" value="45">
+      <div class="hint">0°=赤道（无进动），90°=极点（一个恒星日转一整圈）。</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sLen">摆长 L</label><span class="val" id="vLen">2.00 m</span></div>
+      <input type="range" id="sLen" min="0.5" max="5" step="0.05" value="2">
+      <div class="hint">摆的小角周期 $T=2\pi\sqrt{L/g}$；RK4 步长自动按 T 细分——$\gamma=0$ 时 $10^4\ \mathrm{s}$ 模拟内能量漂移仅 $\sim10^{-4}$。</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sK">自转放大 K</label><span class="val" id="vK">1×（真实地球）</span></div>
+      <input type="range" id="sK" min="1" max="5000" step="1" value="1">
+      <div class="hint">K=1 即真实地球：Ω=7.292×10⁻⁵ rad/s，45° 处进动 10.64°/h；调大 K 放大科里奥利力，几秒内就能看清进动——此时已不是真实地球条件。</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sAcc">时间加速倍率</label><span class="val" id="vAcc">600×</span></div>
+      <input type="range" id="sAcc" min="1" max="3600" step="1" value="600">
+      <div class="hint">进动按小时计，必须加速：600× 下一分钟 ≈ 10 个摆动周期。</div>
+    </div>
+    <div class="group">
+      <div class="row"><label for="sDamp">空气阻尼 γ</label><span class="val" id="vDamp">0.000</span></div>
+      <input type="range" id="sDamp" min="0" max="0.05" step="0.001" value="0">
+      <div class="hint">阻尼项 −γ·v 令玫瑰花瓣逐圈收缩；0 时严格守恒。</div>
+    </div>
+
+    <div class="btns">
+      <button id="bPlay" class="primary">暂停</button>
+      <button id="bReset">重置</button>
+      <button id="bTrail" class="wide">轨迹淡出：8 圈（盘面）</button>
+      <button id="bView" class="wide">视角复位</button>
+    </div>
+    <div class="hint">3D 视图：拖拽旋转视角 · 滚轮缩放 · 双击复位</div>
+
+    <dl class="readout">
+      <dt>进动速率</dt><dd id="r1">10.64 °/h</dd>
+      <dt>进动周期 T<sub>F</sub></dt><dd id="r2">33.85 h</dd>
+      <dt>摆动平面转角</dt><dd id="r3">0.0°（顺时针）</dd>
+      <dt>累计进动角</dt><dd id="r4">0.0°</dd>
+      <dt>摆动周期 T</dt><dd id="r5">2.84 s</dd>
+      <dt>摆尖振幅 |d|</dt><dd id="r6">0.300 m</dd>
+      <dt>自转放大</dt><dd id="rK">1×（真实地球）</dd>
+    </dl>
+
+    <h2 class="sect">纬度表（真实地球，T_F=23.93 h/|sinλ|）</h2>
+    <table class="lat">
+      <tr><th>地点</th><th>λ</th><th>T_F</th></tr>
+      <tr><td>北极</td><td>90°</td><td>23.93 h（恒星日）</td></tr>
+      <tr><td>巴黎（先贤祠）</td><td>48.85°</td><td>31.9 h</td></tr>
+      <tr><td>北京</td><td>39.9°</td><td>37.5 h</td></tr>
+      <tr><td>赤道（基多）</td><td>0°</td><td>∞（无进动）</td></tr>
+    </table>
+
+    <p class="hist"><b>1851 年，傅科</b>在先贤祠悬挂 67 m 单摆：摆动平面约每 31.9 小时（巴黎纬度）旋转一周，第一次在实验室里<b>直接证明了地球自转</b>。玫瑰线花瓣数正比于一个摆动周期内的进动角 Ω·sinλ·T。</p>
+
+    <div class="foot">
+      <a href="../../index.html">‹ 课程总览</a>
+      <span>M6 · 傅科摆与玫瑰线</span>
+    </div>
+  </aside>
+</div>
+<script>
+(function(){
+"use strict";
+var OMEGA=7.292e-5, G=9.81, D2R=Math.PI/180, R2D=180/Math.PI,
+    SD=2*Math.PI/OMEGA, SIDH=SD/24; // sidereal day (s), sidereal hour (s)
+function $(id){return document.getElementById(id);}
+var cv=$("cv"), ctx=cv.getContext("2d"),
+    plot=$("plot"), pctx=plot.getContext("2d"),
+    stage=$("stage"), notice=$("notice"),
+    h1=$("h1"),h2=$("h2"),h3=$("h3"),h4=$("h4"),
+    r1=$("r1"),r2=$("r2"),r3=$("r3"),r4=$("r4"),r5=$("r5"),r6=$("r6"),rK=$("rK"),
+    plotTag=$("plotTag");
+
+var sim={x:0,y:0,vx:0,vy:0,t:0,TH:0,plane:0,angPrev:0,prevR:0,rising:null,playing:true,
+  lam:45,K:1,L:2,accel:600,damp:0,A0:0.30,trailWin:8,trail:[],trailT:-1,series:[],seriesT:-1};
+// 轨迹淡出以“盘面转过圈数”计：窗口 = 圈数 × 盘面转一圈的时间（默认 8 圈）
+var TRAIL_OPTS=[1,8,16,Infinity], trailIdx=1;
+
+function fCor(){return 2*OMEGA*sim.K*Math.sin(sim.lam*D2R);}
+function deriv(s,L,f,damp,h){ // s=[x,y,vx,vy]
+  var w2=G/L;
+  return [ s[2], s[3],
+    -w2*s[0] + f*s[3] - damp*s[2],
+    -w2*s[1] - f*s[2] - damp*s[3] ];
+}
+function rk4(L,f,damp,h){
+  var s=[sim.x,sim.y,sim.vx,sim.vy], a,b,c,d;
+  a=deriv(s,L,f,damp,h);
+  b=deriv([s[0]+a[0]*h/2,s[1]+a[1]*h/2,s[2]+a[2]*h/2,s[3]+a[3]*h/2],L,f,damp,h);
+  c=deriv([s[0]+b[0]*h/2,s[1]+b[1]*h/2,s[2]+b[2]*h/2,s[3]+b[3]*h/2],L,f,damp,h);
+  d=deriv([s[0]+c[0]*h,s[1]+c[1]*h,s[2]+c[2]*h,s[3]+c[3]*h],L,f,damp,h);
+  sim.x+=h*(a[0]+2*b[0]+2*c[0]+d[0])/6; sim.y+=h*(a[1]+2*b[1]+2*c[1]+d[1])/6;
+  sim.vx+=h*(a[2]+2*b[2]+2*c[2]+d[2])/6; sim.vy+=h*(a[3]+2*b[3]+2*c[3]+d[3])/6;
+}
+function trackPlane(){ // |z| antinode crossings -> swing-plane angle (mod 180, unwrapped)
+  var r=Math.hypot(sim.x,sim.y);
+  if(sim.rising===null){ sim.rising=(r>=sim.prevR); }
+  if(sim.rising && r<sim.prevR){ // local max of |z|
+    var ang=Math.atan2(sim.y,sim.x)*R2D, d=ang-sim.angPrev;
+    while(d>90)d-=180; while(d<=-90)d+=180;
+    sim.plane+=d; sim.angPrev=ang;
+  }
+  if(!sim.rising && r>=sim.prevR) sim.rising=true;
+  if(sim.rising && r<sim.prevR) sim.rising=false; // collapse: handled above via prevR update order
+  sim.prevR=r;
+}
+
+var W=0,H=0,DPR=1,cx=0,cy=0,focal=1500;
+var FLOOR_Y=-1.0, DISC_R=0.62, ROSE_R=0.45, TGT_Y=-0.42;
+var cam={yaw:0.60,pitch:0.52,dist:3.5};
+var CAM_DEF={yaw:0.60,pitch:0.52,dist:3.5};
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function proj3(x,y,z){                 // world -> screen, perspective, y-up world
+  var dx=x, dy=y-TGT_Y, dz=z;
+  var cyw=Math.cos(cam.yaw), syw=Math.sin(cam.yaw);
+  var x1=dx*cyw-dz*syw, z1=dx*syw+dz*cyw;
+  var cp=Math.cos(cam.pitch), sp=Math.sin(cam.pitch);
+  var y1=dy*cp-z1*sp;
+  var zc=cam.dist-dy*sp-z1*cp;
+  if(zc<0.08) zc=0.08;
+  var k=focal/zc;
+  return {x:cx+x1*k, y:cy-y1*k, z:zc, k:k};
+}
+function projF(x,y,z){ // 地面（随盘转动）世界坐标 → 屏幕
+  var c=Math.cos(sim.TH), s=Math.sin(sim.TH);
+  return proj3(x*c+z*s, y, -x*s+z*c);
+}
+function fitFocal(){ // auto-fit for the DEFAULT camera only (resize-time; no zoom breathing)
+  var saved={yaw:cam.yaw,pitch:cam.pitch,dist:cam.dist};
+  cam.yaw=CAM_DEF.yaw; cam.pitch=CAM_DEF.pitch; cam.dist=CAM_DEF.dist;
+  focal=1;
+  var mx=0,my=0,i,a,p,d;
+  for(i=0;i<72;i++){
+    a=i/72*2*Math.PI;
+    p=proj3(DISC_R*Math.cos(a),FLOOR_Y,-DISC_R*Math.sin(a));
+    d=Math.abs(p.x-cx); if(d>mx)mx=d;
+    d=Math.abs(p.y-cy); if(d>my)my=d;
+  }
+  p=proj3(0,0.14,0);
+  d=Math.abs(p.x-cx); if(d>mx)mx=d;
+  d=Math.abs(p.y-cy); if(d>my)my=d;
+  var ext=[[0,0.44,0],[0,-0.44,0],[0,0,0.44],[0,0,-0.44]],e; // Ω 轴包络（任意纬度）
+  for(i=0;i<4;i++){
+    e=ext[i]; p=proj3(e[0],e[1],e[2]);
+    d=Math.abs(p.x-cx); if(d>mx)mx=d;
+    d=Math.abs(p.y-cy); if(d>my)my=d;
+  }
+  cam.yaw=saved.yaw; cam.pitch=saved.pitch; cam.dist=saved.dist;
+  return clamp(0.86/Math.max(mx/(W*0.5),my/(H*0.5)),300,7000);
+}
+function resize(){
+  DPR=Math.min(2,window.devicePixelRatio||1);
+  var r=stage.getBoundingClientRect();
+  W=r.width; H=r.height;
+  cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+  cv.style.width=W+"px"; cv.style.height=H+"px";
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  cx=W/2; cy=H/2; focal=fitFocal();
+  var pr=plot.getBoundingClientRect();
+  plot.width=Math.round(pr.width*DPR); plot.height=Math.round(pr.height*DPR);
+  pctx.setTransform(DPR,0,0,DPR,0,0);
+}
+/* ---------- 3D 映射辅助 ---------- */
+function frameRot(x,y){ // 随地球转动的参考系 → 空间固定系（+TH 为地转累积角）
+  var c=Math.cos(sim.TH), s=Math.sin(sim.TH);
+  return {x:x*c-y*s, y:x*s+y*c};
+}
+function bobWorld(){ // sim 米 → 世界单位（绳长归一为 1），刚性竖直摆
+  var g=ROSE_R/sim.A0, f=frameRot(sim.x,sim.y);
+  var bx=f.x*g, bz=-f.y*g; // +sim.y = 北 = -z
+  var h=Math.hypot(bx,bz);
+  if(h>0.93){var s=0.93/h; bx*=s; bz*=s; h=0.93;}
+  return {x:bx,y:-Math.sqrt(Math.max(0,1-h*h)),z:bz};
+}
+function circle3(x,z,r,y,n,pf){ // 高度 y、中心 (x,z)、半径 r 的水平圆 → n 个投影点
+  var pts=[],i,a; pf=pf||proj3;
+  for(i=0;i<n;i++){a=i/n*2*Math.PI;pts.push(pf(x+r*Math.cos(a),y,z-r*Math.sin(a)));}
+  return pts;
+}
+function pathPts(pts,close){
+  ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+  for(var i=1;i<pts.length;i++)ctx.lineTo(pts[i].x,pts[i].y);
+  if(close)ctx.closePath();
+}
+function drawFloor(){
+  ctx.clearRect(0,0,W,H);
+  var pts=circle3(0,0,DISC_R,FLOOR_Y,96,projF);
+  var c0=proj3(0,FLOOR_Y,0),rad=0,i,d;
+  for(i=0;i<pts.length;i++){d=Math.hypot(pts[i].x-c0.x,pts[i].y-c0.y);if(d>rad)rad=d;}
+  pathPts(pts,true);
+  var bg=ctx.createRadialGradient(c0.x,c0.y,0,c0.x,c0.y,Math.max(rad,1));
+  bg.addColorStop(0,"#15274f"); bg.addColorStop(0.55,"#0c1734"); bg.addColorStop(1,"#070d20");
+  ctx.fillStyle=bg; ctx.fill();
+  ctx.strokeStyle="rgba(255,215,110,.30)"; ctx.lineWidth=1.5; ctx.stroke();
+  var rr=[0.40,0.75],j,rp;
+  for(j=0;j<rr.length;j++){
+    rp=circle3(0,0,DISC_R*rr[j],FLOOR_Y+0.001,64,projF);
+    pathPts(rp,true);
+    ctx.strokeStyle="rgba(146,182,255,.10)"; ctx.lineWidth=1; ctx.stroke();
+  }
+  ctx.strokeStyle="rgba(146,182,255,.055)"; ctx.lineWidth=1;
+  for(i=0;i<12;i++){
+    var wa=i/12*2*Math.PI, cw=Math.cos(wa), sw=Math.sin(wa);
+    var q1=projF(DISC_R*0.05*cw,FLOOR_Y+0.001,-DISC_R*0.05*sw);
+    var q2=projF(DISC_R*0.95*cw,FLOOR_Y+0.001,-DISC_R*0.95*sw);
+    ctx.beginPath(); ctx.moveTo(q1.x,q1.y); ctx.lineTo(q2.x,q2.y); ctx.stroke();
+  }
+  for(i=0;i<360;i+=15){
+    var major=(i%90===0), ir=DISC_R-(major?0.055:0.025), orr=DISC_R*0.995;
+    var ta=i*D2R, tc=Math.cos(ta), ts=Math.sin(ta);
+    var t1=projF(ir*tc,FLOOR_Y+0.002,-ir*ts);
+    var t2=projF(orr*tc,FLOOR_Y+0.002,-orr*ts);
+    ctx.strokeStyle="rgba(146,182,255,"+(major?0.45:0.16)+")";
+    ctx.lineWidth=major?1.4:1;
+    ctx.beginPath(); ctx.moveTo(t1.x,t1.y); ctx.lineTo(t2.x,t2.y); ctx.stroke();
+  }
+}
+function drawEarthAxis(){ // 当地地球自转单位向量 u=(0,sinλ,−cosλ)（y 上，北=−z）
+  var lam=sim.lam*D2R, uy=Math.sin(lam), uz=-Math.cos(lam);
+  function Pu(s){return proj3(0,s*uy,s*uz);}
+  var a=Pu(-0.20), o=Pu(0), c=Pu(0.34), b=Pu(0.44);
+  ctx.setLineDash([5,5]);
+  ctx.strokeStyle="rgba(183,155,255,.30)"; ctx.lineWidth=1.1;
+  ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle="rgba(183,155,255,.85)"; ctx.lineWidth=2.2;
+  ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  var dx=b.x-c.x, dy=b.y-c.y, dl=Math.hypot(dx,dy)||1; dx/=dl; dy/=dl;
+  ctx.fillStyle="rgba(183,155,255,.85)"; ctx.beginPath();
+  ctx.moveTo(b.x+dx*9,b.y+dy*9);
+  ctx.lineTo(b.x-dx*3-dy*4.5,b.y-dy*3+dx*4.5);
+  ctx.lineTo(b.x-dx*3+dy*4.5,b.y-dy*3-dx*4.5);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle="rgba(183,155,255,.9)"; ctx.font="12px ui-monospace,monospace";
+  ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText(sim.K>1?"Ω × "+sim.K:"Ω", b.x+dx*12, b.y+dy*12);
+  var arc=90-sim.lam; // 竖直角：+y 与 u 之间，y–z 面内，半径 0.26
+  if(arc>=1){
+    var pts=[], i, n=28;
+    for(i=0;i<=n;i++){
+      var ph=(arc*i/n)*D2R;
+      pts.push(proj3(0,0.26*Math.cos(ph),-0.26*Math.sin(ph)));
+    }
+    ctx.strokeStyle="rgba(183,155,255,.40)"; ctx.lineWidth=1;
+    pathPts(pts,false); ctx.stroke();
+  }
+}
+function drawCompass(){
+  var rr=0.84*DISC_R;
+  var dirs=[["N",90],["E",0],["S",270],["W",180]]; // (cos a, -sin a) 参数化
+  ctx.font="12px ui-monospace,monospace"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillStyle="rgba(207,220,255,.85)";
+  for(var j=0;j<dirs.length;j++){
+    var a=dirs[j][1]*D2R;
+    var p=projF(rr*Math.cos(a),FLOOR_Y+0.004,-rr*Math.sin(a));
+    ctx.fillText(dirs[j][0],p.x,p.y);
+  }
+  var low=null,i;
+  for(i=0;i<48;i++){
+    var ta=i/48*2*Math.PI;
+    var q=projF(DISC_R*Math.cos(ta),FLOOR_Y,-DISC_R*Math.sin(ta));
+    if(!low||q.y>low.y)low=q;
+  }
+  ctx.fillStyle="rgba(255,215,110,.8)"; ctx.font="12px ui-monospace,monospace";
+  ctx.fillText("λ = "+sim.lam.toFixed(1)+"° "+(sim.lam===0?"(赤道)":"N"),low.x,low.y+15);
+}
+function drawPrecessArrow(){
+  var sn=Math.sin(sim.lam*D2R);
+  if(Math.abs(sn)<1e-9)return;
+  var a0=(sn>0?155:25), a1=(sn>0?52:128); // NH 进动使 a 减小 → 箭头指向 52°
+  var rr=0.80*DISC_R, pts=[], i, steps=26;
+  for(i=0;i<=steps;i++){
+    var a=(a0+(a1-a0)*i/steps)*D2R;
+    pts.push(projF(rr*Math.cos(a),FLOOR_Y+0.004,-rr*Math.sin(a)));
+  }
+  ctx.strokeStyle="rgba(255,215,110,.55)"; ctx.lineWidth=2;
+  pathPts(pts,false); ctx.stroke();
+  var A=pts[pts.length-1], Bp=pts[pts.length-2]; // arrowhead from last two projected points
+  var dx=A.x-Bp.x, dy=A.y-Bp.y, dl=Math.hypot(dx,dy)||1; dx/=dl; dy/=dl;
+  ctx.fillStyle="rgba(255,215,110,.55)"; ctx.beginPath();
+  ctx.moveTo(A.x+dx*9,A.y+dy*9);
+  ctx.lineTo(A.x-dx*3-dy*4.5,A.y-dy*3+dx*4.5);
+  ctx.lineTo(A.x-dx*3+dy*4.5,A.y-dy*3-dx*4.5);
+  ctx.closePath(); ctx.fill();
+  var ma=(a0+a1)/2*D2R;
+  var mp=projF(rr*Math.cos(ma),FLOOR_Y+0.004,-rr*Math.sin(ma));
+  var c0=proj3(0,FLOOR_Y,0);
+  var ox=mp.x-c0.x, oy=mp.y-c0.y, ol=Math.hypot(ox,oy)||1;
+  ctx.fillStyle="rgba(255,215,110,.75)"; ctx.font="11px ui-monospace,monospace";
+  ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText("进动",mp.x+ox/ol*16,mp.y+oy/ol*16);
+}
+function drawPlane(){ // 竖直摆动平面：在空间固定（相对盘面的转动由 projF 体现）
+  var ca=1, sa=0; // 空间固定方向 (+x)
+  var p1=proj3(DISC_R*ca,FLOOR_Y,-DISC_R*sa);
+  var p2=proj3(-DISC_R*ca,FLOOR_Y,DISC_R*sa);
+  var t1=proj3(0.09*ca,0,-0.09*sa);
+  var t2=proj3(-0.09*ca,0,0.09*sa);
+  ctx.beginPath();
+  ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.lineTo(t2.x,t2.y); ctx.lineTo(t1.x,t1.y);
+  ctx.closePath();
+  ctx.fillStyle="rgba(127,224,255,.03)"; ctx.fill();
+  ctx.setLineDash([7,7]);
+  ctx.strokeStyle="rgba(127,224,255,.5)"; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle="rgba(127,224,255,.12)"; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(t1.x,t1.y);
+  ctx.moveTo(p2.x,p2.y); ctx.lineTo(t2.x,t2.y); ctx.stroke();
+}
+function drawFloorTrail(){ // 沙痕：地面投影，随年龄变暗
+  var tr=sim.trail, n=tr.length;
+  if(n<2)return;
+  var g=ROSE_R/sim.A0, fy=FLOOR_Y+0.003;
+  ctx.lineCap="round"; ctx.lineJoin="round";
+  var step=n>6000?Math.ceil(n/6000):1;
+  var CH=Math.max(30,Math.ceil(n/200)); // 长轨迹也只用约 200 段，避免每帧上千次 stroke
+  for(var i=0;i<n-1;i+=CH){
+    var j=Math.min(n-1,i+CH);
+    var frac=i/(n-1);
+    ctx.strokeStyle="rgba(255,215,110,"+(0.62*Math.pow(frac,2.2)).toFixed(3)+")"; // 尾端精确淡到 0
+    ctx.lineWidth=0.65+1.05*frac;
+    ctx.beginPath();
+    var p=projF(tr[i].x*g,fy,-tr[i].y*g);
+    ctx.moveTo(p.x,p.y);
+    for(var k=i+step;k<=j;k+=step){p=projF(tr[k].x*g,fy,-tr[k].y*g);ctx.lineTo(p.x,p.y);}
+    p=projF(tr[j].x*g,fy,-tr[j].y*g); ctx.lineTo(p.x,p.y);
+    ctx.stroke();
+  }
+}
+function drawBobAndString(){
+  var bw=bobWorld();
+  var sh=circle3(bw.x,bw.z,0.055,FLOOR_Y+0.002,20); // 地面椭圆投影
+  pathPts(sh,true);
+  ctx.fillStyle="rgba(2,5,12,.45)"; ctx.fill();
+  var pv=proj3(0,0,0), bp=proj3(bw.x,bw.y,bw.z);
+  ctx.lineCap="round";
+  ctx.strokeStyle="rgba(4,8,18,.85)"; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(pv.x,pv.y); ctx.lineTo(bp.x,bp.y); ctx.stroke();
+  ctx.strokeStyle="rgba(255,226,164,.85)"; ctx.lineWidth=1.6;
+  ctx.beginPath(); ctx.moveTo(pv.x,pv.y); ctx.lineTo(bp.x,bp.y); ctx.stroke();
+  var st0=proj3(0,0.14,0); // 天花板短茎
+  ctx.strokeStyle="rgba(255,226,164,.6)"; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(pv.x,pv.y); ctx.lineTo(st0.x,st0.y); ctx.stroke();
+  var plate=circle3(0,0,0.05,0,16); // 铰点盘
+  pathPts(plate,true);
+  ctx.fillStyle="rgba(22,32,60,.95)"; ctx.fill();
+  ctx.strokeStyle="rgba(255,215,110,.45)"; ctx.lineWidth=1; ctx.stroke();
+  var r=clamp(focal*0.014/bp.z,3.2,9);
+  window.TMART.sphere(ctx,bp.x,bp.y,r,"#ffd76e",{glow:true,glowR:3.4,glowAlpha:0.6});
+}
+function drawScene(){
+  drawFloor(); drawEarthAxis(); drawPrecessArrow(); drawPlane(); drawFloorTrail(); drawBobAndString(); drawCompass();
+}
+/* ---------- 视角交互：拖拽环绕 · 滚轮推拉 · 双击/按钮复位 ---------- */
+var drag=false,plx=0,ply=0;
+function resetView(){cam.yaw=CAM_DEF.yaw;cam.pitch=CAM_DEF.pitch;cam.dist=CAM_DEF.dist;}
+cv.style.cursor="grab";
+cv.addEventListener("pointerdown",function(e){
+  drag=true; plx=e.clientX; ply=e.clientY;
+  cv.setPointerCapture(e.pointerId);
+  cv.style.cursor="grabbing";
+  e.preventDefault();
+});
+cv.addEventListener("pointermove",function(e){
+  if(!drag)return;
+  var dx=e.clientX-plx, dy=e.clientY-ply; plx=e.clientX; ply=e.clientY;
+  cam.yaw-=dx*0.006;                      // 拖右 → 场景跟随指针
+  cam.pitch=clamp(cam.pitch+dy*0.006,0.10,1.30); // 拖下 → 相机升高、更俯视
+});
+function endDrag(){drag=false;cv.style.cursor="grab";}
+cv.addEventListener("pointerup",endDrag);
+cv.addEventListener("pointercancel",endDrag);
+cv.addEventListener("wheel",function(e){
+  e.preventDefault();
+  cam.dist=clamp(cam.dist*Math.exp(e.deltaY*0.0012),2.2,7.5);
+},{passive:false});
+cv.addEventListener("dblclick",resetView);
+$("bView").addEventListener("click",resetView);
+function rotDeg(){var a=sim.TH*R2D%360; if(a<0)a+=360; return a;} // 连续进动角（随盘面转角，避免按摆动极值跳变）
+function discTurnSec(){ // 盘面转一圈所需模拟时间
+  var w=OMEGA*sim.K*Math.sin(sim.lam*D2R);
+  return w>1e-12?(2*Math.PI)/w:Infinity; // 赤道：盘面不转，淡出窗口取无穷
+}
+function trailWindowSim(){ // 淡出窗口（模拟秒）
+  return isFinite(sim.trailWin)?sim.trailWin*discTurnSec():Infinity;
+}
+function drawPlot(){
+  var pw=plot.width/DPR, ph=plot.height/DPR;
+  pctx.clearRect(0,0,pw,ph);
+  var ml=34,mr=8,mt=8,mb=18, iw=pw-ml-mr, ih=ph-mt-mb;
+  var sn=Math.abs(Math.sin(sim.lam*D2R));
+  var TF=sn>1e-9?SD/3600/(sn*sim.K):Infinity; // 有效进动周期（含放大 K）
+  var xWin=isFinite(TF)?Math.max(0.02,Math.min(96,TF*2.2)):24; // 小时；K 很大时窗口缩到秒级
+  var tHr=sim.t/3600; // simulated hours
+  var pad=Math.min(3,xWin*0.1); // 右侧留白（原为固定 3 h，短窗口会跑到未来）
+  var x0=tHr>xWin-pad?tHr-xWin+pad:0, x1=x0+xWin;
+  var unit=xWin>2?1:(xWin>0.05?60:3600); // 轴标签单位：h / min / s
+  function fmtAxis(h){
+    if(unit===3600)return (h*3600).toFixed(0)+"s";
+    if(unit===60)return (h*60).toFixed(0)+"m";
+    return (h%1===0?h:h.toFixed(1))+"h";
+  }
+  function fmtDur(h){ // 周期：大用恒星时，小用分/秒
+    if(h>=1)return h.toFixed(2)+" 恒星时";
+    if(h>=1/60)return (h*60).toFixed(1)+" 分钟";
+    return (h*3600).toFixed(1)+" 秒";
+  }
+  function X(v){return ml+(v-x0)/xWin*iw;} function Y(a){return mt+(1-a/370)*ih;}
+  pctx.font="10px ui-monospace,monospace"; pctx.textBaseline="middle";
+  pctx.strokeStyle="rgba(146,182,255,.14)"; pctx.fillStyle="rgba(127,143,184,.9)"; pctx.textAlign="right";
+  for(var a=0;a<=360;a+=90){pctx.beginPath();pctx.moveTo(ml,Y(a));pctx.lineTo(pw-mr,Y(a));pctx.stroke();pctx.fillText(String(a),ml-5,Y(a));}
+  var gs=xWin>48?24:(xWin>26?6:(xWin>8?3:(xWin>2?1:(xWin>0.6?0.25:(xWin>0.15?1/12:(xWin>0.05?1/60:1/360))))));
+  pctx.textAlign="center";
+  for(var gx=Math.ceil(x0/gs)*gs;gx<=x1;gx+=gs){
+    pctx.strokeStyle="rgba(146,182,255,.12)";
+    pctx.beginPath();pctx.moveTo(X(gx),mt);pctx.lineTo(X(gx),mt+ih);pctx.stroke();
+    pctx.fillStyle="rgba(127,143,184,.8)"; pctx.fillText(fmtAxis(gx),X(gx),ph-7);
+  }
+  pctx.setLineDash([5,5]); pctx.strokeStyle="rgba(255,215,110,.65)";
+  pctx.beginPath();pctx.moveTo(ml,Y(360));pctx.lineTo(pw-mr,Y(360));pctx.stroke();pctx.setLineDash([]);
+  pctx.fillStyle="rgba(255,215,110,.8)"; pctx.textAlign="left";
+  pctx.fillText("360°=一整圈",ml+4,Y(360)-7);
+  if(sn>1e-9&&TF<=x1){
+    pctx.strokeStyle="rgba(255,215,110,.8)"; pctx.lineWidth=1.4;
+    pctx.beginPath();pctx.moveTo(X(TF),mt);pctx.lineTo(X(TF),mt+ih);pctx.stroke();pctx.lineWidth=1;
+    pctx.fillText("T_F="+(TF>=1?TF.toFixed(1)+"h":(TF>=1/60?(TF*60).toFixed(1)+"min":(TF*3600).toFixed(0)+"s")),X(TF)+4,mt+10);
+    if(23.93<=x1){pctx.setLineDash([3,4]);pctx.strokeStyle="rgba(127,224,255,.5)";
+      pctx.beginPath();pctx.moveTo(X(23.93),mt);pctx.lineTo(X(23.93),mt+ih);pctx.stroke();pctx.setLineDash([]);}
+    plotTag.textContent="T_F = "+fmtDur(TF);
+  }else{plotTag.textContent="赤道无进动";}
+  var tr=sim.series;
+  if(sn<1e-9){
+    pctx.fillStyle="rgba(255,215,110,.85)"; pctx.textAlign="center";
+    pctx.fillText("赤道无进动：θ(t)≡0",pw/2,mt+ih/2);
+  }
+  if(tr.length>1){
+    pctx.strokeStyle="#ffd76e"; pctx.lineWidth=1.6; pctx.beginPath();
+    var prevA=null;
+    for(var i=0;i<tr.length;i++){
+      var px=X(tr[i].ts);
+      if(px<ml-2){prevA=tr[i].a;continue;}
+      if(prevA!==null&&Math.abs(tr[i].a-prevA)>180){ // wrap drop
+        pctx.lineTo(px,Y(prevA));pctx.lineTo(px,Y(tr[i].a));
+      }
+      pctx.lineTo(px,Y(tr[i].a)); prevA=tr[i].a;
+    }
+    pctx.stroke();
+  }
+}
+function updateReadouts(){
+  var sn=Math.sin(sim.lam*D2R), rate=15.043*sn*sim.K, TF=Math.abs(sn)>1e-9?23.9348/(Math.abs(sn)*sim.K):Infinity;
+  var rateS=(Math.abs(rate)>=1000?rate.toFixed(0):rate.toFixed(2))+" °/h";
+  var tfS=isFinite(TF)?(TF>=1?TF.toFixed(2)+" h":(TF>=1/60?(TF*60).toFixed(1)+" min":(TF*3600).toFixed(1)+" s")):"∞（赤道）";
+  h1.textContent=rateS; h2.textContent=tfS; r1.textContent=rateS; r2.textContent=tfS;
+  var orient=((sim.TH*R2D%180)+180)%180, dir=sn>1e-9?"顺时针":(sn<-1e-9?"逆时针":"无进动");
+  h3.textContent=orient.toFixed(1)+"°";
+  h4.textContent=(sim.t/3600).toFixed(2)+" 恒星时";
+  r3.textContent=orient.toFixed(1)+"°（"+dir+"）";
+  r4.textContent=(sim.TH*R2D).toFixed(1)+"°";
+  r5.textContent=(2*Math.PI*Math.sqrt(sim.L/G)).toFixed(2)+" s";
+  r6.textContent=Math.hypot(sim.x,sim.y).toFixed(3)+" m";
+  rK.textContent=sim.K===1?"1×（真实地球）":sim.K+"×（演示）";
+  var atEquator=Math.abs(sn)<1e-9;
+  notice.hidden=!(atEquator||sim.K>1);
+  if(atEquator)notice.textContent="赤道：水平科氏力为零，摆动平面不旋转（T_F→∞）";
+  else if(sim.K>1)notice.textContent="演示放大：Ω×"+sim.K+"（K=1 才是真实地球条件）";
+}
+function resetSim(){
+  // 理想化释放：摆锤在空间固定系中从极端位置静止释放（相对地面有一个极小的切向速度
+  // −Ω·A0，正好抵消释放点随地球转动的速度）。K=1 时约 3×10⁻⁵ m/s，肉眼不可见；
+  // 这样摆动平面严格固定于空间，放大 K 也不会冒出椭圆分量。
+  sim.x=sim.A0; sim.y=0; sim.vx=0;
+  sim.vy=-OMEGA*sim.K*Math.sin(sim.lam*D2R)*sim.A0; sim.t=0; sim.TH=0;
+  sim.plane=0; sim.angPrev=0; sim.prevR=sim.A0; sim.rising=false;
+  sim.trail=[{x:sim.A0,y:0,t:0}]; sim.trailT=0; sim.series=[{ts:0,a:0}]; sim.seriesT=0;
+}
+function stepSim(dtReal){
+  var dt=Math.min(dtReal,0.033)*sim.accel;
+  var Tp=2*Math.PI*Math.sqrt(sim.L/G), h=Math.min(0.02,Tp/60);
+  var sEnd=sim.t+dt, f=fCor(), serieDt=seriesDt();
+  var win=trailWindowSim(); // 淡出到 0 的时间 = 盘面转 1 圈（乘所选圈数）
+  var trailDt=isFinite(win)?Math.max(Tp/150,win/100000):Tp/150;   // 采样步长随窗口放宽，控制点数
+  while(sim.t<sEnd-1e-9){
+    var hh=Math.min(h,sEnd-sim.t);
+    rk4(sim.L,f,sim.damp,hh); sim.t+=hh;
+    sim.TH+=OMEGA*sim.K*Math.sin(sim.lam*D2R)*hh; // 盘面（地球）累计转角
+    trackPlane();
+    if(sim.t-sim.trailT>=trailDt){
+      // 轨迹存盘面参考系：投影贴在盘面上，随盘一起转动
+      sim.trail.push({x:sim.x,y:sim.y,t:sim.t}); sim.trailT=sim.t;
+    }
+    if(sim.t-sim.seriesT>=serieDt){ // 进动角按模拟时间采样，K 很大时也不会混叠
+      sim.series.push({ts:sim.t/3600,a:rotDeg()}); sim.seriesT=sim.t;
+    }
+  }
+  // 每帧裁剪一次（O(1) 均摊），避免逐点 shift 造成长轨迹卡顿
+  var lim=win, drop=0, tn=sim.trail.length;
+  while(drop<tn-2&&(sim.t-sim.trail[drop].t>lim||tn-drop>100000))drop++;
+  if(drop>0)sim.trail.splice(0,drop);
+  // 只保留绘图窗口附近的历史（1.5 倍窗口），避免阵列无限增长
+  var cutoff=sim.t/3600-xWinNow()*1.5, sdrop=0;
+  while(sdrop<sim.series.length-2&&sim.series[sdrop].ts<cutoff)sdrop++;
+  if(sdrop>0)sim.series.splice(0,sdrop);
+}
+function xWinNow(){
+  var sn=Math.abs(Math.sin(sim.lam*D2R));
+  var TF=sn>1e-9?SD/3600/(sn*sim.K):Infinity;
+  return isFinite(TF)?Math.max(0.02,Math.min(96,TF*2.2)):24;
+}
+function seriesDt(){return xWinNow()/240*3600;} // sim seconds between series points
+
+var last=performance.now();
+function frame(now){
+  var dt=(now-last)/1000; last=now;
+  if(sim.playing&&!document.hidden)stepSim(dt);
+  drawScene(); drawPlot(); updateReadouts(); // keeps redrawing while paused (drag works)
+  requestAnimationFrame(frame);
+}
+
+function bindSlider(id,vid,fmt,set){
+  var el=$(id),lab=$(vid);
+  el.addEventListener("input",function(){set(parseFloat(el.value));lab.textContent=fmt(parseFloat(el.value));});
+}
+// 改变纬度/自转放大时，盘面角速度会突变；换算摆锤速度，保持空间固定系中的速度连续，
+// 这样摆动平面不会因参数调整而被“踢”成椭圆。
+function rephaseFrame(oldW,newW){
+  var d=oldW-newW;            // d = Ω_old − Ω_new（Ω 为盘面角速度）
+  sim.vx-=d*sim.y;            // δv = d·(-y, x)，保持 v_I = v + Ω×r 连续
+  sim.vy+=d*sim.x;
+}
+bindSlider("sLam","vLam",function(v){return v.toFixed(1)+"°";},function(v){
+  var oldW=OMEGA*sim.K*Math.sin(sim.lam*D2R), newW=OMEGA*sim.K*Math.sin(v*D2R);
+  rephaseFrame(oldW,newW); sim.lam=v;
+});
+bindSlider("sLen","vLen",function(v){return v.toFixed(2)+" m";},function(v){sim.L=v;});
+bindSlider("sK","vK",function(v){return v===1?"1×（真实地球）":v+"×（演示）";},function(v){
+  var sn=Math.sin(sim.lam*D2R);
+  rephaseFrame(OMEGA*sim.K*sn,OMEGA*v*sn); sim.K=v;
+});
+bindSlider("sAcc","vAcc",function(v){return v+"×";},function(v){sim.accel=v;});
+bindSlider("sDamp","vDamp",function(v){return v.toFixed(3);},function(v){sim.damp=v;});
+$("bPlay").addEventListener("click",function(){
+  sim.playing=!sim.playing; this.textContent=sim.playing?"暂停":"开始"; last=performance.now();
+});
+$("bReset").addEventListener("click",function(){resetSim();});
+$("bTrail").addEventListener("click",function(){
+  trailIdx=(trailIdx+1)%TRAIL_OPTS.length; sim.trailWin=TRAIL_OPTS[trailIdx];
+  var names={1:"1 圈",8:"8 圈",16:"16 圈"};
+  this.textContent="轨迹淡出："+(isFinite(sim.trailWin)?(names[sim.trailWin]||sim.trailWin+" 圈")+"（盘面）":"全部（上限10万点）");
+});
+window.addEventListener("keydown",function(e){
+  if(e.code==="Space"&&(e.target===document.body||e.target===cv)){
+    e.preventDefault(); $("bPlay").click();
+  }
+});
+
+function runSelftest(){
+  var out=[],ok=true;
+  function chk(name,got,exp,tol){
+    var p=Math.abs(got-exp)<=tol; ok=ok&&p;
+    out.push((p?"PASS":"FAIL")+" "+name+": "+got.toFixed(4)+" (期望 "+exp.toFixed(4)+" ±"+tol+")");
+  }
+  var s={x:0.3,y:0,vx:0,vy:0}, L=2, lam=45, t=0, h=0.02,
+      f=2*OMEGA*Math.sin(lam*D2R), angPrev=0, plane=0, prevR=0.3, rising=false;
+  var E0=0.5*(s.vx*s.vx+s.vy*s.vy)+0.5*(G/L)*(s.x*s.x+s.y*s.y);
+  function dv(u){return[u[2],u[3],-G/L*u[0]+f*u[3],-G/L*u[1]-f*u[2]];}
+  while(t<10000){
+    var u=[s.x,s.y,s.vx,s.vy];
+    var a=dv(u),b=dv(u.map(function(q,i){return q+a[i]*h/2;}));
+    var c=dv(u.map(function(q,i){return q+b[i]*h/2;}));
+    var d=dv(u.map(function(q,i){return q+c[i]*h;}));
+    for(var i=0;i<4;i++)u[i]+=h*(a[i]+2*b[i]+2*c[i]+d[i])/6;
+    s.x=u[0];s.y=u[1];s.vx=u[2];s.vy=u[3]; t+=h;
+    var r=Math.hypot(s.x,s.y);
+    if(rising&&r<prevR){var ang=Math.atan2(s.y,s.x)*R2D,dd=ang-angPrev;
+      while(dd>90)dd-=180;while(dd<=-90)dd+=180;plane+=dd;angPrev=ang;}
+    rising=(r>=prevR);
+    prevR=r;
+  }
+  var got=-plane, exp=OMEGA*Math.sin(lam*D2R)*R2D*10000;
+  chk("RK4 进动角(45°,10000s)",got,exp,0.3);
+  var E=0.5*(s.vx*s.vx+s.vy*s.vy)+0.5*(G/L)*(s.x*s.x+s.y*s.y);
+  chk("能量相对漂移(10⁴s内)",Math.abs((E-E0)/E0),0,2e-4);
+  chk("T_F(90°)",SD/3600,23.9348,0.01);
+  chk("T_F(30°)",(SD/Math.sin(30*D2R))/3600,47.8696,0.02);
+  chk("速率因子 15.043",OMEGA*3600*R2D,15.043,0.01);
+  var box=document.createElement("div");
+  box.id="selftestPanel";
+  box.className="selftest"+(ok?"":" fail");
+  box.textContent=(ok?"SELFTEST PASS\n":"SELFTEST FAIL\n")+out.join("\n");
+  document.querySelector(".app").appendChild(box);
+}
+if(/[?&]selftest=1/.test(location.search))runSelftest();
+
+resize();
+if(window.ResizeObserver){new ResizeObserver(function(){resize();}).observe(stage);}
+window.addEventListener("resize",resize);
+resetSim();
+requestAnimationFrame(function(now){last=now;requestAnimationFrame(frame);});
+})();
+</script>
+<!-- TM-THEME-BODY:START -->
+<canvas class="tm-stars" aria-hidden="true"></canvas>
+<nav class="tm-orbit-nav" aria-label="章节导航">
+  <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
+  <a data-tm-nav="prev" href="#">‹ 上一章</a>
+  <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/01-newton/index.html?ret=M6" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
+  <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
+</nav>
+<script id="tm-theme-js">
+(function () {
+  'use strict';
+  var CHAPTERS = [
+    '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
+    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
+    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
+    '11-rotation-and-field',
+    '13-lightcone-worldlines', '14-foucault-rose', '15-lagrange-points',
+    '16-doppler-beaming'
+  ];
+
+  function currentFolder() {
+    var path = location.pathname || '';
+    var parts = path.split('/');
+    var last = '';
+    for (var i = parts.length - 1; i >= 0; i--) {
+      if (parts[i]) { last = parts[i]; break; }
+    }
+    var folder = last;
+    if (folder === 'index.html') {
+      folder = '';
+      for (var j = parts.length - 1; j >= 0; j--) {
+        if (parts[j] && parts[j] !== 'index.html') { folder = parts[j]; break; }
+      }
+    }
+    return folder;
+  }
+
+  var folder = currentFolder();
+  var idx = -1;
+  for (var i = 0; i < CHAPTERS.length; i++) {
+    if (CHAPTERS[i] === folder) { idx = i; break; }
+  }
+  if (idx < 0) {
+    var n = parseInt(folder, 10);
+    if (isFinite(n) && n >= 0 && n < CHAPTERS.length) idx = n;
+  }
+  if (idx < 0) idx = 0;
+
+  var nav = document.querySelector('.tm-orbit-nav');
+  var stage = document.querySelector('.stage');
+  if (stage && nav && nav.parentNode !== stage) stage.appendChild(nav);
+  function setLink(key, href, text) {
+    if (!nav) return;
+    var a = nav.querySelector('[data-tm-nav="' + key + '"]');
+    if (!a) return;
+    if (href !== null) a.setAttribute('href', href);
+    if (text !== null) a.textContent = text;
+  }
+  var base = '../../';
+  setLink('index', base + 'index.html', null);
+  setLink('ask', base + 'index.html?ask=1&m=' + idx, null);
+  if (idx > 0) {
+    setLink('prev', '../' + CHAPTERS[idx - 1] + '/index.html', null);
+  } else {
+    var prevA = nav ? nav.querySelector('[data-tm-nav="prev"]') : null;
+    if (prevA) prevA.style.display = 'none';
+  }
+  if (idx < CHAPTERS.length - 1) {
+    setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
+  } else {
+    setLink('next', base + 'index.html', '\u2726 \u661f\u56fe');
+  }
+
+  var canvas = document.querySelector('.tm-stars');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = false;
+  try {
+    reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    reduce = false;
+  }
+
+  var STAR_COUNT = 170;
+  var stars = [];
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  for (var s = 0; s < STAR_COUNT; s++) {
+    var layer = s < 85 ? 0 : 1;
+    stars.push({
+      layer: layer,
+      x: Math.random(),
+      y: Math.random(),
+      r: layer === 0 ? rand(0.4, 1.1) : rand(0.8, 1.9),
+      base: layer === 0 ? rand(0.12, 0.32) : rand(0.22, 0.55),
+      tw: rand(0.6, 1.8),
+      ph: rand(0, Math.PI * 2),
+      px: layer === 0 ? 0.015 : 0.04
+    });
+  }
+
+  var w = 0, h = 0, dpr = 1;
+  var parX = 0, parY = 0, targetX = 0, targetY = 0;
+  var running = !reduce;
+  var rafId = 0;
+
+  function resize() {
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    w = window.innerWidth || document.documentElement.clientWidth || 0;
+    h = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (w < 1) w = 1;
+    if (h < 1) h = 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(now) {
+    if (!w || !h) resize();
+    ctx.clearRect(0, 0, w, h);
+    if (!reduce) {
+      parX += (targetX - parX) * 0.06;
+      parY += (targetY - parY) * 0.06;
+    }
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var tw = reduce ? 1 : (0.7 + 0.3 * Math.sin(now * 0.001 * st.tw + st.ph));
+      var a = st.base * tw;
+      var ox = reduce ? 0 : parX * st.px * w;
+      var oy = reduce ? 0 : parY * st.px * h;
+      var x = st.x * w + ox;
+      var y = st.y * h + oy;
+      if (x < 0) x += w;
+      if (x > w) x -= w;
+      if (y < 0) y += h;
+      if (y > h) y -= h;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = st.layer === 0 ? '#cfe0ff' : '#e8eeff';
+      ctx.beginPath();
+      ctx.arc(x, y, st.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  function start() {
+    if (rafId) return;
+    if (document.hidden) return;
+    rafId = requestAnimationFrame(frame);
+  }
+  function frame(now) {
+    if (document.hidden) { rafId = 0; return; }
+    draw(now);
+    if (running) rafId = requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      if (reduce) draw(performance.now());
+      else start();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    resize();
+    draw(performance.now());
+    if (!reduce && !rafId && !document.hidden) start();
+  });
+
+  if (!reduce) {
+    window.addEventListener('mousemove', function (e) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx;
+      targetY = (e.clientY - cy) / cy;
+    });
+  }
+
+  resize();
+  if (reduce) {
+    draw(performance.now());
+  } else {
+    start();
+  }
+})();
+</script>
+<!-- TM-THEME-BODY:END -->
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+</html>

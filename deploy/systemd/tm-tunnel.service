@@ -4,6 +4,7 @@ After=network-online.target tm-login.service
 Wants=network-online.target
 
 [Service]
+Environment="PATH=/home/wck/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Type=simple
 ExecStart=/bin/bash /home/wck/TM-Login/tunnel.sh
 Restart=always

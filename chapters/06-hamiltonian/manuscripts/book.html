@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈密顿力学 · 理论力学</title>
+<link rel="stylesheet" href="../../../assets/manuscript.css">
+<link rel="stylesheet" href="../../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="../index.html">← 章节门户</a><a href="../../../manuscript/index.html">书稿</a><a href="../../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">书稿 · 网页阅读版</div>
+<h1>哈密顿力学</h1>
+<p class="ms-lead">本章书稿全文，可检索、可复制。</p>
+<div class="ms-links"><b>相关</b><a href="../index.html">哈密顿力学 章节</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#勒让德变换与正则方程">6.1勒让德变换与正则方程</a></li>
+<li class="l3"><a href="#先作变量变换再使用运动方程">6.1.1先作变量变换，再使用运动方程</a></li>
+<li class="l3"><a href="#能量循环坐标与含时表示">6.1.2能量、循环坐标与含时表示</a></li>
+<li class="l3"><a href="#相空间作用量与端点条件">6.1.3相空间作用量与端点条件</a></li>
+<li class="l2"><a href="#从模型辨认正则动量">6.2从模型辨认正则动量</a></li>
+<li class="l3"><a href="#中心势中的球坐标">6.2.1中心势中的球坐标</a></li>
+<li class="l3"><a href="#带电粒子与规范变换">6.2.2带电粒子与规范变换</a></li>
+<li class="l3"><a href="#罗斯约化的符号与循环条件">6.2.3罗斯约化的符号与循环条件</a></li>
+<li class="l2"><a href="#相空间流与刘维尔定理">6.3相空间流与刘维尔定理</a></li>
+<li class="l3"><a href="#完整状态与轨道唯一性">6.3.1完整状态与轨道唯一性</a></li>
+<li class="l3"><a href="#散度流映射与密度">6.3.2散度、流映射与密度</a></li>
+<li class="l2"><a href="#泊松括号守恒量与生成元">6.4泊松括号、守恒量与生成元</a></li>
+<li class="l3"><a href="#定义及恒等式的来由">6.4.1定义及恒等式的来由</a></li>
+<li class="l3"><a href="#显含时间的运动积分">6.4.2显含时间的运动积分</a></li>
+<li class="l3"><a href="#守恒量如何生成状态变换">6.4.3守恒量如何生成状态变换</a></li>
+<li class="l2"><a href="#正则变换保持的结构与局部生成函数">6.5正则变换：保持的结构与局部生成函数</a></li>
+<li class="l3"><a href="#辛条件比保持体积更强">6.5.1辛条件比保持体积更强</a></li>
+<li class="l3"><a href="#从作用量边界项推导四类公式">6.5.2从作用量边界项推导四类公式</a></li>
+<li class="l2"><a href="#哈密顿雅可比理论从完全积分重构运动">6.6哈密顿–雅可比理论：从完全积分重构运动</a></li>
+<li class="l3"><a href="#把运动转成常变量的条件">6.6.1把运动转成常变量的条件</a></li>
+<li class="l3"><a href="#自治分离与转折点分支">6.6.2自治分离与转折点分支</a></li>
+<li class="l2"><a href="#作用角变量周期与可积性">6.7作用角变量、周期与可积性</a></li>
+<li class="l3"><a href="#一自由度的面积与频率">6.7.1一自由度的面积与频率</a></li>
+<li class="l3"><a href="#单摆分离曲线附近有限作用与无限周期">6.7.2单摆分离曲线附近：有限作用与无限周期</a></li>
+<li class="l3"><a href="#开普勒作用不同频率何时相同">6.7.3开普勒作用：不同频率何时相同？</a></li>
+<li class="l3"><a href="#多自由度可积性与kam的条件">6.7.4多自由度可积性与KAM的条件</a></li>
+<li class="l2"><a href="#计算与模拟辛性能量与误差阶">6.8计算与模拟：辛性、能量与误差阶</a></li>
+<li class="l3"><a href="#显式euler与辛euler的不同结构">6.8.1显式Euler与辛Euler的不同结构</a></li>
+<li class="l3"><a href="#störmerverlet分裂流的对称复合">6.8.2Störmer–Verlet：分裂流的对称复合</a></li>
+<li class="l3"><a href="#伴随脚本如何独立核验">6.8.3伴随脚本如何独立核验</a></li>
+<li class="l2"><a href="#关键概念与常见误区">关键概念与常见误区</a></li>
+<li class="l2"><a href="#本章小结">本章小结</a></li>
+<li class="l2"><a href="#分层习题">分层习题</a></li>
+<li class="l2"><a href="#解题思路与结果">解题思路与结果</a></li>
+<li class="l2"><a href="#进一步阅读与来源">进一步阅读与来源</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<div class="tcolorbox"><div class="ms-callout-title">本章导读</div>
+<p>第三至五章用拉格朗日量建立运动方程，并处理振动与刚体。现在把速度换成共轭动量：在速度Hessian非退化的区域，同一动力学可写成相空间中的一阶方程。这样做不增加初始数据，而是使守恒量、变量变换和流的几何结构更清楚。</p>
+<p>本章主线是：勒让德变换与边界条件 <span class="math inline">\(\to\)</span> 相空间流 <span class="math inline">\(\to\)</span> 泊松括号与对称性 <span class="math inline">\(\to\)</span> 正则变换 <span class="math inline">\(\to\)</span> 哈密顿–雅可比完全积分 <span class="math inline">\(\to\)</span> 作用角与数值结构。</p>
+<p>学习时始终核对三个条件：变换是否局部可逆？使用的是正则动量还是机械动量？结论是局部坐标中的关系，还是覆盖完整周期的全局描述？含耗散、奇异约束或非完整系统不能未经重建就套用本章普通正则方程。</p>
+</div>
+<h2 id="勒让德变换与正则方程"><span class="ms-secno">6.1</span>勒让德变换与正则方程</h2>
+<h3 id="先作变量变换再使用运动方程"><span class="ms-secno">6.1.1</span>先作变量变换，再使用运动方程</h3>
+<p>设 <span class="math inline">\(L(q,\dot q,t)\)</span> 光滑，<span class="math inline">\(q=(q_1,\ldots,q_s)\)</span> 是独立局部坐标。定义 <span class="math display">\[p_a=L_{\dot q_a},\qquad W_{ab}=L_{\dot q_a\dot q_b}.
+
+\tag{6.1}\]</span> 在 <span class="math inline">\(\det W\ne0\)</span> 的一个点附近，隐函数定理保证可局部反解 <span class="math inline">\(\dot q=v(q,p,t)\)</span>。定义 <span class="math display">\[H(q,p,t)=\sum_a p_av_a(q,p,t)-L(q,v(q,p,t),t).
+
+\tag{6.2}\]</span> 这个勒让德变换中的速度已被消去，不是额外的独立变量。<em>不使用运动方程</em>，先微分： <span class="math display">\[\begin{aligned}
+\mathrm{d}H&amp;=\sum_a(v_a\mathrm{d}p_a+p_a\mathrm{d}v_a)
+-\sum_a(L_{q_a}\mathrm{d}q_a+L_{\dot q_a}\mathrm{d}v_a)-L_t\mathrm{d}t\\
+&amp;=\sum_a(v_a\mathrm{d}p_a-L_{q_a}\mathrm{d}q_a)-L_t\mathrm{d}t.
+\end{aligned}\]</span> 故恒等地 <span class="math inline">\(H_{p_a}=v_a,H_{q_a}=-L_{q_a},H_t=-L_t\)</span>。最后才在真实路径上用 <span class="math inline">\(\dot p_a=L_{q_a}\)</span>，得到 <span class="math display">\[\boxed{\dot q_a=H_{p_a},\qquad\dot p_a=-H_{q_a}.}
+
+\tag{6.3}\]</span> 这里 <span class="math inline">\(H_t\)</span> 保持 <span class="math inline">\(q,p\)</span> 不变，<span class="math inline">\(L_t\)</span> 保持 <span class="math inline">\(q,\dot q\)</span> 不变，再用速度反解比较。反向代入也恢复原拉格朗日方程；两种描述都需要 <span class="math inline">\(2s\)</span> 项初始数据。</p>
+<p>若 <span class="math inline">\(L=\dot q^{\mathsf T}M(q,t)\dot q/2+a(q,t)^{\mathsf T}\dot q-V(q,t)\)</span>，<span class="math inline">\(M\)</span> 可逆，则 <span class="math display">\[p=M\dot q+a,\qquad
+H=\tfrac12(p-a)^{\mathsf T}M^{-1}(p-a)+V.\]</span> 速度一次项不会使变换失效；它使正则动量偏离通常的机械动量。第五章刚体惯量正定有利于反解，但欧拉角在极轴奇异时仍须换坐标图。</p>
+<div class="example">
+<p><strong>例 1.1</strong> (非退化不等于全局单值).  <em>令 <span class="math inline">\(u=\dot q/v_*\)</span>，取正尺度 <span class="math inline">\(E_*,v_*\)</span>， <span class="math display">\[L=E_*(u^4/4-u^2/2)-V(q),\qquad
+p=\frac{E_*}{v_*}(u^3-u).\]</span> <span class="math inline">\(p=0\)</span> 对应 <span class="math inline">\(u=0,\pm1\)</span>，三处Hessian分别为 <span class="math inline">\(-E_*/v_*^2,2E_*/v_*^2,2E_*/v_*^2\)</span>，均非零，但同一动量对应不同速度分支。各分支局部可用 <span class="math display">\[H=E_*(3u^4/4-u^2/2)+V(q),\]</span> 并不能据局部非退化就任意选成一个全局函数。严格凸性可保证动量映射在适当凸域中的单射性，覆盖整个动量域还需全局条件。普通正则理论不要求Hessian正定，但稳定性和全局性是另外的问题。</em></p>
+</div>
+<p>若 <span class="math inline">\(L\)</span> 含未消去的乘子，或某个速度根本不出现，Hessian可奇异，例如 <span class="math inline">\(L=(\dot x-y)^2/2\)</span> 有 <span class="math inline">\(p_y=0\)</span>。不能照常反解所有速度；约束哈密顿理论需另外建立，本章不展开。</p>
+<h3 id="能量循环坐标与含时表示"><span class="ms-secno">6.1.2</span>能量、循环坐标与含时表示</h3>
+<p>沿正则运动 <span class="math display">\[\frac{\mathrm{d}H}{\mathrm{d}t}=\sum_a(H_{q_a}\dot q_a+H_{p_a}\dot p_a)+H_t=H_t.
+
+\tag{6.4}\]</span> 所以 <span class="math inline">\(H_t=0\)</span> 给出 <span class="math inline">\(H\)</span> 守恒。它是否等于实验室系机械能，仍需建模条件：定常自然系统的 <span class="math inline">\(L=T-V\)</span>、<span class="math inline">\(T\)</span> 为齐二次型时，<span class="math inline">\(H=T+V\)</span>。电磁速度一次项也可抵消而给 <span class="math inline">\(H=T+e\phi\)</span>；不能简单断言“凡含速度势，<span class="math inline">\(H\)</span> 必不等于能量”。含时坐标或全导数改变则可能改变这种识别。</p>
+<p>若 <span class="math inline">\(H\)</span> 不含 <span class="math inline">\(q_a\)</span>，则 <span class="math inline">\(\dot p_a=0\)</span>，但守恒的是所选正则动量。若 <span class="math inline">\(L&#39;=L+\mathrm{d}G(q,t)/\mathrm{d}t\)</span>，则 <span class="math display">\[p&#39;=p+G_q,\qquad
+H&#39;(q,p&#39;,t)=H(q,p&#39;-G_q,t)-G_t.\]</span> 显含时间的表示仍可能描述原来守恒的物理量，不能只看 <span class="math inline">\(H&#39;\)</span> 是否显含时间判断整个系统有无能量守恒。</p>
+<div class="example">
+<p><strong>例 1.2</strong> (谐振子：椭圆与时间方向).  <em>对 <span class="math inline">\(L=m\dot q^2/2-m\omega^2q^2/2\)</span>，有 <span class="math display">\[p=m\dot q,\quad H=\frac{p^2}{2m}+\frac12m\omega^2q^2,
+\quad \dot q=p/m,\quad\dot p=-m\omega^2q.\]</span> 消元得 <span class="math inline">\(\ddot q+\omega^2q=0\)</span>。令固定长度尺度为 <span class="math inline">\(a\)</span>，用 <span class="math inline">\(Q=q/a,P=p/(m\omega a)\)</span>，等能线为 <span class="math inline">\(Q^2+P^2=2E/(m\omega^2a^2)\)</span>，在 <span class="math inline">\((Q,P)\)</span> 图上沿顺时针演化；右端点速度朝下，最高点速度向右。这两个无量纲量用于画图，它们的括号为<span class="math inline">\(1/(m\omega a^2)\)</span>；作无量纲正则化时需连同作用量、时间尺度一致处理。</em></p>
+</div>
+<figure id="fig:phase-oscillator">
+<img src="figs/ch06-fig1.svg" style="width:86.0%" />
+<figcaption>谐振子按同一尺度归一化的相轨道，内外能量比为1:4。两曲线采用相同轴比，箭头与正则方程的时间方向一致。</figcaption>
+</figure>
+<h3 id="相空间作用量与端点条件"><span class="ms-secno">6.1.3</span>相空间作用量与端点条件</h3>
+<p>取固定端点时间，定义 <span class="math display">\[\mathcal A[q,p]=\int_{t_1}^{t_2}\left[\sum_ap_a\dot q_a-H(q,p,t)\right]\mathrm{d}t.
+
+\tag{6.5}\]</span> <span class="math inline">\(q,p\)</span> 是独立的试探路径。对 <span class="math inline">\(p\delta\dot q\)</span> 分部积分，得到 <span class="math display">\[\begin{aligned}
+\delta\mathcal A={}&amp;\left[\sum_ap_a\delta q_a\right]_{t_1}^{t_2}\\
+&amp;+\int\sum_a[(\dot q_a-H_{p_a})\delta p_a
+-(\dot p_a+H_{q_a})\delta q_a]\mathrm{d}t.
+\end{aligned}\]</span> 固定两端 <span class="math inline">\(q\)</span>、不固定动量端点，边界项消失，任意内部变分就给两组正则方程。沿驻值路径有 <span class="math inline">\(p=L_{\dot q}\)</span>，作用量恢复第三章的 <span class="math inline">\(\int L\mathrm{d}t\)</span>；任意试探相路径却不需预先满足该关系。</p>
+<p>若固定动量端点，应改用 <span class="math inline">\(\mathcal A-[\sum p_aq_a]_{t_1}^{t_2}\)</span>，边界变分成为 <span class="math inline">\(-[\sum q_a\delta p_a]\)</span>。任意再加固定两端全部动量的求解条件，通常会使边值问题过度约束；固定两个构型端点也不保证任意时间间隔都存在唯一连接轨道。</p>
+<h2 id="从模型辨认正则动量"><span class="ms-secno">6.2</span>从模型辨认正则动量</h2>
+<h3 id="中心势中的球坐标"><span class="ms-secno">6.2.1</span>中心势中的球坐标</h3>
+<div class="example">
+<p><strong>例 1.3</strong> (中心势的哈密顿方程与径向核验).  <em>非相对论质点质量 <span class="math inline">\(m\)</span>，势能 <span class="math inline">\(V(r)=-\kappa/r\)</span>，<span class="math inline">\(\kappa&gt;0\)</span>。只把它当作经典中心势模型，不包含辐射反作用、原子稳定性或量子跃迁。球坐标正则域取 <span class="math inline">\(r&gt;0,\sin\theta\ne0\)</span>，动能给 <span class="math display">\[p_r=m\dot r,\quad p_\theta=mr^2\dot\theta,\quad
+p_\varphi=mr^2\sin^2\theta\dot\varphi.\]</span> 逐项勒让德变换得到 <span class="math display">\[H=\frac{p_r^2}{2m}+\frac{p_\theta^2}{2mr^2}
++\frac{p_\varphi^2}{2mr^2\sin^2\theta}-\frac\kappa r.\]</span> 于是 <span class="math display">\[\begin{aligned}
+\dot r&amp;=p_r/m,&amp;\dot p_r&amp;=\frac{p_\theta^2}{mr^3}+\frac{p_\varphi^2}{mr^3\sin^2\theta}-\frac\kappa{r^2},\\
+\dot\theta&amp;=p_\theta/(mr^2),&amp;\dot p_\theta&amp;=\frac{p_\varphi^2\cos\theta}{mr^2\sin^3\theta},\\
+\dot\varphi&amp;=p_\varphi/(mr^2\sin^2\theta),&amp;\dot p_\varphi&amp;=0.
+\end{aligned}\]</span> <span class="math inline">\(p_\varphi\)</span> 是角动量的 <span class="math inline">\(z\)</span> 分量。若初态 <span class="math inline">\(\theta=\pi/2,p_\theta=0\)</span>，方程保持这两个条件，化为 <span class="math display">\[\dot p_r=\frac{\ell^2}{mr^3}-\frac\kappa{r^2},\quad \ell=p_\varphi.\]</span> 与第一章 <span class="math inline">\(m(\ddot r-r\dot\varphi^2)=-\kappa/r^2\)</span> 一致。坐标轴极点处的分母奇异是球坐标图问题，不代表质点动力学必然奇异；<span class="math inline">\(r=0\)</span> 的库仑势奇异则是另一回事。</em></p>
+</div>
+<h3 id="带电粒子与规范变换"><span class="ms-secno">6.2.2</span>带电粒子与规范变换</h3>
+<p>带电量记为 <span class="math inline">\(e\)</span>（可正可负），与广义坐标 <span class="math inline">\(q\)</span> 区分。外电磁势给定，质量 <span class="math inline">\(m\)</span> 恒定且不计辐射反作用： <span class="math display">\[L=\tfrac12m\mathbf{v}^2+e\mathbf{A}(\mathbf{r},t)\cdot\mathbf{v}-e\phi(\mathbf{r},t),\qquad
+\mathbf{p}=m\mathbf{v}+e\mathbf{A}.\]</span> 故 <span class="math display">\[H(\mathbf{r},\mathbf{p},t)=\frac{[\mathbf{p}-e\mathbf{A}(\mathbf{r},t)]^2}{2m}+e\phi(\mathbf{r},t).
+
+\tag{6.6}\]</span> 定义机械动量 <span class="math inline">\(\mathbf\pi=\mathbf{p}-e\mathbf{A}\)</span>，正则方程是 <span class="math display">\[\dot x_i=\pi_i/m=v_i,\qquad
+\dot p_i=e\sum_jv_j\partial_i A_j-e\partial_i\phi.\]</span> 再用 <span class="math inline">\(\dot\pi_i=\dot p_i-e\partial_tA_i-e\sum_jv_j\partial_jA_i\)</span>，得到 <span class="math display">\[\dot\pi_i=e[-\partial_i\phi-\partial_tA_i]
++e\sum_jv_j(\partial_iA_j-\partial_jA_i)
+=e[\mathbf{E}+\mathbf{v}\times\mathbf{B}]_i.\]</span> 这与第三章洛伦兹力推导吻合，但 <span class="math inline">\(\dot p_i\)</span> 本身一般不等于洛伦兹力。</p>
+<div class="example">
+<p><strong>例 1.4</strong> (匀强磁场：机械动量不构成正则对).  <em>取 <span class="math inline">\(\mathbf{B}=B\hat z,\phi=0,\mathbf{A}=(0,Bx,0)\)</span>。则 <span class="math display">\[H=\frac{p_x^2+(p_y-eBx)^2+p_z^2}{2m},\quad
+p_y,p_z\text{ 守恒}.\]</span> <span class="math inline">\(x\)</span> 方程给 <span class="math inline">\(\dot p_x=eB(p_y-eBx)/m=eBv_y\)</span>，<span class="math inline">\(\dot p_y=0\)</span> 却不意味着 <span class="math inline">\(mv_y\)</span> 守恒，因为 <span class="math inline">\(\pi_y=p_y-eBx\)</span>。代入即得平面回旋方程 <span class="math inline">\(m\dot v_x=eBv_y,m\dot v_y=-eBv_x\)</span>，机械动能守恒。后文将算出 <span class="math inline">\(\{\pi_x,\pi_y\}=eB\)</span>，所以不能把 <span class="math inline">\((x,y,\pi_x,\pi_y)\)</span> 当成普通正则变量而仍用原括号公式。</em></p>
+</div>
+<p>规范变换 <span class="math inline">\(\mathbf{A}&#39;=\mathbf{A}+\nabla\chi,\phi&#39;=\phi-\partial_t\chi\)</span> 使 <span class="math display">\[\mathbf{p}&#39;=\mathbf{p}+e\nabla\chi,\qquad
+H&#39;(\mathbf{r},\mathbf{p}&#39;,t)=H(\mathbf{r},\mathbf{p}&#39;-e\nabla\chi,t)-e\partial_t\chi.\]</span> 它是一种含时正则表示变化，后文的第二类生成函数可取 <span class="math inline">\(F_2(\mathbf{r},\mathbf{p}&#39;,t)=\mathbf{r}\cdot\mathbf{p}&#39;-e\chi\)</span>。相同轨道、相同机械动量并不要求不同规范下的正则动量和哈密顿函数数值相同。</p>
+<h3 id="罗斯约化的符号与循环条件"><span class="ms-secno">6.2.3</span>罗斯约化的符号与循环条件</h3>
+<p>第五章约化重陀螺使用 <span class="math inline">\(\mathcal R=L-p_\phi\dot\phi-p_\psi\dot\psi\)</span>。这里保持同一<strong>拉格朗日型罗斯函数</strong>约定。设坐标分成 <span class="math inline">\(x_i,y_\alpha\)</span>，对选中的速度块有可逆Hessian，可局部由 <span class="math inline">\(\mu_\alpha=L_{\dot y_\alpha}\)</span> 消去 <span class="math inline">\(\dot y\)</span>，定义 <span class="math display">\[\mathcal R(x,y,\dot x,\mu,t)=L-\sum_\alpha\mu_\alpha\dot y_\alpha.
+
+\tag{6.7}\]</span> 把动量关系代入微分，速度 <span class="math inline">\(\mathrm{d}\dot y\)</span> 项相消，得到 <span class="math display">\[\mathcal R_{\dot x_i}=L_{\dot x_i},\quad \mathcal R_{x_i}=L_{x_i},\quad
+\mathcal R_{y_\alpha}=L_{y_\alpha},\quad
+\mathcal R_{\mu_\alpha}=-\dot y_\alpha.\]</span> 真实路径因而满足 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\mathcal R_{\dot x_i}-\mathcal R_{x_i}=0,\quad
+\dot\mu_\alpha=\mathcal R_{y_\alpha},\quad
+\dot y_\alpha=-\mathcal R_{\mu_\alpha}.\]</span> 若 <span class="math inline">\(y\)</span> 循环，<span class="math inline">\(\mu\)</span> 才可固定为常数，剩下 <span class="math inline">\(x\)</span> 的约化拉格朗日问题。另一些文献取哈密顿型相反号 <span class="math inline">\(R_H=\sum\mu\dot y-L=-\mathcal R\)</span>，其混合正则方程符号随之改变；不能把两种约定无说明地混用。完整Hessian可逆也不自动保证任意选中的子块可逆。</p>
+<div class="example">
+<p><strong>例 1.5</strong> (中心力约化为什么要加离心有效势？).  <em>平面中心势 <span class="math inline">\(L=m(\dot r^2+r^2\dot\varphi^2)/2-V(r)\)</span>，循环动量 <span class="math inline">\(\ell=mr^2\dot\varphi\)</span>。先取 <span class="math inline">\(L-\ell\dot\varphi\)</span> 再代入，得 <span class="math display">\[\mathcal R=\frac m2\dot r^2-\left[V(r)+\frac{\ell^2}{2mr^2}\right].\]</span> 所以 <span class="math inline">\(m\ddot r=-V&#39;(r)+\ell^2/(mr^3)\)</span>。若只代回 <span class="math inline">\(L\)</span>，会得到离心项的错误符号，因为改变的是固定动量的变分问题。用 <span class="math inline">\(\dot\varphi=-\mathcal R_\ell=\ell/(mr^2)\)</span> 可重构轨道方位。</em></p>
+</div>
+<h2 id="相空间流与刘维尔定理"><span class="ms-secno">6.3</span>相空间流与刘维尔定理</h2>
+<h3 id="完整状态与轨道唯一性"><span class="ms-secno">6.3.1</span>完整状态与轨道唯一性</h3>
+<p>在正则局部图中，<span class="math inline">\(z=(q,p)\)</span> 是 <span class="math inline">\(2s\)</span> 维相点。记 <span class="math display">\[\Omega=\begin{pmatrix}0&amp;I\\-I&amp;0\end{pmatrix},\qquad
+\dot z=\Omega\nabla_zH.\]</span> 满足局部唯一性条件时，同一时刻的一个相点给唯一的未来。自治系统的不同相轨道在正则点不能相交；含时系统若把时间投影掉，两条图上曲线可以相交，不能据投影否定唯一性。位形曲线在同一位置交叉更不奇怪，因为动量可以不同。</p>
+<div class="example">
+<p><strong>例 1.6</strong> (单摆：闭合摆动、分离曲线与持续转动).  <em>取角度 <span class="math inline">\(q\)</span> 从竖直向下量起，<span class="math inline">\(I=ml^2,K_0=mgl\)</span>， <span class="math display">\[H=\frac{p^2}{2I}+K_0(1-\cos q),\quad
+\dot q=p/I,\quad \dot p=-K_0\sin q.\]</span> 能量给 <span class="math inline">\(p=\pm\sqrt{2I[E-K_0(1-\cos q)]}\)</span>。<span class="math inline">\(0&lt;E&lt;2K_0\)</span> 为有两转折点的摆动；<span class="math inline">\(E&gt;2K_0\)</span> 动量不变号，是持续转动；<span class="math inline">\(E=2K_0\)</span> 为分离曲线。<span class="math inline">\(q\)</span> 按 <span class="math inline">\(2\pi\)</span> 识别，完整相空间是圆柱，转动轨道在展开平面上不闭合，却在圆柱上闭合。顶点 <span class="math inline">\((\pi,0)\)</span> 为鞍点，线性式 <span class="math inline">\(\ddot\eta-(K_0/I)\eta=0\)</span> 含增长与衰减方向。</em></p>
+</div>
+<figure id="fig:ham-pendulum">
+<img src="figs/ch06-fig2.svg" style="width:86.0%" />
+<figcaption>单摆相图的展开表示：蓝线<span class="math inline">\(E/K_0=1\)</span>，红虚线为分离曲线<span class="math inline">\(E/K_0=2\)</span>，绿点划线为<span class="math inline">\(E/K_0=3\)</span>。上下半平面时间方向相反；左右边按周期识别。</figcaption>
+</figure>
+<h3 id="散度流映射与密度"><span class="ms-secno">6.3.2</span>散度、流映射与密度</h3>
+<p>设 <span class="math inline">\(H\)</span> 二阶偏导连续，<span class="math inline">\(\mathcal D_t\)</span> 是随流移动的相区域。速度场散度为 <span class="math display">\[\nabla_z\cdot\dot z=\sum_a(\partial_{q_a}H_{p_a}-\partial_{p_a}H_{q_a})=0.\]</span> 由输运定理， <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\int_{\mathcal D_t}\mathrm{d}^sq\,\mathrm{d}^sp=0.
+
+\tag{6.8}\]</span> 等价地，流映射 <span class="math inline">\(z(t)=\Phi_{t,t_0}(z_0)\)</span> 的雅可比行列式满足 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\det D\Phi=(\nabla_z\cdot\dot z)\det D\Phi=0,
+\quad \det D\Phi_{t_0,t_0}=1.\]</span> 这是刘维尔定理；不要求自治，体积保持也不要求形状保持。</p>
+<figure id="fig:liouville">
+<img src="figs/ch06-fig3.svg" style="width:86.0%" />
+<figcaption>取无量纲自由粒子<span class="math inline">\(H=P^2/2\)</span>，时间步长为1，准确映射为<span class="math inline">\((Q,P)\mapsto(Q+P,P)\)</span>。左方单位面积矩形变为右方单位面积平行四边形，顶点均由同一映射计算。</figcaption>
+</figure>
+<p>对随流输运的概率密度 <span class="math inline">\(\rho(q,p,t)\)</span>，连续性方程为 <span class="math display">\[\partial_t\rho+\nabla_z\cdot(\rho\dot z)=0,
+\quad \partial_t\rho+\dot z\cdot\nabla_z\rho=0.\]</span> 因此精细密度沿轨道不变，即使分布显含时间也如此。对自治 <span class="math inline">\(H\)</span>，适当的 <span class="math inline">\(\rho=f(H)\)</span> 是静态分布，但体积保持本身既不保证遍历性，也不推出能量面上某个特定均匀概率；微正则平衡仍需统计假设。相体积元素是正则坐标的 <span class="math inline">\(\mathrm{d}q\mathrm{d}p\)</span>，在一般非正则变量中不能丢掉测度雅可比。</p>
+<h2 id="泊松括号守恒量与生成元"><span class="ms-secno">6.4</span>泊松括号、守恒量与生成元</h2>
+<h3 id="定义及恒等式的来由"><span class="ms-secno">6.4.1</span>定义及恒等式的来由</h3>
+<p>对相空间函数定义 <span class="math display">\[\{f,g\}=\sum_a(f_{q_a}g_{p_a}-f_{p_a}g_{q_a})
+=(\nabla f)^{\mathsf T}\Omega\nabla g.
+
+\tag{6.9}\]</span> 用正则方程代入总导数，得到 <span class="math display">\[\dot f=\{f,H\}+\partial_tf.
+
+\tag{6.10}\]</span> 所以基本括号为 <span class="math inline">\(\{q_a,q_b\}=\{p_a,p_b\}=0,\{q_a,p_b\}=\delta_{ab}\)</span>。括号对实常数线性、反对称，且由导数乘积法则有 <span class="math display">\[\{f,gh\}=\{f,g\}h+g\{f,h\}.\]</span> 若系数依赖相点，就不能把它随意当常数移出括号。</p>
+<p>雅可比恒等式为 <span class="math display">\[\{f,\{g,h\}\}+\{g,\{h,f\}\}+\{h,\{f,g\}\}=0.
+
+\tag{6.11}\]</span> 它不是额外的运动假设。以 <span class="math inline">\(z_i\)</span> 记全部正则变量，<span class="math inline">\(f_i=\partial_if\)</span>，常矩阵 <span class="math inline">\(\Omega\)</span> 给 <span class="math display">\[\{f,\{g,h\}\}=f_i\Omega_{ij}g_{kj}\Omega_{k\ell}h_\ell
++f_i\Omega_{ij}g_k\Omega_{k\ell}h_{\ell j}.\]</span> 加上两个循环置换后，含 <span class="math inline">\(f_{ij}\)</span>、<span class="math inline">\(g_{ij}\)</span>、<span class="math inline">\(h_{ij}\)</span> 的项分别因二阶导数对称与 <span class="math inline">\(\Omega\)</span> 反对称成对抵消。这也说明它依赖当前括号的微分结构，不能只凭反对称性就认定任意双线性运算满足雅可比式。</p>
+<h3 id="显含时间的运动积分"><span class="ms-secno">6.4.2</span>显含时间的运动积分</h3>
+<p>定义 <span class="math inline">\(D_Hf=\partial_tf+\{f,H\}\)</span>。<span class="math inline">\(f\)</span> 守恒的条件是 <span class="math inline">\(D_Hf=0\)</span>，不要求它不显含时间。利用雅可比式和时间导数乘积规则， <span class="math display">\[D_H\{f,g\}=\{D_Hf,g\}+\{f,D_Hg\}.\]</span> 因此两个运动积分的括号仍是运动积分，即泊松定理；该括号可能只是零或已有量，并不保证产生新的独立守恒量。</p>
+<div class="example">
+<p><strong>例 1.7</strong> (角动量代数与空间转动).  <em>取正则Cartesian变量，<span class="math inline">\(J_x=yp_z-zp_y,J_y=zp_x-xp_z\)</span>。分别求梯度： <span class="math display">\[(J_x)_q=(0,p_z,-p_y),\quad(J_x)_p=(0,-z,y),\]</span> <span class="math display">\[(J_y)_q=(-p_z,0,p_x),\quad(J_y)_p=(z,0,-x).\]</span> 两次点积相减得 <span class="math inline">\(\{J_x,J_y\}=xp_y-yp_x=J_z\)</span>，循环置换给 <span class="math inline">\(\{J_i,J_j\}=\epsilon_{ijk}J_k\)</span>。这是正则轨道角动量的代数；存在磁矢势时，机械轨道角动量与对称性生成元的识别需另查规范和边界项。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.8</strong> (机械动量的磁括号).  <em><span class="math inline">\(\pi_i=p_i-eA_i(q,t)\)</span> 满足 <span class="math display">\[\{q_i,\pi_j\}=\delta_{ij},\qquad
+\{\pi_i,\pi_j\}=e(\partial_iA_j-\partial_jA_i)=e\epsilon_{ijk}B_k.\]</span> 计算中 <span class="math inline">\(\{p_i,A_j\}=-\partial_iA_j\)</span>，<span class="math inline">\(\{A_i,p_j\}=\partial_jA_i\)</span>，正负号不可丢。故虽有位置–机械动量的单位括号，完整基本括号仍不正则；两动量之间的非零括号正记录磁场的影响。</em></p>
+</div>
+<h3 id="守恒量如何生成状态变换"><span class="ms-secno">6.4.3</span>守恒量如何生成状态变换</h3>
+<p>对光滑 <span class="math inline">\(G(q,p,t)\)</span>，在固定时刻令 <span class="math display">\[\delta q_a=\epsilon G_{p_a},\quad\delta p_a=-\epsilon G_{q_a},\quad
+\delta f=\epsilon\{f,G\}.\]</span> <span class="math inline">\(G=p_x\)</span> 生成 <span class="math inline">\(x\)</span> 平移；<span class="math inline">\(G=J_z=xp_y-yp_x\)</span> 给 <span class="math display">\[\delta x=-\epsilon y,\quad\delta y=\epsilon x,\quad
+\delta p_x=-\epsilon p_y,\quad\delta p_y=\epsilon p_x,\]</span> 即绕 <span class="math inline">\(+z\)</span> 的主动微转动。<span class="math inline">\(G\)</span> 的哈密顿向量场本身生成局部正则流；若 <span class="math inline">\(G\)</span> 自治且 <span class="math inline">\(\{H,G\}=0\)</span>，该变换还保持 <span class="math inline">\(H\)</span>，因而给动力学对称性。</p>
+<div class="example">
+<p><strong>例 1.9</strong> (伽利略速度变换与含时守恒量).  <em>一维自由粒子 <span class="math inline">\(H=p^2/(2m)\)</span>，取 <span class="math inline">\(G=tp-mx\)</span>。有 <span class="math display">\[\partial_tG=p,\quad\{G,H\}=-p,\quad\dot G=0;
+\qquad\delta x=\epsilon t,\quad\delta p=\epsilon m.\]</span> <span class="math inline">\(\epsilon\)</span> 的单位是速度。它生成主动增加速度的状态变换；同第三章含边界项的诺特量一致。若取 <span class="math inline">\(-G\)</span>，变换参数方向同时反转，不能只比较守恒量的正负号。</em></p>
+</div>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p>正则量子化用 <span class="math inline">\([\hat q_a,\hat p_b]=i\hbar\delta_{ab}\)</span>，角动量也有相应对易代数。这是结构联系，不意味着对任意经典函数都存在保持所有乘积和泊松括号的简单量子映射；高次乘积有算符次序等问题。继续学习需线性算符与量子力学，本章不以替换符号代替量子化的完整构造。</p>
+</div>
+<h2 id="正则变换保持的结构与局部生成函数"><span class="ms-secno">6.5</span>正则变换：保持的结构与局部生成函数</h2>
+<h3 id="辛条件比保持体积更强"><span class="ms-secno">6.5.1</span>辛条件比保持体积更强</h3>
+<p>令 <span class="math inline">\(Z=(Q,P)=Z(z,t)\)</span> 是可逆局部变换，<span class="math inline">\(\mathcal J=\partial Z/\partial z\)</span>。固定时刻的新变量括号矩阵是 <span class="math display">\[\{Z_i,Z_j\}=(\mathcal J\Omega\mathcal J^{\mathsf T})_{ij}.\]</span> 正则变换要求基本括号保持，即 <span class="math display">\[\mathcal J\Omega\mathcal J^{\mathsf T}=\Omega
+\quad\Longleftrightarrow\quad
+\mathcal J^{\mathsf T}\Omega\mathcal J=\Omega.
+
+\tag{6.12}\]</span> 可用 <span class="math inline">\(\Omega^{-1}=-\Omega\)</span> 取逆证明两个形式等价。此条件还使任意 <span class="math inline">\(f,g\)</span> 的泊松括号经链式法则保持，不仅是某个给定 <span class="math inline">\(H\)</span> 的一条轨道偶然能写成相似方程。</p>
+<p>对不显含时间的正则变换，<span class="math inline">\(K(Z)=H(z(Z))\)</span>，于是 <span class="math display">\[\dot Z=\mathcal J\Omega\nabla_zH
+=\mathcal J\Omega\mathcal J^{\mathsf T}\nabla_ZK=\Omega\nabla_ZK.\]</span> 显含时间时还须加 <span class="math inline">\(\partial_tZ\)</span>，并相应改变 <span class="math inline">\(K\)</span>；单独验证某时刻辛性不允许把这一项删去。</p>
+<p>几何上，辛条件保持二形式 <span class="math inline">\(\sum_a\mathrm{d}q_a\wedge\mathrm{d}p_a\)</span>。将它作<span class="math inline">\(s\)</span>次外积便得到正则体积（差一个固定符号和阶乘），故正则变换保持定向体积、<span class="math inline">\(\det\mathcal J=1\)</span>。在一自由度的二维空间，行列式为1也足够；多自由度时仅有体积保持远远不够。</p>
+<div class="example">
+<p><strong>例 1.10</strong> (四维体积保持的反例).  <em>取两自由度变换 <span class="math display">\[Q_1=2q_1,\ P_1=p_1,\quad Q_2=q_2,\ P_2=p_2/2.\]</span> 总雅可比行列式为1，但 <span class="math inline">\(\{Q_1,P_1\}=2,\{Q_2,P_2\}=1/2\)</span>，不是正则变换。相反，<span class="math inline">\(Q=aq,P=p/a\)</span>、<span class="math inline">\(a\ne0\)</span> 的一对互逆缩放是正则的。体积守恒不能代替逐对括号检验。</em></p>
+</div>
+<figure id="fig:ham-volume-not-symplectic">
+<img src="figs/ch06-fig4.svg" style="width:86.0%" />
+<figcaption>四维反例在两个共轭平面的面积变化，虚线表示原单位方块。两个面积因子的乘积为1，却各自不保持，因而整体体积保持仍不辛。</figcaption>
+</figure>
+<h3 id="从作用量边界项推导四类公式"><span class="ms-secno">6.5.2</span>从作用量边界项推导四类公式</h3>
+<p>局部正则变换可由相空间作用量的一形式关系构造： <span class="math display">\[\sum_ap_a\mathrm{d}q_a-H\mathrm{d}t
+=\sum_aP_a\mathrm{d}Q_a-K\mathrm{d}t+\mathrm{d}F_1.\]</span> 把 <span class="math inline">\(F_1\)</span> 取为 <span class="math inline">\((q,Q,t)\)</span> 的函数，比较独立微分系数，就有 <span class="math inline">\(p=(F_1)_q,P=-(F_1)_Q,K=H+(F_1)_t\)</span>。进一步令 <span class="math display">\[F_2=F_1+\sum_aP_aQ_a,\quad
+F_3=F_1-\sum_ap_aq_a,\quad
+F_4=F_1-\sum_ap_aq_a+\sum_aP_aQ_a,\]</span> 并在各自可反解的图中改用相应自变量，得到 <span class="math display">\[\begin{aligned}
+F_1(q,Q,t):&amp;\quad p=(F_1)_q,\quad P=-(F_1)_Q,\\
+F_2(q,P,t):&amp;\quad p=(F_2)_q,\quad Q=(F_2)_P,\\
+F_3(p,Q,t):&amp;\quad q=-(F_3)_p,\quad P=-(F_3)_Q,\\
+F_4(p,P,t):&amp;\quad q=-(F_4)_p,\quad Q=(F_4)_P.
+\end{aligned}\tag{6.13}\]</span> 每一类都有 <span class="math inline">\(K=H+(F_i)_t\)</span>，偏时间导数保持该类列出的自变量固定。用旧变量写出右端后，还需代入反变换，才能成为 <span class="math inline">\(K(Q,P,t)\)</span>。</p>
+<p>这些是局部构造，需相应混合Hessian可逆。例如 <span class="math inline">\(F_2\)</span> 需要 <span class="math inline">\(\det(F_{2,qP})\ne0\)</span>，才能由 <span class="math inline">\(p=F_{2,q}\)</span> 解出 <span class="math inline">\(P\)</span>。恒等变换有 <span class="math inline">\(F_2=q\cdot P\)</span>，但不能把依赖的 <span class="math inline">\(q,Q=q\)</span> 强作独立变量构成常规 <span class="math inline">\(F_1(q,Q)\)</span> 图。存在正则变换不意味着四类生成函数在所有点或全局都同时可用。</p>
+<div class="example">
+<p><strong>例 1.11</strong> (可逆点变换及其动量).  <em>设 <span class="math inline">\(Q=f(q)\)</span>，<span class="math inline">\(Df\)</span> 可逆，取 <span class="math inline">\(F_2(q,P)=f(q)\cdot P\)</span>。则 <span class="math display">\[Q=f(q),\qquad p=(Df)^{\mathsf T}P.\]</span> 这是第三章位形坐标变换的正则提升。对 <span class="math inline">\(Q=aq\)</span>，<span class="math inline">\(P=p/a\)</span>，新量纲随坐标尺度变化，<span class="math inline">\(p\mathrm{d}q=P\mathrm{d}Q\)</span>；若只改 <span class="math inline">\(q\)</span> 而不相应改 <span class="math inline">\(p\)</span>，一般不再正则。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.12</strong> (移动坐标：新哈密顿量要包含时间项).  <em>自由粒子改用 <span class="math inline">\(Q=x-Vt\)</span>，取 <span class="math inline">\(F_2(x,P,t)=(x-Vt)P\)</span>，故 <span class="math display">\[p=P,\quad Q=x-Vt,\quad K=H-VP=\frac{P^2}{2m}-VP.\]</span> 正则方程 <span class="math inline">\(\dot Q=P/m-V,\dot P=0\)</span> 与坐标定义一致。也可从 <span class="math inline">\(L&#39;=m(\dot Q+V)^2/2\)</span> 直接勒让德变换复算；<span class="math inline">\(K\)</span> 不等于原系 <span class="math inline">\(p^2/(2m)\)</span>。</em></p>
+<p><em>若还希望新动量是移动系机械动量，另取 <span class="math display">\[\widehat F_2=(x-Vt)(\widehat P+mV)+\tfrac12mV^2t.\]</span> 得到 <span class="math inline">\(p=\widehat P+mV,\widehat Q=x-Vt,\widehat K=\widehat P^2/(2m)\)</span>。两个描述的坐标相同、动量和边界项不同，不能将其中一套的<span class="math inline">\(P\)</span>与另一套的<span class="math inline">\(K\)</span>混用。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.13</strong> (规范变换作为含时正则变换).  <em>对电磁例取 <span class="math inline">\(F_2(\mathbf{r},\mathbf{p}&#39;,t)=\mathbf{r}\cdot\mathbf{p}&#39;-e\chi(\mathbf{r},t)\)</span>，则 <span class="math display">\[\mathbf{p}=\mathbf{p}&#39;-e\nabla\chi,\quad\mathbf{r}&#39;=\mathbf{r},\quad
+K=H-e\partial_t\chi.\]</span> 代入旧 <span class="math inline">\(H\)</span>，正好成为势 <span class="math inline">\(\mathbf{A}&#39;=\mathbf{A}+\nabla\chi,\phi&#39;=\phi-\chi_t\)</span> 下的同一最小耦合形式。机械动量 <span class="math inline">\(\mathbf{p}&#39;-e\mathbf{A}&#39;=\mathbf{p}-e\mathbf{A}\)</span> 不变，独立验证了轨道不变；哈密顿量改变不是额外施加了一个电场。</em></p>
+</div>
+<h2 id="哈密顿雅可比理论从完全积分重构运动"><span class="ms-secno">6.6</span>哈密顿–雅可比理论：从完全积分重构运动</h2>
+<h3 id="把运动转成常变量的条件"><span class="ms-secno">6.6.1</span>把运动转成常变量的条件</h3>
+<p>希望构造第二类生成函数 <span class="math inline">\(S(q,\alpha,t)\)</span>，使新动量为 <span class="math inline">\(\alpha\)</span>，新坐标为 <span class="math inline">\(\beta\)</span>，新哈密顿量为零。由 <span class="math inline">\(p=S_q\)</span>、<span class="math inline">\(K=H+S_t\)</span>，得到 <span class="math display">\[\boxed{S_t+H(q,S_q,t)=0.}
+
+\tag{6.14}\]</span> 这是一阶偏微分方程，称哈密顿–雅可比（HJ）方程，<span class="math inline">\(S\)</span>称哈密顿主函数，具有作用量量纲。求到<em>一个</em>无参数的 <span class="math inline">\(S(q,t)\)</span>，只给一族 <span class="math inline">\(p=S_q\)</span>，通常不足以重建全部初值。所需完全积分含 <span class="math inline">\(s\)</span> 个参数 <span class="math inline">\(\alpha_a\)</span>，并在工作图中满足 <span class="math display">\[\det S_{q_a\alpha_b}\ne0.\]</span> 于是 <span class="math display">\[p_a=S_{q_a},\quad \beta_a=S_{\alpha_a},\quad
+\dot\alpha_a=\dot\beta_a=0.\]</span> 先由 <span class="math inline">\(\beta=S_\alpha\)</span> 反解 <span class="math inline">\(q(t;\alpha,\beta)\)</span>，再求 <span class="math inline">\(p\)</span>，共给出<span class="math inline">\(2s\)</span>个轨道常量。可任加一个不影响导数的常数，但它不算新的独立轨道参数。</p>
+<p>由真实路径上的作用量随终点变化，可得端点形式 <span class="math inline">\(\mathrm{d}S=p\cdot\mathrm{d}q-H\mathrm{d}t\)</span>，所以 <span class="math inline">\(S_q=p,S_t=-H\)</span>；这里选择了固定初端与一条光滑连接路径分支。多条连接、焦散或转折会使这个端点函数需分支或换图，不能把它不加条件称作全局单值函数。</p>
+<div class="example">
+<p><strong>例 1.14</strong> (自由粒子的完全积分).  <em><span class="math inline">\(H=p^2/(2m)\)</span>，取 <span class="math display">\[S(x,\alpha,t)=\alpha x-\frac{\alpha^2}{2m}t,
+\quad S_{x\alpha}=1.\]</span> 直接代入HJ式为零；<span class="math inline">\(p=\alpha,\beta=x-\alpha t/m\)</span>，故 <span class="math inline">\(x=\beta+\alpha t/m\)</span>。<span class="math inline">\(\alpha\)</span> 为初动量，<span class="math inline">\(\beta\)</span> 为初位置；量纲 <span class="math inline">\([S]=\)</span>能量<span class="math inline">\(\times\)</span>时间，故 <span class="math inline">\(S_x\)</span> 确为动量。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.15</strong> (恒力的完全积分与两个初值).  <em>恒力 <span class="math inline">\(F\)</span> 的势能 <span class="math inline">\(V=-Fx\)</span>，取 <span class="math display">\[S=(\alpha+Ft)x-\frac{\alpha^2t}{2m}
+-\frac{\alpha Ft^2}{2m}-\frac{F^2t^3}{6m}.\]</span> 有 <span class="math inline">\(S_x=\alpha+Ft\)</span>，而 <span class="math display">\[S_t=Fx-\frac{\alpha^2}{2m}-\frac{\alpha Ft}{m}-\frac{F^2t^2}{2m},\]</span> 与 <span class="math inline">\(H(x,S_x)=S_x^2/(2m)-Fx\)</span> 相消，且 <span class="math inline">\(S_{x\alpha}=1\)</span>。因此 <span class="math display">\[p=\alpha+Ft,\quad\beta=x-\alpha t/m-Ft^2/(2m),
+\quad x=\beta+\alpha t/m+Ft^2/(2m).\]</span> 这独立恢复Newton恒加速度轨道；<span class="math inline">\(F\to0\)</span> 退回自由粒子完全积分。</em></p>
+</div>
+<h3 id="自治分离与转折点分支"><span class="ms-secno">6.6.2</span>自治分离与转折点分支</h3>
+<p>自治 <span class="math inline">\(H\)</span> 可令 <span class="math display">\[S=W(q,\alpha)-E(\alpha)t,\qquad H(q,W_q)=E.
+
+\tag{6.15}\]</span> <span class="math inline">\(W\)</span> 称特征函数。求解它仍可能与原运动一样困难；HJ提供精确的重组方式，而非保证任意系统都能显式分离。</p>
+<div class="example">
+<p><strong>例 1.16</strong> (谐振子的一支HJ解为何不覆盖整周期？).  <em>设 <span class="math inline">\(E&gt;0\)</span>，<span class="math inline">\(A=\sqrt{2E/(m\omega^2)}\)</span>，在 <span class="math inline">\(|q|&lt;A,p&gt;0\)</span> 的分支上 <span class="math display">\[W_q=\sqrt{2mE-m^2\omega^2q^2},\]</span> 其原函数可取 <span class="math display">\[W_+(q,E)=\tfrac12q\sqrt{2mE-m^2\omega^2q^2}
++\frac E\omega\arcsin(q/A).\]</span> 参数 <span class="math inline">\(E\)</span> 在该图中使 <span class="math inline">\(W_{qE}=m/p\ne0\)</span>，因此 <span class="math inline">\(S=W_+-Et\)</span> 为局部完全积分。求 <span class="math inline">\(S_E=\beta\)</span> 得 <span class="math display">\[\frac1\omega\arcsin(q/A)-t=\beta,
+\quad q=A\sin[\omega(t+\beta)].\]</span> 但此反正弦主值只覆盖 <span class="math inline">\(p&gt;0\)</span>、相位在 <span class="math inline">\((-\pi/2,\pi/2)\)</span> 的区间。转折后必须改取负动量支并匹配相位；转折点 <span class="math inline">\(p=0\)</span> 时 <span class="math inline">\(W_{qE}\)</span> 发散，该生成函数图失效，而原相空间运动光滑。不能把局部反正弦时间关系直接当作全局周期计时器。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.17</strong> (中心势分离常数就是角动量).  <em>对前文球坐标中心势，取 <span class="math display">\[W=W_r(r)+W_\theta(\theta)+\ell_z\varphi.\]</span> 代入HJ式并乘 <span class="math inline">\(r^2\)</span>，径向与角向分离，定义常数 <span class="math inline">\(\ell^2\)</span>： <span class="math display">\[(W_\theta&#39;)^2+\frac{\ell_z^2}{\sin^2\theta}=\ell^2,
+\qquad
+(W_r&#39;)^2=2m[E-V(r)]-\ell^2/r^2.\]</span> 所以 <span class="math inline">\(\ell^2=J^2\)</span>，并要求 <span class="math inline">\(\ell^2\ge\ell_z^2\)</span>。各项根号的正负分支对应运动方向，容许区要求根号非负；由参数导数重构角度与时间仍是必需步骤。圆轨道或特殊平面选择可使某参数图退化，不能只数形式上的分离常数就保证全局完全积分。</em></p>
+</div>
+<h2 id="作用角变量周期与可积性"><span class="ms-secno">6.7</span>作用角变量、周期与可积性</h2>
+<h3 id="一自由度的面积与频率"><span class="ms-secno">6.7.1</span>一自由度的面积与频率</h3>
+<p>对自治一自由度中一族光滑、紧致、无临界点的周期轨道，取真实运动方向的闭合积分 <span class="math display">\[J(E)=\frac1{2\pi}\oint p\,\mathrm{d}q.
+
+\tag{6.16}\]</span> 对通常有两个简单转折点的自然系统，<span class="math inline">\(J\)</span> 等于闭合相面积除以 <span class="math inline">\(2\pi\)</span>。<span class="math inline">\(q\)</span> 为角坐标的持续转动则要在圆柱的基本周期回路积分，未必是展开平面内的围面积。</p>
+<p>在非临界的轨道族上，对 <span class="math inline">\(H(q,p)=E\)</span> 求导得 <span class="math inline">\(H_p\partial_Ep=1\)</span>。两支合起来有 <span class="math display">\[\frac{\mathrm{d}J}{\mathrm{d}E}=\frac1{2\pi}\oint\frac{\mathrm{d}q}{\dot q}
+=\frac{T(E)}{2\pi}.\]</span> 简单转折处 <span class="math inline">\(p=0\)</span> 使端点项为零，<span class="math inline">\(1/\dot q\)</span> 的奇异性可积；在分离曲线处周期发散则另论。反解 <span class="math inline">\(E=H(J)\)</span> 后，取局部生成函数 <span class="math inline">\(W(q,J)\)</span>，定义 <span class="math display">\[\theta=W_J,\qquad\dot\theta=H_J=2\pi/T(E),\qquad\dot J=0.
+
+\tag{6.17}\]</span> <span class="math inline">\(\theta\)</span> 的周期为 <span class="math inline">\(2\pi\)</span>，不是构型角必然相等的另一个名字。若改用不除以 <span class="math inline">\(2\pi\)</span> 的作用，保持正则性就需将其共轭角同时除以 <span class="math inline">\(2\pi\)</span>。</p>
+<div class="example">
+<p><strong>例 1.18</strong> (谐振子的全周期相位与局部生成函数).  <em>取 <span class="math display">\[q=\sqrt{\frac{2J}{m\omega}}\sin\theta,\qquad
+p=\sqrt{2m\omega J}\cos\theta,\quad J&gt;0.\]</span> 沿一周积分 <span class="math inline">\(p\mathrm{d}q\)</span> 得 <span class="math inline">\(J=E/\omega\)</span>。反变换是 <span class="math display">\[J=\frac{p^2+m^2\omega^2q^2}{2m\omega},\qquad
+\theta=\operatorname{atan2}(m\omega q,p)\pmod{2\pi}.\]</span> 直接求偏导可验证 <span class="math inline">\(\{\theta,J\}=1\)</span>，因此 <span class="math inline">\(H=\omega J\)</span> 给 <span class="math inline">\(\dot\theta=\omega\)</span>。角在任一选定切口图上光滑，绕周后加 <span class="math inline">\(2\pi\)</span>；原点 <span class="math inline">\(J=0\)</span> 没有可辨相位，不能纳入同一角坐标图。</em></p>
+<p><em>在 <span class="math inline">\(\sin\theta\ne0\)</span> 的适当分支，也可用第一类生成函数 <span class="math display">\[F_1(q,\theta)=\tfrac12m\omega q^2\cot\theta,
+\quad p=(F_1)_q,\quad J=-(F_1)_\theta
+=\frac{m\omega q^2}{2\sin^2\theta}.\]</span> 由此得 <span class="math inline">\(K=\omega J\)</span>。<span class="math inline">\(\sin\theta=0\)</span> 时这类投影图失效，并不表示非零动量的物理状态消失；应换图或直接使用上述正反变换。</em></p>
+</div>
+<figure id="fig:ham-action-angle">
+<img src="figs/ch06-fig5.svg" style="width:86.0%" />
+<figcaption>使用互逆缩放后的共轭轴，两坐标均有作用量平方根单位。半径为<span class="math inline">\(\sqrt{2J}\)</span>，相面积为<span class="math inline">\(2\pi J\)</span>；相位从正动量轴顺时针量起，与正文正弦/余弦约定一致。</figcaption>
+</figure>
+<h3 id="单摆分离曲线附近有限作用与无限周期"><span class="ms-secno">6.7.2</span>单摆分离曲线附近：有限作用与无限周期</h3>
+<div class="example">
+<p><strong>例 1.19</strong> (周期发散不要求相面积发散).  <em>回到 <span class="math inline">\(H=p^2/(2I)+K_0(1-\cos q)\)</span>，<span class="math inline">\(0&lt;E&lt;2K_0\)</span> 时令 <span class="math display">\[k=\sqrt{E/(2K_0)}=\sin(q_{\max}/2)&lt;1.\]</span> 由 <span class="math inline">\(\dot q=p/I\)</span>，四分之一周期为 <span class="math inline">\(\sqrt{I/(2K_0)}\int_0^{q_{\max}}\mathrm{d}q/\sqrt{E/K_0-1+\cos q}\)</span>。作 <span class="math inline">\(\sin(q/2)=k\sin u\)</span>，得到 <span class="math display">\[T(E)=4\sqrt{I/K_0}\int_0^{\pi/2}\frac{\mathrm{d}u}{\sqrt{1-k^2\sin^2u}}.\]</span> <span class="math inline">\(k\to0\)</span> 恢复 <span class="math inline">\(2\pi\sqrt{I/K_0}\)</span>；<span class="math inline">\(k\to1^-\)</span> 时端点附近被积函数趋 <span class="math inline">\(1/\cos u\)</span>，积分对数发散，不能继续用固定小振动频率。</em></p>
+<p><em>分离曲线的正支为 <span class="math inline">\(p_+(q)=2\sqrt{IK_0}\cos(q/2)\)</span>，<span class="math inline">\(-\pi\le q\le\pi\)</span>。因此摆动侧的极限作用 <span class="math display">\[J_{\rm lib,s}=\frac1{2\pi}\,2\int_{-\pi}^{\pi}p_+(q)\mathrm{d}q
+=\frac{8\sqrt{IK_0}}\pi\]</span> 仍有限，而 <span class="math inline">\(\mathrm{d}J/\mathrm{d}E=T/(2\pi)\)</span> 发散。正向转动侧只沿一支绕圆柱一圈，其极限为 <span class="math inline">\(4\sqrt{IK_0}/\pi\)</span>。两侧采用不同基本回路，不能要求它们的作用值无区别地相等；分离曲线本身不是正则的作用角环面。</em></p>
+</div>
+<figure id="fig:ham-pendulum-period">
+<img src="figs/ch06-fig6.svg" style="width:86.0%" />
+<figcaption>单摆摆动周期的数值积分，与小振动常周期比较。蓝线仅计算<span class="math inline">\(E/K_0&lt;2\)</span>的正则轨道，红虚线标出分离能量；不在临界点伪造有限周期。数据由伴随核查脚本生成。</figcaption>
+</figure>
+<h3 id="开普勒作用不同频率何时相同"><span class="ms-secno">6.7.3</span>开普勒作用：不同频率何时相同？</h3>
+<div class="example">
+<p><strong>例 1.20</strong> (有界平面库仑势的径向作用).  <em>取 <span class="math inline">\(V=-\kappa/r,E&lt;0\)</span>，并固定正向角动量 <span class="math inline">\(\ell&gt;0\)</span>，非圆椭圆的半长轴、偏心率满足 <span class="math display">\[a=-\frac\kappa{2E},\qquad \ell^2=m\kappa a(1-e^2),\quad0&lt;e&lt;1.\]</span> 角向作用 <span class="math inline">\(J_\varphi=\ell\)</span>，径向往复作用为 <span class="math display">\[J_r=\frac1\pi\int_{r_-}^{r_+}\sqrt{2m(E+\kappa/r)-\ell^2/r^2}\,\mathrm{d}r.\]</span> 以偏近点角 <span class="math inline">\(u\)</span> 代入 <span class="math inline">\(r=a(1-e\cos u),0\le u\le\pi\)</span>，则 <span class="math display">\[p_r=\sqrt{m\kappa/a}\frac{e\sin u}{1-e\cos u},\qquad
+J_r=\frac{\sqrt{m\kappa a}}\pi\int_0^\pi
+\frac{e^2\sin^2u}{1-e\cos u}\mathrm{d}u.\]</span> 用恒等式 <span class="math inline">\(e^2\sin^2u/(1-e\cos u)=1+e\cos u-(1-e^2)/(1-e\cos u)\)</span>，再由 <span class="math inline">\(\tan(u/2)\)</span> 代换得 <span class="math inline">\(\int_0^\pi\mathrm{d}u/(1-e\cos u)=\pi/\sqrt{1-e^2}\)</span>，故 <span class="math display">\[J_r=\sqrt{m\kappa a}-\ell
+=\kappa\sqrt{\frac{m}{-2E}}-\ell.\]</span> 反解能量为 <span class="math display">\[H=-\frac{m\kappa^2}{2(J_r+J_\varphi)^2},\quad
+\omega_r=\omega_\varphi=\frac{m\kappa^2}{(J_r+J_\varphi)^3}
+=\sqrt{\frac\kappa{ma^3}}.\]</span> 两角频率相同对应闭合的开普勒椭圆，并与第一章周期关系相容。圆轨道 <span class="math inline">\(J_r=0\)</span> 是此作用域的边界，零角动量碰撞轨道也不在当前正则环面图内。</em></p>
+</div>
+<h3 id="多自由度可积性与kam的条件"><span class="ms-secno">6.7.4</span>多自由度可积性与KAM的条件</h3>
+<p>对自治 <span class="math inline">\(s\)</span> 自由度系统，刘维尔可积要求包含 <span class="math inline">\(H\)</span> 在内的<span class="math inline">\(s\)</span>个函数独立积分 <span class="math inline">\(F_i\)</span>，且 <span class="math inline">\(\{F_i,F_j\}=0\)</span>。若共同正则水平集紧致、连通，适当邻域中可用环面上的作用角变量，<span class="math inline">\(H=H(J)\)</span>，<span class="math inline">\(\dot\theta_a=\partial_{J_a}H,\dot J=0\)</span>。一般作用是基本回路上的 <span class="math inline">\(\oint\sum p_a\mathrm{d}q_a/(2\pi)\)</span>，只有在合适分离坐标中才直接变成单项 <span class="math inline">\(\oint p_a\mathrm{d}q_a\)</span>。</p>
+<p>运动可为周期或准周期，取决于频率是否有整数共振关系。非紧致散射、临界能量、分离曲线和坐标覆盖障碍不能被“有<span class="math inline">\(s\)</span>个常数”一句话排除。可积也不等于一定能在原坐标中初等分离变量。</p>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p>对 <span class="math inline">\(H_0(J)+\epsilon H_1(J,\theta)\)</span>，一种常见KAM版本要求足够光滑或解析、摄动小，以及频率非退化，例如 <span class="math inline">\(\det\partial_J^2H_0\ne0\)</span>；保留频率满足 <span class="math inline">\(|k\cdot\omega|\ge\gamma|k|^{-\tau}\)</span>，<span class="math inline">\(k\in\mathbb Z^s\setminus\{0\}\)</span>，参数按定理选取。结论是许多环面保留，不保证所有共振环面，也不直接给出天体寿命。谐振子 <span class="math inline">\(H_0=\sum\omega_aJ_a\)</span> 在此Hessian条件下退化，需另用合适定理。</p>
+<p>自治一自由度鞍点的指数不稳定不等于混沌；线性拍或短时能量误差也不是混沌判据。继续学习需摄动、微分方程及非共振数论条件。</p>
+</div>
+<h2 id="计算与模拟辛性能量与误差阶"><span class="ms-secno">6.8</span>计算与模拟：辛性、能量与误差阶</h2>
+<h3 id="显式euler与辛euler的不同结构"><span class="ms-secno">6.8.1</span>显式Euler与辛Euler的不同结构</h3>
+<p>取无量纲谐振子 <span class="math inline">\(H=(q^2+p^2)/2\)</span>，步长 <span class="math inline">\(h\)</span> 固定。显式Euler为 <span class="math display">\[q_{n+1}=q_n+hp_n,\quad p_{n+1}=p_n-hq_n,
+\quad A_E=\begin{pmatrix}1&amp;h\\-h&amp;1\end{pmatrix}.\]</span> 它满足 <span class="math inline">\(H_{n+1}=(1+h^2)H_n\)</span>、<span class="math inline">\(\det A_E=1+h^2\)</span>，任意非零步长都会产生非物理的面积和能量增长。</p>
+<p>先踢动量、后漂移位置的辛Euler为 <span class="math display">\[p_{n+1}=p_n-hq_n,\quad q_{n+1}=q_n+hp_{n+1},\quad
+A_S=\begin{pmatrix}1-h^2&amp;h\\-h&amp;1\end{pmatrix}.\]</span> 两步是正则剪切的复合，或直接核验 <span class="math inline">\(A_S^{\mathsf T}\Omega A_S=\Omega\)</span>。代入还可证明它精确保持二次型 <span class="math display">\[\widetilde H_S=\tfrac12(q^2+p^2-hqp).\]</span> 仅当 <span class="math inline">\(|h|&lt;2\)</span>，这个二次型正定，保证轨道有界；<span class="math inline">\(|h|=2\)</span> 的重特征值一般有Jordan增长。辛性不自动保证任意步长稳定，更不意味着逐步精确保持原能量。</p>
+<p>对一般自治 <span class="math inline">\(H(q,p)\)</span>，第二类生成函数 <span class="math inline">\(F_2(q,P)=q\cdot P+hH(q,P)\)</span> 给 <span class="math display">\[p=P+hH_q(q,P),\qquad Q=q+hH_p(q,P).\]</span> 这是一般辛Euler的一种形式，通常需隐式解 <span class="math inline">\(P\)</span>。不能把只适于可分离模型的显式“踢–漂移”直接套用于任意含磁矢势或坐标相关惯性的哈密顿量。</p>
+<h3 id="störmerverlet分裂流的对称复合"><span class="ms-secno">6.8.2</span>Störmer–Verlet：分裂流的对称复合</h3>
+<p>若 <span class="math inline">\(H=T(p)+V(q)\)</span>，两部分精确流分别是 <span class="math inline">\(q\)</span> 漂移、<span class="math inline">\(p\)</span> 踢动。以半踢–全漂移–半踢复合，得 <span class="math display">\[\begin{aligned}
+p_{n+1/2}&amp;=p_n-\tfrac h2\nabla V(q_n),\\
+q_{n+1}&amp;=q_n+h\nabla T(p_{n+1/2}),\\
+p_{n+1}&amp;=p_{n+1/2}-\tfrac h2\nabla V(q_{n+1}).
+\end{aligned}
+
+\tag{6.18}\]</span> 每一流辛，复合也辛；把 <span class="math inline">\(h\)</span> 变为 <span class="math inline">\(-h\)</span> 并逆序执行恢复原态，因此它还具有时间对称性。对光滑问题，Taylor展开相对精确一步的误差是 <span class="math inline">\(O(h^3)\)</span>，在合适固定时间区间内全局误差为 <span class="math inline">\(O(h^2)\)</span>。标准逐状态自适应改变步长一般会破坏原有的辛映射论证，需专门构造。</p>
+<p>例如对常见的<span class="math inline">\(T=p^{\mathsf T}p/(2m)\)</span>，先把分裂步展开： <span class="math display">\[q_{n+1}=q_n+hp_n/m-\frac{h^2}{2m}\nabla V(q_n),\]</span> <span class="math display">\[p_{n+1}=p_n-h\nabla V(q_n)-\frac{h^2}{2m}V^{\prime\prime}(q_n)p_n+O(h^3).\]</span> 精确方程有<span class="math inline">\(\ddot q=-\nabla V/m,\ddot p=-V^{\prime\prime}p/m\)</span>，故两式逐项匹配到<span class="math inline">\(h^2\)</span>，直接核验二阶精度。</p>
+<div class="example">
+<p><strong>例 1.21</strong> (保住能量形状，仍会积累相位误差).  <em>对单位谐振子，Verlet矩阵为 <span class="math display">\[A_V=\begin{pmatrix}1-h^2/2&amp;h\\-h(1-h^2/4)&amp;1-h^2/2\end{pmatrix}.\]</span> 它精确保持 <span class="math inline">\(\widetilde H_V=[(1-h^2/4)q^2+p^2]/2\)</span>。在 <span class="math inline">\(|h|&lt;2\)</span> 内，特征值为 <span class="math inline">\(e^{\pm i\vartheta}\)</span>，由迹得 <span class="math display">\[\cos\vartheta=1-h^2/2,\quad
+\widetilde\omega=\frac2h\arcsin(h/2)=1+\frac{h^2}{24}+O(h^4).\]</span> 原能量只作小幅振荡，但相位误差约按 <span class="math inline">\((\widetilde\omega-1)t\)</span> 积累。<span class="math inline">\(h\to0\)</span> 的收敛与固定 <span class="math inline">\(h\)</span> 下任意长时间相位精确不是同一结论。这个模型中的精确保持二次型，也不代表一般非线性系统有同样简单、每步精确保留的修正能量。</em></p>
+</div>
+<figure id="fig:ham-integrators">
+<img src="figs/ch06-fig7.svg" style="width:86.0%" />
+<figcaption>同初态<span class="math inline">\((q,p)=(1,0)\)</span>。左图固定<span class="math inline">\(h=0.1\)</span>，纵轴为对数；右图在固定<span class="math inline">\(t=10\)</span>比较解析末态，显示一阶与二阶收敛。有限区间比较不替代长期相位核查。</figcaption>
+</figure>
+<h3 id="伴随脚本如何独立核验"><span class="ms-secno">6.8.3</span>伴随脚本如何独立核验</h3>
+<p>标准库脚本 <code>review/verify_ch06.py</code> 输出</p>
+<div class="center">
+<p><code>ch06_verification_results.json</code></p>
+</div>
+<p>并生成上述周期和算法图的数据。检查包括：勒让德偏导、罗斯离心项、磁括号与规范变换、相流面积、正则与非正则反例、含时生成函数、HJ完全积分与重构、谐振子/单摆/开普勒作用，以及积分器辛条件、稳定步长、修正二次型和收敛阶。长期比较还记录能量与相位，避免只凭曲线看似闭合就认定算法正确。</p>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p>足够光滑、小步长且轨道位于合适区域时，后向误差分析可将辛算法联系到邻近修正哈密顿系统，解释长期能量表现。这里并未保证任意步长或临界轨道；本章只证明了线性模型的明确二次型。一般理论见章末研究综述，需数值微分方程基础。</p>
+</div>
+<h2 class="unnumbered" id="关键概念与常见误区">关键概念与常见误区</h2>
+<ul>
+<li><p>勒让德变换先给函数恒等式，再结合运动方程；局部Hessian非退化不保证全局单值反解。</p></li>
+<li><p>正则动量、机械动量、能量函数与实验室机械能应按模型识别；含时正则变换还改变哈密顿量。</p></li>
+<li><p>刘维尔体积保持不保证遍历、热化或平衡分布；多自由度体积保持也不等同于辛性。</p></li>
+<li><p>守恒条件是 <span class="math inline">\(\partial_tf+\{f,H\}=0\)</span>；一个守恒量既可标记运动，也可生成状态变换。</p></li>
+<li><p>四类生成函数依赖相应局部投影可逆。不能将恒等变换或转折点强塞进失效的生成函数图。</p></li>
+<li><p>HJ完全积分需足够独立参数与非退化条件；作用角通常覆盖正则周期轨道族，分离曲线与原点须另论。</p></li>
+<li><p>辛积分保持结构，仍有稳定步长、状态误差与长期相位误差；能量曲线平稳不足以证明轨道准确。</p></li>
+</ul>
+<h2 class="unnumbered" id="本章小结">本章小结</h2>
+<p>以正则动量代替速度后，动力学在相空间由反对称结构生成。作用量边界项说明可用哪些端点与生成函数；泊松括号联系时间演化、对称性和守恒量；HJ完全积分提供回到轨道的常量反解，作用角把正则周期族组织成匀速相位运动。正则性、紧致性、分支和数值误差都需在使用这些工具时检查。</p>
+<p>下一章保留作用量与正则方法，但重新检验牛顿绝对时空。哈密顿形式本身不规定洛伦兹或伽利略对称性，必须由具体物理作用量和时空结构决定。非相对论 <span class="math inline">\(H=p^2/(2m)\)</span> 的适用范围也将在相对论粒子的能量动量关系中重新界定。</p>
+<h2 class="unnumbered" id="分层习题">分层习题</h2>
+<ol>
+<li><p><strong>速度一次项。</strong> 对 <span class="math inline">\(L=m\dot q^2/2+a(q)\dot q-V(q)\)</span> 求 <span class="math inline">\(p,H\)</span>，用正则方程恢复Newton方程。证明一维光滑 <span class="math inline">\(a(q)\dot q\)</span> 在局部只改变固定构型端点作用量的边界项。</p></li>
+<li><p><strong>局部与全局。</strong> 对正文四次速度模型列出 <span class="math inline">\(p=0\)</span> 的三个速度及相应 <span class="math inline">\(H\)</span>。非零Hessian说明什么？对 <span class="math inline">\(L=(\dot x-y)^2/2\)</span>，为什么普通变换不能反解两速度？</p></li>
+<li><p><strong>边界项。</strong> 给相空间作用量加入 <span class="math inline">\(-[pq]_{t_1}^{t_2}\)</span>，完整写出变分，说明固定动量端点如何得到正则方程；任意固定全部<span class="math inline">\(q,p\)</span>两端为什么一般过约束？</p></li>
+<li><p><strong>移动系。</strong> 对正文两种生成函数分别求新坐标、动量、哈密顿量和轨道，比较原系机械能与移动系机械能，说明为什么不能交叉混用。</p></li>
+<li><p><strong>罗斯约化。</strong> 对平面中心势在固定 <span class="math inline">\(\ell\)</span> 下导出约化径向方程和角度重构；若相应角坐标不循环，为什么不能仍将其动量固定为常数？</p></li>
+<li><p><strong>密度与刘维尔。</strong> 自由粒子的初密度为 <span class="math inline">\(C\exp[-q^2/(2\sigma_q^2)-p^2/(2\sigma_p^2)]\)</span>。求 <span class="math inline">\(\rho(q,p,t)\)</span>、位置方差及相协方差行列式，解释扩散形状不等于相体积增加。</p></li>
+<li><p><strong>含时守恒与生成元。</strong> 对 <span class="math inline">\(G=tp-mx\)</span> 验证守恒并写出所生的 <span class="math inline">\(\delta x,\delta p\)</span>。再验证角动量括号 <span class="math inline">\(\{J_x,J_y\}=J_z\)</span>，说明泊松定理为何不保证新量独立。</p></li>
+<li><p><strong>磁括号。</strong> 在 <span class="math inline">\(\mathbf{A}=(0,Bx,0)\)</span> 下算 <span class="math inline">\(\{\pi_x,\pi_y\}\)</span>，比较 <span class="math inline">\(p_y\)</span> 与 <span class="math inline">\(mv_y\)</span> 的演化；规范改变后哪个动量保持物理数值不变？</p></li>
+<li><p><strong>体积与辛。</strong> 核验正文四维反例的行列式和两对基本括号。改成 <span class="math inline">\(Q_a=a_aq_a,P_a=p_a/a_a\)</span> 后是否正则？</p></li>
+<li><p><strong>含时缩放。</strong> 对谐振子取 <span class="math inline">\(F_2(q,P,t)=e^{\lambda t}qP\)</span>，常数<span class="math inline">\(\lambda\)</span>单位为时间的负一次方。求 <span class="math inline">\(Q,P,K\)</span>，再由原正则方程独立验证新方程中的含时项。</p></li>
+<li><p><strong>生成函数图。</strong> 恒等变换为何有常规<span class="math inline">\(F_2\)</span>却不能用常规独立<span class="math inline">\((q,Q)\)</span>作同一<span class="math inline">\(F_1\)</span>？谐振子<span class="math inline">\(F_1(q,\theta)\)</span>在何处失效，物理轨道是否在那里终止？</p></li>
+<li><p><strong>完全积分。</strong> 对恒力例逐项验证HJ方程与 <span class="math inline">\(S_{x\alpha}=1\)</span>，再由 <span class="math inline">\(\beta=S_\alpha\)</span> 重构 <span class="math inline">\(x,p\)</span>。只有一个不含可调参数的HJ特解是否足够？</p></li>
+<li><p><strong>HJ分支。</strong> 对谐振子算 <span class="math inline">\(W_E,W_{qE}\)</span>，说明正根分支的相位范围，并解释转折后的负根为何必需。</p></li>
+<li><p><strong>作用与相位。</strong> 用相面积和直接积分两种方式算谐振子 <span class="math inline">\(J\)</span>，验证 <span class="math inline">\(\{\theta,J\}=1\)</span>。若 <span class="math inline">\(J_{\rm alt}=2\pi J\)</span>，其共轭角周期及演化速率是什么？</p></li>
+<li><p><strong>分离曲线。</strong> 算单摆摆动侧、正转动侧的分离极限作用，说明因子2来自何种回路差别；证明摆动周期发散而作用有限不矛盾。</p></li>
+<li><p><strong>开普勒可积性。</strong> 从 <span class="math inline">\(J_r=\kappa\sqrt{m/(-2E)}-\ell\)</span> 反解 <span class="math inline">\(H\)</span>，求两频率。计算二维 <span class="math inline">\(H(J_r,J_\varphi)\)</span> 的Hessian秩，能否据其退化就说开普勒不可积？能否直接套正文列出的非退化KAM版本？</p></li>
+<li><p><strong>辛算法与稳定。</strong> 验证辛Euler、Verlet的矩阵辛条件及各自修正二次型。辛Euler在<span class="math inline">\(h=2\)</span>时对<span class="math inline">\((q,p)=(1,1)\)</span>与<span class="math inline">\((1,0)\)</span>的行为是否相同？</p></li>
+<li><p><strong>计算检验。</strong> 运行伴随脚本，分别检查 <span class="math inline">\(\mathrm{d}J/\mathrm{d}E=T/(2\pi)\)</span>、HJ残差、积分器有限区间收敛和长期能量/相位。为什么低能量误差或单位行列式不能单独证明算法轨道准确？</p></li>
+</ol>
+<h2 class="unnumbered" id="解题思路与结果">解题思路与结果</h2>
+<ol>
+<li><p><span class="math inline">\(p=m\dot q+a,H=(p-a)^2/(2m)+V\)</span>，故 <span class="math inline">\(\dot q=(p-a)/m,\dot p=a&#39;\dot q-V&#39;\)</span>，相减得 <span class="math inline">\(m\ddot q=-V&#39;\)</span>。<span class="math inline">\(a(q)\dot q=\mathrm{d}[\int^qa(s)\mathrm{d}s]/\mathrm{d}t\)</span>，局部固定<span class="math inline">\(q\)</span>端点不改内部方程。</p></li>
+<li><p><span class="math inline">\(u=0,\pm1\)</span>，对应<span class="math inline">\(H=V,V+E_*/4,V+E_*/4\)</span>。每点局部可反解，但三个分支不能拼成任意全局单值关系。奇异例的<span class="math inline">\(p_y=0\)</span>与<span class="math inline">\(\dot y\)</span>无关，需约束理论。</p></li>
+<li><p>边界项为<span class="math inline">\(-[q\delta p]\)</span>，内部仍为<span class="math inline">\((\dot q-H_p)\delta p-(\dot p+H_q)\delta q\)</span>。<span class="math inline">\(2s\)</span>个初始数据已定一阶系统；任意额外两端条件通常不相容，不能由边界项消失推断存在唯一解。</p></li>
+<li><p>第一种<span class="math inline">\(P=p,K=P^2/(2m)-VP\)</span>；第二种<span class="math inline">\(\widehat P=p-mV,\widehat K=\widehat P^2/(2m)\)</span>，两者<span class="math inline">\(Q=x-Vt\)</span>相同。原系能量为<span class="math inline">\(p^2/(2m)\)</span>，移动系机械能为<span class="math inline">\((p-mV)^2/(2m)\)</span>。</p></li>
+<li><p><span class="math inline">\(\mathcal R=m\dot r^2/2-V-\ell^2/(2mr^2)\)</span>，<span class="math inline">\(m\ddot r=-V&#39;+\ell^2/(mr^3)\)</span>，<span class="math inline">\(\dot\varphi=-\mathcal R_\ell\)</span>。非循环时<span class="math inline">\(\dot\ell=L_\varphi\)</span>一般非零，须联立其演化。</p></li>
+<li><p><span class="math inline">\(\rho=C\exp[-(q-pt/m)^2/(2\sigma_q^2)-p^2/(2\sigma_p^2)]\)</span>，位置方差为<span class="math inline">\(\sigma_q^2+t^2\sigma_p^2/m^2\)</span>，协方差为<span class="math inline">\(t\sigma_p^2/m\)</span>，行列式仍<span class="math inline">\(\sigma_q^2\sigma_p^2\)</span>。精细密度沿流不变，位置边缘却展宽。</p></li>
+<li><p><span class="math inline">\(G_t=p,\{G,H\}=-p\)</span>，<span class="math inline">\(\delta x=\epsilon t,\delta p=\epsilon m\)</span>。角动量括号循环封闭在已有三个分量中；括号也可能为零，不保证函数独立。</p></li>
+<li><p><span class="math inline">\(\{\pi_x,\pi_y\}=eB\)</span>；<span class="math inline">\(p_y\)</span>守恒而<span class="math inline">\(\dot\pi_y=-eBv_x\)</span>。机械动量<span class="math inline">\(\pi\)</span>规范不变，正则<span class="math inline">\(p\)</span>随<span class="math inline">\(e\nabla\chi\)</span>改变。</p></li>
+<li><p>原反例行列式1，括号分别2、1/2，不正则。互逆缩放则全部基本括号保持，是正则变换。</p></li>
+<li><p><span class="math inline">\(Q=e^{\lambda t}q,p=e^{\lambda t}P\)</span>， <span class="math display">\[K=\frac{e^{2\lambda t}P^2}{2m}+\frac{m\omega^2e^{-2\lambda t}Q^2}{2}+\lambda QP.\]</span> 从而<span class="math inline">\(\dot Q=e^{2\lambda t}P/m+\lambda Q,\dot P=-m\omega^2e^{-2\lambda t}Q-\lambda P\)</span>。末两项来自<span class="math inline">\(F_{2,t}\)</span>。</p></li>
+<li><p>恒等变换的<span class="math inline">\(q,Q=q\)</span>不能独立变化，投影图退化；<span class="math inline">\(F_2=qP\)</span>没有此问题。谐振子的<span class="math inline">\(\sin\theta=0\)</span>处<span class="math inline">\(F_1\)</span>失效，但<span class="math inline">\(J&gt;0\)</span>的原轨道可光滑穿过<span class="math inline">\(q=0\)</span>。</p></li>
+<li><p><span class="math inline">\(p=\alpha+Ft,\beta=x-\alpha t/m-Ft^2/(2m)\)</span>，解见正文。需一个带足够独立参数且混合Hessian可逆的完全积分，不能仅凭一个特解覆盖全部初值。</p></li>
+<li><p>正支<span class="math inline">\(W_E=\arcsin(q/A)/\omega\)</span>、<span class="math inline">\(W_{qE}=m/p\)</span>，相位限于<span class="math inline">\((-\pi/2,\pi/2)\)</span>的选定区间。转折后<span class="math inline">\(p\)</span>符号改变，换支并匹配累计相位，不能重置成反正弦主值。</p></li>
+<li><p><span class="math inline">\(J=E/\omega\)</span>，直接对<span class="math inline">\(\theta=\operatorname{atan2}(m\omega q,p)\)</span>求偏导给括号1。<span class="math inline">\(J_{\rm alt}\)</span>的共轭角为<span class="math inline">\(\theta/(2\pi)\)</span>，周期1，速率<span class="math inline">\(\omega/(2\pi)\)</span>。</p></li>
+<li><p>分别为<span class="math inline">\(8\sqrt{IK_0}/\pi\)</span>和<span class="math inline">\(4\sqrt{IK_0}/\pi\)</span>。摆动闭合曲线包含正负两动量支，正转动一周只用正支；有限<span class="math inline">\(J\)</span>可以具有发散的能量导数，正如<span class="math inline">\(\mathrm{d}J/\mathrm{d}E=T/(2\pi)\)</span>。</p></li>
+<li><p><span class="math inline">\(H=-m\kappa^2/[2(J_r+J_\varphi)^2]\)</span>，两频率相同。Hessian的每个元素都等于同一个非零二阶导，秩1、行列式0；这是频率退化而非不可积，正文所列非退化KAM版本不能直接用。</p></li>
+<li><p>两矩阵均满足<span class="math inline">\(A^{\mathsf T}\Omega A=\Omega\)</span>；对应二次型见正文。<span class="math inline">\(h=2\)</span>时<span class="math inline">\(A_S\)</span>特征值为−1，<span class="math inline">\((1,1)\)</span>为特征向量可交替有界，<span class="math inline">\((1,0)\)</span>含广义特征分量而线性增长，故不能断言所有初态均稳定。</p></li>
+<li><p>前两项核验解析模型/变量关系，有限时间步长比较核验数值阶；长期相位另记录。保持体积不是保持所有辛结构，更不控制离散频率偏差。</p></li>
+</ol>
+<h2 class="unnumbered" id="进一步阅读与来源">进一步阅读与来源</h2>
+<p>查阅日期：2026-11-06。模型按本书正则括号、生成函数和<span class="math inline">\(J=(2\pi)^{-1}\oint p\mathrm{d}q\)</span>约定重新推导，数值均为教学设定。</p>
+<ol>
+<li><p>David Tong，<a href="https://www.damtp.cam.ac.uk/user/tong/dynamics/dynhtml/S4.html">The Hamiltonian Formalism</a>，可对照正则方程、括号、作用角和HJ方法，比较时核对作用归一化与生成元符号。</p></li>
+<li><p>Iain Stewart，MIT 8.09，<a href="https://ocw.mit.edu/courses/8-09-classical-mechanics-iii-fall-2014/f00f7f68ac7ba346a0868efb7430582c_MIT8_09F14_Chapter_4.pdf">Chapter 4: Canonical Transformations, Hamilton–Jacobi Equations, and Action–Angle Variables</a>，用于进一步研究正则结构与完全积分。</p></li>
+<li><p>MIT 8.09，<a href="https://ocw.mit.edu/courses/8-09-classical-mechanics-iii-fall-2014/a55cb49d8706f671ccfdac7c6937cddc_MIT8_09F14_pset5.pdf">Problem Set 5</a>，训练含时正则变换、括号及HJ重构。本章题目按当前模型另行编写。</p></li>
+<li><p>E. Hairer、C. Lubich、G. Wanner，<a href="https://www.cambridge.org/core/journals/acta-numerica/article/geometric-numerical-integration-illustrated-by-the-stormerverlet-method/E55395D5DD7A4E0526D10EA74DA6C46B">Geometric numerical integration illustrated by the Störmer–Verlet method</a>，Acta Numerica原始研究入口；继续学习数值辛性、时间对称与后向误差分析。</p></li>
+</ol>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>哈密顿力学 · 书稿网页版</span><span><a href="../index.html">返回章节</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
+<script src="../../../assets/tm-i18n-data.js"></script>
+<script src="../../../assets/tm-i18n.js"></script>
+<script src="../../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../../assets/ui-motion.js" defer></script>
+</body>
+</html>

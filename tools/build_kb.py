@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""build_kb.py — build knowledge.json from the module registry."""
+"""build_kb.py — [遗留] 从初版 12 模块 tex 注册表构建 knowledge.json。
+
+警告：MODULES_META 是旧编号（M0–M11，2026-11 重构前）。现站使用新编号
+M0–M26 + S7（见 data/modules.json），其策划版 knowledge.json 不得被本遗留
+管线覆盖。防回退守卫：现有 KB 更大时拒绝写出，除非 --force。
+KB 丢失/回退时用 tools/recover_kb.py 从 neural 快照恢复。
+"""
 from __future__ import annotations
 
 import argparse
@@ -292,6 +298,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--stats", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="允许覆盖更大的现有 knowledge.json（危险：旧编号管线）")
     args = ap.parse_args()
 
     if args.check:
@@ -318,6 +326,19 @@ def main() -> int:
     modules = [build_module(m) for m in MODULES_META]
     chunk_count = sum(len(m["chunks"]) for m in modules)
     char_count = sum(c["chars"] for m in modules for c in m["chunks"])
+    if OUT.exists() and not args.force:
+        try:
+            old = json.loads(OUT.read_text(encoding="utf-8"))
+            old_cc = old.get("chunk_count", 0)
+            old_n = len(old.get("modules", []))
+            if old_cc > chunk_count or old_n > len(modules):
+                print(f"REFUSED: 现有 KB 更大（modules={old_n} chunks={old_cc}），"
+                      f"本遗留构建只有 modules={len(modules)} chunks={chunk_count}（旧编号）。"
+                      f"现站 KB 用新编号（data/modules.json）；恢复请用 tools/recover_kb.py，"
+                      f"确要覆盖加 --force。")
+                return 1
+        except Exception:
+            pass
     data = {
         "version": 1,
         "built_at": datetime.now(timezone.utc).isoformat(),

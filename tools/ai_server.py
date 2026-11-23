@@ -75,12 +75,13 @@ MODULES = KB["modules"]
 CHUNKS_FLAT = [(m, c) for m in MODULES for c in m["chunks"]]
 MODULE_INDEX = {m["milestone"]: i for i, m in enumerate(MODULES)}
 
+_MODULE_LINE = "、".join("%s %s" % (m.get("milestone"), m.get("title")) for m in MODULES)
+
 SYSTEM_PROMPT = (
-    "你是《理论力学·交互讲义》的助教，只服务本站 12 个模块（M0–M11）：\n"
-    "M0 比奈、M1 有效势、M2 散射与俘获、M3 两体、M4 变分原理、M5 虚功原理、\n"
-    "M6 碰撞与变质量、M7 刚体、M8 运动学、M9 Atwood 机、M10 耦合系统与小振动、M11 旋转参考系与磁场。\n"
+    f"你是《理论力学·交互讲义》的助教，只服务本站 {len(MODULES)} 个模块：\n"
+    + _MODULE_LINE + "。\n"
     "必须遵守：\n"
-    "1) 只回答本站这 12 个模块覆盖的物理问题。\n"
+    "1) 只回答本站这些模块覆盖的物理问题。\n"
     "2) 回答最多 3 句、120 字以内；不要展开推导。\n"
     "3) 若用户要求详细推导/完整过程：只给一句直觉，并说“详见 [M#] 的 note.pdf”，不要推导。\n"
     "4) 物理但不在本站范围（量子场论、统计力学、电动力学、广义相对论等）：只回复“网站未收录这个问题。”\n"
@@ -90,7 +91,7 @@ SYSTEM_PROMPT = (
     "8) 公式只用简单 LaTeX：$...$、\\frac{}{}、\\sqrt{}、_{} ^{}、希腊字母；不要用 \\begin{aligned}、\\begin{cases}、\\left、\\right、\\mathbb、\\mathcal、\\tag。\n"
     "9) 若历史中已出现过“同学请认真学习”或“你的胆子真是肥嘟嘟的”，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
     "10) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
-    "11) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；用一句话列出 12 个模块并问用户想看哪一个。若已指定章节，直接答该章。\n"
+    "11) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；用一句话给出模块菜单并问用户想看哪一个。若已指定章节，直接答该章。\n"
     "12) 语气亲切、鼓励，像助教；可称呼“同学”；先回应问题，再给结论；不要生硬、不要说教（固定拒绝/提醒句除外）。\n"
     "13) 只输出最终回答，不要输出思考过程、自我指令或字数统计。\n"
     "示例：\n"
@@ -107,14 +108,14 @@ REVIEW_PROMPT = (
     "你会收到：学生问题、参考文段、本地助教草稿。\n"
     "审核标准：\n"
     "1) 事实以参考文段为准；公式或结论错误必须改正。\n"
-    "2) 只允许本站 12 个模块（M0-M11）的物理内容；站外物理只回复“网站未收录这个问题。”；非物理只回复“同学请认真学习。”。\n"
+    f"2) 只允许本站 {len(MODULES)} 个模块的物理内容；站外物理只回复“网站未收录这个问题。”；非物理只回复“同学请认真学习。”。\n"
     "3) 最多 3 句、120 字；要求详细推导时只给一句直觉 + “详见 [M#] 的 note.pdf”，不要展开。\n"
     "4) 引用 [M#] 必须对应正确章节。\n"
     "5) 若草稿已合格，可原样输出或轻微润色；不要解释审核过程。\n"
     "6) 公式只用简单 LaTeX（$...$、\\frac、\\sqrt、上下标、希腊字母）；不要用 aligned/cases/left/right。\n"
     "7) 若历史中已有无关问题提醒，用户仍问无关问题，回复：你的胆子真是肥嘟嘟的，快回去学习。\n"
     "8) 若用户只是打招呼，回复：你好同学，有什么问题？\n"
-    "9) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；列出 12 个模块并问用户想看哪一个；已指定章节则直接答该章。\n"
+    "9) 若问题只是“方程/公式/定理”等泛词且未指定章节，不要猜章节；给出模块菜单并问用户想看哪一个；已指定章节则直接答该章。\n"
     "10) 语气亲切、鼓励，像助教；可称呼“同学”；先回应再给结论；不要生硬。\n"
     "只输出最终中文回答。"
 )
@@ -130,21 +131,41 @@ MODULE_EQUATIONS = {
     "M1": "$V_{\\mathrm{eff}}=V(r)+L^2/(2mr^2)$，圆轨道 $V_{\\mathrm{eff}}'(r_0)=0$",
     "M2": "散射角 $\\Theta(b)$，俘获截面 $\\sigma=\\pi b_c^2$",
     "M3": "$P^2=4\\pi^2a^3/[G(M_1+M_2)]$，$K=\\frac{M_2}{M_1+M_2}\\frac{2\\pi a}{P\\sqrt{1-e^2}}\\sin i$",
-    "M4": "$\\frac{d}{dt}\\frac{\\partial L}{\\partial \\dot q}-\\frac{\\partial L}{\\partial q}=0$",
-    "M5": "$\\delta W=0$，$\\tan\\theta_{min}=1/(2\\mu)$",
-    "M6": "$e=\\frac{v_2'-v_1'}{v_1-v_2}$，$\\beta=\\arctan(2\\tan\\alpha)-\\alpha$",
-    "M7": "$I=\\sum mr^2$，$L=I\\omega$",
-    "M8": "$a_t=\\dot v$，$a_n=v^2/r$；$\\ddot\\theta=-(g/L)\\sin\\theta$",
-    "M9": "$a=\\frac{(m_2-m_1)g}{m_1+m_2+I/R^2}$，$T_2-T_1=\\frac{Ia}{R^2}$",
-    "M10": "$\\det(K-\\omega^2 M)=0$，$\\omega_r=\\sqrt{k/m}$，$\\omega_\\theta=\\sqrt{g/r_0}$",
-    "M11": "$\\ddot\\theta=(\\Omega^2\\cos\\theta-g/R)\\sin\\theta$，$Q_x=m\\dot x-qBy$",
+    "M4": "$e=\\frac{v_2'-v_1'}{v_1-v_2}$，$\\beta=\\arctan(2\\tan\\alpha)-\\alpha$",
+    "M5": "脱离条件 $N=0$：$\\cos\\theta=2/3$；$a_t=\\dot v$，$a_n=v^2/r$",
+    "M6": "傅科进动 $T_F=2\\pi/(\\Omega|\\sin\\lambda|)$（$\\lambda$ 为纬度）",
+    "M7": "CR3BP：$\\mu=M_2/(M_1+M_2)$；$\\mu<\\mu_c\\approx0.0385$ 时 L4/L5 稳定",
+    "M8": "等时摆 $T=\\pi\\sqrt{a/g}$ 与释放点无关；$h=s^2/(8a)$",
+    "M9": "折射定律 $n_1\\sin\\theta_1=n_2\\sin\\theta_2$（费马原理）",
+    "M10": "$\\delta\\int ds=0$；弧长泛函的欧拉–拉格朗日方程给出直线",
+    "M11": "$\\delta W=0$，梯子临界角 $\\tan\\theta_{min}=1/(2\\mu)$",
+    "M12": "$a=\\frac{(m_2-m_1)g}{m_1+m_2+I/R^2}$，$T_2-T_1=\\frac{Ia}{R^2}$",
+    "M13": "$a_{rel}=\\frac{(M+m)g\\sin\\alpha}{M+m\\sin^2\\alpha}$，水平动量守恒",
+    "M14": "$r_0=l_0+mg/k$，$\\omega_r=\\sqrt{k/m}$，$\\omega_\\theta=\\sqrt{g/r_0}$",
+    "M15": "$\\omega=\\sqrt{g(M+m)/(Ml)}$（$M\\to\\infty$ 回到 $\\sqrt{g/l}$）",
+    "M16": "$T\\approx T_0(1+\\theta_0^2/16+11\\theta_0^4/3072)$",
+    "M17": "对初值敏感 $\\delta(t)\\sim\\delta_0 e^{\\lambda t}$；能量守恒但长期不可预测",
+    "M18": "$I=\\sum mr^2$，$L=I\\omega$；球壳内势为常数",
+    "M19": "欧拉方程 $I_1\\dot\\omega_1=(I_2-I_3)\\omega_2\\omega_3$；中间轴不稳定",
+    "M20": "$\\ddot\\theta=(\\Omega^2\\cos\\theta-g/R)\\sin\\theta$，$\\Omega_c=\\sqrt{g/R}$",
+    "M21": "$Q_x=m\\dot x-qBy$，$Q_y=m\\dot y+qBx$；$\\omega_c=qB/m$",
+    "M22": "刘维尔定理：相流保面积，$\\partial\\rho/\\partial t+\\{\\rho,H\\}=0$",
+    "M23": "辛映射 $\\det(\\partial z'/\\partial z)=1$；能量长期有界",
+    "M24": "$s^2=c^2t^2-x^2$ 不变；$s^2>0$ 类时、$=0$ 类光、$<0$ 类空",
+    "M25": "$\\omega'=\\gamma\\omega(1-\\beta\\cos\\alpha)$（波四矢量 boost）；车头灯集束",
+    "M26": "$E^2-p^2=m^2$（$c=1$）；不变质量 $M^2=(\\sum E)^2-(\\sum p)^2$",
+    "M27": "$A(\\omega)=F_0/\\sqrt{(\\omega_0^2-\\omega^2)^2+4\\gamma^2\\omega^2}$，$Q=\\omega_0/(2\\gamma)$，功率峰恒在 $\\omega_0$",
+    "M28": "稳恒进动 $I_1\\Omega^2\\cos\\theta_0-I_3\\omega_3\\Omega+Mgl=0$；睡眠稳定 $\\omega_3^2>4I_1Mgl/I_3^2$",
+    "M29": "$p=\\partial L/\\partial\\dot q$，$H=p\\dot q-L$；罗斯 $R=L-p_\\theta\\dot\\theta$",
+    "M30": "$x^2-t^2=1/a^2$（$c=1$）；$v=\\tanh(a\\tau)$，$\\tau=\\mathrm{asinh}(at)/a$",
+    "S7": "$\\gamma=1/\\sqrt{1-\\beta^2}$；$t'=\\gamma(t-\\beta x)$，$x'=\\gamma(x-\\beta t)$（$c=1$）",
 }
 
 
 def chapter_menu() -> str:
     parts = ["%s %s" % (m.get("milestone"), m.get("title")) for m in MODULES]
     return ("你问得有点宽，想具体看哪一章？\n" + " · ".join(parts)
-            + "\n可以直接问“M4 的拉格朗日方程是什么”。")
+            + "\n可以直接问“M12 的 Atwood 加速度怎么算”。")
 
 
 GREETING_RE = re.compile(
@@ -164,6 +185,13 @@ CHAPTER_KEYWORDS = (
     "进动", "截面", "球冠", "甲虫", "球壳", "斜抛", "单摆", "简谐",
     "Atwood", "阿特伍德", "耦合", "小振动", "弹簧摆", "小车", "旋转参考系",
     "磁场", "雅可比", "诺特荷", "回旋",
+    "光锥", "世界线", "固有时", "同时性", "洛伦兹变换", "多普勒", "集束",
+    "车头灯", "不变质量", "相对论", "相空间", "刘维尔", "辛积分", "正则",
+    "哈密顿", "勒让德", "罗斯", "泊松", "自由刚体", "网球拍", "惯量",
+    "欧拉角", "傅科", "拉格朗日点", "混沌", "共振", "受迫", "阻尼", "简正",
+    "双曲", "伽利略", "作用量", "诺特", "费马", "测地线", "悬链线", "最速降线",
+    "陀螺", "章动", "睡眠", "品质因数", "半功率", "受迫",
+    "固有加速度", "快度", "双曲运动", "正则方程", "勒让德", "罗斯",
 )
 
 MIME = {

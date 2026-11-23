@@ -20,6 +20,10 @@
   .hud{position:absolute; left:20px; bottom:16px; font-size:11.5px; color:var(--muted);
        display:flex; gap:11px; flex-wrap:wrap; pointer-events:none}
   .stage .hud{max-width:calc(100% - 200px)}
+  @media (min-width:821px){
+    .stage .hud{display:grid; grid-template-columns:repeat(3, max-content); gap:6px 18px;
+      bottom:64px; align-items:baseline; max-width:calc(100% - 40px)}
+  }
   .hud b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
   .notice.bad{color:#ffd7d7;border-color:rgba(255,123,123,.5);background:rgba(60,10,16,.6)}
   .notice{position:absolute; right:16px; bottom:58px; max-width:52%; padding:7px 11px;
@@ -340,6 +344,15 @@ details.mapping {
   background: rgba(127, 224, 255, .18);
   box-shadow: 0 0 10px rgba(127, 224, 255, .25);
 }
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
 
 @media (max-width: 820px) {
   .tm-orbit-nav {
@@ -362,6 +375,7 @@ details.mapping {
   .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
   .hud { max-width: calc(100% - 150px); }
   .brand { max-width: calc(100% - 24px); }
 }
@@ -472,6 +486,7 @@ window.TMART = (function () {
 <meta name="twitter:description" content="旋转参考系与磁场 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
 </head>
 <body>
 <style>
@@ -521,7 +536,7 @@ window.TMART = (function () {
       </div>
       <div class="group">
         <div class="row"><label for="p-th0">初始 θ₀（°）</label><span class="val" id="v-th0">8.6</span></div>
-        <input id="p-th0" type="range" min="1" max="45" step="0.5" value="8.6">
+        <input id="p-th0" type="range" min="0" max="180" step="0.5" value="8.6">
       </div>
       <button id="btn-view" type="button" style="width:100%;margin-top:2px">重置视角</button>
       <div class="hint">拖动场景自由旋转视角；滚轮缩放，物理量保持不变。</div>
@@ -541,6 +556,11 @@ window.TMART = (function () {
         <input id="p-q" type="range" min="-1" max="1" step="2" value="1">
         <div class="hint">拖动到 −1 切换电荷符号；回旋转向随之反转。</div>
       </div>
+      <div class="group">
+        <div class="row"><label for="p-g">重力加速度 g（向下）</label><span class="val" id="v-g">0.00</span></div>
+        <input id="p-g" type="range" min="0" max="10" step="0.02" value="0">
+        <div class="hint">g=0 时退化为纯回旋运动；重力使回旋圆心水平漂移，Q_x 仍守恒。</div>
+      </div>
     </div>
 
     <div class="group">
@@ -551,12 +571,11 @@ window.TMART = (function () {
       <button id="btn-pause">暂停</button>
       <button id="btn-reset">重置</button>
     </div>
-    <div class="tag">圆环场景取 m = 1；磁场场景取 m = 1、q = ±1，B 与 v₀ 为任意一致单位。<br>
-    自测：<span>index.html?selftest=1</span></div>
-    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
-    <a class="doc" href="../10-coupled-systems/index.html">← 上一模块：耦合系统与小振动</a>
+    <div class="tag">圆环场景取 m = 1；磁场场景取 m = 1、q = ±1，B 与 v₀ 为任意一致单位。</div>
+    <a class="doc" href="note.html">阅读推导（网页版）</a>
+    <a class="doc" data-tm-doc="prev" href="../17-free-rigid-body/index.html">← 上一模块 M19：自由刚体与网球拍效应</a>
     <a class="doc" href="../../chapters/04-lagrangian/index.html">回到第 4 章：拉格朗日力学</a><br>
-    <a class="doc" href="../../chapters/05-oscillations/index.html">下一章：小振动 →</a>
+    <a class="doc" data-tm-doc="next" href="?scene=cyclotron">下一模块 M21：磁场中的带电粒子 →</a>
     <details class="mapping">
       <summary>作业映射（作业-8 Q5 圆环、Q6 磁场）</summary>
       <table>
@@ -579,7 +598,7 @@ window.TMART = (function () {
   try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
 
   var ring = { R: 1.2, Om: 2, th0: 0.15, th: 0.15, om: 0, t: 0, trail: [] };
-  var cyc = { B: 1.2, v0: 1, q: 1, t: 0, trail: [] };
+  var cyc = { B: 1.2, v0: 1, q: 1, g: 0, t: 0, trail: [], trailLife: 20 };
   var sph = { r: 1, theta: 1.27, phi: 0.42 };
   var DEFAULT_SPH = { r: 1, theta: 1.27, phi: 0.42 };
   var view = { x: 0.30, y: 0.42, z: 0 };
@@ -642,7 +661,7 @@ window.TMART = (function () {
     var phi = ring.Om * ring.t;
     ring.trail.push({
       x: ring.R * Math.sin(ring.th) * Math.cos(phi),
-      y: ring.R * Math.cos(ring.th),
+      y: -ring.R * Math.cos(ring.th),
       z: ring.R * Math.sin(ring.th) * Math.sin(phi)
     });
     if (ring.trail.length > 300) ring.trail.shift();
@@ -654,14 +673,14 @@ window.TMART = (function () {
   function ringPoint(u, phi) {
     return {
       x: ring.R * Math.cos(u) * Math.cos(phi),
-      y: ring.R * Math.sin(u),
+      y: -ring.R * Math.sin(u),
       z: ring.R * Math.cos(u) * Math.sin(phi)
     };
   }
   function beadPoint(th, phi) {
     return {
       x: ring.R * Math.sin(th) * Math.cos(phi),
-      y: ring.R * Math.cos(th),
+      y: -ring.R * Math.cos(th),
       z: ring.R * Math.sin(th) * Math.sin(phi)
     };
   }
@@ -743,57 +762,84 @@ window.TMART = (function () {
   function omegaC() { return cyc.q * cyc.B; }
   function cycState(t) {
     var w = omegaC(), v0 = cyc.v0;
+    var vd = -cyc.g / w;                 // 重力导致的 E×B 型漂移
+    var R = (v0 - vd) / w;               // 回旋半径（带符号）
+    var wt = w * t;
     return {
-      x: (v0 / w) * Math.sin(w * t),
-      y: (v0 / w) * (Math.cos(w * t) - 1),
-      vx: v0 * Math.cos(w * t),
-      vy: -v0 * Math.sin(w * t)
+      x: vd * t + R * Math.sin(wt),
+      y: R * (Math.cos(wt) - 1),
+      vx: vd + R * w * Math.cos(wt),
+      vy: -R * w * Math.sin(wt)
     };
   }
   function cycStep(dt) {
     cyc.t += dt;
     var s = cycState(cyc.t);
-    cyc.trail.push({ x: s.x, y: s.y });
-    if (cyc.trail.length > 420) cyc.trail.shift();
+    cyc.trail.push({ x: s.x, y: s.y, t: cyc.t });
+    while (cyc.trail.length && cyc.t - cyc.trail[0].t > cyc.trailLife) cyc.trail.shift();
+    if (cyc.trail.length > 1500) cyc.trail.shift();
   }
   function resetCyc() { cyc.t = 0; cyc.trail = []; }
   function drawCyc() {
     var s = cycState(cyc.t), w = omegaC();
-    var rOrbit = Math.abs(cyc.v0 / w);
+    var vd = -cyc.g / w;
+    var R = (cyc.v0 - vd) / w;
+    var rOrbit = Math.abs(R);
     var scale = Math.min(W, H) * 0.30 / Math.max(0.2, rOrbit);
     var cx = W * 0.5, cy = H * 0.5;
-    var centerX = 0, centerY = -cyc.v0 / w;
-    // 把回旋圆心放在画布中心，原点坐标单独换算
+    var centerX = 0, centerY = -R;
+    // 把初始回旋圆心放在画布中心；有重力时圆心随漂移平移
     function sx(x) { return cx + (x - centerX) * scale; }
     function sy(y) { return cy - (y - centerY) * scale; }
+    function wrapCoord(v, size) { v = v % size; return v < 0 ? v + size : v; }
+    function screenPoint(x, y) {
+      return { x: wrapCoord(sx(x), W), y: wrapCoord(sy(y), H) };
+    }
     var ox = sx(0), oy = sy(0);
+    var guideX = cx + (vd * cyc.t - centerX) * scale;
 
     ctx.strokeStyle = 'rgba(140,160,220,.16)'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, H); ctx.stroke();
 
-    // 回旋圆
+    // 回旋圆（圆心随重力漂移）
     ctx.strokeStyle = 'rgba(127,224,255,.35)'; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.arc(cx, cy, rOrbit * scale, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(guideX, cy, rOrbit * scale, 0, Math.PI * 2); ctx.stroke();
 
-    // 圆心
+    // 漂移中的圆心
     ctx.strokeStyle = 'rgba(255,210,122,.75)'; ctx.lineWidth = 1.4;
     ctx.beginPath();
-    ctx.moveTo(cx - 7, cy); ctx.lineTo(cx + 7, cy);
-    ctx.moveTo(cx, cy - 7); ctx.lineTo(cx, cy + 7);
+    ctx.moveTo(guideX - 7, cy); ctx.lineTo(guideX + 7, cy);
+    ctx.moveTo(guideX, cy - 7); ctx.lineTo(guideX, cy + 7);
     ctx.stroke();
 
-    // 轨迹
-    ctx.strokeStyle = 'rgba(183,155,255,.45)'; ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    cyc.trail.forEach(function (p, i) {
-      var x = sx(p.x), y = sy(p.y);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    // 轨迹：按年龄逐段衰减；穿越屏幕边界时断开，避免横跨全屏的连线
+    ctx.lineCap = 'round';
+    var prev = null;
+    cyc.trail.forEach(function (p) {
+      var q = screenPoint(p.x, p.y);
+      if (prev) {
+        var dx = Math.abs(q.x - prev.x), dy = Math.abs(q.y - prev.y);
+        if (dx < W * 0.5 && dy < H * 0.5) {
+          var age = Math.max(0, cyc.t - p.t);
+          var fade = Math.max(0, 1 - age / cyc.trailLife);
+          var alpha = 0.55 * fade * fade;
+          if (alpha > 0.008) {
+            ctx.strokeStyle = 'rgba(183,155,255,' + alpha.toFixed(3) + ')';
+            ctx.lineWidth = 0.8 + 0.7 * fade;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.stroke();
+          }
+        }
+      }
+      prev = q;
     });
-    ctx.stroke();
 
-    // 粒子
-    var px = sx(s.x), py = sy(s.y);
+    // 粒子：从一侧出屏后从另一侧进入
+    var pnow = screenPoint(s.x, s.y);
+    var px = pnow.x, py = pnow.y;
     ctx.fillStyle = '#7fe0ff';
     ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.fill();
 
@@ -802,31 +848,44 @@ window.TMART = (function () {
     ctx.strokeStyle = '#7ff0cf'; ctx.lineWidth = 1.8;
     ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + vx, py + vy); ctx.stroke();
 
+    // 重力方向提示（屏幕竖直向下）
+    if (cyc.g > 0.001) {
+      var gLen = 24 + Math.min(cyc.g, 2) * 16;
+      var gy0 = py + 11, gy1 = gy0 + gLen;
+      ctx.strokeStyle = 'rgba(255,180,120,.9)'; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(px, gy0); ctx.lineTo(px, gy1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px, gy1); ctx.lineTo(px - 4, gy1 - 6); ctx.lineTo(px + 4, gy1 - 6); ctx.closePath();
+      ctx.fillStyle = 'rgba(255,180,120,.9)'; ctx.fill();
+      ctx.fillStyle = 'rgba(255,196,150,.95)'; ctx.font = '10px ui-monospace,monospace';
+      ctx.textAlign = 'left'; ctx.fillText('g', px + 7, gy1 + 3);
+    }
+
     // 守恒量
     var Qx = s.vx - cyc.q * cyc.B * s.y;
-    var Qy = s.vy + cyc.q * cyc.B * s.x;
+    var QyPlus = s.vy + cyc.q * cyc.B * s.x + cyc.g * cyc.t;
     var pxCanon = s.vx - 0.5 * cyc.q * cyc.B * s.y;
     var pyCanon = s.vy + 0.5 * cyc.q * cyc.B * s.x;
     setHud([
       ['ω_c = qB/m', w.toFixed(3) + (w < 0 ? '（顺时针）' : '（逆时针）')],
-      ['r_c = v₀/|ω_c|', rOrbit.toFixed(3)],
+      ['r_c = |v₀−v_d|/|ω_c|', rOrbit.toFixed(3) + '　g=' + cyc.g.toFixed(2)],
       ['Q_x = mẋ−qBy', Qx.toFixed(4) + '（守恒）'],
-      ['Q_y = mẏ+qBx', Qy.toFixed(4) + '（守恒）'],
+      ['Q_y+mg t', QyPlus.toFixed(4) + '（守恒）'],
       ['p_x（机械动量）', pxCanon.toFixed(4) + '　p_y ' + pyCanon.toFixed(4)]
     ]);
   }
 
   function eqHtml() {
     if (scene === 'ring') return '' +
-      '<div><span class="num">L =</span> ½mR²θ̇² + ½mR²Ω²sin²θ + mgR cosθ</div>' +
-      '<div><span class="num">θ̈ =</span> (Ω²cosθ − g/R) sinθ</div>' +
-      '<div><span class="num">Ω_c =</span> √(g/R)　<span class="num">cosθ_eq =</span> g/(Ω²R)</div>' +
-      '<div><span class="num">ℰ =</span> θ̇∂L/∂θ̇ − L = ½mR²θ̇² − ½mR²Ω²sin²θ − mgR cosθ</div>';
+      '<div><span class="num">L =</span> $\\tfrac12 mR^2\\dot\\theta^2+\\tfrac12 mR^2\\Omega^2\\sin^2\\theta+mgR\\cos\\theta$</div>' +
+      '<div><span class="num">θ̈ =</span> $\\ddot\\theta=(\\Omega^2\\cos\\theta-g/R)\\sin\\theta$</div>' +
+      '<div><span class="num">Ω_c =</span> $\\sqrt{g/R}$　<span class="num">cosθ_eq =</span> $\\dfrac{g}{\\Omega^2R}$</div>' +
+      '<div><span class="num">ℰ =</span> $\\dot\\theta\\dfrac{\\partial L}{\\partial\\dot\\theta}-L=\\tfrac12 mR^2\\dot\\theta^2-\\tfrac12 mR^2\\Omega^2\\sin^2\\theta-mgR\\cos\\theta$</div>';
     return '' +
-      '<div><span class="num">L =</span> ½m(ẋ²+ẏ²) + (qB/2)(xẏ−yẋ)</div>' +
-      '<div><span class="num">E-L：</span> mẍ = qBẏ　mÿ = −qBẋ</div>' +
-      '<div><span class="num">Q_x =</span> mẋ − qBy　<span class="num">Q_y =</span> mẏ + qBx（守恒）</div>' +
-      '<div><span class="num">圆心：</span> X_c = x + ẏ/ω_c　Y_c = y − ẋ/ω_c</div>';
+      '<div><span class="num">L =</span> $\\tfrac12 m(\\dot x^2+\\dot y^2)+\\dfrac{qB}{2}(x\\dot y-y\\dot x)-mgy$</div>' +
+      '<div><span class="num">E-L：</span> $m\\ddot x=qB\\dot y$　$m\\ddot y=-qB\\dot x-mg$</div>' +
+      '<div><span class="num">漂移：</span> $v_d=-g/\\omega_c$　<span class="num">r_c =</span> $|v_0-v_d|/|\\omega_c|$</div>' +
+      '<div><span class="num">Q_x =</span> $m\\dot x-qBy$（守恒）　<span class="num">Q_y+mg t：</span>$m\\dot y+qBx+mgt$（守恒）</div>' +
+      '<div><span class="num">圆心：</span> $X_c=x+\\dfrac{\\dot y}{\\omega_c}=v_dt$　$Y_c=-\\dfrac{v_0-v_d}{\\omega_c}$</div>';
   }
 
   function draw() {
@@ -854,6 +913,7 @@ window.TMART = (function () {
     cyc.B = parseFloat($('p-B').value);
     cyc.v0 = parseFloat($('p-v0').value);
     cyc.q = parseFloat($('p-q').value);
+    cyc.g = parseFloat($('p-g').value);
     speed = parseFloat($('p-speed').value);
 
     $('v-R').textContent = ring.R.toFixed(2);
@@ -862,6 +922,7 @@ window.TMART = (function () {
     $('v-B').textContent = cyc.B.toFixed(2);
     $('v-v0').textContent = cyc.v0.toFixed(2);
     $('v-q').textContent = cyc.q > 0 ? '+1' : '−1';
+    $('v-g').textContent = cyc.g.toFixed(2);
     $('v-speed').textContent = speed.toFixed(1);
 
     resetRing(); resetCyc();
@@ -875,10 +936,11 @@ window.TMART = (function () {
     });
     cv.style.cursor = s === 'ring' ? 'grab' : 'crosshair';
     $('eqBox').innerHTML = eqHtml();
+    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([$('eqBox')]);
     sync();
   }
 
-  ['p-R', 'p-Om', 'p-th0', 'p-B', 'p-v0', 'p-q', 'p-speed']
+  ['p-R', 'p-Om', 'p-th0', 'p-B', 'p-v0', 'p-q', 'p-g', 'p-speed']
     .forEach(function (id) { $(id).addEventListener('input', sync); });
   $('sel-scene').addEventListener('change', function () { setScene(this.value); });
   $('btn-pause').addEventListener('click', function () {
@@ -1002,6 +1064,7 @@ window.TMART = (function () {
   <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
   <a data-tm-nav="prev" href="#">‹ 上一章</a>
   <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/06-hamiltonian/index.html?ret=M19" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
   <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
 </nav>
 <script id="tm-theme-js">
@@ -1009,9 +1072,9 @@ window.TMART = (function () {
   'use strict';
   var CHAPTERS = [
     '00-binet', '01-effective-potential', '02-scattering', '03-two-body',
-    '04-variational', '05-virtual-work', '06-collisions', '07-rigid-body',
-    '08-kinematics', '09-atwood-pulley', '10-coupled-systems',
-    '11-rotation-and-field'
+    '06-collisions', '08-kinematics', '14-foucault-rose', '15-lagrange-points',
+    '04-variational', '05-virtual-work', '09-atwood-pulley',
+    '10-coupled-systems', '07-rigid-body', '11-rotation-and-field'
   ];
 
   function currentFolder() {
@@ -1064,7 +1127,7 @@ window.TMART = (function () {
   if (idx < CHAPTERS.length - 1) {
     setLink('next', '../' + CHAPTERS[idx + 1] + '/index.html', null);
   } else {
-    setLink('next', base + 'chapters/05-oscillations/index.html', '下一章 ›');
+    setLink('next', base + 'modules/13-lightcone-worldlines/index.html', '下一章 ›');
   }
 
   var canvas = document.querySelector('.tm-stars');
@@ -1189,5 +1252,14 @@ window.TMART = (function () {
 <!-- TM-THEME-BODY:END -->
   <script src="../../assets/tm-i18n-data.js"></script>
   <script src="../../assets/tm-i18n.js"></script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-modes.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

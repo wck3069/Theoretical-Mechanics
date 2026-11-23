@@ -335,6 +335,15 @@ details.mapping {
   background: rgba(127, 224, 255, .18);
   box-shadow: 0 0 10px rgba(127, 224, 255, .25);
 }
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
 
 @media (max-width: 820px) {
   .tm-orbit-nav {
@@ -357,6 +366,7 @@ details.mapping {
   .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
   .hud { max-width: calc(100% - 150px); }
   .brand { max-width: calc(100% - 24px); }
 }
@@ -467,6 +477,7 @@ window.TMART = (function () {
 <meta name="twitter:description" content="散射与俘获 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
 </head>
 <body>
 <div class="app">
@@ -484,7 +495,7 @@ window.TMART = (function () {
       <span>入射动能 E <b id="hudE">-</b></span>
       <span>散射角 Θ <b id="hudTheta">-</b></span>
       <span>碰撞参数 b <b id="hudB">-</b></span>
-      <span>临界瞄准 b_c <b id="hudBc">-</b></span>
+      <span>临界瞄准 $b_c$ <b id="hudBc">-</b></span>
       <span>俘获截面 σ（面积 πb_c²：b<b_c 的入射全部被俘获） <b id="hudSigma">-</b></span>
       <span>状态 <b id="hudState">-</b></span>
     </div>
@@ -493,13 +504,13 @@ window.TMART = (function () {
   </div>
   <aside class="panel">
     <div class="eq">
-      <div><span class="num">散射：</span> V = k/r²（排斥）</div>
-      <div><span class="num">俘获：</span> V = -α/r⁴（吸引）</div>
-      <div><span class="num">Θ</span> = π(1 - 1/√(1+k/(Eb²)))</div>
-      <div><span class="num">b_c</span> = (4α/E)^{1/4}</div>
-      <div><span class="num">σ</span> = π b_c² = 2π√(α/E)</div>
+      <div><span class="num">散射：</span> $V=\dfrac{k}{r^2}$（排斥）</div>
+      <div><span class="num">俘获：</span> $V=-\alpha/r^4$（吸引）</div>
+      <div>$\Theta=\pi\left(1-\dfrac{1}{\sqrt{1+k/(Eb^2)}}\right)$</div>
+      <div>$b_c=(4\alpha/E)^{1/4}$</div>
+      <div>$\sigma=\pi b_c^2=2\pi\sqrt{\alpha/E}$</div>
     </div>
-    <div class="hint">符号：E=入射动能、k/α=势强度、b=碰撞参数（瞄准距离）、b_c=临界瞄准、Θ=散射角、σ=俘获截面（面积 πb_c²：b&lt;b_c 的入射全部被俘获）。单位：m=1 无量纲演示。</div>
+    <div class="hint">符号：E=入射动能、k/α=势强度、b=碰撞参数（瞄准距离）、$b_c$=临界瞄准、$\Theta$=散射角、$\sigma$=俘获截面（面积 $\pi b_c^2$：$b<b_c$ 的入射全部被俘获）。单位：m=1 无量纲演示。</div>
     <div class="group">
       <div class="row"><label for="sel-mode">模式</label></div>
       <select id="sel-mode" aria-label="模式">
@@ -531,18 +542,16 @@ window.TMART = (function () {
       <button id="btn-p-critical">临界 b_c</button>
       <button id="btn-p-graze">掠射</button>
     </div>
-    <div class="tag">单位：m=1 无量纲演示。散射模式看 Θ 与轨迹偏转；俘获模式看 b_c 与 σ=πb_c²。<br>
-    URL 可复现：<span>?mode=…&E=…&k=…&b=…&speed=…</span><br>
-    自测：<span>index.html?selftest=1</span>（5 项硬断言，全 PASS 才通过）</div>
-    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
-    <a class="doc" href="../01-effective-potential/index.html">← 上一模块：有效势与轨道稳定性</a>
-    <a class="doc" href="../03-two-body/index.html">下一模块：两体问题与系外行星 →</a>
+    <div class="tag">单位：m=1 无量纲演示。散射模式看 Θ 与轨迹偏转；俘获模式看 $b_c$ 与 $\sigma=\pi b_c^2$。</div>
+    <a class="doc" href="note.html">阅读推导（网页版）</a>
+    <a class="doc" data-tm-doc="prev" href="../01-effective-potential/index.html">← 上一模块 M1：有效势与轨道稳定性</a>
+    <a class="doc" data-tm-doc="next" href="../03-two-body/index.html">下一模块 M3：两体问题与系外行星 →</a>
     <details class="mapping">
       <summary>作业映射（本模块覆盖：作业-3 Q2、Q3）</summary>
       <table>
         <tr><th>来源</th><th>知识点</th><th>页面对应</th></tr>
-        <tr><td>作业-3 Q2</td><td>排斥势 k/r² 散射：散射角、微分散射截面、总截面</td><td>模式=散射；HUD 显示 Θ；轨迹可视化</td></tr>
-        <tr><td>作业-3 Q3</td><td>吸引势 -α/r⁴ 俘获：临界 b_c、俘获截面 σ</td><td>模式=俘获；HUD 显示 b_c、σ；螺旋轨迹</td></tr>
+        <tr><td>作业-3 Q2</td><td>排斥势 $k/r^2$ 散射：散射角、微分散射截面、总截面</td><td>模式=散射；HUD 显示 Θ；轨迹可视化</td></tr>
+        <tr><td>作业-3 Q3</td><td>吸引势 $-\alpha/r^4$ 俘获：临界 b_c、俘获截面 σ</td><td>模式=俘获；HUD 显示 $b_c$、$\sigma$；螺旋轨迹</td></tr>
       </table>
     </details>
   </aside>
@@ -879,6 +888,7 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
   <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
   <a data-tm-nav="prev" href="#">‹ 上一章</a>
   <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/01-newton/index.html?ret=M2" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
   <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
 </nav>
 <script id="tm-theme-js">
@@ -1066,5 +1076,13 @@ metUpdate(); window.addEventListener('resize', metUpdate); document.body.appendC
 <!-- TM-THEME-BODY:END -->
   <script src="../../assets/tm-i18n-data.js"></script>
   <script src="../../assets/tm-i18n.js"></script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

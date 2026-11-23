@@ -1,0 +1,146 @@
+{
+  "units": "c=1",
+  "checks": [
+    {
+      "name": "Lorentz inverse and Minkowski interval",
+      "passed": true,
+      "evidence": "200 arbitrary four-vectors; inverse and interval; worked example ctprime=4"
+    },
+    {
+      "name": "Clock ticks and simultaneous rod endpoint events",
+      "passed": true,
+      "evidence": {
+        "rod_length_L0": 0.5999999999999999,
+        "passage_time_L0_over_c": 0.7499999999999998
+      }
+    },
+    {
+      "name": "Reception worldline intersections and exponential lifetime",
+      "passed": true,
+      "evidence": {
+        "right_receive_t": 1.0625,
+        "left_receive_t": 4.25,
+        "survival": 0.26359713811572677
+      }
+    },
+    {
+      "name": "Causal classification and special frames",
+      "passed": true,
+      "evidence": "spacelike simultaneous and timelike co-located frames; future order"
+    },
+    {
+      "name": "Spacetime-axis calibration",
+      "passed": true,
+      "evidence": "calibrated units on both invariant hyperbolae"
+    },
+    {
+      "name": "Twin simultaneity and smooth proper-time quadrature",
+      "passed": true,
+      "evidence": {
+        "smooth_tau_over_T": 0.8125496102822012,
+        "quadrature_change": 0.0
+      }
+    },
+    {
+      "name": "Velocity transformation and rapidity composition",
+      "passed": true,
+      "evidence": "200 three-dimensional velocities; rapidity; no superluminal result"
+    },
+    {
+      "name": "Light speed, wave phase and Doppler angles",
+      "passed": true,
+      "evidence": "null wave vectors, Doppler and aberration; exercise ratio 7/8"
+    },
+    {
+      "name": "Four-momentum mass shell and observer energy",
+      "passed": true,
+      "evidence": "150 mass shells; velocity inversion; observer-energy invariance"
+    },
+    {
+      "name": "Composite mass of photons",
+      "passed": true,
+      "evidence": {
+        "invariant_mass": 1.3968483351106444
+      }
+    },
+    {
+      "name": "Three-force, power and four-force",
+      "passed": true,
+      "evidence": "finite-difference dp/dt and dE/dt, four-force orthogonality"
+    },
+    {
+      "name": "Constant force, work and proper acceleration",
+      "passed": true,
+      "evidence": {
+        "z_0.75_tau": 0.6931471805599453,
+        "ln2": 0.6931471805599453,
+        "z_1_acceleration": 0.3535533905932738
+      }
+    },
+    {
+      "name": "Free action, regular Hessian and Legendre transform",
+      "passed": true,
+      "evidence": "independent L and momentum derivatives, Hessian and Legendre energy"
+    },
+    {
+      "name": "Electromagnetic Hamiltonian minimal coupling",
+      "passed": true,
+      "evidence": "canonical versus mechanical momentum; gauge-invariant kinetic energy"
+    },
+    {
+      "name": "Inelastic collision and system mass",
+      "passed": true,
+      "evidence": "fixed-target sticky collisions checked in both frames"
+    },
+    {
+      "name": "Massive two-body decay and photon decay boosts",
+      "passed": true,
+      "evidence": {
+        "daughter_E": [
+          2.2,
+          2.8
+        ],
+        "daughter_p": 1.9595917942265426
+      }
+    },
+    {
+      "name": "Compton scattering conservation",
+      "passed": true,
+      "evidence": "16 scattering kinematics; on-shell recoil; quantum relation kept separate"
+    },
+    {
+      "name": "Massive-channel thresholds and photon recoil threshold",
+      "passed": true,
+      "evidence": {
+        "fixed_target_K_Mf4": 6,
+        "collider_total_K_Mf4": 2,
+        "photon_target_threshold": 2.2
+      }
+    },
+    {
+      "name": "Magnetic rigidity and cyclotron frequency",
+      "passed": true,
+      "evidence": "p=|e|Brho and omega=u/rho=|e|B/(gamma*m)"
+    },
+    {
+      "name": "Low-speed and low-momentum expansions",
+      "passed": true,
+      "evidence": {
+        "velocity_series_remainder_ratios": [
+          64.61279850293289,
+          64.15166015869922
+        ]
+      }
+    },
+    {
+      "name": "Photon-nucleon and nucleon-nucleon two-to-two kinematics",
+      "passed": true,
+      "evidence": {
+        "events_checked": 20,
+        "photon_example_out_energy": 0.28571428571428564,
+        "equal_mass_example_lab_opening_deg": 78.46304096718453
+      }
+    }
+  ],
+  "passed": 21
+}

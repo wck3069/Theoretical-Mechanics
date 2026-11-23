@@ -105,7 +105,22 @@ def source_files():
     files += sorted((ROOT/'chapters').glob('*/index.html'))
     files += sorted((ROOT/'chapters').glob('*/manuscripts/*.html'))
     files += sorted((ROOT/'modules').glob('*/index.html'))
+    files += sorted((ROOT/'modules').glob('*/note.html'))
+    files += [ROOT/'modules'/'00-binet'/'binet.html']
+    files += [ROOT/'manuscript'/'index.html']
+    files += [ROOT/'neural'/'index.html']
     return [f for f in files if f.exists()]
+
+def reader_key(path: Path) -> str:
+    rel = path.relative_to(ROOT).as_posix()
+    m = re.match(r'chapters/([^/]+)/manuscripts/([^/]+)\.html$', rel)
+    if m:
+        return 'reader-ch-' + m.group(1) + '-' + m.group(2)
+    m = re.match(r'modules/([^/]+)/(?:note|binet)\.html$', rel)
+    if m:
+        return 'reader-' + m.group(1)
+    return ''
+
 
 EN_OVERRIDES = {
     '星表': 'Star Catalog', '学习路径': 'Learning Path', '术语': 'Glossary', '关于': 'About',
@@ -119,6 +134,7 @@ EN_OVERRIDES = {
     '术语表 GLOSSARY': 'GLOSSARY', '关于 ABOUT': 'ABOUT',
     '问星 · AI 助教': 'Ask Star · AI Tutor', '更改语言': 'Change language',
     '理论力学': 'Theoretical Mechanics', '从质点到哈密顿': 'From Particles to Hamiltonian',
+    '点击星球进入章节': 'Click a planet to open its chapter',
     '理论力学：从质点到哈密顿 — 星图目录': 'Theoretical Mechanics: From Particles to Hamiltonian — Star Map Catalog',
     '星图目录': 'Star Map Catalog', '第1章 质点力学 · 理论力学：从质点到哈密顿': 'Chapter 1 Particle Mechanics · Theoretical Mechanics: From Particles to Hamiltonian',
     '单摆': 'Simple pendulum', '双摆': 'Double pendulum', '刚体力学': 'Rigid Body Mechanics',
@@ -164,6 +180,25 @@ EN_OVERRIDES = {
     'L²/2r² 像一堵「离心墙」（离心势垒）。高斯势 V=−exp(−r²/2) 的势垒只在 L<2√2/2.718≈1.04 时存在；L 超过它，势垒消失，粒子直坠中心。': 'L²/2r² acts as a "centrifugal wall" (centrifugal barrier). The Gaussian potential V=−exp(−r²/2) has a barrier only when L<2√2/2.718≈1.04; above it, the barrier disappears and the particle falls straight to the center.',
     '第一章': 'Chapter 1', '封面': 'Cover', '平时成绩': 'Coursework', '课后作业': 'Homework',
     '期末考试': 'Final exam', '牛顿力学': 'Newtonian mechanics', '分析力学': 'Analytical mechanics',
+    '圆柱脱离与运动学': 'Cylinder detachment and kinematics', '单摆周期修正': 'Pendulum period correction',
+    '双摆混沌': 'Double-pendulum chaos', '模块页保留 M0–M22 编号；书稿条目用 S7': 'Module pages keep the M0–M22 numbering; the manuscript item uses S7',
+    '模式索引': 'Mode index', '等时摆（摆线）': 'Isochronous pendulum (cycloid)',
+    '折射定律': 'Law of refraction', '最短路径': 'Shortest path', '圆柱脱离': 'Cylinder detachment',
+    '单摆周期（M12 非线性振动）': 'Pendulum period (M12 nonlinear oscillations)', '双摆混沌': 'Double-pendulum chaos',
+    '斜面上的滑块': 'Block on an inclined plane', '弹簧摆': 'Spring pendulum', '小车与单摆': 'Cart and pendulum',
+    '旋转圆环上的珠子': 'Bead on a rotating ring', '磁场中的带电粒子': 'Charged particle in a magnetic field',
+    '单摆周期（共享 M5.2）': 'Pendulum period (shared M5.2)', '单摆周期': 'Pendulum period',
+    '作业映射': 'Assignment Map', '模型与假设': 'Model and Assumptions', '推导': 'Derivation',
+    '解析结果': 'Analytical Results', '数值验证': 'Numerical Verification', '讨论': 'Discussion',
+    '本章小结': 'Chapter Summary', '关键概念与常见误区': 'Key Concepts and Common Misconceptions',
+    '分层习题': 'Tiered Exercises', '解题思路与结果': 'Solutions and Results',
+    '进一步阅读与来源': 'Further Reading and Sources', '进一步阅读与数据来源': 'Further Reading and Data Sources',
+    '本章导读': 'Chapter Overview', '参考文献': 'References', '附录': 'Appendix',
+    '目录': 'Contents', '相关': 'Related', '阅读书稿': 'Read chapter', '阅读推导': 'Read derivation',
+    '阅读推导（网页版）': 'Read derivation (web)', '网页推导': 'Web derivation',
+    '物理图像与理解 · PHYSICAL INSIGHT': 'Physical Insight',
+    '核心结论 · KEY RESULT': 'Key Result', '数学注记 · MATH NOTE': 'Math Note',
+    '进一步探索 · FURTHER': 'Further Exploration',
     '个月': 'months', '成绩': 'Grade', '分数': 'Score', '随堂测验': 'Quiz',
 }
 TW_OVERRIDES = {
@@ -177,6 +212,7 @@ TW_OVERRIDES = {
     '术语表 GLOSSARY': '術語表 GLOSSARY', '关于 ABOUT': '關於 ABOUT',
     '问星 · AI 助教': '問星 · AI 助教', '更改语言': '更改語言',
     '理论力学': '理論力學', '从质点到哈密顿': '從質點到哈密頓',
+    '点击星球进入章节': '點擊星球進入章節',
     '理论力学：从质点到哈密顿 — 星图目录': '理論力學：從質點到哈密頓 — 星圖目錄',
     '星图目录': '星圖目錄', '单摆': '單擺', '双摆': '雙擺', '刚体力学': '剛體力學', '哈密顿力学': '哈密頓力學',
     '质点系力学': '質點系力學', '变分法': '變分法', '拉格朗日力学': '拉格朗日力學', '小振动': '小振動',
@@ -210,13 +246,14 @@ def translate_one(s: str, target: str) -> str:
             time.sleep(0.6 * (attempt + 1))
     return s
 
-def translate_batch(items: list[str], target: str, cache: dict[str,str]) -> int:
+def translate_batch(items: list[str], target: str, cache: dict[str,str], save=None) -> int:
     todo = [s for s in items if s not in cache]
     if not todo:
         return 0
     # Keep each request comfortably under URL limits.
-    for i in range(0, len(todo), 26):
-        batch = todo[i:i+26]
+    chunk = 60
+    for i in range(0, len(todo), chunk):
+        batch = todo[i:i+chunk]
         while batch and len(SEP.join(batch)) > 1700:
             batch = batch[:-1]
         ok = False
@@ -235,8 +272,10 @@ def translate_batch(items: list[str], target: str, cache: dict[str,str]) -> int:
         if not ok:
             for s in batch:
                 cache[s] = translate_one(s, target)
-        if i % (26 * 10) == 0:
+        if i % (chunk * 10) == 0:
             print(f'  {target}: {min(i+len(batch),len(todo))}/{len(todo)}', flush=True)
+        if save and (i // chunk) % 5 == 4:
+            save()
         time.sleep(0.08)
     return len(todo)
 
@@ -256,23 +295,40 @@ def repair_identity(source, target, cache):
     return len(bad)
 
 def main():
-    all_strings = set()
+    per_page: dict[str, set[str]] = {}
+    global_set: set[str] = set()
     for f in source_files():
         ss = page_strings(f)
         print(f'{len(ss):4d}  {f.relative_to(ROOT)}')
-        all_strings |= ss
+        key = reader_key(f)
+        if key:
+            per_page.setdefault(key, set()).update(ss)
+        else:
+            global_set |= ss
+    global_strings = set(global_set)
     for d in OVERRIDES.values():
-        all_strings |= set(d)
-    print('unique Chinese strings:', len(all_strings))
+        global_strings |= set(d)
+    all_strings = set(global_strings)
+    for ss in per_page.values():
+        all_strings |= ss
+    print('unique Chinese strings:', len(all_strings), '| global:', len(global_strings), '| reader pages:', len(per_page))
     cache_all = {}
     if CACHE.exists():
         try: cache_all = json.loads(CACHE.read_text())
         except Exception: cache_all = {}
+    def save_cache():
+        CACHE.write_text(json.dumps(cache_all, ensure_ascii=False, indent=1))
+
     for target in ('en', 'zh-TW'):
         cache_all.setdefault(target, {})
-        n = translate_batch(sorted(all_strings), target, cache_all[target])
-        repair_identity(all_strings, target, cache_all[target])
-        CACHE.write_text(json.dumps(cache_all, ensure_ascii=False, indent=1))
+        if target == 'zh-TW' and zhconv:
+            for s in sorted(all_strings):
+                cache_all[target].setdefault(s, zhconv.convert(s, 'zh-tw'))
+            n = 0
+        else:
+            n = translate_batch(sorted(all_strings), target, cache_all[target], save_cache)
+            repair_identity(all_strings, target, cache_all[target])
+        save_cache()
         print(f'{target}: translated {n}; cached {len(cache_all[target])}')
     en = {s: cache_all['en'].get(s, s) for s in all_strings}
     tw = {s: cache_all['zh-TW'].get(s, s) for s in all_strings}
@@ -281,10 +337,45 @@ def main():
     for s, t in EN_OVERRIDES.items(): en[s] = t
     for s, t in TW_OVERRIDES.items(): tw[s] = t
     data = {'en-US': en, 'zh-TW': tw}
-    payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
-    OUT.write_text('/* generated by tools/build_i18n.py; runtime translation data */\n'
-                   'window.TM_I18N_DATA=' + payload + ';\n', encoding='utf-8')
-    print('wrote', OUT, OUT.stat().st_size, 'bytes')
+    i18n_dir = ROOT / 'assets' / 'i18n'
+    i18n_dir.mkdir(parents=True, exist_ok=True)
+
+    def dump(doc: dict, var: str) -> str:
+        payload = json.dumps(doc, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
+        return '/* generated by tools/build_i18n.py */\nwindow.' + var + '=' + payload + ';\n'
+
+    gdoc = {lang: {s: data[lang][s] for s in global_strings} for lang in ('en-US', 'zh-TW')}
+    (i18n_dir / 'global.js').write_text(dump(gdoc, 'TM_I18N_DATA'), encoding='utf-8')
+    for key, ss in sorted(per_page.items()):
+        page_only = ss - global_strings
+        pdoc = {lang: {s: data[lang][s] for s in page_only} for lang in ('en-US', 'zh-TW')}
+        (i18n_dir / (key + '.js')).write_text(dump(pdoc, 'TM_I18N_PAGE'), encoding='utf-8')
+    loader = '''/* generated by tools/build_i18n.py - lazy loader for translation data */
+(function () {
+  function lang() { try { return localStorage.getItem('tm-lang') || 'zh-CN'; } catch (e) { return 'zh-CN'; } }
+  if (lang() === 'zh-CN') return;
+  var s = document.currentScript, all = document.getElementsByTagName('script');
+  if (!s) {
+    for (var i = all.length - 1; i >= 0; i--) {
+      if (/tm-i18n-data\\.js([?#]|$)/.test(all[i].src)) { s = all[i]; break; }
+    }
+  }
+  if (!s) return;
+  var base = s.src.replace(/[^/]*$/, ''), p = location.pathname, key = '', m;
+  m = p.match(/\\/chapters\\/([^/]+)\\/manuscripts\\/([^/]+)\\.html$/);
+  if (m) key = 'reader-ch-' + m[1] + '-' + m[2];
+  else {
+    m = p.match(/\\/modules\\/([^/]+)\\/(?:note|binet)\\.html$/);
+    if (m) key = 'reader-' + m[1];
+  }
+  var files = ['i18n/global.js'];
+  if (key) files.push('i18n/' + key + '.js');
+  for (var j = 0; j < files.length; j++) document.write('<script src="' + base + files[j] + '"><\\/script>');
+})();
+'''
+    OUT.write_text(loader, encoding='utf-8')
+    sizes = {p.name: p.stat().st_size for p in i18n_dir.glob('*.js')}
+    print('wrote', OUT.relative_to(ROOT), OUT.stat().st_size, 'bytes; global', sizes.get('global.js'), 'bytes; page dicts', len(per_page))
 
 if __name__ == '__main__':
     main()

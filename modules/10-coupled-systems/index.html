@@ -340,6 +340,15 @@ details.mapping {
   background: rgba(127, 224, 255, .18);
   box-shadow: 0 0 10px rgba(127, 224, 255, .25);
 }
+.tm-orbit-nav a[data-tm-nav="exit"] {
+  background: rgba(255, 210, 122, .14);
+  border-color: rgba(255, 210, 122, .45);
+  color: #ffe4ad;
+}
+.tm-orbit-nav a[data-tm-nav="exit"]:hover {
+  background: rgba(255, 210, 122, .24);
+  box-shadow: 0 0 10px rgba(255, 210, 122, .3);
+}
 
 @media (max-width: 820px) {
   .tm-orbit-nav {
@@ -362,6 +371,7 @@ details.mapping {
   .tm-orbit-nav a[data-tm-nav="prev"]::before { content: "‹"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="next"]::before { content: "›"; font-size: 14px; }
   .tm-orbit-nav a[data-tm-nav="ask"]::before { content: "问"; font-size: 11px; }
+  .tm-orbit-nav a[data-tm-nav="exit"]::before { content: "\21a9"; font-size: 13px; }
   .hud { max-width: calc(100% - 150px); }
   .brand { max-width: calc(100% - 24px); }
 }
@@ -472,6 +482,7 @@ window.TMART = (function () {
 <meta name="twitter:description" content="耦合系统与小振动 · 交互实验：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
+  <link rel="stylesheet" href="../../assets/ui-liquid.css">
 </head>
 <body>
 <style>
@@ -564,11 +575,10 @@ window.TMART = (function () {
       <button id="btn-pause">暂停</button>
       <button id="btn-reset">重置</button>
     </div>
-    <div class="tag">SI 单位；g = 9.81 m/s²。斜面与小车场景中 X 的位移量较小，属真实比例。<br>
-    自测：<span>index.html?selftest=1</span></div>
-    <a class="doc" href="note.pdf">查看推导 PDF（note.pdf）</a>
-    <a class="doc" href="../09-atwood-pulley/index.html">← 上一模块：Atwood 机</a>
-    <a class="doc" href="../11-rotation-and-field/index.html">下一模块：旋转与磁场 →</a>
+    <div class="tag">SI 单位；$g=9.81\ \mathrm{m/s^2}$。斜面与小车场景中 X 的位移量较小，属真实比例。</div>
+    <a class="doc" href="note.html">阅读推导（网页版）</a>
+    <a class="doc" data-tm-doc="prev" href="../09-atwood-pulley/index.html">← 上一模块 M12：有转动惯量的 Atwood 机</a>
+    <a class="doc" data-tm-doc="next" href="?scene=spring">下一模块 M14：弹簧摆 →</a>
     <details class="mapping">
       <summary>作业映射（作业-8 Q3、Q4、Q5 小车）</summary>
       <table>
@@ -655,10 +665,16 @@ window.TMART = (function () {
 
     var s = 0.5 * v.aRel * wedge.t * wedge.t;
     var frac = Math.min(1, s / 0.9);
-    var bx = x0 + frac * baseW, by = topY + frac * Hw;
     var bw = 30;
+    // 让方块底面贴合斜面：沿外法线抬起半个边长（另留 1px 视觉间隙），
+    // 并把行程限制在斜面两端内，避免旋转后的下角陷进地面。
+    var ux = Math.cos(v.a), uy = Math.sin(v.a);
+    var slopeLen = Math.hypot(baseW, Hw);
+    var along = bw / 2 + frac * (slopeLen - bw);
+    var px = x0 + ux * along, py = topY + uy * along;
+    var bx = px + Math.sin(v.a) * (bw / 2 + 1), by = py - Math.cos(v.a) * (bw / 2 + 1);
     ctx.save();
-    ctx.translate(bx, by - bw / 2);
+    ctx.translate(bx, by);
     ctx.rotate(v.a);
     ctx.fillStyle = 'rgba(255,210,122,.9)';
     ctx.fillRect(-bw / 2, -bw / 2, bw, bw);
@@ -826,20 +842,20 @@ window.TMART = (function () {
 
   function eqHtml() {
     if (scene === 'wedge') return '' +
-      '<div><span class="num">L =</span> ½(M+m)Ẋ² + m Ẋṡ cosα + ½mṡ² + mg s sinα</div>' +
-      '<div><span class="num">p_X =</span> (M+m)Ẋ + mṡ cosα = 0</div>' +
-      '<div><span class="num">a_rel =</span> g sinα (M+m)/(M+m sin²α)</div>' +
-      '<div><span class="num">a_X =</span> −m g sinα cosα/(M+m sin²α)</div>';
+      '<div><span class="num">L =</span> $\\tfrac12(M+m)\\dot X^2+m\\dot X\\dot s\\cos\\alpha+\\tfrac12 m\\dot s^2+mgs\\sin\\alpha$</div>' +
+      '<div><span class="num">p_X =</span> $(M+m)\\dot X+m\\dot s\\cos\\alpha=0$</div>' +
+      '<div><span class="num">a_rel =</span> $\\dfrac{g\\sin\\alpha\\,(M+m)}{M+m\\sin^2\\alpha}$</div>' +
+      '<div><span class="num">a_X =</span> $-\\dfrac{mg\\sin\\alpha\\cos\\alpha}{M+m\\sin^2\\alpha}$</div>';
     if (scene === 'spring') return '' +
-      '<div><span class="num">L =</span> ½m(ṙ²+r²θ̇²) − ½k(r−l₀)² + mgr cosθ</div>' +
-      '<div><span class="num">r̈ =</span> rθ̇² − (k/m)(r−l₀) + g cosθ</div>' +
-      '<div><span class="num">θ̈ =</span> −(g sinθ + 2ṙθ̇)/r</div>' +
-      '<div><span class="num">r₀ =</span> l₀ + mg/k　<span class="num">ω_r =</span> √(k/m)　<span class="num">ω_θ =</span> √(g/r₀)</div>';
+      '<div><span class="num">L =</span> $\\tfrac12 m(\\dot r^2+r^2\\dot\\theta^2)-\\tfrac12 k(r-l_0)^2+mgr\\cos\\theta$</div>' +
+      '<div><span class="num">r̈ =</span> $\\ddot r=r\\dot\\theta^2-\\dfrac{k}{m}(r-l_0)+g\\cos\\theta$</div>' +
+      '<div><span class="num">θ̈ =</span> $\\ddot\\theta=-\\dfrac{g\\sin\\theta+2\\dot r\\dot\\theta}{r}$</div>' +
+      '<div><span class="num">r₀ =</span> $l_0+\\dfrac{mg}{k}$　<span class="num">ω_r =</span> $\\sqrt{k/m}$　<span class="num">ω_θ =</span> $\\sqrt{g/r_0}$</div>';
     return '' +
-      '<div><span class="num">L =</span> ½(M+m)Ẋ² + ml cosθ Ẋθ̇ + ½ml²θ̇² + mgl cosθ</div>' +
-      '<div><span class="num">p_X =</span> (M+m)Ẋ + ml cosθ θ̇ = 0</div>' +
-      '<div><span class="num">θ̈ =</span> −[(M+m)g sinθ + ml sinθ cosθ θ̇²]/[l(M+m sin²θ)]</div>' +
-      '<div><span class="num">ω =</span> √(g(M+m)/(Ml))　<span class="muted">M→∞ 时 √(g/l)</span></div>';
+      '<div><span class="num">L =</span> $\\tfrac12(M+m)\\dot X^2+ml\\cos\\theta\\,\\dot X\\dot\\theta+\\tfrac12 ml^2\\dot\\theta^2+mgl\\cos\\theta$</div>' +
+      '<div><span class="num">p_X =</span> $(M+m)\\dot X+ml\\cos\\theta\\,\\dot\\theta=0$</div>' +
+      '<div><span class="num">θ̈ =</span> $-\\dfrac{(M+m)g\\sin\\theta+ml\\sin\\theta\\cos\\theta\\,\\dot\\theta^2}{l(M+m\\sin^2\\theta)}$</div>' +
+      '<div><span class="num">ω =</span> $\\sqrt{\\dfrac{g(M+m)}{Ml}}$　<span class="muted">$M\\to\\infty$ 时 $\\sqrt{g/l}$</span></div>';
   }
 
   function draw() {
@@ -904,6 +920,7 @@ window.TMART = (function () {
       g.classList.toggle('on', g.getAttribute('data-scene') === s);
     });
     $('eqBox').innerHTML = eqHtml();
+    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([$('eqBox')]);
     $('l1').textContent = '—';
     sync();
   }
@@ -974,6 +991,7 @@ window.TMART = (function () {
   <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
   <a data-tm-nav="prev" href="#">‹ 上一章</a>
   <a data-tm-nav="next" href="#">下一章 ›</a>
+  <a data-tm-nav="exit" href="../../chapters/04-oscillations/index.html?ret=M13" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
   <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
 </nav>
 <script id="tm-theme-js">
@@ -1161,5 +1179,14 @@ window.TMART = (function () {
 <!-- TM-THEME-BODY:END -->
   <script src="../../assets/tm-i18n-data.js"></script>
   <script src="../../assets/tm-i18n.js"></script>
+  <script src="../../assets/tm-offline-kb.js"></script>
+  <script defer src="../../assets/tm-ai-panel.js"></script>
+  <script defer src="../../assets/pdf-viewer.js"></script>
+  <script defer src="../../assets/tm-modes.js"></script>
+  <script defer src="../../assets/tm-seq.js"></script>
+
+<script src="../../assets/ui-motion.js" defer></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'none'},svg:{fontCache:'local'}};</script>
+<script defer src="../../assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

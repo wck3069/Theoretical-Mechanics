@@ -1,0 +1,15 @@
+[Unit]
+Description=TM Cloudflare quick tunnel (open demo preview of dist/)
+Documentation=file:///home/wck/Theoretical-Mechanics/deploy/cloudflared.md
+After=network-online.target tm-static-server.service
+Wants=network-online.target
+
+[Service]
+Environment="PATH=/home/wck/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Type=simple
+ExecStart=/bin/bash /home/wck/Theoretical-Mechanics/deploy/demo-tunnel.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

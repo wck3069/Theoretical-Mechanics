@@ -1,0 +1,151 @@
+\documentclass[UTF8,fontset=none,11pt,oneside,openany,a4paper]{ctexbook}
+
+\setCJKmainfont{Songti SC}
+\setCJKsansfont{Heiti SC}
+\setCJKmonofont{Heiti SC}
+\setCJKfamilyfont{zhsong}{Songti SC}
+\setCJKfamilyfont{zhhei}{Heiti SC}
+\usepackage{geometry}
+\geometry{left=2.6cm,right=2.6cm,top=2.6cm,bottom=2.6cm}
+
+\usepackage{amsmath,amssymb,amsthm,bm}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,decorations.pathmorphing,decorations.markings,patterns,angles,quotes,3d}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage[most]{tcolorbox}
+\usepackage{booktabs,enumitem,array,multirow}
+\usepackage{caption,needspace}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+\ctexset{
+  chapter/format={\centering\LARGE\bfseries},
+  section/format={\Large\bfseries},
+  subsection/format={\large\bfseries}
+}
+
+\newtheorem{definition}{定义}[chapter]
+\newtheorem{theorem}{定理}[chapter]
+\newtheorem{example}{例}[chapter]
+\newtheorem{remark}{注}[chapter]
+
+\newtcolorbox{guidebox}{
+  colback=gray!4,colframe=gray!50!black,title={本章导读},
+  fonttitle=\bfseries,boxrule=.6pt,arc=2pt,breakable
+}
+\newlist{bookexercises}{enumerate}{1}
+\setlist[bookexercises]{label=\textbf{\thechapter.\arabic*},ref=\thechapter.\arabic*,leftmargin=3.2em}
+\newlist{bookreading}{enumerate}{1}
+\setlist[bookreading]{label={[\arabic*]},leftmargin=2em}
+\newcommand{\exlevel}[1]{\textsf{〔#1〕}\,}
+
+\newtcolorbox{keybox}[1][]{
+  colback=blue!4,colframe=blue!55!black,
+  fonttitle=\bfseries,title={核心结论},
+  boxrule=0.6pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,breakable,#1
+}
+\newtcolorbox{physicsbox}[1][]{
+  colback=green!4,colframe=green!45!black,
+  fonttitle=\bfseries,title={物理图像与理解（Physical Insight）},
+  boxrule=0.6pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,breakable,#1
+}
+\newtcolorbox{mathbox}[1][]{
+  colback=orange!4,colframe=orange!60!black,
+  fonttitle=\bfseries,title={数学注记},
+  boxrule=0.6pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,breakable,#1
+}
+\newtcolorbox{modernbox}[1][]{
+  colback=violet!4,colframe=violet!55!black,
+  fonttitle=\bfseries,title={进一步探索（Further Exploration）},
+  boxrule=0.6pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,breakable,#1
+}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bv}{\boldsymbol{v}}
+\newcommand{\ba}{\boldsymbol{a}}
+\newcommand{\bF}{\boldsymbol{F}}
+\newcommand{\bE}{\boldsymbol{E}}
+\newcommand{\bB}{\boldsymbol{B}}
+\newcommand{\bR}{\boldsymbol{R}}
+\newcommand{\bJ}{\boldsymbol{J}}
+\newcommand{\bM}{\boldsymbol{M}}
+\newcommand{\bp}{\boldsymbol{p}}
+\newcommand{\bP}{\boldsymbol{P}}
+\newcommand{\bvec}[1]{\boldsymbol{#1}}
+\newcommand{\bu}{\boldsymbol{u}}
+\newcommand{\bg}{\boldsymbol{g}}
+\newcommand{\bV}{\boldsymbol{V}}
+\newcommand{\bT}{\boldsymbol{T}}
+\newcommand{\bq}{\boldsymbol{q}}
+\newcommand{\bA}{\boldsymbol{A}}
+\newcommand{\bN}{\boldsymbol{N}}
+\newcommand{\bI}{\boldsymbol{I}}
+\newcommand{\bom}{\boldsymbol{\omega}}
+\newcommand{\bOm}{\boldsymbol{\Omega}}
+\newcommand{\bth}{\boldsymbol{\theta}}
+\newcommand{\be}{\boldsymbol{e}}
+\newcommand{\er}{\hat{\be}_r}
+\newcommand{\etheta}{\hat{\be}_\theta}
+\newcommand{\ephi}{\hat{\be}_\varphi}
+\newcommand{\et}{\hat{\be}_t}
+\newcommand{\en}{\hat{\be}_n}
+\newcommand{\eb}{\hat{\be}_b}
+\newcommand{\ii}{\hat{\boldsymbol{\imath}}}
+\newcommand{\jj}{\hat{\boldsymbol{\jmath}}}
+\newcommand{\kk}{\hat{\boldsymbol{k}}}
+\newcommand{\dv}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\dvv}[3][]{\frac{\dd^{#1} #2}{\dd #3^{#1}}}
+\newcommand{\pdv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ddv}[2]{\frac{\dd^2 #1}{\dd #2^2}}
+
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.25}
+
+\begin{document}
+
+\frontmatter
+\begin{titlepage}
+\thispdfpagelabel{Cover}
+\centering
+\vspace*{3cm}
+{\Huge\bfseries 理论力学\par}
+\vspace{0.8cm}
+{\large 第1章\quad 牛顿力学\par}
+\vspace{0.15cm}
+{\large 第2章\quad 变分法\par}
+\vspace{0.15cm}
+{\large 第3章\quad 拉格朗日力学\par}
+\vspace{0.15cm}
+{\large 第4章\quad 小振动\par}
+\vspace{0.15cm}
+{\large 第5章\quad 刚体力学\par}
+\vspace{0.15cm}
+{\large 第6章\quad 哈密顿力学\par}
+\vspace{0.15cm}
+{\large 第7章\quad 狭义相对论\par}
+\vspace{0.15cm}
+\vspace{1.2cm}
+{\large 全书统稿版\par}
+\vfill
+{\large 2026\par}
+\end{titlepage}
+
+\tableofcontents
+\input{reader-guide}
+\mainmatter
+
+\include{chapters/ch01}
+\include{chapters/ch02}
+\include{chapters/ch03}
+\include{chapters/ch04}
+\include{chapters/ch05}
+\include{chapters/ch06}
+\include{chapters/ch07}
+
+\end{document}
