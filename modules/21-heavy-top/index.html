@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>重陀螺的进动与章动 · 稳恒进动、有效势与睡眠陀螺</title>
+<meta name="description" content="重对称陀螺交互实验：RK4 积分倾角有效势方程，演示稳恒进动的慢支与快支、章动、竖直睡眠陀螺的稳定性阈值，以及力矩自由极限下进动速率与角动量几何的一致性。">
+<link rel="stylesheet" href="../../assets/cosmos/tm-cosmos.css">
+<style>
+  :root{
+    --accent:#d8b48a; --accent2:#f0d3a6; --ice:#8fd0e8;
+    --good:#7ee3a0; --bad:#ff8a8a;
+    --line:rgba(216,180,138,.20);
+    --glass:linear-gradient(160deg,rgba(43,36,26,.55),rgba(6,10,22,.80));
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; color:#e8eeff; overflow:hidden;
+    font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif}
+  .app{display:flex; height:100vh; width:100vw; position:relative; z-index:1}
+  .stage{position:relative; flex:1; min-width:0}
+  canvas#cv{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+  canvas#cv.grabbing{cursor:grabbing}
+  .brand{position:absolute; top:22px; left:26px; pointer-events:none; max-width:calc(100% - 390px)}
+  .brand h1{margin:0; font-size:19px; letter-spacing:.5px; font-weight:650;
+    background:linear-gradient(90deg,#d8b48a 0%,#f0d3a6 55%,#8fd0e8 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+  @supports not (background-clip:text){.brand h1{color:#d8b48a; background:none; -webkit-text-fill-color:initial}}
+  .brand p{margin:5px 0 0; font-size:12.5px; color:#a9b8dc}
+  .brand p .mid{color:var(--accent2)}
+  .intro{margin:6px 0 0; font-size:12.5px; color:#93a2c8; line-height:1.6; max-width:92%}
+  .hud{position:absolute; left:26px; bottom:22px; font-size:12.5px; color:#77839f;
+       display:flex; gap:14px; flex-wrap:wrap; pointer-events:none; max-width:calc(100% - 400px)}
+  .hud span{display:inline-flex; align-items:baseline; gap:6px}
+  .hud i{font-style:normal; color:#9fb2dc; font-size:11.5px}
+  .hud b{color:var(--accent2); font-weight:600; font-variant-numeric:tabular-nums;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .hud b.ok{color:var(--good)} .hud b.no{color:var(--bad)}
+  .notice{position:absolute; right:16px; bottom:64px; max-width:46%; padding:8px 12px;
+    font-size:12px; line-height:1.65; color:var(--accent2);
+    border:1px solid rgba(216,180,138,.35); border-left:3px solid var(--accent);
+    border-radius:9px; background:rgba(8,12,24,.66)}
+  .notice.bad{color:#ffd7e2; border-color:rgba(255,138,138,.5); border-left-color:var(--bad)}
+  .panel{width:344px; flex:none; padding:20px 20px 16px; overflow-y:auto;
+    background:var(--glass); border-left:1px solid rgba(216,180,138,.35);
+    backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+  .panel::-webkit-scrollbar{width:8px}
+  .panel::-webkit-scrollbar-thumb{background:rgba(216,180,138,.45); border-radius:4px}
+  .eq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; line-height:1.95;
+    padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(6,10,22,.72); color:#d9e4ff; margin-bottom:14px}
+  .eq .num{color:var(--accent2)}
+  .sub{margin:14px 0 8px; font-size:12px; letter-spacing:.06em; color:#c8b28d;
+    border-bottom:1px solid var(--line); padding-bottom:4px}
+  .btns{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px}
+  .btns.four{grid-template-columns:1fr 1fr 1fr 1fr}
+  .btns.two{grid-template-columns:1fr 1fr}
+  button{font:inherit; font-size:12px; padding:8px 6px; border-radius:9px; cursor:pointer;
+    color:#efe4c8; background:rgba(216,180,138,.10); border:1px solid rgba(216,180,138,.35);
+    transition:transform .15s, background .15s, box-shadow .15s}
+  button:hover{background:rgba(216,180,138,.20); transform:translateY(-1px);
+    box-shadow:0 4px 14px rgba(216,180,138,.15)}
+  button.active{background:rgba(216,180,138,.26); border-color:rgba(216,180,138,.65);
+    color:#ffedc2; box-shadow:0 0 10px rgba(216,180,138,.25)}
+  button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .group{margin-bottom:13px}
+  .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px}
+  .row label{font-size:13px; color:#c3cde8}
+  .row .val{font-family:ui-monospace,monospace; font-size:13px; color:var(--accent2);
+    font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%; -webkit-appearance:none; appearance:none; height:4px;
+    border-radius:2px; background:linear-gradient(90deg,#d8b48a,#5a4326); outline:none;
+    box-shadow:0 0 8px rgba(216,180,138,.16)}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px;
+    border-radius:50%; background:#e8c9a0; border:2px solid #241a0e;
+    box-shadow:0 0 12px rgba(216,180,138,.7); cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%;
+    background:#e8c9a0; border:2px solid #241a0e; box-shadow:0 0 12px rgba(216,180,138,.6);
+    cursor:pointer}
+  .hint{font-size:11.5px; color:#75809c; margin-top:5px; line-height:1.5}
+  .tag{display:block; margin-top:14px; font-size:11.5px; color:#77839f; line-height:1.65}
+  .tag span{color:var(--accent2)}
+  .selftest{position:absolute; top:14px; right:14px; max-width:72%; max-height:70vh;
+    overflow-y:auto; white-space:pre-wrap; z-index:999; padding:10px 14px;
+    font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.65; border-radius:10px;
+    background:rgba(9,14,30,.92); border:1px solid rgba(216,180,138,.45); color:#efe4c8}
+  .selftest.fail{border-color:rgba(255,138,138,.7); color:#ffd7e2}
+  @media (max-width:820px){
+    .brand{max-width:calc(100% - 24px)} .brand .intro{display:none}
+    .app{flex-direction:column}
+    .panel{width:100%; height:42vh; border-left:none; border-top:1px solid var(--line)}
+    .stage{height:58vh}
+    .hud{left:14px; bottom:14px; gap:10px; font-size:11px; max-width:calc(100% - 150px);
+      padding:4px 8px; border-radius:8px; background:rgba(4,8,20,.58);
+      border:1px solid rgba(216,180,138,.12)}
+    .notice{max-width:calc(100% - 28px); bottom:86px; font-size:11px}
+  }
+  @media (prefers-reduced-motion: reduce){ button{transition:none} }
+</style>
+<script id="tm-art">
+window.TMART = (function () {
+  'use strict';
+  var TAU = Math.PI * 2, cache = {};
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.max(0, Math.min(255, Math.round(((n >> 16) & 255) * f)));
+    var g = Math.max(0, Math.min(255, Math.round(((n >> 8) & 255) * f)));
+    var b = Math.max(0, Math.min(255, Math.round((n & 255) * f)));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  function sphereSprite(r, color) {
+    var k = 's|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var pad = Math.max(3, r * 0.5), size = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size * 2); c.height = Math.ceil(size * 2);
+    var g = c.getContext('2d'); g.scale(2, 2);
+    var cx = size / 2, cy = size / 2;
+    var rg = g.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.06, cx, cy, r * 1.02);
+    rg.addColorStop(0, '#ffffff');
+    rg.addColorStop(0.16, shade(color, 1.65));
+    rg.addColorStop(0.52, color);
+    rg.addColorStop(1, shade(color, 0.32));
+    g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, r, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.18)';
+    g.lineWidth = Math.max(0.7, r * 0.055);
+    g.beginPath(); g.arc(cx, cy, r * 0.96, 0, TAU); g.stroke();
+    cache[k] = { c: c, size: size, r: r };
+    return cache[k];
+  }
+  function glowSprite(r, color) {
+    var k = 'g|' + r + '|' + color;
+    if (cache[k]) return cache[k];
+    var size = Math.max(8, r * 2);
+    var c = document.createElement('canvas');
+    c.width = Math.ceil(size); c.height = Math.ceil(size);
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    rg.addColorStop(0, hexA(color, 0.75));
+    rg.addColorStop(0.28, hexA(color, 0.32));
+    rg.addColorStop(1, hexA(color, 0));
+    g.fillStyle = rg; g.fillRect(0, 0, size, size);
+    cache[k] = { c: c, size: size };
+    return cache[k];
+  }
+  function sphere(ctx, x, y, r, color, opt) {
+    opt = opt || {};
+    if (opt.glow) {
+      var gr = glowSprite(r * (opt.glowR || 3), color);
+      ctx.globalAlpha = opt.glowAlpha == null ? 0.55 : opt.glowAlpha;
+      ctx.drawImage(gr.c, x - gr.size / 2, y - gr.size / 2, gr.size, gr.size);
+      ctx.globalAlpha = 1;
+    }
+    var s = sphereSprite(r, color);
+    ctx.drawImage(s.c, x - s.size / 2, y - s.size / 2, s.size, s.size);
+  }
+  function project(x, y, z, yaw, pitch) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cp - z1 * sp;
+    var z2 = y * sp + z1 * cp;
+    return { x: x1, y: y1, z: z2 };
+  }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  return { sphere: sphere, glow: glowSprite, project: project, hexA: hexA,
+           shade: shade, clamp: clamp, TAU: TAU };
+})();
+</script>
+</head>
+<body data-cosmos="page" data-cosmos-accent="#d8b48a">
+<div class="app">
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <noscript><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ffd7d7;font-size:14px">需要启用 JavaScript 才能显示实验画面</div></noscript>
+    <div class="brand">
+      <h1>重陀螺的进动与章动</h1>
+      <p><span class="mid">模块 21</span> · 第 5 章 刚体力学 · 重对称陀螺 · 有效势 V_eff(θ)</p>
+      <p class="intro">支点在下方、质心高 <i>l</i> 的对称陀螺：循环动量 <i>p_φ</i>（竖直角动量 L_z）与 <i>p_ψ</i>=I₃ω₃（轴向角动量）把三维运动约化成倾角 <i>θ</i> 的一维有效势问题。轴尖在单位球面上画出<b>进动 + 章动</b>玫瑰线。拖动画布旋转视角；切到「有效势」看转折点与极小，切到「睡眠陀螺」扫过稳定阈值 ω₃c=√(4I₁Mgl)/I₃。</p>
+    </div>
+    <div class="hud" id="hudBox"></div>
+    <div id="notice" class="notice"></div>
+    <div id="selftestPanel" class="selftest" hidden></div>
+  </div>
+
+  <aside class="panel">
+    <div class="eq" id="eqTop">
+      <span class="num">欧拉角（θ 章动 / φ 进动 / ψ 自转）</span><br>
+      p_ψ = I₃(ψ̇ + φ̇cosθ) = I₃ω₃ = L₃<br>
+      p_φ = I₁φ̇sin²θ + p_ψcosθ = L_z<br>
+      ½I₁θ̇² + V_eff(θ) = E − p_ψ²/(2I₃)<br>
+      V_eff = (p_φ − p_ψcosθ)²/(2I₁sin²θ) + Mgl·cosθ<br>
+      <span class="num">稳恒进动</span> I₁Ω²cosθ₀ − I₃ω₃Ω + Mgl = 0
+    </div>
+    <div class="eq" id="eqPot" hidden>
+      <span class="num">一维约化（Routh 固定 p_φ、p_ψ）</span><br>
+      I₁θ̈ = −V_eff′(θ)，转折点 V_eff = E′<br>
+      <span class="num">极小 θ*（稳恒支）</span> V_eff′(θ*) = 0，极大点不稳定<br>
+      <span class="num">章动频率</span> ω_n = √(V_eff″(θ*)/I₁) = √((h/I₁ − 2Ωcosθ₀)² + Ω²sin²θ₀)
+    </div>
+    <div class="eq" id="eqSleep" hidden>
+      <span class="num">θ=0 奇异 → 线性化偏移 (u,v)</span><br>
+      I₁ü + h·v̇ − Mgl·u = 0，　I₁v̈ − h·u̇ − Mgl·v = 0<br>
+      σ± = i(h ± √(h² − 4I₁Mgl))/(2I₁)，　h = I₃ω₃<br>
+      <span class="num">稳定判据</span> ω₃² > 4I₁Mgl/I₃²（失稳时 σ 有正实部：指数增长；临界重根扰动 ∝ t）
+    </div>
+
+    <div class="sub">场景</div>
+    <div class="btns">
+      <button id="scTop" class="active" aria-label="切换到陀螺 3D 场景">陀螺 3D</button>
+      <button id="scPot" aria-label="切换到有效势场景">有效势</button>
+      <button id="scSleep" aria-label="切换到睡眠陀螺场景">睡眠陀螺</button>
+    </div>
+    <div class="sub">预设</div>
+    <div class="btns four">
+      <button id="psSlow" aria-label="预设：慢进动">慢进动</button>
+      <button id="psFast" aria-label="预设：快支进动">快支进动</button>
+      <button id="psStrong" aria-label="预设：强章动">强章动</button>
+      <button id="psSleep" aria-label="预设：睡眠临界">睡眠临界</button>
+    </div>
+
+    <div class="sub">参数（无量纲：I₁=1）</div>
+    <div class="group"><div class="row"><label for="pW3">自转角速度 ω₃（rad/s）</label><span class="val" id="vW3">12.0</span></div>
+      <input type="range" id="pW3" min="0" max="20" step="0.05" value="12" aria-label="自转角速度 omega3，单位 rad/s"></div>
+    <div class="group"><div class="row"><label for="pTh">初始倾角 θ₀（°）</label><span class="val" id="vTh">45</span></div>
+      <input type="range" id="pTh" min="5" max="80" step="1" value="45" aria-label="初始倾角 theta0，单位度"></div>
+    <div class="group"><div class="row"><label for="pR">惯量比 I₃/I₁</label><span class="val" id="vR">0.60</span></div>
+      <input type="range" id="pR" min="0.2" max="2" step="0.01" value="0.6" aria-label="转动惯量比 I3 比 I1"></div>
+    <div class="group"><div class="row"><label for="pMgl">重力矩 Mgl</label><span class="val" id="vMgl">0.50</span></div>
+      <input type="range" id="pMgl" min="0.1" max="2" step="0.01" value="0.5" aria-label="重力矩参数 Mgl"></div>
+    <div class="group" id="gRel"><div class="row"><label for="pRel">释放偏移 δθ（°）</label><span class="val" id="vRel">0</span></div>
+      <input type="range" id="pRel" min="-10" max="10" step="0.5" value="0" aria-label="初始释放偏移 delta theta，单位度">
+      <div class="hint">0 = 由静止释放（φ̇₀=0，章动最大）；稳恒预设下 δθ≠0 给稳恒解叠加小章动。</div></div>
+    <div class="group"><div class="row"><label for="pSpd">演示速度</label><span class="val" id="vSpd">1.0×</span></div>
+      <input type="range" id="pSpd" min="0.1" max="3" step="0.1" value="1" aria-label="动画演示速度倍率"></div>
+
+    <div class="btns two">
+      <button id="btnPause" aria-label="暂停或继续动画">暂停</button>
+      <button id="btnReset" aria-label="复位到当前参数初始条件">复位</button>
+    </div>
+
+    <span class="tag"><span>数值方法：</span>定步长 RK4（h=0.002，按倍率折算子步数）积分 Routh 约化方程 I₁θ̈=−V_eff′(θ)，φ、ψ 由守恒动量重构。<br>
+    <span>单位制：</span>无量纲演示单位（I₁=1；实数量纲示例见 README）。<br>
+    <span>已知限制：</span>仅对称陀螺 I₁=I₂；欧拉角在 sinθ→0 处奇异——程序以恒等式改写 p_φ=p_ψ 情形、其余按 |sinθ|≥10⁻³ 截断并在 HUD 提示；不含摩擦与章动阻尼；θ 超出 [0,π] 的姿态以 |θ| 读数。</span>
+  </aside>
+</div>
+<script defer src="../../assets/cosmos/tm-cosmos.js"></script>
+<script>
+/* 重陀螺的进动与章动（模块 21 / M28）
+ * Routh 约化：1/I1 * th'' = -V'(th)，V=(pp-hh c)^2/(2 I1 s^2)+mgl c
+ * phi'=(pp-hh c)/(I1 s^2)，psi'=hh/I3-phi' c；pp=L_z，hh=L3=I3 w3。
+ * RK4 定步长。sin(th)->0：dp=0 用恒等式改写，其余截断并提示。 */
+(function () {
+  'use strict';
+  function $(id) { return document.getElementById(id); }
+  var TAU = Math.PI * 2, RAD = Math.PI / 180;
+  function cl(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  var cv = $('cv'), ctx = cv.getContext('2d'), ART = window.TMART;
+  var SELFTEST = /[?&]selftest=1(?:&|$)/.test(location.search);
+  var q = new URLSearchParams(location.search);
+  var DEF = { scene: 'top', steady: 'none', w3: 12, th0: 45, r: 0.6, mgl: 0.5, rel: 0, spd: 1 };
+  var LIM = { w3: [0, 20], th0: [5, 80], r: [0.2, 2], mgl: [0.1, 2], rel: [-10, 10], spd: [0.1, 3] };
+  function num(v, lo, hi, fb) { v = parseFloat(v); return isFinite(v) ? cl(v, lo, hi) : fb; }
+  var PRESETS = {
+    slow:   { scene: 'top',   steady: 'slow', w3: 12,   th0: 45, r: 0.6, mgl: 0.5, rel: 0 },
+    fast:   { scene: 'top',   steady: 'fast', w3: 9,    th0: 50, r: 0.6, mgl: 0.5, rel: 0 },
+    strong: { scene: 'top',   steady: 'none', w3: 3.5,  th0: 65, r: 0.6, mgl: 1.2, rel: 0 },
+    sleep:  { scene: 'sleep', steady: 'none', w3: 2.36, th0: 8,  r: 0.6, mgl: 0.5, rel: 0 }
+  };
+  var P = {}, kk;
+  for (kk in DEF) P[kk] = DEF[kk];
+  function applyPreset(n) { var pr = PRESETS[n]; if (!pr) return false; for (var a in pr) P[a] = pr[a]; return true; }
+  if (q.has('preset')) applyPreset(q.get('preset'));
+  if (['top', 'pot', 'sleep'].indexOf(q.get('scene')) >= 0) P.scene = q.get('scene');
+  if (['none', 'slow', 'fast'].indexOf(q.get('steady')) >= 0) P.steady = q.get('steady');
+  for (kk in LIM) if (q.has(kk)) P[kk] = num(q.get(kk), LIM[kk][0], LIM[kk][1], DEF[kk]);
+
+  function veff(I1, pp, hh, mgl, th) {
+    var c = Math.cos(th), s = Math.sin(th), s2 = s * s, N = pp - hh * c;
+    if (Math.abs(pp - hh) < 1e-10) return hh * hh * (1 - c) / (2 * I1 * (1 + c)) + mgl * c;
+    if (s2 < 1e-12) s2 = 1e-12;
+    return N * N / (2 * I1 * s2) + mgl * c;
+  }
+  function vD(I1, pp, hh, mgl, th) {
+    var c = Math.cos(th), s = Math.sin(th), s2 = s * s, N = pp - hh * c;
+    if (Math.abs(pp - hh) < 1e-10) return hh * hh * s / (I1 * (1 + c) * (1 + c)) - mgl * s;
+    if (s2 < 1e-12) s2 = 1e-12;
+    return N * (hh * s2 - N * c) / (I1 * s2 * s) - mgl * s;
+  }
+  function pD(I1, pp, hh, th) {
+    var c = Math.cos(th), s = Math.sin(th), s2 = s * s;
+    if (Math.abs(pp - hh) < 1e-10) return hh / (I1 * (1 + c));
+    if (s2 < 1e-12) s2 = 1e-12;
+    return (pp - hh * c) / (I1 * s2);
+  }
+  function acc(I1, pp, hh, mgl, th) { return -vD(I1, pp, hh, mgl, th) / I1; }
+  function rk1(I1, pp, hh, mgl, th, w, H) {
+    var h2 = H / 2;
+    var a1 = w, b1 = acc(I1, pp, hh, mgl, th);
+    var a2 = w + b1 * h2, b2 = acc(I1, pp, hh, mgl, th + a1 * h2);
+    var a3 = w + b2 * h2, b3 = acc(I1, pp, hh, mgl, th + a2 * h2);
+    var a4 = w + b3 * H, b4 = acc(I1, pp, hh, mgl, th + a3 * H);
+    return [th + H / 6 * (a1 + 2 * a2 + 2 * a3 + a4), w + H / 6 * (b1 + 2 * b2 + 2 * b3 + b4)];
+  }
+  function roots2(I1, mgl, hh, c) {
+    if (Math.abs(c) < 1e-9) { if (Math.abs(hh) < 1e-12) return null; var O = mgl / hh; return { slow: O, fast: O }; }
+    var D = hh * hh - 4 * I1 * mgl * c;
+    if (D < 0) return null;
+    var sq = Math.sqrt(D), so = (hh - sq) / (2 * I1 * c), fa = (hh + sq) / (2 * I1 * c);
+    if (so > fa) { var t = so; so = fa; fa = t; }
+    return { slow: so, fast: fa };
+  }
+  function bisect(fn, lo, hi, it) {
+    var flo = fn(lo);
+    for (var i = 0; i < it; i++) {
+      var mid = (lo + hi) / 2, fm = fn(mid);
+      if (fm === 0) return mid;
+      if ((flo < 0) !== (fm < 0)) hi = mid; else { lo = mid; flo = fm; }
+    }
+    return (lo + hi) / 2;
+  }
+  var S = { th: 0.7854, w: 0, t: 0, ph: 0, ps: 0 };
+  var K = { pp: 0, hh: 0, I1: 1, I3: 0.6, mgl: 0.5, E: 0, sing: false, roots: null, Omeas: 0 };
+  var TR = { rose: [], floor: [], spiral: [] };
+  var M = { tmin: 0, tmax: 0, per: -1, asc: -1, dE: 0, dLz: 0, dL3: 0, mx: 0, steps: 0, wn: -1 };
+  function setup() {
+    var I1 = 1, I3 = P.r, mgl = P.mgl, hh = I3 * P.w3;
+    var th0 = P.th0 * RAD, c0 = Math.cos(th0), s0 = Math.sin(th0), pd0 = 0;
+    K.roots = P.steady === 'none' ? null : roots2(I1, mgl, hh, c0);
+    if (K.roots) pd0 = P.steady === 'slow' ? K.roots.slow : K.roots.fast;
+    K.I1 = I1; K.I3 = I3; K.mgl = mgl; K.hh = hh;
+    K.pp = I1 * pd0 * s0 * s0 + hh * c0;
+    S.th = cl(th0 + P.rel * RAD, 0.01, 3.10); S.w = 0; S.t = 0; S.ph = 0; S.ps = 0;
+    K.sing = false;
+    K.E = 0.5 * I1 * S.w * S.w + veff(I1, K.pp, hh, mgl, S.th) + hh * hh / (2 * I3);
+    TR.rose = []; TR.floor = []; TR.spiral = [];
+    M = { tmin: S.th, tmax: S.th, per: -1, asc: -1, dE: 0, dLz: 0, dL3: 0, mx: Math.abs(S.th), steps: 0, wn: -1 };
+    K.Omeas = 0;
+    updNotice();
+  }
+  function frameSim() {
+    var T = P.spd / 60, n = Math.max(1, Math.round(T / 0.002)), h = T / n, i;
+    for (i = 0; i < n; i++) {
+      var wPrev = S.w, r = rk1(K.I1, K.pp, K.hh, K.mgl, S.th, S.w, h);
+      S.th = r[0]; S.w = r[1]; S.t += h; M.steps++;
+      var s = Math.sin(S.th), c = Math.cos(S.th);
+      if (Math.abs(s) < 1e-3 && Math.abs(K.pp - K.hh) > 1e-9) K.sing = true;
+      var pd = pD(K.I1, K.pp, K.hh, S.th), ps = K.hh / K.I3 - pd * c;
+      S.ph += pd * h; S.ps += ps * h;
+      if (S.t > 0.6) K.Omeas = S.ph / S.t;
+      if (wPrev < 0 && S.w >= 0 && S.t > 0.6) { if (M.asc >= 0) { M.per = S.t - M.asc; M.wn = TAU / M.per; } M.asc = S.t; }
+      if (S.th < M.tmin) M.tmin = S.th; if (S.th > M.tmax) M.tmax = S.th;
+      if (Math.abs(S.th) > M.mx) M.mx = Math.abs(S.th);
+      var E = 0.5 * K.I1 * S.w * S.w + veff(K.I1, K.pp, K.hh, K.mgl, S.th) + K.hh * K.hh / (2 * K.I3);
+      var d = Math.abs(E - K.E) / (Math.abs(K.E) + 1); if (d > M.dE) M.dE = d;
+      var lz = K.I1 * pd * s * s + K.hh * c;
+      d = Math.abs(lz - K.pp) / (Math.abs(K.pp) + 1e-9); if (d > M.dLz) M.dLz = d;
+      var l3 = K.I3 * (ps + pd * c);
+      d = Math.abs(l3 - K.hh) / (Math.abs(K.hh) + 1e-9); if (d > M.dL3) M.dL3 = d;
+    }
+    var u = [Math.sin(S.th) * Math.sin(S.ph), Math.cos(S.th), -Math.sin(S.th) * Math.cos(S.ph)];
+    TR.rose.push(u); if (TR.rose.length > 1800) TR.rose.shift();
+    if (u[1] <= -0.34) { var tt = 0.84 / (-u[1]); if (tt <= 1.25) { TR.floor.push([u[0] * tt, u[1] * tt, u[2] * tt]); if (TR.floor.length > 900) TR.floor.shift(); } }
+    if (P.scene === 'sleep') { TR.spiral.push(u); if (TR.spiral.length > 2400) TR.spiral.shift(); }
+  }
+  function buildHud() {
+    var labels = P.scene === 'pot'
+      ? ['E′ 能量', 'θ 允许区', 'θ* 稳恒点', 'ω_n 理论', 'ω_n 实测', 'ΔE/E', 't (s)']
+      : P.scene === 'sleep'
+      ? ['ω₃ (rad/s)', 'ω₃c 阈值', 'ω₃/ω₃c', 'θ_max 达到', '章动周期 T_n', 'ΔE/E', 't (s)']
+      : ['Ω̄ 进动实测', 'θ 范围 [°]', '章动 T_n (s)', 'ω_n = 2π/T_n', 'ΔE/E', 'ΔLz / ΔL3', 't (s)'];
+    var box = $('hudBox'), html = '';
+    for (var i = 0; i < labels.length; i++) html += '<span><i>' + labels[i] + '</i><b id="hv' + i + '">–</b></span>';
+    box.innerHTML = html;
+  }
+  function f2(v) { return (v === undefined || isNaN(v)) ? '–' : v.toFixed(2); }
+  function f4(v) { return (v === undefined || isNaN(v)) ? '–' : v.toFixed(4); }
+  function updHud() {
+    var w3c = Math.sqrt(4 * K.I1 * K.mgl) / K.I3, i;
+    var vals, cls = {};
+    if (P.scene === 'pot') {
+      var Ep = K.E - K.hh * K.hh / (2 * K.I3);
+      vals = [f2(Ep), (M.tmin / RAD).toFixed(1) + '° – ' + (M.tmax / RAD).toFixed(1) + '°',
+        thStar() === null ? '无（大章动）' : (thStar() / RAD).toFixed(1) + '°',
+        f2(wnTheory()), M.wn > 0 ? f2(M.wn) : '–',
+        (M.dE * 100).toExponential(1) + '%', f2(S.t)];
+    } else if (P.scene === 'sleep') {
+      var ratio = K.hh / K.I3 / w3c;
+      vals = [f2(K.hh / K.I3), f2(w3c), (P.w3 / w3c).toFixed(3),
+        (M.mx / RAD).toFixed(2) + '°', M.per > 0 ? f2(M.per) : '–',
+        (M.dE * 100).toExponential(1) + '%', f2(S.t)];
+      if (P.w3 >= w3c) cls[2] = 'ok'; else cls[2] = 'no';
+    } else {
+      vals = [f2(K.Omeas), (M.tmin / RAD).toFixed(1) + '° – ' + (M.tmax / RAD).toFixed(1) + '°',
+        M.per > 0 ? f2(M.per) : '–', M.wn > 0 ? f2(M.wn) : '–',
+        (M.dE * 100).toExponential(1) + '%',
+        (M.dLz * 100).toExponential(1) + '% / ' + (M.dL3 * 100).toExponential(1) + '%', f2(S.t)];
+      if (K.roots) { var O = P.steady === 'slow' ? K.roots.slow : K.roots.fast; vals[3] = f2(M.wn > 0 ? M.wn : wnTheory()) + ' | Ω₀=' + f2(O); }
+    }
+    for (i = 0; i < vals.length; i++) { var el = $('hv' + i); if (el) { el.textContent = vals[i]; el.className = cls[i] || ''; } }
+  }
+  function thStar() {
+    var prev = vD(K.I1, K.pp, K.hh, K.mgl, 0.02), th = 0.02;
+    for (th = 0.02; th < 1.55; th += 0.002) {
+      var v = vD(K.I1, K.pp, K.hh, K.mgl, th);
+      if (prev < 0 && v >= 0) return bisect(function (x) { return vD(K.I1, K.pp, K.hh, K.mgl, x); }, th - 0.002, th, 60);
+      prev = v;
+    }
+    return null;
+  }
+  function wnTheory() {
+    var t0 = thStar(); if (t0 === null) return NaN;
+    var d2 = (vD(K.I1, K.pp, K.hh, K.mgl, t0 + 1e-4) - vD(K.I1, K.pp, K.hh, K.mgl, t0 - 1e-4)) / 2e-4;
+    return d2 > 0 ? Math.sqrt(d2 / K.I1) : NaN;
+  }
+  function updNotice() {
+    var box = $('notice'), w3c = Math.sqrt(4 * K.I1 * K.mgl) / K.I3, msg = '', bad = false;
+    if (P.scene === 'sleep') {
+      if (P.w3 >= w3c) msg = '睡眠判据 ω₃/ω₃c = ' + (P.w3 / w3c).toFixed(2) + ' ≥ 1：竖直位置线性稳定，小倾角做有界进动-摆动。';
+      else { msg = '睡眠判据 ω₃/ω₃c = ' + (P.w3 / w3c).toFixed(2) + ' < 1：ω₃² < 4I₁Mgl/I₃²，竖直位置不稳定——倾角按 σ₊ 指数增长直至大角度章动。'; bad = true; }
+    } else if (P.scene === 'pot') {
+      msg = '允许区 = V_eff ≤ E′ 的区间；V′=0 的极小点为稳恒进动（下摆支点），极大点为不稳定分离点。';
+    } else {
+      if (K.sing) { msg = '接近 sinθ→0：欧拉角奇异，程序已按 |sinθ|≥10⁻³ 截断，读数不可信。'; bad = true; }
+      else if (P.steady !== 'none' && !K.roots) { msg = '判别式 h² < 4I₁Mgl·cosθ₀：不存在稳恒进动解，陀螺必然下落-抬升（大章动）。'; bad = true; }
+      else if (P.steady === 'slow') msg = '慢支 Ω≈Mgl/(I₃ω₃)：常规重力进动方向（逆时针俯视）。';
+      else if (P.steady === 'fast') msg = '快支 Ω≈I₃ω₃/(I₁cosθ₀)：高阶修正项主导，数值不稳定但短暂可观察。';
+      else msg = '由静止释放（φ̇₀=0）：支点滑出后形成经典摆线章动；拖动画布可旋转视角。';
+    }
+    box.textContent = msg; box.className = 'notice' + (bad ? ' bad' : '');
+    box.style.display = msg ? 'block' : 'none';
+  }
+  var dpr = 1, cvW = 0, cvH = 0, cam = { yaw: 0.65, pitch: 0.34, zoom: 1 };
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.max(60, Math.round(r.width * dpr));
+    cv.height = Math.max(60, Math.round(r.height * dpr));
+    cvW = cv.width; cvH = cv.height;
+  }
+  window.addEventListener('resize', resize);
+  (function () {
+    var down = false, px = 0, py = 0;
+    cv.addEventListener('pointerdown', function (e) { down = true; px = e.clientX; py = e.clientY; cv.classList.add('grabbing'); });
+    window.addEventListener('pointerup', function () { down = false; cv.classList.remove('grabbing'); });
+    cv.addEventListener('pointermove', function (e) { if (!down) return; cam.yaw += (e.clientX - px) * 0.008; cam.pitch = cl(cam.pitch + (e.clientY - py) * 0.006, -1.2, 1.4); px = e.clientX; py = e.clientY; });
+    cv.addEventListener('wheel', function (e) { e.preventDefault(); cam.zoom = cl(cam.zoom * (e.deltaY < 0 ? 1.08 : 0.92), 0.5, 2.2); }, { passive: false });
+  })();
+  function draw() {
+    ctx.clearRect(0, 0, cvW, cvH);
+    if (P.scene === 'pot') drawPot(); else drawTop3();
+    updHud();
+  }
+  function drawTop3() {
+    var W = cvW, H = cvH, sc = Math.min(W, H) * 0.36 * cam.zoom;
+    var cx = W / 2, cy = H * 0.54, piv = [0, 0, -0.45], i;
+    function toScr(p) { var v = ART.project(p[0] - piv[0], p[1] - piv[1], p[2] - piv[2], cam.yaw, cam.pitch); return [cx + v.x * sc, cy - v.y * sc, v.z]; }
+    function ln(a, b, col, wd) { ctx.strokeStyle = col; ctx.lineWidth = wd * dpr; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+    var pr = toScr(piv);
+    ctx.strokeStyle = 'rgba(216,180,138,.20)'; ctx.lineWidth = 1.2 * dpr;
+    ctx.beginPath(); ctx.arc(pr[0], pr[1], sc, 0, TAU); ctx.stroke();
+    var la, an, q;
+    for (la = -60; la <= 60; la += 30) {
+      ctx.strokeStyle = 'rgba(143,208,232,.10)'; ctx.lineWidth = 1 * dpr; ctx.beginPath();
+      var yy = Math.sin(la * RAD), rr = Math.cos(la * RAD);
+      for (an = 0; an <= 360; an += 12) {
+        q = toScr([piv[0] + rr * Math.cos(an * RAD), piv[1] + yy, piv[2] + rr * Math.sin(an * RAD)]);
+        if (an === 0) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      }
+      ctx.stroke();
+    }
+    for (an = 0; an < 180; an += 45) {
+      ctx.strokeStyle = 'rgba(143,208,232,.08)'; ctx.beginPath();
+      for (la = -84; la <= 84; la += 6) {
+        var yy2 = Math.sin(la * RAD), rr2 = Math.cos(la * RAD);
+        q = toScr([piv[0] + rr2 * Math.cos(an * RAD), piv[1] + yy2, piv[2] + rr2 * Math.sin(an * RAD)]);
+        if (la === -84) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      }
+      ctx.stroke();
+    }
+    var fy = -0.84;
+    for (i = -2; i <= 2; i++) {
+      var g = i * 0.5;
+      ln(toScr([g, fy, -1.1]), toScr([g, fy, 1.1]), 'rgba(216,180,138,.07)', 1);
+      ln(toScr([-1.1, fy, g]), toScr([1.1, fy, g]), 'rgba(216,180,138,.07)', 1);
+    }
+    var rose = TR.rose;
+    if (rose.length > 1) {
+      ctx.lineWidth = 1.4 * dpr; ctx.strokeStyle = 'rgba(216,180,138,.16)'; ctx.beginPath();
+      for (i = 1; i < rose.length; i++) {
+        q = toScr([piv[0] + rose[i][0], piv[1] + rose[i][1], piv[2] + rose[i][2]]);
+        if (i === 1) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      }
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(240,211,166,.75)'; ctx.beginPath();
+      for (i = Math.max(1, rose.length - 260); i < rose.length; i++) {
+        q = toScr([piv[0] + rose[i][0], piv[1] + rose[i][1], piv[2] + rose[i][2]]);
+        if (i === Math.max(1, rose.length - 260)) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      }
+      ctx.stroke();
+    }
+    if (TR.floor.length > 1) {
+      ctx.lineWidth = 1.6 * dpr; ctx.strokeStyle = 'rgba(143,208,232,.55)'; ctx.beginPath();
+      for (i = 1; i < TR.floor.length; i++) {
+        q = toScr([TR.floor[i][0], fy, TR.floor[i][2]]);
+        if (i === 1) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      }
+      ctx.stroke();
+    }
+    var st = Math.sin(S.th), ct = Math.cos(S.th);
+    var u = [st * Math.sin(S.ph), ct, -st * Math.cos(S.ph)];
+    var len = P.scene === 'sleep' ? 0.9 : 1.02;
+    var tip = [piv[0] + u[0] * len, piv[1] + u[1] * len, piv[2] + u[2] * len];
+    ln(pr, toScr(tip), 'rgba(240,211,166,.9)', 2.4);
+    var dc = 0.68 * len, dr = 0.30;
+    var cen = [piv[0] + u[0] * dc, piv[1] + u[1] * dc, piv[2] + u[2] * dc];
+    var a1 = [u[2], 0, -u[0]], nn = Math.sqrt(a1[0] * a1[0] + a1[2] * a1[2]);
+    if (nn < 1e-6) a1 = [1, 0, 0]; else { a1[0] /= nn; a1[2] /= nn; }
+    var a2 = [u[1] * a1[2] - u[2] * a1[1], u[2] * a1[0] - u[0] * a1[2], u[0] * a1[1] - u[1] * a1[0]];
+    ctx.strokeStyle = 'rgba(216,180,138,.8)'; ctx.lineWidth = 1.6 * dpr; ctx.beginPath();
+    for (an = 0; an <= 360; an += 10) {
+      var ca = an * RAD + S.ps;
+      q = toScr([cen[0] + dr * (Math.cos(ca) * a1[0] + Math.sin(ca) * a2[0]),
+                 cen[1] + dr * (Math.cos(ca) * a1[1] + Math.sin(ca) * a2[1]),
+                 cen[2] + dr * (Math.cos(ca) * a1[2] + Math.sin(ca) * a2[2])]);
+      if (an === 0) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+    }
+    ctx.stroke();
+    for (i = 0; i < 6; i++) {
+      var sa = S.ps + i * TAU / 6;
+      q = toScr([cen[0] + dr * (Math.cos(sa) * a1[0] + Math.sin(sa) * a2[0]),
+                 cen[1] + dr * (Math.cos(sa) * a1[1] + Math.sin(sa) * a2[1]),
+                 cen[2] + dr * (Math.cos(sa) * a1[2] + Math.sin(sa) * a2[2])]);
+      ln(toScr(cen), q, 'rgba(216,180,138,.4)', 1.2);
+    }
+    ART.sphere(ctx, toScr(cen)[0], toScr(cen)[1], 9 * dpr, '#8a6a3f', {});
+    ART.sphere(ctx, toScr(tip)[0], toScr(tip)[1], 7 * dpr, '#f0d3a6', { glow: true, glowAlpha: 0.5 });
+    ART.sphere(ctx, pr[0], pr[1], 5 * dpr, '#d8b48a', {});
+    if (P.scene === 'sleep' && TR.spiral.length > 1) {
+      ctx.lineWidth = 1.6 * dpr; ctx.strokeStyle = 'rgba(143,208,232,.5)'; ctx.beginPath();
+      for (i = 1; i < TR.spiral.length; i++) {
+        q = toScr([8 * TR.spiral[i][0], 0.86, 8 * TR.spiral[i][2]]);
+        if (i === 1) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      }
+      ctx.stroke();
+      ctx.setLineDash([4 * dpr, 4 * dpr]);
+      ln(toScr([0, 0.86, 0]), toScr([0, 1.15, 0]), 'rgba(143,208,232,.6)', 1.2);
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(143,208,232,.25)'; ctx.beginPath();
+      var rq = toScr([0, 0.86, 0]); ctx.arc(rq[0], rq[1], 0.05 * sc * 8 * 0 + 0.05 * sc, 0, TAU); ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(160,175,210,.85)'; ctx.font = (12 * dpr) + 'px ui-monospace,monospace';
+    ctx.fillText(P.scene === 'sleep' ? '偏差螺旋 ×8（睡眠：小倾角有界 vs 失稳增长）' : '玫瑰线：进动 φ + 章动 θ 合成（轴尖在球面）', 16 * dpr, cvH - 14 * dpr);
+  }
+  function drawPot() {
+    var W = cvW, H = cvH, pad = 58 * dpr, lo = 2 * RAD, hi = 86 * RAD, i;
+    var Ep = K.E - K.hh * K.hh / (2 * K.I3), N = 240, th, vs = [], mn = 1e18, mx = -1e18;
+    for (i = 0; i <= N; i++) {
+      th = lo + (hi - lo) * i / N;
+      var v = veff(K.I1, K.pp, K.hh, K.mgl, th);
+      vs.push(v); if (v < mn) mn = v; if (v > mx) mx = v;
+    }
+    var ymin = Math.min(mn, Ep) - 0.1, ymax = Math.max(mx, Ep) * 1.1 + 0.2;
+    function X(t) { return pad + (W - 2 * pad) * (t - lo) / (hi - lo); }
+    function Y(v) { return H - pad - (H - 2 * pad) * (v - ymin) / (ymax - ymin); }
+    ctx.strokeStyle = 'rgba(143,208,232,.10)'; ctx.lineWidth = 1 * dpr;
+    var gv;
+    for (gv = Math.ceil(ymin); gv <= ymax; gv += Math.max(1, Math.round((ymax - ymin) / 8))) {
+      ctx.beginPath(); ctx.moveTo(pad, Y(gv)); ctx.lineTo(W - pad, Y(gv)); ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(216,180,138,.14)';
+    var deg;
+    for (deg = 10; deg <= 80; deg += 10) { ctx.beginPath(); ctx.moveTo(X(deg * RAD), pad * 0.5); ctx.lineTo(X(deg * RAD), H - pad * 0.6); ctx.stroke(); }
+    ctx.fillStyle = 'rgba(143,208,232,.14)';
+    if (M.tmax > lo && M.tmin < hi) { ctx.fillRect(X(Math.max(M.tmin, lo)), pad * 0.5, X(Math.min(M.tmax, hi)) - X(Math.max(M.tmin, lo)), H - pad * 1.1); }
+    ctx.strokeStyle = '#f0d3a6'; ctx.lineWidth = 2.2 * dpr; ctx.beginPath();
+    for (i = 0; i <= N; i++) { var xx = X(lo + (hi - lo) * i / N); if (i === 0) ctx.moveTo(xx, Y(vs[i])); else ctx.lineTo(xx, Y(vs[i])); }
+    ctx.stroke();
+    ctx.setLineDash([6 * dpr, 5 * dpr]); ctx.strokeStyle = '#8fd0e8'; ctx.lineWidth = 1.6 * dpr;
+    ctx.beginPath(); ctx.moveTo(pad, Y(Ep)); ctx.lineTo(W - pad, Y(Ep)); ctx.stroke(); ctx.setLineDash([]);
+    var tpts = [], prev = vs[0] - Ep;
+    for (i = 1; i <= N; i++) {
+      var cur = vs[i] - Ep;
+      if ((prev < 0) !== (cur < 0)) {
+        var a = lo + (hi - lo) * (i - 1) / N, b = lo + (hi - lo) * i / N;
+        var rr = bisect(function (x) { return veff(K.I1, K.pp, K.hh, K.mgl, x) - Ep; }, a, b, 50);
+        tpts.push(rr);
+      }
+      prev = cur;
+    }
+    for (i = 0; i < tpts.length; i++) {
+      var q = [X(tpts[i]), Y(Ep)];
+      ctx.strokeStyle = '#7ee3a0'; ctx.lineWidth = 2 * dpr;
+      ctx.beginPath(); ctx.arc(q[0], q[1], 5 * dpr, 0, TAU); ctx.stroke();
+      ctx.fillStyle = '#7ee3a0'; ctx.font = (11 * dpr) + 'px ui-monospace,monospace';
+      ctx.fillText('θ=' + (tpts[i] / RAD).toFixed(1) + '°', q[0] + 7 * dpr, q[1] - 7 * dpr);
+    }
+    var t0 = thStar();
+    if (t0 !== null) {
+      var q2 = [X(t0), Y(veff(K.I1, K.pp, K.hh, K.mgl, t0))];
+      ctx.strokeStyle = '#d8b48a'; ctx.lineWidth = 2 * dpr;
+      ctx.beginPath(); ctx.moveTo(q2[0], pad * 0.5); ctx.lineTo(q2[0], H - pad * 0.6); ctx.stroke();
+      ctx.fillStyle = '#d8b48a';
+      ctx.fillText('θ*=' + (t0 / RAD).toFixed(1) + '°（稳恒进动极小）', q2[0] + 8 * dpr, pad * 0.5 + 14 * dpr);
+    }
+    var q3 = [X(cl(S.th, lo, hi)), Y(veff(K.I1, K.pp, K.hh, K.mgl, S.th))];
+    ctx.strokeStyle = 'rgba(255,160,120,.6)'; ctx.lineWidth = 1.4 * dpr;
+    ctx.beginPath(); ctx.moveTo(q3[0], q3[1]); ctx.lineTo(q3[0], Y(Ep)); ctx.stroke();
+    ART.sphere(ctx, q3[0], q3[1], 6 * dpr, '#ffaa77', { glow: true, glowAlpha: 0.6 });
+    ctx.fillStyle = '#8fd0e8'; ctx.font = (12 * dpr) + 'px ui-monospace,monospace';
+    ctx.fillText('E′ = E − p_ψ²/2I₃（水平虚线）', pad + 4 * dpr, Y(Ep) - 8 * dpr);
+    ctx.fillStyle = '#f0d3a6';
+    ctx.fillText('V_eff(θ)（θ=0 处 →+∞，除非 p_φ=p_ψ）', pad + 4 * dpr, pad * 0.5 - 8 * dpr);
+    ctx.fillStyle = 'rgba(160,175,210,.85)';
+    ctx.fillText('θ (°)：2 … 86', W - pad - 90 * dpr, H - pad * 0.4);
+  }
+  var lastPreset = null;
+  function syncUI() {
+    var SL = [['pW3', 'vW3', 'w3', 2], ['pTh', 'vTh', 'th0', 0], ['pR', 'vR', 'r', 2],
+              ['pMgl', 'vMgl', 'mgl', 2], ['pRel', 'vRel', 'rel', 1], ['pSpd', 'vSpd', 'spd', 1]];
+    for (var i = 0; i < SL.length; i++) {
+      var e = $(SL[i][0]); e.value = String(P[SL[i][2]]);
+      $(SL[i][1]).textContent = P[SL[i][2]].toFixed(SL[i][3]) + (SL[i][2] === 'spd' ? '×' : '');
+    }
+    $('scTop').className = P.scene === 'top' ? 'active' : '';
+    $('scPot').className = P.scene === 'pot' ? 'active' : '';
+    $('scSleep').className = P.scene === 'sleep' ? 'active' : '';
+    $('eqTop').hidden = P.scene !== 'top';
+    $('eqPot').hidden = P.scene !== 'pot';
+    $('eqSleep').hidden = P.scene !== 'sleep';
+    $('psSlow').className = lastPreset === 'slow' ? 'active' : '';
+    $('psFast').className = lastPreset === 'fast' ? 'active' : '';
+    $('psStrong').className = lastPreset === 'strong' ? 'active' : '';
+    $('psSleep').className = lastPreset === 'sleep' ? 'active' : '';
+  }
+  (function bind() {
+    var pairs = [['pW3', 'w3'], ['pTh', 'th0'], ['pR', 'r'], ['pMgl', 'mgl'], ['pRel', 'rel'], ['pSpd', 'spd']];
+    for (var i = 0; i < pairs.length; i++) (function (id, key) {
+      $(id).addEventListener('input', function () {
+        P[key] = num(this.value, LIM[key][0], LIM[key][1], DEF[key]);
+        lastPreset = null; syncUI();
+        if (key === 'spd') return;
+        setup();
+      });
+    })(pairs[i][0], pairs[i][1]);
+    $('scTop').addEventListener('click', function () { P.scene = 'top'; lastPreset = null; syncUI(); setup(); });
+    $('scPot').addEventListener('click', function () { P.scene = 'pot'; lastPreset = null; syncUI(); setup(); });
+    $('scSleep').addEventListener('click', function () { P.scene = 'sleep'; lastPreset = null; syncUI(); setup(); });
+    var ps = [['psSlow', 'slow'], ['psFast', 'fast'], ['psStrong', 'strong'], ['psSleep', 'sleep']];
+    for (var j = 0; j < ps.length; j++) (function (id, name) {
+      $(id).addEventListener('click', function () { applyPreset(name); lastPreset = name; syncUI(); setup(); });
+    })(ps[j][0], ps[j][1]);
+    var running = true;
+    $('btnPause').addEventListener('click', function () { running = !running; this.textContent = running ? '暂停' : '继续'; });
+    $('btnReset').addEventListener('click', function () { setup(); });
+    window.__setRun = function (v) { running = !!v; };
+  })();
+  function tick() { if (P.scene !== 'idle') frameSim(); draw(); window.requestAnimationFrame(tick); }
+  function runSelftest() {
+    var panel = $('selftestPanel'); panel.hidden = false;
+    var out = [], pass = 0, fail = 0;
+    function chk(name, ok, exp, act) {
+      out.push((ok ? 'PASS ' : 'FAIL ') + name + ' : expected=' + exp + ' actual=' + act);
+      if (ok) pass++; else fail++;
+    }
+    function sim1D(I1, pp, hh, mgl, th0, w0, H, T, cb) {
+      var th = th0, w = w0, t = 0, n = Math.round(T / H), i;
+      for (i = 0; i < n; i++) {
+        var r = rk1(I1, pp, hh, mgl, th, w, H);
+        if (cb) cb(th, w, t, r[0], r[1], H);
+        th = r[0]; w = r[1]; t += H;
+      }
+    }
+    (function () {
+      var th = 60 * RAD, c = Math.cos(th), h = 6, mgl = 0.5;
+      var R = roots2(1, mgl, h, c), sf = 2 * mgl / (h + Math.sqrt(h * h - 4 * mgl * c));
+      function qd(O) { return O * O * c - h * O + mgl; }
+      var ok = !!R && Math.abs(qd(R.slow)) < 1e-9 && Math.abs(qd(R.fast)) < 1e-9 && Math.abs(sf - R.slow) < 1e-12;
+      chk('ST1 steady-roots', ok, 'quad resid<1e-9', R ? ('r1=' + Math.abs(qd(R.slow)).toExponential(2) + ' r2=' + Math.abs(qd(R.fast)).toExponential(2) + ' dform=' + Math.abs(sf - R.slow).toExponential(2)) : 'null');
+    })();
+    (function () {
+      var h = 12, mgl = 0.5, R = roots2(1, mgl, h, Math.cos(45 * RAD)), ap = mgl / h;
+      var rel = Math.abs(R.slow - ap) / ap;
+      chk('ST1b slow-limit', rel < 0.02, 'relerr<2%', 'slow=' + R.slow.toFixed(6) + ' approx=' + ap.toFixed(6) + ' rel=' + rel.toFixed(4));
+    })();
+    (function () {
+      var pp = 1.2, hh = 2, mgl = 0.3, prev = vD(1, pp, hh, mgl, 2 * RAD), t = null;
+      for (var x = 2 * RAD; x <= 86 * RAD && t === null; x += 0.002) {
+        var v = vD(1, pp, hh, mgl, x);
+        if (prev < 0 && v >= 0) t = bisect(function (y) { return vD(1, pp, hh, mgl, y); }, x - 0.002, x, 60);
+        prev = v;
+      }
+      var res = t === null ? NaN : Math.abs(vD(1, pp, hh, mgl, t));
+      chk('ST2 veff-minimum', t !== null && res < 1e-6, "V'(th*)<1e-6", t === null ? 'no root' : ('theta*=' + (t / RAD).toFixed(3) + 'deg resid=' + res.toExponential(2)));
+    })();
+    (function () {
+      var I3 = 0.6, mgl = 0.5, w3c = Math.sqrt(4 * mgl) / I3, th0 = 0.5 * RAD;
+      function maxth(w3) { var hh = I3 * w3, mx = 0; sim1D(1, hh, hh, mgl, th0, 0, 5e-4, 30, function (th) { if (Math.abs(th) > mx) mx = Math.abs(th); }); return mx; }
+      var mxU = maxth(0.9 * w3c), mxB = maxth(1.1 * w3c);
+      chk('ST3 sleeping-threshold', mxU > 10 * RAD && mxB < 2 * RAD, 'grow>10deg & bound<2deg', 'wc=' + w3c.toFixed(4) + ' mxU=' + (mxU / RAD).toFixed(2) + 'deg mxB=' + (mxB / RAD).toFixed(3) + 'deg');
+    })();
+    (function () {
+      var I3 = 0.6, mgl = 0.5, hh = 7.2, c0 = Math.cos(45 * RAD), pp = hh * c0;
+      var E0 = 0.5 * 0 * 0 + veff(1, pp, hh, mgl, 45 * RAD) + hh * hh / (2 * I3), dE = 0, dz = 0;
+      sim1D(1, pp, hh, mgl, 45 * RAD, 0, 5e-4, 5, function (th, w) {
+        var E = 0.5 * w * w + veff(1, pp, hh, mgl, th) + hh * hh / (2 * I3);
+        var d = Math.abs(E - E0) / (Math.abs(E0) + 1); if (d > dE) dE = d;
+        var pd = pD(1, pp, hh, th), lz = pd * Math.sin(th) * Math.sin(th) + hh * Math.cos(th);
+        d = Math.abs(lz - pp) / (Math.abs(pp) + 1e-9); if (d > dz) dz = d;
+      });
+      chk('ST4 conservation', dE < 1e-8 && dz < 1e-10, 'relErr<1e-8 @1e4 steps', 'dE=' + dE.toExponential(2) + ' dLz=' + dz.toExponential(2));
+    })();
+    (function () {
+      var I3 = 0.6, mgl = 0.5, hh = 5.4, th0 = 50 * RAD, c0 = Math.cos(th0), s0 = Math.sin(th0);
+      var R = roots2(1, mgl, hh, c0), Om = R.slow, pp = Om * s0 * s0 + hh * c0;
+      var wnf = Math.sqrt((hh - 2 * Om * c0) * (hh - 2 * Om * c0) + Om * Om * s0 * s0);
+      var asc = -1, per = -1, pw = 0;
+      sim1D(1, pp, hh, mgl, th0 + 0.5 * RAD, 0, 1e-3, 20, function (th, w, t) {
+        if (pw < 0 && w >= 0) { if (asc >= 0 && per < 0) per = t - asc; asc = t; }
+        pw = w;
+      });
+      var rel = per > 0 ? Math.abs(TAU / per / wnf - 1) : NaN;
+      chk('ST5 nutation-freq', per > 0 && rel < 0.02, 'T_meas vs 2pi/wnf', 'per=' + per.toFixed(4) + ' Ttheory=' + (TAU / wnf).toFixed(4) + ' rel=' + (per > 0 ? rel.toFixed(4) : 'NaN'));
+    })();
+    (function () {
+      var I3 = 0.6, mgl = 1e-6, hh = 4.8, th0 = 30 * RAD, c0 = Math.cos(th0), pp = hh / c0;
+      var ph = 0, pdPrev = pD(1, pp, hh, th0), dth = 0;
+      sim1D(1, pp, hh, mgl, th0, 0, 1e-3, 10, function (th, w, t, thn, wn, H) {
+        var pd = pD(1, pp, hh, th); ph += 0.5 * (pdPrev + pd) * H; pdPrev = pd;
+        var d = Math.abs(th - th0); if (d > dth) dth = d;
+      });
+      var rel = Math.abs(ph / 10 / pp - 1);
+      chk('ST6 torquefree-omega', rel < 0.02 && dth < 0.02, 'Omega vs Lz/I1 rel<2%', 'Om=' + (ph / 10).toFixed(4) + ' ref=' + pp.toFixed(4) + ' rel=' + rel.toExponential(2) + ' dth=' + dth.toFixed(5));
+    })();
+    var line = 'SELFTEST ' + pass + '/' + (pass + fail) + (fail ? ' FAIL' : ' PASS');
+    out.push(line);
+    panel.textContent = out.join('\n');
+    panel.className = 'selftest' + (fail ? ' fail' : '');
+    window.__selftest = { passed: pass, failed: fail, details: out };
+  }
+  buildHud(); syncUI(); resize(); setup();
+  if (SELFTEST) { window.__setRun(false); runSelftest(); }
+  else { window.requestAnimationFrame(tick); }
+})();
+</script>
+</body>
+</html>
