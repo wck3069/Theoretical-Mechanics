@@ -206,7 +206,67 @@ input[type="range"]::-moz-range-track {
   background: rgba(148, 188, 255, 0.20);
 }
 
-/* 模块控制栏、下拉框、公式框、底部星图导航 */
+/* 模块控制栏、下拉框、公式框、底部星图导航（全站 33 个模块视觉完全统一） */
+body[data-tm-mx] {
+  background: radial-gradient(1200px 800px at 70% 10%, #0b142c 0%, #050812 56%, #02040b 100%) !important;
+  color: #e2eaff !important;
+}
+body[data-tm-mx] .brand h1,
+body[data-tm-mx] header.top h1 {
+  color: #ffd27a !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  text-shadow: 0 2px 18px rgba(255, 210, 122, 0.22) !important;
+}
+body[data-tm-mx] .hud b {
+  color: #ffd27a !important;
+  font-variant-numeric: tabular-nums !important;
+}
+body[data-tm-mx] aside.panel,
+body[data-tm-mx] .panel {
+  background: linear-gradient(180deg, rgba(11, 18, 38, 0.88) 0%, rgba(7, 12, 26, 0.94) 100%) !important;
+  border-color: var(--at-line) !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.06), -12px 0 36px rgba(2, 5, 16, 0.45) !important;
+}
+body[data-tm-mx] .panel button:not(.close):not(.mini-btn) {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  border: 1px solid rgba(110, 156, 255, 0.28) !important;
+  background: rgba(58, 95, 191, 0.16) !important;
+  color: #dce6ff !important;
+  transition: all 0.16s ease !important;
+}
+body[data-tm-mx] .panel button:not(.close):not(.mini-btn):hover {
+  background: rgba(94, 162, 255, 0.28) !important;
+  border-color: rgba(127, 224, 255, 0.52) !important;
+  color: #ffffff !important;
+}
+body[data-tm-mx] .panel button.primary,
+body[data-tm-mx] .panel button.active {
+  background: linear-gradient(180deg, #4380ff 0%, #2a5de0 100%) !important;
+  border-color: rgba(127, 196, 255, 0.65) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 16px rgba(45, 102, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+body[data-tm-mx] .panel button.primary:hover {
+  filter: brightness(1.1);
+}
+body[data-tm-mx] .doc {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  border: 1px solid rgba(127, 224, 255, 0.26) !important;
+  background: rgba(12, 22, 46, 0.65) !important;
+  color: #bfefff !important;
+  transition: all 0.16s ease !important;
+}
+body[data-tm-mx] .doc:hover {
+  background: rgba(127, 224, 255, 0.12) !important;
+  border-color: rgba(127, 224, 255, 0.52) !important;
+  color: #ffffff !important;
+}
 aside, .panel, .sidebar, .controls {
   border-color: var(--at-line) !important;
 }
@@ -222,7 +282,7 @@ select:hover, select:focus {
   border-color: var(--at-cyan) !important;
   box-shadow: 0 0 0 3px rgba(127, 224, 255, 0.14);
 }
-.formula, .eq-box, .fbox, .math-card {
+.eq, .formula, .eq-box, .fbox, .math-card {
   border-radius: 12px !important;
   corner-shape: round !important;
   background: linear-gradient(165deg, rgba(6, 12, 28, 0.88), rgba(4, 8, 20, 0.94)) !important;
