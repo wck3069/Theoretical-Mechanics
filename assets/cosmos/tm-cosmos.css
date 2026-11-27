@@ -193,3 +193,386 @@ body[data-cosmos-nebula="andromeda"] .cosmos-nebula { transform-origin: 46% 40%;
     transition: none;
   }
 }
+
+/* TM-ATELIER-START */
+/* ============================================================================
+ * TM-ATELIER — 全站统一「深空天文台 · 液态星辉玻璃」美术升级层
+ * 覆盖：7 章节页 / 33 交互模块 / 书稿与推导阅读器 / 目录页
+ * 100% 离线，零外链，尊重 prefers-reduced-motion
+ * ============================================================================ */
+
+:root {
+  --at-void: #040712;
+  --at-deep: #080f22;
+  --at-glass: rgba(11, 18, 38, 0.72);
+  --at-glass-strong: rgba(9, 15, 32, 0.86);
+  --at-line: rgba(148, 188, 255, 0.16);
+  --at-line-hi: rgba(178, 214, 255, 0.34);
+  --at-spec: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --at-shadow: 0 16px 44px rgba(2, 5, 16, 0.56);
+  --at-cyan: #7fe0ff;
+  --at-solar: #ffd27a;
+  --at-text: #eaf0ff;
+  --at-text2: #b4c3e4;
+  --at-muted: #7b8db5;
+}
+
+/* —— 1. 全局星辉滚动条与选区 —— */
+html {
+  color-scheme: dark;
+  scrollbar-color: rgba(148, 188, 255, 0.28) rgba(4, 7, 18, 0.5);
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(4, 7, 18, 0.55); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(148, 188, 255, 0.30), rgba(127, 224, 255, 0.22));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(176, 212, 255, 0.52), rgba(127, 224, 255, 0.42));
+  background-clip: content-box;
+}
+::selection {
+  background: rgba(127, 224, 255, 0.26);
+  color: #ffffff;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* —— 2. 移除违和的扁平剪纸黄月牙，改为柔和深空天体辉光 —— */
+.cosmos-moon {
+  width: 24vmin !important;
+  height: 24vmin !important;
+  top: -4vmin !important;
+  right: -2vmin !important;
+  opacity: 0.55 !important;
+}
+.cosmos-moon__disc {
+  display: none !important;
+}
+.cosmos-moon__swirl {
+  inset: 0 !important;
+  opacity: 0.7 !important;
+  background: radial-gradient(circle at 60% 40%, rgba(127, 224, 255, 0.16), rgba(255, 210, 122, 0.08) 42%, transparent 72%) !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  animation: none !important;
+}
+
+/* —— 3. 七大章节页（[data-cosmos="page"]）：深邃星云氛围 + 精奢磨砂玻璃卡 —— */
+body[data-cosmos="page"]::before {
+  background:
+    radial-gradient(960px 620px at 16% 12%, rgba(28, 72, 148, 0.26), transparent 64%),
+    radial-gradient(840px 560px at 84% 22%, rgba(92, 58, 168, 0.18), transparent 62%),
+    linear-gradient(180deg, rgba(4, 7, 18, 0.76) 0%, rgba(4, 8, 20, 0.84) 55%, rgba(3, 5, 14, 0.92) 100%) !important;
+}
+body[data-cosmos="page"] .top {
+  background: rgba(9, 15, 32, 0.74) !important;
+  backdrop-filter: blur(16px) saturate(1.25) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.25) !important;
+  border: 1px solid var(--at-line) !important;
+  border-radius: 16px !important;
+  corner-shape: round !important;
+  padding: 12px 18px !important;
+  box-shadow: var(--at-spec), 0 12px 36px rgba(2, 5, 16, 0.45) !important;
+}
+body[data-cosmos="page"] .home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px !important;
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  background: rgba(255, 210, 122, 0.10) !important;
+  border: 1px solid rgba(255, 210, 122, 0.30) !important;
+  transition: all 0.2s ease !important;
+}
+body[data-cosmos="page"] .home:hover {
+  background: rgba(255, 210, 122, 0.18) !important;
+  border-color: rgba(255, 210, 122, 0.55) !important;
+  transform: translateY(-1px);
+}
+body[data-cosmos="page"] .chapter-nav a {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  padding: 5px 11px !important;
+  background: rgba(255, 255, 255, 0.03);
+}
+body[data-cosmos="page"] .hero h1 {
+  letter-spacing: 0.04em;
+}
+body[data-cosmos="page"] .card {
+  border-radius: 18px !important;
+  corner-shape: round !important;
+  background: linear-gradient(160deg, rgba(16, 26, 54, 0.74) 0%, rgba(7, 12, 26, 0.86) 100%) !important;
+  backdrop-filter: blur(14px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.18) !important;
+  border: 1px solid rgba(154, 192, 255, 0.18) !important;
+  box-shadow: var(--at-spec), 0 14px 36px rgba(2, 5, 16, 0.48) !important;
+  transition: transform 0.26s cubic-bezier(.22,.68,.28,1), border-color 0.26s ease, box-shadow 0.26s ease !important;
+}
+body[data-cosmos="page"] .card:hover {
+  transform: translateY(-4px) !important;
+  border-color: color-mix(in srgb, var(--cacc, #7fe0ff) 48%, rgba(255, 255, 255, 0.16)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 20px 52px rgba(2, 5, 18, 0.68),
+    0 0 28px color-mix(in srgb, var(--cacc, #7fe0ff) 16%, transparent) !important;
+}
+body[data-cosmos="page"] .tags span {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  background: rgba(148, 188, 255, 0.07) !important;
+  border-color: rgba(148, 188, 255, 0.16) !important;
+  color: #a9bce0 !important;
+  padding: 2px 9px !important;
+}
+body[data-cosmos="page"] .enter {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  padding: 8px 14px !important;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent, #ffd27a) 92%, #ffffff), var(--accent, #ffd27a)) !important;
+  color: #060b18 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent, #ffd27a) 28%, transparent) !important;
+}
+body[data-cosmos="page"] .enter:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--accent, #ffd27a) 42%, transparent) !important;
+}
+body[data-cosmos="page"] .pdf {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  padding: 8px 13px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(154, 192, 255, 0.22) !important;
+  color: #d6e2ff !important;
+}
+body[data-cosmos="page"] .pdf:hover {
+  background: rgba(127, 224, 255, 0.10) !important;
+  border-color: rgba(127, 224, 255, 0.44) !important;
+  color: #ffffff !important;
+}
+
+/* —— 4. 全部 33 个交互模块：星辉滑块、磨砂控制栏与按钮统一美化 —— */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(127, 224, 255, 0.30), rgba(148, 188, 255, 0.16));
+  outline: none;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+input[type="range"]:hover {
+  background: linear-gradient(90deg, rgba(127, 224, 255, 0.45), rgba(148, 188, 255, 0.24));
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #9eeaff 45%, #49b8f5 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px rgba(127, 224, 255, 0.65), 0 2px 6px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.16);
+  box-shadow: 0 0 18px rgba(127, 224, 255, 0.90), 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #9eeaff 45%, #49b8f5 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px rgba(127, 224, 255, 0.65);
+}
+input[type="range"]::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(148, 188, 255, 0.20);
+}
+
+/* 模块控制栏、下拉框、公式框、底部星图导航 */
+aside, .panel, .sidebar, .controls {
+  border-color: var(--at-line) !important;
+}
+select {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  background-color: rgba(7, 13, 28, 0.86) !important;
+  border: 1px solid var(--at-line-hi) !important;
+  color: var(--at-text) !important;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+select:hover, select:focus {
+  border-color: var(--at-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(127, 224, 255, 0.14);
+}
+.formula, .eq-box, .fbox, .math-card {
+  border-radius: 12px !important;
+  corner-shape: round !important;
+  background: linear-gradient(165deg, rgba(6, 12, 28, 0.88), rgba(4, 8, 20, 0.94)) !important;
+  border: 1px solid rgba(127, 224, 255, 0.20) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+.tm-orbit-nav {
+  background: rgba(8, 14, 30, 0.78) !important;
+  backdrop-filter: blur(14px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.2) !important;
+  border: 1px solid var(--at-line) !important;
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  padding: 5px 8px !important;
+  box-shadow: var(--at-spec), 0 12px 34px rgba(2, 5, 16, 0.55) !important;
+}
+.tm-orbit-nav a, .tm-orbit-nav button {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  border-color: rgba(148, 188, 255, 0.20) !important;
+  transition: all 0.16s ease !important;
+}
+.tm-orbit-nav a:hover, .tm-orbit-nav button:hover {
+  background: rgba(127, 224, 255, 0.14) !important;
+  border-color: rgba(127, 224, 255, 0.45) !important;
+  color: #ffffff !important;
+}
+
+/* M31–M40 新模块顶部导航与操作按钮统一升级 */
+.modnav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.modnav .backlink {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, 0.10);
+  border: 1px solid rgba(127, 224, 255, 0.30);
+  color: #9ce8ff;
+  text-decoration: none;
+  font-size: 12.5px;
+  white-space: nowrap;
+  transition: all 0.16s ease;
+}
+.modnav .backlink:hover {
+  background: rgba(127, 224, 255, 0.20);
+  border-color: rgba(127, 224, 255, 0.60);
+  color: #ffffff;
+}
+.modnav select {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+
+/* —— 5. 书稿与推导阅读器（body.ms-reader / body.ms-hub）：深空精装阅读质感 —— */
+body.ms-reader, body.ms-hub {
+  background:
+    radial-gradient(1100px 680px at 14% 4%, rgba(28, 66, 134, 0.22), transparent 62%),
+    radial-gradient(900px 620px at 88% 18%, rgba(74, 46, 138, 0.14), transparent 58%),
+    radial-gradient(1200px 800px at 50% 108%, rgba(12, 36, 88, 0.26), transparent 60%),
+    #040712 !important;
+  background-attachment: fixed !important;
+  color: var(--at-text) !important;
+}
+body.ms-reader .ms-header, body.ms-hub .top {
+  background: rgba(9, 15, 32, 0.78) !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+  border-bottom: 1px solid var(--at-line) !important;
+  box-shadow: 0 8px 30px rgba(2, 5, 16, 0.45) !important;
+}
+body.ms-reader .ms-nav a {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  border-color: var(--at-line) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  transition: all 0.16s ease !important;
+}
+body.ms-reader .ms-nav a:hover {
+  border-color: var(--at-line-hi) !important;
+  background: rgba(127, 224, 255, 0.10) !important;
+}
+body.ms-reader .ms-hero {
+  border-radius: 20px !important;
+  corner-shape: round !important;
+  background: linear-gradient(155deg, rgba(16, 26, 54, 0.78) 0%, rgba(8, 13, 28, 0.88) 100%) !important;
+  border: 1px solid rgba(154, 192, 255, 0.20) !important;
+  box-shadow: var(--at-spec), var(--at-shadow) !important;
+  position: relative;
+  overflow: hidden;
+}
+body.ms-reader .ms-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(520px 220px at 88% 0%, rgba(127, 224, 255, 0.12), transparent 70%);
+  pointer-events: none;
+}
+body.ms-reader .ms-hero h1 {
+  background: linear-gradient(96deg, #ffffff 0%, #d4e8ff 58%, #9ce8ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+body.ms-reader .ms-toc {
+  border-radius: 16px !important;
+  corner-shape: round !important;
+  background: rgba(9, 15, 32, 0.68) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--at-line) !important;
+  box-shadow: var(--at-spec), 0 12px 32px rgba(2, 5, 16, 0.40) !important;
+}
+body.ms-reader .ms-toc a {
+  border-radius: 8px !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+body.ms-reader .ms-toc a:hover {
+  background: rgba(127, 224, 255, 0.09) !important;
+  color: #ffffff !important;
+}
+body.ms-reader .ms-body {
+  color: #e6eeff !important;
+  line-height: 1.88 !important;
+}
+body.ms-reader .mathbox,
+body.ms-reader .definition,
+body.ms-reader .example,
+body.ms-reader .modernbox {
+  border-radius: 14px !important;
+  corner-shape: round !important;
+  background: linear-gradient(160deg, rgba(14, 24, 50, 0.72), rgba(8, 13, 28, 0.82)) !important;
+  border: 1px solid rgba(148, 188, 255, 0.18) !important;
+  border-left: 3px solid var(--at-cyan) !important;
+  box-shadow: var(--at-spec), 0 10px 28px rgba(2, 5, 16, 0.36) !important;
+}
+body.ms-reader .definition { border-left-color: var(--at-solar) !important; }
+body.ms-reader .example { border-left-color: #8fe8a0 !important; }
+body.ms-reader .modernbox { border-left-color: #c88aff !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-cosmos="page"] .card,
+  body[data-cosmos="page"] .home,
+  body[data-cosmos="page"] .enter,
+  input[type="range"]::-webkit-slider-thumb {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* TM-ATELIER-END */

@@ -21,7 +21,7 @@ class H(http.server.SimpleHTTPRequestHandler):
         try:
             path = self.path.split('?')[0].split('#')[0]
             dest = self.headers.get('Sec-Fetch-Dest', '')
-            if path.endswith('neural/index.html') and dest == 'iframe':
+            if path.endswith('/index.html') and '/chapters/' in path and dest == 'iframe':
                 time.sleep(DELAY)
             if '/textures/hi/' in path and dest == 'image':
                 time.sleep(1.2)

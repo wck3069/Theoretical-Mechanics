@@ -18,7 +18,7 @@ URL_FILE="$STATE/demo-url"
 : > "$URL_FILE"
 ln -sfn "$URL_FILE" /tmp/tm-demo-url
 
-"$CF_BIN" tunnel --url http://127.0.0.1:8081 --no-autoupdate 2>&1 |
+"$CF_BIN" tunnel --url http://127.0.0.1:8081 --protocol http2 --no-autoupdate 2>&1 |
 while IFS= read -r line; do
   printf '%s\n' "$line"
   if [[ "$line" =~ (https://[a-z0-9-]+\.trycloudflare\.com) ]]; then

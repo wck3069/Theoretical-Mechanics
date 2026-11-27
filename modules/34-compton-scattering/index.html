@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>康普顿散射运动学 · 理论力学</title>
+<style>
+:root{--bg:#05070f;--panel:rgba(16,22,40,.88);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
+.app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.brand{position:absolute;left:24px;top:20px;pointer-events:none}.brand h1{font-size:19px;margin:0}.brand p{font-size:12.5px;color:var(--muted);margin:5px 0 0;line-height:1.5}
+.hud{position:absolute;left:24px;bottom:22px;display:flex;gap:18px;font-size:12.5px;color:var(--muted);pointer-events:none}.hud b{color:var(--a);font-variant-numeric:tabular-nums}
+.panel{width:330px;flex:none;padding:20px;overflow:auto;background:var(--panel);border-left:1px solid var(--line);backdrop-filter:blur(12px)}
+.eq{font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.9;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(5,9,20,.6);color:#cfe0ff;margin-bottom:16px}
+.group{margin-bottom:16px}.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.val{font-family:ui-monospace,monospace;color:var(--b)}
+input[type=range]{width:100%;accent-color:var(--a)}.hint{color:var(--muted);font-size:11.5px;line-height:1.6;margin-top:6px}
+button{font:inherit;font-size:12.5px;padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:rgba(127,224,255,.12);color:var(--text);cursor:pointer;margin-right:8px}
+button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weight:600}
+@media(max-width:820px){.app{flex-direction:column}.panel{width:auto;height:44vh;border-left:0;border-top:1px solid var(--line)}.stage{height:56vh}.brand h1{font-size:16px}.hud{bottom:12px;left:14px;gap:12px}}
+.intro{margin-top:8px!important;max-width:640px;line-height:1.7;color:#b9c6ea!important}
+.hint{color:#8290b6;font-size:11.5px;line-height:1.65;margin:6px 0 2px;padding-left:9px;border-left:2px solid rgba(120,165,255,.22)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.btns button{margin:0}.btns button.full{grid-column:1/-1}
+.doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+.doc:hover{border-color:#7fe0ff}
+.tag{color:#6d7ba3;font-size:10.5px;line-height:1.6;border-top:1px solid rgba(120,165,255,.14);padding-top:10px}
+#errbox{position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}
+.modnav{display:flex;gap:8px;align-items:center;margin:0 0 12px}.modnav a.backlink{flex:none;color:#bfefff;text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(127,224,255,.10)}.modnav a.backlink:hover{border-color:#7fe0ff}.modnav select{flex:1;min-width:0;font:inherit;font-size:12.5px;padding:8px;border-radius:9px;border:1px solid var(--line);background:rgba(10,16,32,.7);color:var(--text)}
+
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="康普顿散射运动学 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/34-compton-scattering/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="康普顿散射运动学 · 理论力学">
+<meta property="og:description" content="康普顿散射运动学 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/34-compton-scattering/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="康普顿散射运动学 · 理论力学">
+<meta name="twitter:description" content="康普顿散射运动学 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<link rel="stylesheet" href="../../assets/tm-atelier.css">
+</head>
+<body>
+<div class="app"><div class="stage"><canvas id="cv"></canvas>
+<div class="brand"><h1>M34 · 康普顿散射运动学</h1><p>四动量守恒给出电子真实出射角 φₑ=atan2(E′sinθ, E−E′cosθ)：反冲电子永远前冲（φₑ&lt;90°），θ=0 时无反冲。</p><p class="intro">第一步：比较 θ=0（无反冲）与 θ=180°（背散射，电子获得最大能量）；第二步：把 E 拉到 1 MeV，看绿色电子径迹几乎贴着入射方向。</p></div>
+<div class="hud"><span>λ → λ′ <b id="lam">–</b> pm</span><span>E′ / Tₑ <b id="ep">–</b></span><span>φₑ / βₑ <b id="rec">–</b></span></div>
+</div><aside class="panel">
+<div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="" disabled>▣ M34 康普顿散射运动学（当前）</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
+<div class="eq">E′ = E/[1+(E/mₑc²)(1−cosθ)] &nbsp;|&nbsp; pₑc = √(Tₑ(Tₑ+2mₑc²))</div>
+<div class="group"><div class="row"><label>入射光子能量 E（对数轴）</label><span class="val" id="ev">300 keV</span></div><input id="e" type="range" min="0" max="4" step="0.01" value="2.477">
+<div class="hint">从 1 keV 到 10 MeV 跨四个量级：低能端 Δλ/λ 可近乎 100%，高能端光子几乎把全部能量交给电子。</div></div>
+<div class="group"><div class="row"><label>散射角 θ</label><span class="val" id="tv">60°</span></div><input id="theta" type="range" min="0" max="180" value="60">
+<div class="hint">前向 Δλ=0、无反冲；后向 Δλ=2λ_C=4.85 pm 为上限。电子角 φₑ 由动量守恒决定，不由 θ/2 简单平分。</div></div>
+<div class="btns"><button class="primary" id="sweep">扫角</button><button id="reset">复位</button><button class="full" id="p1">Thomson 极限 (1 keV, 90°)</button><button class="full" id="p2">Mo-Kα 17.4 keV</button><button class="full" id="p3">⁶⁶²Cs 背散射 662 keV</button><button class="full" id="p4">1 MeV, 60°</button></div>
+<p class="hint">λ_C = h/(mₑc) = 2.426 pm，mₑc²=511 keV。图只画运动学，未按 Klein–Nishina 截面加权（各角度出射概率不同）。右下角为闭合动量三角形 p = p′ + pₑ。出处：书稿 ch07.tex:735。</p>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">四动量守恒 · 电子静止 · 无 Klein–Nishina 权重 · 出处：书稿 ch07.tex:735</div></aside></div>
+<div id="selftestPanel" class="selftest" hidden></div>
+<script>
+window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
+(function(){
+function shell(c,w,h,seed){
+ c.clearRect(0,0,w,h);
+ var g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#0b1226');g.addColorStop(.55,'#060a16');g.addColorStop(1,'#02030a');c.fillStyle=g;c.fillRect(0,0,w,h);
+ var frac=function(v){return v-Math.floor(v)};
+ for(var i=0;i<90;i++){var x=frac(Math.sin(i*12.9898+seed)*43758.5453)*w,y=frac(Math.sin(i*78.233+seed*3)*24634.6345)*h,a=.08+frac(Math.sin(i*4.17)*9157.13)*.22;c.fillStyle='rgba(207,224,255,'+a.toFixed(3)+')';c.fillRect(x,y,1.2,1.2)}
+ c.strokeStyle='rgba(120,160,255,.055)';c.lineWidth=1;c.beginPath();for(var x2=60;x2<w;x2+=80){c.moveTo(x2,0);c.lineTo(x2,h)}for(var y2=60;y2<h;y2+=80){c.moveTo(0,y2);c.lineTo(w,y2)}c.stroke();
+}
+ const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),E=document.getElementById('e'),TH=document.getElementById('theta');
+ const mec2=511,lc=2.426,hc=1239.84;let sweep=false;
+ function resize(){const b=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);resize();
+ function fmtE(v){return v<1000?v.toFixed(1)+' keV':(v/1000).toFixed(2)+' MeV'}
+ function calc(){const en=Math.pow(10,Number(E.value)),t=Number(TH.value)*Math.PI/180,c=1-Math.cos(t),dl=lc*c,ep=en/(1+(en/mec2)*c),Te=en-ep,pe=Math.sqrt(Math.max(0,Te*(Te+2*mec2))),phi=Math.atan2(-ep*Math.sin(t),en-ep*Math.cos(t));return {en,t,dl,ep,Te,pe,phi,lam:hc/en,lamp:hc/(en/(1+(en/mec2)*c)),beta:pe/(Te+mec2)}}
+ function wave(x0,y0,x1,y1,space,color){const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy),nx=-dy/L,ny=dx/L;ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();for(let s=0;s<L;s+=3){const px=x0+dx*s/L,py=y0+dy*s/L,a=Math.sin(s/space*Math.PI*2)*5;ctx.lineTo(px+nx*a,py+ny*a)}ctx.stroke()}
+ function arrow(x0,y0,x1,y1,color,w2){ctx.strokeStyle=color;ctx.lineWidth=w2||2;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();const a=Math.atan2(y1-y0,x1-x0);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-10*Math.cos(a-.45),y1-10*Math.sin(a-.45));ctx.lineTo(x1-10*Math.cos(a+.45),y1-10*Math.sin(a+.45));ctx.closePath();ctx.fillStyle=color;ctx.fill()}
+ function draw(t){
+  const P=calc(),w=cv.clientWidth,h=cv.clientHeight;shell(ctx,w,h,357);
+  const ox=w*0.32,oy=h*0.52,S=Math.min(w,h)*0.30;
+  ctx.strokeStyle='rgba(150,180,240,.12)';ctx.beginPath();ctx.arc(ox,oy,S,0,Math.PI*2);ctx.stroke();
+  const spIn=Math.max(6,40/Math.sqrt(P.en)),spOut=spIn*(P.lamP!==undefined?1:1)*(P.lamp/P.lam);
+  wave(40,oy,ox-14,oy,spIn,'rgba(127,224,255,.9)');
+  const ex=ox+S*Math.cos(P.t),ey=oy-S*Math.sin(P.t);
+  wave(ox+20,oy,ex,ey,spIn*(P.lamp/P.lam),'rgba(255,210,122,.9)');
+  arrow(ox,oy,ex,ey,'rgba(255,210,122,.35)',2);
+  ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(ox,oy,4.5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(127,224,255,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(ox,oy,8,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle='#dce6ff';ctx.font='12px ui-monospace,monospace';ctx.textAlign='left';
+  ctx.fillText('λ='+P.lam.toFixed(3)+' pm',44,oy-14);ctx.fillText('λ′='+P.lamp.toFixed(3)+' pm (Δλ='+P.dl.toFixed(3)+')',ox+30,oy-S*0.55);
+  if(P.Te<1e-6){ctx.fillStyle='#8d9cc4';ctx.fillText('θ=0：无反冲，电子留在原地',ox+30,oy+30)}
+  else{
+   const rl=S*(0.35+0.5*Math.min(1,P.Te/P.en)),edx=ox+rl*Math.cos(P.phi),edy=oy-rl*Math.sin(P.phi);
+   arrow(ox,oy,edx,edy,'#8fe8a0',2.4);
+   ctx.setLineDash([4,5]);ctx.strokeStyle='rgba(143,232,160,.35)';ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox+S*1.15,oy);ctx.stroke();ctx.setLineDash([]);
+   ctx.strokeStyle='rgba(143,232,160,.7)';ctx.beginPath();ctx.arc(ox,oy,S*0.3,-P.phi,0);ctx.stroke();
+   ctx.fillStyle='#8fe8a0';ctx.fillText('φₑ='+(-P.phi*180/Math.PI).toFixed(1)+'° (<90°)',ox+S*0.32,oy+18);
+   ctx.fillText('e⁻ Tₑ='+P.Te.toFixed(1)+' keV, βₑ='+P.beta.toFixed(3),edx+8,edy+4);
+  }
+  const tx=w*0.78,ty=h*0.62,sc=64/Math.max(P.en,1);
+  ctx.fillStyle='#8d9cc4';ctx.textAlign='center';ctx.fillText('动量三角形 p = p′ + pₑ',tx,ty-52);
+  const A=[tx-40,ty],B=[tx-40+P.en*sc*0.8,ty],C=[B[0]-P.ep*sc*0.8*Math.cos(P.t),B[1]+P.ep*sc*0.8*Math.sin(P.t)];
+  ctx.strokeStyle='rgba(127,224,255,.8)';ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+  arrow(A[0],A[1],B[0],B[1],'rgba(127,224,255,.8)',1.6);
+  arrow(B[0],B[1],C[0],C[1],'rgba(143,232,160,.9)',1.6);
+  arrow(C[0],C[1],A[0],A[1],'rgba(255,210,122,.8)',1.6);
+  ctx.fillStyle='#b9c6ea';ctx.textAlign='left';
+  ctx.fillText('pₑc = √(Tₑ(Tₑ+2mₑc²)) = '+P.pe.toFixed(1)+' keV',tx-40,ty+44);
+  ctx.fillText('（三角形闭合 = 数值自洽校验）',tx-40,ty+60);
+  ctx.fillStyle='#8d9cc4';ctx.textAlign='left';ctx.fillText('θ = '+TH.value+'°',48,oy+22);
+  document.getElementById('lam').textContent=P.lam.toFixed(3)+'→'+P.lamp.toFixed(3);
+  document.getElementById('ep').textContent=P.ep.toFixed(1)+' / '+P.Te.toFixed(1)+' keV';
+  document.getElementById('rec').textContent=(P.Te<1e-6?'—':(-P.phi*180/Math.PI).toFixed(1)+'° / '+P.beta.toFixed(3));
+  document.getElementById('ev').textContent=fmtE(P.en);document.getElementById('tv').textContent=TH.value+'°';
+  if(sweep){TH.value=Number(TH.value)+0.7;if(Number(TH.value)>=180){TH.value=0;sweep=false}}
+  requestAnimationFrame(draw)
+ }
+ document.getElementById('sweep').addEventListener('click',()=>{sweep=true;TH.value=0});
+ document.getElementById('reset').addEventListener('click',()=>{sweep=false;E.value=2.477;TH.value=60});
+ document.getElementById('p1').onclick=function(){E.value=0;TH.value=90;sweep=false};
+ document.getElementById('p2').onclick=function(){E.value=1.2405;TH.value=90;sweep=false};
+ document.getElementById('p3').onclick=function(){E.value=2.8209;TH.value=180;sweep=false};
+ document.getElementById('p4').onclick=function(){E.value=3;TH.value=60;sweep=false};
+ requestAnimationFrame(draw)
+
+  /* ---------------- 自检（?selftest=1） ---------------- */
+  function runSelfTest() {
+    var lines = [], passN = 0, failN = 0;
+    function relLine(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = isFinite(rel) && rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+    function absLine(name, exp, act, tol, unit) {
+      var err = Math.abs(act - exp);
+      var ok = isFinite(err) && err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(6) +
+        ' actual=' + act.toFixed(6) + ' ' + unit + '=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+
+    var eSave = E.value, tSave = TH.value;
+    function cAt(enKeV, deg) { E.value = Math.log10(enKeV); TH.value = deg; return calc(); }
+    var r0 = cAt(300, 60), th = 60 * Math.PI / 180, cosT = Math.cos(th);
+    absLine('ST1 波长增量 dlam=lc*(1-cos(theta))', lc * (1 - cosT), r0.dl, 1e-9, 'pm');
+    relLine('ST2 lam_prime=lam+dlam（用页面取整常数，容差 1e-4）', r0.lam + r0.dl, r0.lamp, 1e-4);
+    relLine('ST3 能量守恒 Te=E-E_prime', r0.en - r0.ep, r0.Te, 1e-12);
+    relLine('ST4 康普顿公式 E_prime=E/[1+(E/mec2)(1-cos)]',
+      r0.en / (1 + (r0.en / mec2) * (1 - cosT)), r0.ep, 1e-12);
+    relLine('ST5 动量三角形 pe^2=E^2+E_p^2-2EE_p cos(theta)',
+      Math.max(0, r0.en * r0.en + r0.ep * r0.ep - 2 * r0.en * r0.ep * cosT), r0.pe * r0.pe, 1e-10);
+    relLine('ST6 pe^2=Te*(Te+2*mec2)', r0.Te * (r0.Te + 2 * mec2), r0.pe * r0.pe, 1e-10);
+    relLine('ST7 beta_e=pe/(Te+mec2)', r0.pe / (r0.Te + mec2), r0.beta, 1e-12);
+    absLine('ST7b beta_e<1（电子不超光速）', 1, r0.beta < 1 ? 1 : 0, 0.5, 'bool');
+    relLine('ST8 数值一致性 hc/mec2=lc', hc / mec2, lc, 1e-3);
+    var r180 = cAt(300, 180);
+    absLine('ST9 后向 180 度时 dlam=2lc（上限）', 2 * lc, r180.dl, 1e-9, 'pm');
+    var rThom = cAt(1, 90);
+    absLine('ST10 Thomson 极限 1keV/90 度 dlam=lc', lc, rThom.dl, 1e-9, 'pm');
+    relLine('ST10b 低能极限 E_prime 趋近 E', rThom.en, rThom.ep, 2e-3);
+    E.value = eSave; TH.value = tSave;
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\nSELFTEST ' + passN + '/' + (passN + failN) + (failN ? ' \u2717' : ' \u2713');
+    window.__selftest = { passed: passN, failed: failN, details: lines.join('\n') };
+  }
+  if (/[?&]selftest=1/.test(location.search)) {
+    try { runSelfTest(); } catch (e) {
+      var pp = document.getElementById('selftestPanel');
+      if (pp) { pp.hidden = false; pp.textContent = 'selftest 异常 : ' + (e && e.message); }
+      window.__selftest = { passed: 0, failed: 1, details: String(e && e.message) };
+    }
+  }
+
+})();
+</script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+</body></html>

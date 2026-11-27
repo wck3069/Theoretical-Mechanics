@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>火箭方程与质量流 · 理论力学</title>
+<style>
+:root{--bg:#05070f;--panel:rgba(16,22,40,.88);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
+.app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.brand{position:absolute;left:24px;top:20px;pointer-events:none}.brand h1{font-size:19px;margin:0}.brand p{font-size:12.5px;color:var(--muted);margin:5px 0 0;line-height:1.5}
+.hud{position:absolute;left:24px;bottom:22px;display:flex;gap:18px;font-size:12.5px;color:var(--muted);pointer-events:none}.hud b{color:var(--a);font-variant-numeric:tabular-nums}
+.panel{width:330px;flex:none;padding:20px;overflow:auto;background:var(--panel);border-left:1px solid var(--line);backdrop-filter:blur(12px)}
+.eq{font-family:ui-monospace,monospace;font-size:13px;line-height:1.9;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(5,9,20,.6);color:#cfe0ff;margin-bottom:16px}
+.group{margin-bottom:16px}.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.val{font-family:ui-monospace,monospace;color:var(--b)}
+input[type=range]{width:100%;accent-color:var(--a)}.hint{color:var(--muted);font-size:11.5px;line-height:1.6;margin-top:6px}
+button{font:inherit;font-size:12.5px;padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:rgba(127,224,255,.12);color:var(--text);cursor:pointer;margin-right:8px}
+button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weight:600}
+@media(max-width:820px){.app{flex-direction:column}.panel{width:auto;height:44vh;border-left:0;border-top:1px solid var(--line)}.stage{height:56vh}.brand h1{font-size:16px}.hud{bottom:12px;left:14px;gap:12px}}
+.intro{margin-top:8px!important;max-width:640px;line-height:1.7;color:#b9c6ea!important}
+.hint{color:#8290b6;font-size:11.5px;line-height:1.65;margin:6px 0 2px;padding-left:9px;border-left:2px solid rgba(120,165,255,.22)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.btns button{margin:0}.btns button.full{grid-column:1/-1}
+.doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+.doc:hover{border-color:#7fe0ff}
+.tag{color:#6d7ba3;font-size:10.5px;line-height:1.6;border-top:1px solid rgba(120,165,255,.14);padding-top:10px}
+#errbox{position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}
+.modnav{display:flex;gap:8px;align-items:center;margin:0 0 12px}.modnav a.backlink{flex:none;color:#bfefff;text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(127,224,255,.10)}.modnav a.backlink:hover{border-color:#7fe0ff}.modnav select{flex:1;min-width:0;font:inherit;font-size:12.5px;padding:8px;border-radius:9px;border:1px solid var(--line);background:rgba(10,16,32,.7);color:var(--text)}
+
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="火箭方程与质量流 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/31-rocket-massflow/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="火箭方程与质量流 · 理论力学">
+<meta property="og:description" content="火箭方程与质量流 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/31-rocket-massflow/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="火箭方程与质量流 · 理论力学">
+<meta name="twitter:description" content="火箭方程与质量流 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<link rel="stylesheet" href="../../assets/tm-atelier.css">
+</head>
+<body>
+<div class="app"><div class="stage"><canvas id="cv"></canvas>
+<div class="brand"><h1>M31 · 火箭方程与质量流</h1><p>开放系统：喷气动量通量给出 Δv = vₑ ln(m₀/m)；尾气在实验室（惯性）系的速度是 v−vₑ，可以向前。</p><p class="intro">第一步：点播放，看尾气相对火箭以 vₑ 向后喷，而它的实验室系方向在 v 越过 vₑ 后翻向；第二步：把质量比拉到 e，Δv 恰等于 vₑ。</p></div>
+<div class="hud"><span>推力 F=vₑ|ṁ| <b id="F">0</b> N</span><span>加速度 a=F/m <b id="ac">0</b> m/s²</span><span>尾气实验室系速度 <b id="vg">–</b></span></div>
+</div><aside class="panel">
+<div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="" disabled>▣ M31 火箭方程与质量流（当前）</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
+<div class="eq">Δv = vₑ ln(m₀/m) &nbsp;|&nbsp; F = vₑ|ṁ|, a=F/m</div>
+<div class="group"><div class="row"><label>喷气速度 vₑ</label><span class="val" id="veV">3000 m/s</span></div><input id="ve" type="range" min="500" max="30000" step="100" value="3000">
+<div class="hint">化学火箭 2.5–4.5 km/s，离子推进到 30 km/s：同 Δv 下质量比按指数缩小。</div></div>
+<div class="group"><div class="row"><label>质量流率 |ṁ|（粒子密度）</label><span class="val" id="mdV">2.0 kg/s</span></div><input id="md" type="range" min="0.5" max="10" step="0.1" value="2">
+<div class="hint">粒子流越密 |ṁ| 越大，推力 F=vₑ|ṁ| 越大；m(t) 减小使 a(t)=F/m(t) 不断攀升。设 m₀=10 kg。</div></div>
+<div class="group"><div class="row"><label>目标质量比 m₀/m</label><span class="val" id="rv">8.0</span></div><input id="r" type="range" min="1" max="20" step="0.1" value="8">
+<div class="hint">左图横轴取对数 x=ln(m₀/m)：曲线是过原点的直线，x=1（比值=e）处 Δv=vₑ，已在图上标出。</div></div>
+<div class="btns"><button class="primary" id="play">播放质量流</button><button id="reset">重置</button><button class="full" id="p1">液氧煤油 vₑ=3，比 10</button><button class="full" id="p2">液氢液氧 vₑ=4.5，比 6</button><button class="full" id="p3">离子推 vₑ=30，比 1.3</button><button class="full" id="p4">基准：比值 = e</button></div>
+<p class="hint">前提：无重力、无阻力，vₑ 与 |ṁ| 恒定。每个粒子携带发射时刻的惯性速度 v−vₑ，之后匀速直线运动——v>vₑ 时尾气在实验室系里向前。出处：书稿 ch01.tex:1322。</p>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">理想火箭方程 · 无重力无阻力 · 尾气实验室系 = v−vₑ · 出处：书稿 ch01.tex:1322</div></aside></div>
+<div id="selftestPanel" class="selftest" hidden></div>
+<script>
+window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
+(function(){
+function shell(c,w,h,seed){
+ c.clearRect(0,0,w,h);
+ var g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#0b1226');g.addColorStop(.55,'#060a16');g.addColorStop(1,'#02030a');c.fillStyle=g;c.fillRect(0,0,w,h);
+ var frac=function(v){return v-Math.floor(v)};
+ for(var i=0;i<90;i++){var x=frac(Math.sin(i*12.9898+seed)*43758.5453)*w,y=frac(Math.sin(i*78.233+seed*3)*24634.6345)*h,a=.08+frac(Math.sin(i*4.17)*9157.13)*.22;c.fillStyle='rgba(207,224,255,'+a.toFixed(3)+')';c.fillRect(x,y,1.2,1.2)}
+ c.strokeStyle='rgba(120,160,255,.055)';c.lineWidth=1;c.beginPath();for(var x2=60;x2<w;x2+=80){c.moveTo(x2,0);c.lineTo(x2,h)}for(var y2=60;y2<h;y2+=80){c.moveTo(0,y2);c.lineTo(w,y2)}c.stroke();
+}
+ const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+ const ve=document.getElementById('ve'),md=document.getElementById('md'),r=document.getElementById('r');
+ const m0=10;let m=m0,playing=false,last=0,parts=[],xrock=0,emit=0;
+ function resize(){const b=cv.getBoundingClientRect();const d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}
+ addEventListener('resize',resize);resize();
+ function vNow(){return Number(ve.value)*Math.log(m0/m)}
+ function draw(t){
+  const w=cv.clientWidth,h=cv.clientHeight,L=64,R=26,T=Math.round(h*0.30),B=94,xmax=Math.log(20),veN=Number(ve.value),ymax=veN*xmax;
+  shell(ctx,w,h,306);
+  const px=u=>L+u/xmax*(w*0.5-L),py=val=>h-B-val/ymax*(h-T-B);
+  ctx.strokeStyle='rgba(150,180,240,.18)';ctx.lineWidth=1;ctx.font='11px ui-monospace,monospace';ctx.fillStyle='#8d9cc4';
+  [[0,'1'],[1,'e'],[Math.log(10),'10'],[xmax,'20']].forEach(t2=>{const x=px(t2[0]);ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,h-B);ctx.stroke();ctx.textAlign='center';ctx.fillText(t2[1],x,h-B+16)});
+  for(let k=1;k<=3;k++){const y=py(veN*k);ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w*0.5-R,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(k+'vₑ',L-8,y+4)}
+  ctx.textAlign='center';ctx.fillStyle='#8d9cc4';ctx.fillText('ln(m₀/m) 横轴已是 log：比值=e 处 Δv=vₑ',(px(0)+px(xmax))/2,h-B+34);
+  ctx.beginPath();ctx.moveTo(px(0),py(0));ctx.lineTo(px(xmax),py(ymax));ctx.strokeStyle='#7fe0ff';ctx.lineWidth=2.2;ctx.stroke();
+  ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(px(1),py(veN),5,0,Math.PI*2);ctx.fill();ctx.textAlign='left';ctx.fillText('e → Δv=vₑ',px(1)+9,py(veN)-8);
+  const cu=Math.log(Math.max(m0/m,1)),cy2=py(veN*cu);ctx.strokeStyle='rgba(255,210,122,.4)';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(px(cu),h-B);ctx.lineTo(px(cu),cy2);ctx.lineTo(L,cy2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(px(cu),cy2,6,0,Math.PI*2);ctx.fill();
+  const rx0=w*0.58,yc=h*0.44,v=vNow(),sc=110/Math.max(veN,1);
+  if(playing){const dt=Math.min(0.05,(t-last)/1000);
+   const lost=Math.min(m-m0/Number(r.value),Number(md.value)*dt*0.35);m=Math.max(m0/Number(r.value),m-lost);emit+=lost;
+   const nx=rx0+xrock-24;
+   while(emit>=0.05){emit-=0.05;parts.push({x:nx-6,y:yc+(Math.random()-.5)*14,vx:(vNow()-veN)*sc,age:0})}
+   xrock=Math.min(xrock+v*sc*dt,w-rx0-120);
+   if(m<=m0/Number(r.value)+1e-9)playing=false;
+   parts.forEach(p=>{p.x+=p.vx*dt;p.age+=dt});parts=parts.filter(p=>p.age<6&&p.x>-20&&p.x<w+20);
+  }
+  parts.forEach(p=>{const fwd=p.vx>0;ctx.fillStyle=fwd?'rgba(255,170,120,':'rgba(127,224,255,';ctx.globalAlpha=Math.max(0,1-p.age/6);ctx.fillRect(p.x,p.y,fwd?4:3,2);ctx.globalAlpha=1});
+  const rx=rx0+xrock;
+  ctx.fillStyle='#e8eefc';ctx.beginPath();ctx.moveTo(rx+26,yc);ctx.lineTo(rx-14,yc-11);ctx.lineTo(rx-14,yc+11);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(127,224,255,.25)';ctx.fillRect(rx-14,yc-11,Math.max(4,26*(m/m0)),22);ctx.strokeStyle='rgba(127,224,255,.6)';ctx.strokeRect(rx-14,yc-11,26,22);
+  const fl=10+Number(md.value)*1.6;ctx.fillStyle='rgba(255,150,80,.65)';ctx.beginPath();ctx.moveTo(rx-14,yc-5);ctx.lineTo(rx-14-fl,yc);ctx.lineTo(rx-14,yc+5);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#8d9cc4';ctx.textAlign='left';ctx.font='12px ui-monospace,monospace';
+  ctx.fillText('m='+(m).toFixed(2)+' kg, v='+v.toFixed(0)+' m/s',rx0-30,yc+46);
+  if(v>veN){ctx.fillStyle='#ff9a9a';ctx.fillText('v > vₑ：尾气在实验室系向前飞！',rx0-30,yc+64)}
+  document.getElementById('F').textContent=(veN*Number(md.value)).toExponential(2);
+  document.getElementById('ac').textContent=(veN*Number(md.value)/m).toFixed(1);
+  document.getElementById('vg').textContent=(v-veN).toFixed(0)+' m/s';
+  last=t;requestAnimationFrame(draw)
+ }
+ function sync(){document.getElementById('veV').textContent=Number(ve.value).toLocaleString()+' m/s';document.getElementById('mdV').textContent=Number(md.value).toFixed(1);document.getElementById('rv').textContent=Number(r.value).toFixed(1)}
+ [ve,md,r].forEach(el=>el.addEventListener('input',sync));
+ document.getElementById('play').addEventListener('click',()=>{m=m0;parts=[];xrock=0;emit=0;playing=true;last=performance.now()});
+ document.getElementById('reset').addEventListener('click',()=>{m=m0;parts=[];xrock=0;emit=0;playing=false});
+ sync();
+ document.getElementById('p1').onclick=function(){ve.value=3000;md.value=2;r.value=10;sync()};
+ document.getElementById('p2').onclick=function(){ve.value=4500;md.value=2;r.value=6;sync()};
+ document.getElementById('p3').onclick=function(){ve.value=30000;md.value=0.6;r.value=1.3;sync()};
+ document.getElementById('p4').onclick=function(){ve.value=3000;md.value=2;r.value=2.7;sync()};
+ requestAnimationFrame(draw)
+
+  /* ---------------- 自检（?selftest=1） ---------------- */
+  function runSelfTest() {
+    var lines = [], passN = 0, failN = 0;
+    function relLine(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = isFinite(rel) && rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+    function absLine(name, exp, act, tol, unit) {
+      var err = Math.abs(act - exp);
+      var ok = isFinite(err) && err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(6) +
+        ' actual=' + act.toFixed(6) + ' ' + unit + '=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+
+    var mSave = m, veSave = ve.value, veN = 2500;
+    ve.value = veN;
+    m = m0;
+    absLine('ST1 齐奥尔科夫斯基：m=m0 时 dv=0', 0, vNow(), 1e-9, 'm/s');
+    m = m0 / Math.E;
+    relLine('ST2 质量比 e 时 dv=ve', veN, vNow(), 1e-12);
+    m = m0 / 10; var v10 = vNow();
+    m = m0 / 100;
+    relLine('ST3 对数可加性 dv(10*10)=2dv(10)', 2 * v10, vNow(), 1e-12);
+    var vT = 1500;
+    m = m0 * Math.exp(-vT / veN);
+    relLine('ST4 反解 m=m0*exp(-dv/ve) 回代 dv', vT, vNow(), 1e-10);
+    var mdot = 0.7, m1 = m0 - mdot * 1.0;
+    var vv = 0, tEnd = 1.0, hh = 1e-4, nn = Math.round(tEnd / hh), ii;
+    for (ii = 0; ii < nn; ii++) {
+      var tt = ii * hh, mm = m0 - mdot * tt;
+      var k1 = veN * mdot / mm;
+      var k2 = veN * mdot / (mm - mdot * hh / 2);
+      var k3 = k2;
+      var k4 = veN * mdot / (mm - mdot * hh);
+      vv += hh / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+    }
+    relLine('ST5 数值积分 dv/dt=ve*mdot/m 与闭式解一致（t=1s）', veN * Math.log(m0 / m1), vv, 1e-9);
+    m = m0 / Math.pow(Math.E, 3);
+    absLine('ST6 当 dv=3ve 时尾气在实验室系向前（v-ve>0）', 1, (vNow() - veN) > 0 ? 1 : 0, 0.5, 'sign');
+    m = mSave; ve.value = veSave;
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\nSELFTEST ' + passN + '/' + (passN + failN) + (failN ? ' \u2717' : ' \u2713');
+    window.__selftest = { passed: passN, failed: failN, details: lines.join('\n') };
+  }
+  if (/[?&]selftest=1/.test(location.search)) {
+    try { runSelfTest(); } catch (e) {
+      var pp = document.getElementById('selftestPanel');
+      if (pp) { pp.hidden = false; pp.textContent = 'selftest 异常 : ' + (e && e.message); }
+      window.__selftest = { passed: 0, failed: 1, details: String(e && e.message) };
+    }
+  }
+
+})();
+</script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+</body></html>

@@ -82,14 +82,14 @@ body[data-cosmos="page"] .actions a.pdf:hover{color:var(--text)}
 @media(max-width:620px){.wrap{margin:16px;padding:24px 18px 56px}.hero{padding:36px 0 28px}h1{font-size:clamp(28px,7.6vw,38px)}h1 .num{font-size:clamp(42px,12.6vw,58px);margin-bottom:6px}.top{gap:8px}.chapter-nav a{font-size:12px;padding:3px 7px}.grid{gap:12px;margin-top:24px}.card{padding:16px}.footer{flex-direction:column}html::after{inset:8px;border-radius:10px}}
 </style>
 <!-- TM-SEO:START -->
-<meta name="description" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿：章节导读、交互模块与书稿入口。">
+<meta name="description" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿：章节导读、交互模块与手写手稿入口。">
 <meta name="author" content="wck3069">
 <meta name="theme-color" content="#05060f">
 <link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/chapters/01-newton/index.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="理论力学：从质点到哈密顿">
 <meta property="og:title" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿">
-<meta property="og:description" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿：章节导读、交互模块与书稿入口。">
+<meta property="og:description" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿：章节导读、交互模块与手写手稿入口。">
 <meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/chapters/01-newton/index.html">
 <meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -98,7 +98,7 @@ body[data-cosmos="page"] .actions a.pdf:hover{color:var(--text)}
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿">
-<meta name="twitter:description" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿：章节导读、交互模块与书稿入口。">
+<meta name="twitter:description" content="第1章 牛顿力学 · 理论力学：从质点到哈密顿：章节导读、交互模块与手写手稿入口。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
   <link rel="stylesheet" href="../../assets/ui-liquid.css">
@@ -115,62 +115,86 @@ body[data-cosmos="page"] .actions a.pdf:hover{color:var(--text)}
       <div class="eyebrow">CHAPTER 01 · NEWTONIAN MECHANICS</div>
       <h1><span class="num">01 / 07</span>牛顿力学</h1>
       <p class="lead">运动的描述与分量表达式、牛顿三定律、功与能、质点系与质心、碰撞、中心力与轨道。</p>
+  <div class="actions" style="margin-top:14px"><a class="primary" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid rgba(127,224,255,.42);background:rgba(127,224,255,.12);color:#bfefff;text-decoration:none" href="../../neural/index.html#/c/chapter-01-newton">🕸 新版知识网络 · 本章关联 →</a></div>
     </section>
-    <section class="grid" aria-label="本章模块"><article class="card" style="--accent:#ffd27a">
+    <section class="grid" aria-label="本章模块">
+<article class="card" style="--accent:#b79bff">
+  <div class="ms">M36</div>
+  <h2>位力定理与幂次势</h2>
+  <p>M36 对幂次中心势做数值积分，实时比较 2⟨T⟩ 与 n⟨V⟩，验证位力定理。</p>
+  <div class="tags"><span>位力定理</span><span>幂次势</span><span>时间平均</span></div>
+  <div class="actions"><a class="enter" href="../../modules/36-virial-power-law/index.html">进入模拟</a><a class="pdf" href="../../modules/36-virial-power-law/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M36">知识网络</a></div>
+</article>
+
+<article class="card" style="--accent:#ffb56b">
+  <div class="ms">M31</div>
+  <h2>火箭方程与质量流</h2>
+  <p>M31 把喷气动量通量计入开放系统，得到 Δv=vₑ ln(m₀/m)，并可视化质量比与推进剂占比。</p>
+  <div class="tags"><span>火箭方程</span><span>质量流</span><span>动量通量</span></div>
+  <div class="actions"><a class="enter" href="../../modules/31-rocket-massflow/index.html">进入模拟</a><a class="pdf" href="../../modules/31-rocket-massflow/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M31">知识网络</a></div>
+</article>
+<article class="card" style="--accent:#7fe0ff">
+  <div class="ms">M32</div>
+  <h2>二连杆雅可比与奇异位形</h2>
+  <p>M32 用二连杆机械臂演示 δx=Jδθ；det J=l₁l₂ sinθ₂ 为零时末端失去一个方向的可控速度。</p>
+  <div class="tags"><span>雅可比</span><span>奇异位形</span><span>机械臂</span></div>
+  <div class="actions"><a class="enter" href="../../modules/32-two-link-jacobian/index.html">进入模拟</a><a class="pdf" href="../../modules/32-two-link-jacobian/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M32">知识网络</a></div>
+</article>
+<article class="card" style="--accent:#ffd27a">
   <div class="ms">M0</div>
   <h2>比奈方程（现有样板）</h2>
-  <p>M0 中心力轨道方程 u&#x27;&#x27;+u=-F(1/u)/(m h^2 u^2)，用于判别圆锥曲线、近日点进动与轨道闭合。</p>
+  <p>M0 中心力轨道方程 u&#x27;&#x27;+u=-F(1/u)/(m h<sup>2</sup> u<sup>2</sup>)，用于判别圆锥曲线、近日点进动与轨道闭合。</p>
   <div class="tags"><span>中心力</span><span>比奈方程</span><span>圆锥曲线</span><span>进动</span></div>
-  <div class="actions"><a class="enter" href="../../modules/00-binet/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/00-binet/binet.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m0">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/00-binet/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/00-binet/binet.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M0">知识网络</a></div>
 </article>
 <article class="card" style="--accent:#7fe0ff">
   <div class="ms">M1</div>
   <h2>有效势与轨道稳定性</h2>
-  <p>M1 把角动量并入势能得到 V_eff，用曲线读出转折点、圆轨道稳定性与小振动频率；附伯特兰定理。</p>
+  <p>M1 把角动量并入势能得到 V<sub>eff</sub>，用曲线读出转折点、圆轨道稳定性与小振动频率；附伯特兰定理。</p>
   <div class="tags"><span>有效势</span><span>RK4</span><span>Bertrand</span><span>进动</span></div>
-  <div class="actions"><a class="enter" href="../../modules/01-effective-potential/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/01-effective-potential/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m1">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/01-effective-potential/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/01-effective-potential/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M1">知识网络</a></div>
 </article>
 <article class="card" style="--accent:#b79bff">
   <div class="ms">M2</div>
   <h2>散射与俘获</h2>
   <p>M2 中心力散射的偏转角、微分截面与俘获条件，卢瑟福散射与势垒穿透的几何。</p>
   <div class="tags"><span>散射</span><span>截面</span><span>俘获</span><span>RK4</span></div>
-  <div class="actions"><a class="enter" href="../../modules/02-scattering/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/02-scattering/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m2">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/02-scattering/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/02-scattering/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M2">知识网络</a></div>
 </article>
 <article class="card" style="--accent:#7ff0cf">
   <div class="ms">M3</div>
   <h2>两体问题与系外行星</h2>
   <p>M3 约化质量把两体问题化为单体，开普勒第三定律，以及系外行星视向速度的观测反演。</p>
   <div class="tags"><span>两体</span><span>RV</span><span>多普勒</span><span>系外行星</span></div>
-  <div class="actions"><a class="enter" href="../../modules/03-two-body/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/03-two-body/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m3">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/03-two-body/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/03-two-body/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M3">知识网络</a></div>
 </article>
 <article class="card" style="--accent:#ff9d6b">
   <div class="ms">M4</div>
   <h2>碰撞与变质量</h2>
   <p>M4 动量守恒与恢复系数，一维与二维碰撞，以及雨滴变质量系统的运动方程。</p>
   <div class="tags"><span>碰撞</span><span>变质量</span><span>恢复系数</span><span>雨滴</span></div>
-  <div class="actions"><a class="enter" href="../../modules/06-collisions/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/06-collisions/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m4">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/06-collisions/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/06-collisions/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M4">知识网络</a></div>
 </article>
 <article class="card" style="--accent:#9fd8ff">
   <div class="ms">M5</div>
   <h2>圆柱脱离与运动学</h2>
   <p>极坐标与自然坐标运动学、相对运动与伽利略变换；圆柱面上脱离角与约束反力。</p>
   <div class="tags"><span>运动学</span><span>极坐标</span><span>圆柱脱离</span><span>约束</span></div>
-  <div class="actions"><a class="enter" href="../../modules/08-kinematics/index.html?mode=cylinder">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/08-kinematics/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m5">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/08-kinematics/index.html?mode=cylinder">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../modules/08-kinematics/note.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M5">知识网络</a></div>
 </article>
 <article class="card" style="--accent:#ffd76e">
   <div class="ms">M6</div>
   <h2>傅科摆与玫瑰线</h2>
   <p>在转动参考系中积分傅科摆方程：科里奥利项令摆动平面缓慢进动，进动周期 T=2π/(ω|sinλ|)；摆尖在地面画出玫瑰轨迹，纬度滑杆从赤道（不旋转）到极点（一个恒星日一圈）。</p>
   <div class="tags"><span>傅科摆</span><span>科里奥利力</span><span>转动参考系</span><span>进动</span></div>
-  <div class="actions"><a class="enter" href="../../modules/14-foucault-rose/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../chapters/01-newton/manuscripts/book.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m6">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/14-foucault-rose/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../chapters/01-newton/manuscripts/book.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M6">知识网络</a></div>
 </article>
 <article class="card" style="--accent:#c678dd">
   <div class="ms">M7</div>
   <h2>拉格朗日点</h2>
   <p>旋转参考系下的圆限制性三体问题：有效势的五个平稳点 L1–L5，零速度曲线随能量开合，演示小天体绕 L4/L5 的蝌蚪形与马蹄形轨道，支持日–地、日–木星、地–月质量比。</p>
   <div class="tags"><span>拉格朗日点</span><span>限制性三体</span><span>有效势</span><span>蝌蚪轨道</span></div>
-  <div class="actions"><a class="enter" href="../../modules/15-lagrange-points/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../chapters/01-newton/manuscripts/book.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/chapter-01-newton/m7">知识网络</a></div>
+  <div class="actions"><a class="enter" href="../../modules/15-lagrange-points/index.html">进入模拟</a><a class="pdf" href="./manuscripts/book.html">阅读书稿</a><a class="pdf" href="../../chapters/01-newton/manuscripts/book.html">阅读推导</a><a class="pdf" href="../../neural/index.html#/u/M7">知识网络</a></div>
 </article>
 </section>
     <script>

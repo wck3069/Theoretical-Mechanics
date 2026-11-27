@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二连杆雅可比与奇异位形 · 理论力学</title>
+<style>
+:root{--bg:#05070f;--panel:rgba(16,22,40,.88);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
+.app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.brand{position:absolute;left:24px;top:20px;pointer-events:none}.brand h1{font-size:19px;margin:0}.brand p{font-size:12.5px;color:var(--muted);margin:5px 0 0;line-height:1.5}
+.hud{position:absolute;left:24px;bottom:22px;display:flex;gap:18px;font-size:12.5px;color:var(--muted);pointer-events:none}.hud b{color:var(--a);font-variant-numeric:tabular-nums}
+.panel{width:330px;flex:none;padding:20px;overflow:auto;background:var(--panel);border-left:1px solid var(--line);backdrop-filter:blur(12px)}
+.eq{font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.8;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(5,9,20,.6);color:#cfe0ff;margin-bottom:16px}
+.group{margin-bottom:16px}.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.val{font-family:ui-monospace,monospace;color:var(--b)}
+input[type=range]{width:100%;accent-color:var(--a)}.hint{color:var(--muted);font-size:11.5px;line-height:1.6;margin-top:6px}
+button{font:inherit;font-size:12.5px;padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:rgba(127,224,255,.12);color:var(--text);cursor:pointer;margin-right:8px}
+button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weight:600}
+.warn{color:#ff9c8a}@media(max-width:820px){.app{flex-direction:column}.panel{width:auto;height:44vh;border-left:0;border-top:1px solid var(--line)}.stage{height:56vh}.brand h1{font-size:16px}.hud{bottom:12px;left:14px;gap:12px}}
+.intro{margin-top:8px!important;max-width:640px;line-height:1.7;color:#b9c6ea!important}
+.hint{color:#8290b6;font-size:11.5px;line-height:1.65;margin:6px 0 2px;padding-left:9px;border-left:2px solid rgba(120,165,255,.22)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.btns button{margin:0}.btns button.full{grid-column:1/-1}
+.doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+.doc:hover{border-color:#7fe0ff}
+.tag{color:#6d7ba3;font-size:10.5px;line-height:1.6;border-top:1px solid rgba(120,165,255,.14);padding-top:10px}
+#errbox{position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}
+.modnav{display:flex;gap:8px;align-items:center;margin:0 0 12px}.modnav a.backlink{flex:none;color:#bfefff;text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(127,224,255,.10)}.modnav a.backlink:hover{border-color:#7fe0ff}.modnav select{flex:1;min-width:0;font:inherit;font-size:12.5px;padding:8px;border-radius:9px;border:1px solid var(--line);background:rgba(10,16,32,.7);color:var(--text)}
+
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="二连杆雅可比与奇异位形 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/32-two-link-jacobian/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="二连杆雅可比与奇异位形 · 理论力学">
+<meta property="og:description" content="二连杆雅可比与奇异位形 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/32-two-link-jacobian/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="二连杆雅可比与奇异位形 · 理论力学">
+<meta name="twitter:description" content="二连杆雅可比与奇异位形 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<link rel="stylesheet" href="../../assets/tm-atelier.css">
+</head>
+<body>
+<div class="app"><div class="stage"><canvas id="cv"></canvas>
+<div class="brand"><h1>M32 · 二连杆雅可比与奇异位形</h1><p>关节速度经雅可比映射为末端速度；det J = l₁l₂ sinθ₂，零时失去一个方向的控制。</p><p class="intro">第一步：把 θ₂ 拉到 0°，看末端速度椭圆压成一条线；那就是机械臂的奇异位形。</p></div>
+<div class="hud"><span>σ₁/σ₂ <b id="sv">0</b></span><span>κ=σ₁/σ₂ <b id="kap">0</b></span><span>状态 <b id="state">正常</b></span></div>
+</div><aside class="panel">
+<div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="" disabled>▣ M32 二连杆雅可比与奇异位形（当前）</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
+<div class="eq">det J = l₁l₂ sinθ₂ &nbsp;|&nbsp; 速度椭圆半轴 = σ₁, σ₂</div>
+<div class="group"><div class="row"><label>关节角 θ₁</label><span class="val" id="t1v">40°</span></div><input id="t1" type="range" min="-180" max="180" value="40">
+<div class="hint">θ₁ 决定大臂朝向；拖动它观察工作点绕基座转动，雅可比椭圆随之旋转。</div></div>
+<div class="group"><div class="row"><label>关节角 θ₂</label><span class="val" id="t2v">70°</span></div><input id="t2" type="range" min="-180" max="180" value="70">
+<div class="hint">θ₂ 是小臂相对大臂的夹角。θ₂=0 或 ±180° 时两臂共线，det J=0。</div></div>
+<div class="group"><div class="row"><label>杆长比 l₂/l₁</label><span class="val" id="lrV">1.00</span></div><input id="lr" type="range" min="0.4" max="2" step="0.05" value="1">
+<div class="hint">l₂≠l₁ 时内边界圆 |l₁−l₂|>0，折叠奇异不再落在基座；真各向同性在 l₁=√2l₂、θ₂=135°。</div></div>
+<div class="btns"><button class="primary" id="sweep">扫过奇异位形</button><button id="reset">复位</button><button class="full" id="p1">折叠奇异 θ₂=180°</button><button class="full" id="p2">最大可操作度位 θ₂=90°</button><button class="full" id="p3">近奇异 θ₂=10°</button><button class="full" id="p4">反向构型 θ₂=−90°</button></div>
+<p class="hint">末端椭圆是 ‖δθ‖=1 经 J 映射的速度可操作度椭圆（半轴=奇异值，方向=左奇异向量）；θ₂=90° 只使面积最大，κ≈2.62 并非各向同性。cyan/橙箭头 = 雅可比两列 j₁、j₂。</p>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">平面二连杆 · 速度可操作度椭圆 · 出处：书稿 ch01.tex:532</div></aside></div>
+<div id="selftestPanel" class="selftest" hidden></div>
+<script>
+window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
+(function(){
+function shell(c,w,h,seed){
+ c.clearRect(0,0,w,h);
+ var g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#0b1226');g.addColorStop(.55,'#060a16');g.addColorStop(1,'#02030a');c.fillStyle=g;c.fillRect(0,0,w,h);
+ var frac=function(v){return v-Math.floor(v)};
+ for(var i=0;i<90;i++){var x=frac(Math.sin(i*12.9898+seed)*43758.5453)*w,y=frac(Math.sin(i*78.233+seed*3)*24634.6345)*h,a=.08+frac(Math.sin(i*4.17)*9157.13)*.22;c.fillStyle='rgba(207,224,255,'+a.toFixed(3)+')';c.fillRect(x,y,1.2,1.2)}
+ c.strokeStyle='rgba(120,160,255,.055)';c.lineWidth=1;c.beginPath();for(var x2=60;x2<w;x2+=80){c.moveTo(x2,0);c.lineTo(x2,h)}for(var y2=60;y2<h;y2+=80){c.moveTo(0,y2);c.lineTo(w,y2)}c.stroke();
+}
+
+ const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),t1=document.getElementById('t1'),t2=document.getElementById('t2'),lr=document.getElementById('lr');
+ let sweep=false;
+ function resize(){const b=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);resize();
+ function jac(a,b,l2){const l1=1,s1=Math.sin(a),c1=Math.cos(a),s12=Math.sin(a+b),c12=Math.cos(a+b);return {a:-l1*s1-l2*s12,b:-l2*s12,c:l1*c1+l2*c12,d:l2*c12}}
+ function vals(J){const A=J.a*J.a+J.c*J.c,B=J.a*J.b+J.c*J.d,C=J.b*J.b+J.d*J.d,tr=A+C,de=A*C-B*B,disc=Math.sqrt(Math.max(0,tr*tr/4-de));return [Math.sqrt(Math.max(0,tr/2+disc)),Math.sqrt(Math.max(0,tr/2-disc))]}
+ function draw(t){
+  const w=cv.clientWidth,h=cv.clientHeight;shell(ctx,w,h,340);
+  const a=t1.value*Math.PI/180,b=t2.value*Math.PI/180,l2r=Number(lr.value),J=jac(a,b,l2r),det=J.a*J.d-J.b*J.c,sv=vals(J);
+  const A=J.a*J.a+J.c*J.c,Bc=J.a*J.b+J.c*J.d,Cc=J.b*J.b+J.d*J.d,phi=0.5*Math.atan2(2*Bc,A-Cc);
+  const ox=w*0.42,oy=h*0.58,S=Math.min(w,h)*0.17;
+  const x1=ox+S*Math.cos(a),y1=oy-S*Math.sin(a),x2=x1+S*l2r*Math.cos(a+b),y2=y1-S*l2r*Math.sin(a+b);
+  ctx.strokeStyle='rgba(150,180,240,.13)';ctx.beginPath();ctx.arc(ox,oy,S,0,Math.PI*2);ctx.stroke();
+  ctx.setLineDash([5,6]);ctx.strokeStyle='rgba(150,180,240,.20)';ctx.beginPath();ctx.arc(ox,oy,S*(1+l2r),0,Math.PI*2);ctx.stroke();
+  if(Math.abs(1-l2r)>0.01){ctx.strokeStyle='rgba(255,156,138,.4)';ctx.beginPath();ctx.arc(ox,oy,S*Math.abs(1-l2r),0,Math.PI*2);ctx.stroke()}ctx.setLineDash([]);
+  ctx.font='12px ui-monospace,monospace';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='rgba(3,6,16,.88)';ctx.strokeText('外边界 l₁+l₂',ox,oy-S*(1+l2r)-8);ctx.fillStyle='#dce6ff';ctx.fillText('外边界 l₁+l₂',ox,oy-S*(1+l2r)-8);
+  if(Math.abs(1-l2r)>0.01){ctx.strokeStyle='rgba(3,6,16,.88)';ctx.strokeText('内边界 |l₁−l₂|',ox,oy-S*Math.abs(1-l2r)-8);ctx.fillStyle='#ffb3a3';ctx.fillText('内边界 |l₁−l₂|',ox,oy-S*Math.abs(1-l2r)-8)}
+  ctx.lineWidth=11;ctx.lineCap='round';ctx.strokeStyle='rgba(127,224,255,.75)';ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(x1,y1);ctx.stroke();
+  ctx.strokeStyle='rgba(255,210,122,.75)';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,210,122,.4)';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1+S*.55*Math.cos(a),y1-S*.55*Math.sin(a));ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='#ffd27a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x1,y1,S*.28,-a,-(a+b),b<0);ctx.stroke();
+  ctx.fillStyle='#ffd27a';ctx.textAlign='left';ctx.fillText('θ₂',x1+S*.3*Math.cos(a+b/2+.35),y1-S*.3*Math.sin(a+b/2+.35));
+  [[ox,oy],[x1,y1],[x2,y2]].forEach((p,i)=>{ctx.beginPath();ctx.arc(p[0],p[1],6,0,Math.PI*2);ctx.lineWidth=3;ctx.strokeStyle='rgba(3,6,16,.92)';ctx.stroke();ctx.fillStyle=i===2?'#ffd27a':'#dce6ff';ctx.fill()});
+  function arrow(vx,vy,col,lab){const sc=S*0.3;ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2+vx*sc,y2-vy*sc);ctx.stroke();ctx.fillStyle=col;ctx.textAlign='left';ctx.fillText(lab,x2+vx*sc+4,y2-vy*sc-4)}
+  const s1=Math.sin(a),c1=Math.cos(a),s12=Math.sin(a+b),c12=Math.cos(a+b);
+  arrow(-s1-l2r*s12,c1+l2r*c12,'rgba(127,224,255,.9)','j₁');
+  arrow(-l2r*s12,l2r*c12,'rgba(255,170,120,.9)','j₂');
+  const eS=Math.min(150,S*0.55);ctx.save();ctx.translate(x2,y2);ctx.rotate(-phi);
+  ctx.beginPath();ctx.ellipse(0,0,Math.max(1,sv[0]*eS*0.55),Math.max(1,sv[1]*eS*0.55),0,0,Math.PI*2);
+  ctx.strokeStyle=Math.abs(det)<0.08?'#ff9c8a':'rgba(127,224,255,.85)';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+  ctx.textAlign='left';ctx.fillStyle='#b9c6ea';
+  ctx.fillText('det J = l₁l₂ sinθ₂ = '+det.toFixed(3)+(det>=0?'（肘上构型）':'（肘下构型，符号翻转）'),w*.04,h*.9);
+  if(Math.abs(Math.abs(Number(t2.value))-90)<4){ctx.fillStyle='#ffd27a';ctx.fillText('θ₂=±90°：|det J|最大 ≠ 各向同性（κ≈'+(sv[0]/Math.max(sv[1],1e-6)).toFixed(2)+'）',w*.04,h*.94)}
+  document.getElementById('sv').textContent=sv[0].toFixed(2)+' / '+sv[1].toFixed(2);document.getElementById('kap').textContent=(sv[0]/Math.max(sv[1],1e-4)).toFixed(1);
+  const st=document.getElementById('state');st.textContent=Math.abs(det)<0.08?'奇异/退化':'正常';st.className=Math.abs(det)<0.08?'warn':'';
+  document.getElementById('t1v').textContent=t1.value+'°';document.getElementById('t2v').textContent=t2.value+'°';document.getElementById('lrV').textContent=l2r.toFixed(2);
+  if(sweep){t2.value=Number(t2.value)+0.8;if(Number(t2.value)>=180)Number(t2.value=-180)}
+  requestAnimationFrame(draw)
+ }
+ [lr].forEach(el=>el.addEventListener('input',()=>{}));
+ document.getElementById('sweep').addEventListener('click',()=>{sweep=!sweep;t2.value=-180});
+ document.getElementById('reset').addEventListener('click',()=>{sweep=false;t1.value=40;t2.value=70;lr.value=1});
+ document.getElementById('p1').onclick=function(){sweep=false;t1.value=0;t2.value=180};document.getElementById('p2').onclick=function(){sweep=false;t1.value=45;t2.value=90};document.getElementById('p3').onclick=function(){sweep=false;t1.value=45;t2.value=10};document.getElementById('p4').onclick=function(){sweep=false;t1.value=0;t2.value=-90};
+ requestAnimationFrame(draw)
+
+  /* ---------------- 自检（?selftest=1） ---------------- */
+  function runSelfTest() {
+    var lines = [], passN = 0, failN = 0;
+    function relLine(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = isFinite(rel) && rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+    function absLine(name, exp, act, tol, unit) {
+      var err = Math.abs(act - exp);
+      var ok = isFinite(err) && err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(6) +
+        ' actual=' + act.toFixed(6) + ' ' + unit + '=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+
+    var l1 = 1;
+    function eePos(a, b, l2) {
+      return [l1 * Math.cos(a) + l2 * Math.cos(a + b), l1 * Math.sin(a) + l2 * Math.sin(a + b)];
+    }
+    var hh = 1e-6, cases = [[0.7, 1.2, 1.0], [-1.1, 0.4, 0.6], [2.4, -2.0, 1.4]], ci;
+    var maxJ = 0;
+    for (ci = 0; ci < cases.length; ci++) {
+      var A0 = cases[ci][0], B0 = cases[ci][1], L2 = cases[ci][2], JJ = jac(A0, B0, L2);
+      var pa = eePos(A0 + hh, B0, L2), ma = eePos(A0 - hh, B0, L2);
+      var pb = eePos(A0, B0 + hh, L2), mb = eePos(A0, B0 - hh, L2);
+      var num = [[(pa[0] - ma[0]) / (2 * hh), (pb[0] - mb[0]) / (2 * hh)],
+                 [(pa[1] - ma[1]) / (2 * hh), (pb[1] - mb[1]) / (2 * hh)]];
+      var ana = [[JJ.a, JJ.b], [JJ.c, JJ.d]], r0, c0;
+      for (r0 = 0; r0 < 2; r0++) {
+        for (c0 = 0; c0 < 2; c0++) {
+          var e0 = Math.abs(num[r0][c0] - ana[r0][c0]) / Math.max(1, Math.abs(ana[r0][c0]));
+          if (e0 > maxJ) { maxJ = e0; }
+        }
+      }
+    }
+    absLine('ST1 J 与末端位置中心差分一致（3 构型最大值）', 0, maxJ, 1e-8, 'relerr');
+    var Jc = jac(0.9, 1.1, 1.3), sv = vals(Jc);
+    var detJ = Jc.a * Jc.d - Jc.b * Jc.c;
+    relLine('ST2 sigma1*sigma2=|det J|', Math.abs(detJ), sv[0] * sv[1], 1e-12);
+    relLine('ST3 sigma1^2+sigma2^2=tr(J^T J)', Jc.a * Jc.a + Jc.b * Jc.b + Jc.c * Jc.c + Jc.d * Jc.d,
+      sv[0] * sv[0] + sv[1] * sv[1], 1e-12);
+    var svFold = vals(jac(0.8, 0, 1.0));
+    absLine('ST4 折叠奇异 theta2=0 时 sigma_min=0', 0, svFold[1], 1e-9, 'abs');
+    var svIso = vals(jac(0.5, 135 * Math.PI / 180, 1 / Math.SQRT2));
+    relLine('ST5 l2=1/sqrt2, theta2=135 度各向同性 sigma_min/sigma_max=1', 1, svIso[1] / svIso[0], 1e-9);
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\nSELFTEST ' + passN + '/' + (passN + failN) + (failN ? ' \u2717' : ' \u2713');
+    window.__selftest = { passed: passN, failed: failN, details: lines.join('\n') };
+  }
+  if (/[?&]selftest=1/.test(location.search)) {
+    try { runSelfTest(); } catch (e) {
+      var pp = document.getElementById('selftestPanel');
+      if (pp) { pp.hidden = false; pp.textContent = 'selftest 异常 : ' + (e && e.message); }
+      window.__selftest = { passed: 0, failed: 1, details: String(e && e.message) };
+    }
+  }
+
+})();
+</script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+</body>
+</html>

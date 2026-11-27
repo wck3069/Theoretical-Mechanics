@@ -1,518 +1,678 @@
 {
- "version": 2,
- "built_at": "2026-11-10",
- "modules": [
-  {
-   "slug": "00-binet",
-   "milestone": "M0",
-   "title": "比奈方程（现有样板）",
-   "src": "中心力、比奈方程、圆锥曲线、进动",
-   "tags": [
-    "中心力",
-    "比奈方程",
-    "圆锥曲线",
-    "进动"
-   ],
-   "summary": "M0 中心力轨道方程 u''+u=-F(1/u)/(m h^2 u^2)，用于判别圆锥曲线、近日点进动与轨道闭合。",
-   "sim": "modules/00-binet/index.html",
-   "note": "modules/00-binet/binet.html",
-   "color": "#ffd27a"
-  },
-  {
-   "slug": "01-effective-potential",
-   "milestone": "M1",
-   "title": "有效势与轨道稳定性",
-   "src": "作业-2 Q1–Q7 · 作业-3 Q1 · 作业-5 Q4",
-   "tags": [
-    "有效势",
-    "RK4",
-    "Bertrand",
-    "进动"
-   ],
-   "summary": "M1 把角动量并入势能得到 V_eff，用曲线读出转折点、圆轨道稳定性与小振动频率；附伯特兰定理。",
-   "sim": "modules/01-effective-potential/index.html",
-   "note": "modules/01-effective-potential/note.html",
-   "color": "#7fe0ff"
-  },
-  {
-   "slug": "02-scattering",
-   "milestone": "M2",
-   "title": "散射与俘获",
-   "src": "作业-3 Q2–Q3",
-   "tags": [
-    "散射",
-    "截面",
-    "俘获",
-    "RK4"
-   ],
-   "summary": "M2 中心力散射的偏转角、微分截面与俘获条件，卢瑟福散射与势垒穿透的几何。",
-   "sim": "modules/02-scattering/index.html",
-   "note": "modules/02-scattering/note.html",
-   "color": "#b79bff"
-  },
-  {
-   "slug": "03-two-body",
-   "milestone": "M3",
-   "title": "两体问题与系外行星",
-   "src": "两体专题",
-   "tags": [
-    "两体",
-    "RV",
-    "多普勒",
-    "系外行星"
-   ],
-   "summary": "M3 约化质量把两体问题化为单体，开普勒第三定律，以及系外行星视向速度的观测反演。",
-   "sim": "modules/03-two-body/index.html",
-   "note": "modules/03-two-body/note.html",
-   "color": "#7ff0cf"
-  },
-  {
-   "slug": "06-collisions",
-   "milestone": "M4",
-   "title": "碰撞与变质量",
-   "src": "作业-5 Q1–Q3",
-   "tags": [
-    "碰撞",
-    "变质量",
-    "恢复系数",
-    "雨滴"
-   ],
-   "summary": "M4 动量守恒与恢复系数，一维与二维碰撞，以及雨滴变质量系统的运动方程。",
-   "sim": "modules/06-collisions/index.html",
-   "note": "modules/06-collisions/note.html",
-   "color": "#ff9d6b"
-  },
-  {
-   "slug": "08-kinematics",
-   "milestone": "M5",
-   "title": "圆柱脱离与运动学",
-   "src": "作业-1",
-   "tags": [
-    "运动学",
-    "极坐标",
-    "圆柱脱离",
-    "约束"
-   ],
-   "summary": "极坐标与自然坐标运动学、相对运动与伽利略变换；圆柱面上脱离角与约束反力。",
-   "sim": "modules/08-kinematics/index.html?mode=cylinder",
-   "note": "modules/08-kinematics/note.html",
-   "color": "#9fd8ff"
-  },
-  {
-   "slug": "14-foucault-rose",
-   "milestone": "M6",
-   "title": "傅科摆与玫瑰线",
-   "src": "手稿 ch01 · 转动参考系",
-   "tags": [
-    "傅科摆",
-    "科里奥利力",
-    "转动参考系",
-    "进动"
-   ],
-   "summary": "在转动参考系中积分傅科摆方程：科里奥利项令摆动平面缓慢进动，进动周期 T=2π/(ω|sinλ|)；摆尖在地面画出玫瑰轨迹，纬度滑杆从赤道（不旋转）到极点（一个恒星日一圈）。",
-   "sim": "modules/14-foucault-rose/index.html",
-   "note": "chapters/01-newton/manuscripts/book.html",
-   "color": "#ffd76e"
-  },
-  {
-   "slug": "15-lagrange-points",
-   "milestone": "M7",
-   "title": "拉格朗日点",
-   "src": "手稿 ch01 · 转动参考系 · 有效势",
-   "tags": [
-    "拉格朗日点",
-    "限制性三体",
-    "有效势",
-    "蝌蚪轨道"
-   ],
-   "summary": "旋转参考系下的圆限制性三体问题：有效势的五个平稳点 L1–L5，零速度曲线随能量开合，演示小天体绕 L4/L5 的蝌蚪形与马蹄形轨道，支持日–地、日–木星、地–月质量比。",
-   "sim": "modules/15-lagrange-points/index.html",
-   "note": "chapters/01-newton/manuscripts/book.html",
-   "color": "#c678dd"
-  },
-  {
-   "slug": "04-variational",
-   "milestone": "M8",
-   "title": "等时摆（摆线）",
-   "src": "作业-6",
-   "tags": [
-    "变分",
-    "摆线",
-    "等时性",
-    "时间泛函"
-   ],
-   "summary": "摆线的等时性：任意起点同时到达，周期 T=π√(a/g) 与振幅无关。",
-   "sim": "modules/04-variational/index.html?mode=cycloid",
-   "note": "modules/04-variational/note.html",
-   "color": "#ff9fc4"
-  },
-  {
-   "slug": "04-variational",
-   "milestone": "M9",
-   "title": "折射定律",
-   "src": "作业-6",
-   "tags": [
-    "变分",
-    "费马原理",
-    "折射",
-    "Snell"
-   ],
-   "summary": "费马原理与时间泛函的驻值条件给出 Snell 定律 n₁sinθ₁=n₂sinθ₂。",
-   "sim": "modules/04-variational/index.html?mode=refraction",
-   "note": "modules/04-variational/note.html",
-   "color": "#ff9fc4"
-  },
-  {
-   "slug": "04-variational",
-   "milestone": "M10",
-   "title": "最短路径",
-   "src": "作业-6",
-   "tags": [
-    "变分",
-    "测地线",
-    "最短路径",
-    "E–L"
-   ],
-   "summary": "两点间最短路径与曲面测地线：Euler–Lagrange 方程给出直线或短程线。",
-   "sim": "modules/04-variational/index.html?mode=shortest",
-   "note": "modules/04-variational/note.html",
-   "color": "#ff9fc4"
-  },
-  {
-   "slug": "05-virtual-work",
-   "milestone": "M11",
-   "title": "虚功原理与静力学",
-   "src": "作业-7",
-   "tags": [
-    "虚功",
-    "静力学",
-    "梯子",
-    "平衡"
-   ],
-   "summary": "M9 约束力不做功，虚功原理给出静力平衡与广义力；梯子平衡、分离条件与摩擦角。",
-   "sim": "modules/05-virtual-work/index.html",
-   "note": "modules/05-virtual-work/note.html",
-   "color": "#ffc46b"
-  },
-  {
-   "slug": "09-atwood-pulley",
-   "milestone": "M12",
-   "title": "有转动惯量的 Atwood 机",
-   "src": "作业-8 Q1",
-   "tags": [
-    "Atwood",
-    "转动惯量",
-    "张力差",
-    "拉格朗日"
-   ],
-   "summary": "M10 以 m2 向下位移为广义坐标，得到等效质量 m1+m2+I/R² 与张力差 T2−T1=Ia/R²。",
-   "sim": "modules/09-atwood-pulley/index.html",
-   "note": "modules/09-atwood-pulley/note.html",
-   "color": "#7fe0ff"
-  },
-  {
-   "slug": "10-coupled-systems",
-   "milestone": "M13",
-   "title": "斜面上的滑块",
-   "src": "作业-8 Q3 · Q4 · Q5",
-   "tags": [
-    "耦合",
-    "循环坐标",
-    "斜面",
-    "约束"
-   ],
-   "summary": "斜面滑块：循环坐标、水平动量守恒与约束反力分配。",
-   "sim": "modules/10-coupled-systems/index.html?scene=wedge",
-   "note": "modules/10-coupled-systems/note.html",
-   "color": "#b79bff"
-  },
-  {
-   "slug": "10-coupled-systems",
-   "milestone": "M14",
-   "title": "弹簧摆",
-   "src": "作业-8 Q3 · Q4 · Q5",
-   "tags": [
-    "耦合",
-    "弹簧摆",
-    "简正坐标",
-    "小振动"
-   ],
-   "summary": "弹簧摆：径向与角向耦合，两支小振动频率与简正坐标。",
-   "sim": "modules/10-coupled-systems/index.html?scene=spring",
-   "note": "modules/10-coupled-systems/note.html",
-   "color": "#b79bff"
-  },
-  {
-   "slug": "10-coupled-systems",
-   "milestone": "M15",
-   "title": "小车与单摆",
-   "src": "作业-8 Q3 · Q4 · Q5",
-   "tags": [
-    "耦合",
-    "小车单摆",
-    "动量守恒",
-    "小振动"
-   ],
-   "summary": "小车—单摆：水平动量守恒，耦合频率与反冲。",
-   "sim": "modules/10-coupled-systems/index.html?scene=cart",
-   "note": "modules/10-coupled-systems/note.html",
-   "color": "#b79bff"
-  },
-  {
-   "slug": "08b-nonlinear",
-   "milestone": "M16",
-   "title": "单摆周期修正",
-   "src": "作业-1",
-   "tags": [
-    "单摆",
-    "周期修正",
-    "Lindstedt",
-    "相空间"
-   ],
-   "summary": "单摆大角周期修正、Lindstedt 近似、相空间与非线性振荡。",
-   "sim": "modules/08-kinematics/index.html?mode=pendulum",
-   "note": "modules/08-kinematics/note.html",
-   "color": "#ffa07a"
-  },
-  {
-   "slug": "08b-nonlinear",
-   "milestone": "M17",
-   "title": "双摆混沌",
-   "src": "作业-1",
-   "tags": [
-    "双摆",
-    "混沌",
-    "初值敏感",
-    "相空间"
-   ],
-   "summary": "双摆对初值敏感、相空间轨迹分离与混沌判据。",
-   "sim": "modules/08-kinematics/index.html?mode=double",
-   "note": "modules/08-kinematics/note.html",
-   "color": "#ffa07a"
-  },
-  {
-   "slug": "07-rigid-body",
-   "milestone": "M18",
-   "title": "刚体几何与角动量",
-   "src": "作业-4",
-   "tags": [
-    "刚体",
-    "角动量",
-    "球壳",
-    "质心"
-   ],
-   "summary": "M13 转动惯量、平行轴定理与角动量守恒；球壳、滚动物体与质心系的分解。",
-   "sim": "modules/07-rigid-body/index.html",
-   "note": "modules/07-rigid-body/note.html",
-   "color": "#c9b8ff"
-  },
-  {
-   "slug": "17-free-rigid-body",
-   "milestone": "M19",
-   "title": "自由刚体与网球拍效应",
-   "src": "手稿 ch05 · 欧拉方程 · 自由刚体",
-   "tags": [
-    "欧拉方程",
-    "自由刚体",
-    "网球拍定理",
-    "角动量"
-   ],
-   "summary": "积分无力矩欧拉方程，调节主惯量与初始角速度，观察中间轴不稳定、角速度翻转与空间角动量守恒。",
-   "sim": "modules/17-free-rigid-body/index.html",
-   "note": "chapters/05-rigid-body/manuscripts/book.html",
-   "color": "#e6c98c"
-  },
-  {
-   "slug": "11-rotation-and-field",
-   "milestone": "M20",
-   "title": "旋转圆环上的珠子",
-   "src": "作业-8 Q5 · Q6",
-   "tags": [
-    "旋转参考系",
-    "有效势",
-    "分岔",
-    "雅可比积分"
-   ],
-   "summary": "旋转圆环上的有效势、临界角速度与超临界叉式分岔。",
-   "sim": "modules/11-rotation-and-field/index.html?scene=ring",
-   "note": "modules/11-rotation-and-field/note.html",
-   "color": "#7ff0cf"
-  },
-  {
-   "slug": "11-rotation-and-field",
-   "milestone": "M21",
-   "title": "磁场中的带电粒子",
-   "src": "作业-8 Q5 · Q6",
-   "tags": [
-    "磁场",
-    "回旋运动",
-    "诺特荷",
-    "正则动量"
-   ],
-   "summary": "均匀磁场中的回旋运动：规范动量、诺特荷与回旋圆心。",
-   "sim": "modules/11-rotation-and-field/index.html?scene=cyclotron",
-   "note": "modules/11-rotation-and-field/note.html",
-   "color": "#7ff0cf"
-  },
-  {
-   "slug": "18-phase-space",
-   "milestone": "M22",
-   "title": "相空间与刘维尔",
-   "src": "手稿 ch06 · 相空间流 · 刘维尔定理",
-   "tags": [
-    "相空间",
-    "刘维尔",
-    "单摆",
-    "面积保持"
-   ],
-   "summary": "拖动单摆初始相点，观察闭合摆动、转动与分离线；用一团初始点演示相面积在哈密顿流下保持。",
-   "sim": "modules/18-phase-space/index.html?scene=phase",
-   "note": "chapters/06-hamiltonian/manuscripts/book.html",
-   "color": "#b79bff"
-  },
-  {
-   "slug": "18-phase-space",
-   "milestone": "M23",
-   "title": "辛积分器比较",
-   "src": "手稿 ch06 · 辛积分 · 能量误差",
-   "tags": [
-    "辛积分",
-    "Verlet",
-    "能量误差",
-    "长期稳定性"
-   ],
-   "summary": "对比显式 Euler、辛 Euler 与 Verlet：相轨道、能量误差随时间的漂移与步长收敛。",
-   "sim": "modules/18-phase-space/index.html?scene=integrator",
-   "note": "chapters/06-hamiltonian/manuscripts/book.html",
-   "color": "#7fe0ff"
-  },
-  {
-   "slug": "13-lightcone-worldlines",
-   "milestone": "M24",
-   "title": "光锥与世界线",
-   "src": "手稿 ch07 · 时空间隔与光锥",
-   "tags": [
-    "光锥",
-    "世界线",
-    "时空间隔",
-    "同时性"
-   ],
-   "summary": "在闵可夫斯基图上绘制光锥与世界线：拖拽事件实时判定类时/类光/类空间隔 s²=c²t²−x²，参考系速度倾斜同时线，比较直世界线与折线世界线的固有时，并演示相对论速度合成。",
-   "sim": "modules/13-lightcone-worldlines/index.html",
-   "note": "chapters/07-relativity/manuscripts/book.html",
-   "color": "#7ec8ff"
-  },
-  {
-   "slug": "16-doppler-beaming",
-   "milestone": "M25",
-   "title": "相对论多普勒与车头灯效应",
-   "src": "手稿 ch07 · 多普勒效应与光行差",
-   "tags": [
-    "多普勒效应",
-    "光行差",
-    "车头灯效应",
-    "星场"
-   ],
-   "summary": "以速度 β 穿行静止星场：观测频率 ω′=γω(1−βcosα) 使前方蓝移、后方红移；光行差令星光向前汇聚、前方星场变亮变密，退行方向 ω′/ω=√((1−β)/(1+β))。",
-   "sim": "modules/16-doppler-beaming/index.html",
-   "note": "chapters/07-relativity/manuscripts/book.html",
-   "color": "#ff7a9e"
-  },
-  {
-   "slug": "19-relativistic-collisions",
-   "milestone": "M26",
-   "title": "相对论碰撞与不变质量",
-   "src": "手稿 ch07 · 四动量守恒 · 阈能",
-   "tags": [
-    "四动量",
-    "不变质量",
-    "阈能",
-    "碰撞"
-   ],
-   "summary": "调节质量与速度，比较弹性/完全非弹性碰撞；实时显示总四动量、系统不变质量与固定靶阈能。",
-    "sim": "modules/19-relativistic-collisions/index.html",
-    "note": "chapters/07-relativity/manuscripts/book.html",
-    "color": "#8fe8ff"
-  },
-  {
-    "slug": "20-forced-resonance",
-    "milestone": "M27",
-    "title": "受迫振动与共振",
-    "src": "手稿 ch04 · 阻尼与受迫响应 · 拍",
-    "tags": [
-      "受迫振动",
-      "共振",
-      "品质因数",
-      "拍频"
-    ],
-    "summary": "受迫振子瞬态→稳态全过程；A(ω) 与 P̄(ω) 双共振曲线、ω_R 移动、半功率带宽 2γ 与 Q=ω₀/2γ；两频叠加拍频。",
-    "sim": "modules/20-forced-resonance/index.html",
-    "note": "chapters/04-oscillations/manuscripts/book.html",
-    "color": "#ff9e64"
-  },
-  {
-    "slug": "21-heavy-top",
-    "milestone": "M28",
-    "title": "重陀螺的进动与章动",
-    "src": "手稿 ch05 · 重对称陀螺 · 睡眠陀螺",
-    "tags": [
-      "进动",
-      "章动",
-      "睡眠陀螺",
-      "有效势"
-    ],
-    "summary": "守恒动量约化出倾角有效势 V_eff(θ)；稳恒进动慢支/快支、球面玫瑰线章动、睡眠陀螺稳定性阈值 ω₃c=√(4I₁Mgl)/I₃。",
-    "sim": "modules/21-heavy-top/index.html",
-    "note": "chapters/05-rigid-body/manuscripts/book.html",
-    "color": "#d8b48a"
-  },
-  {
-    "slug": "22-legendre-routh",
-    "milestone": "M29",
-    "title": "勒让德变换与罗斯约化",
-    "src": "手稿 ch06 · 勒让德变换与正则方程 · 罗斯约化",
-    "tags": [
-      "勒让德变换",
-      "正则方程",
-      "罗斯约化",
-      "循环坐标"
-    ],
-    "summary": "勒让德变换的切线几何：L(q,q̇)↔H(q,p) 互逆；正则方程与拉格朗日方程同轨迹对照；循环坐标的罗斯约化再现有效势径向运动。",
-    "sim": "modules/22-legendre-routh/index.html",
-    "note": "chapters/06-hamiltonian/manuscripts/book.html",
-    "color": "#e7d39b"
-  },
-  {
-    "slug": "23-hyperbolic-motion",
-    "milestone": "M30",
-    "title": "双曲运动与恒固有加速度",
-    "src": "手稿 ch07 · 恒力运动与固有加速度",
-    "tags": [
-      "双曲运动",
-      "固有加速度",
-      "快度",
-      "Rindler视界"
-    ],
-    "summary": "恒固有加速度世界线 x²−t²=1/a²：快度线性增长、速度渐近光速、固有时 asinh(at)/a；光子追逐与 Rindler 视界；牛顿极限对照。",
-    "sim": "modules/23-hyperbolic-motion/index.html",
-    "note": "chapters/07-relativity/manuscripts/book.html",
-    "color": "#9fe6e6"
-  },
-  {
-    "slug": "12-relativity",
-    "milestone": "S7",
-   "title": "狭义相对论",
-   "src": "书稿 ch07 · 相对论",
-   "tags": [
-    "洛伦兹变换",
-    "同时性",
-    "四维动量",
-    "不变质量"
-   ],
-   "summary": "从事件与时钟同步建立洛伦兹变换；时空间隔与光锥；速度合成与多普勒效应；四维动量、质能关系与相对论碰撞。",
-   "sim": "chapters/07-relativity/index.html",
-   "note": "chapters/07-relativity/manuscripts/book.html",
-   "color": "#8fe8ff"
-  }
- ]
+  "version": 2,
+  "built_at": "2026-11-10",
+  "modules": [
+    {
+      "slug": "00-binet",
+      "milestone": "M0",
+      "title": "比奈方程（现有样板）",
+      "src": "中心力、比奈方程、圆锥曲线、进动",
+      "tags": [
+        "中心力",
+        "比奈方程",
+        "圆锥曲线",
+        "进动"
+      ],
+      "summary": "由中心力角动量守恒导出比奈方程 $u''+u=-\\frac{F(1/u)}{mh^2u^2}$，用于定量求解圆锥曲线轨道、近日点进动与轨道闭合条件。",
+      "sim": "modules/00-binet/index.html",
+      "note": "modules/00-binet/binet.html",
+      "color": "#ffd27a"
+    },
+    {
+      "slug": "01-effective-potential",
+      "milestone": "M1",
+      "title": "有效势与轨道稳定性",
+      "src": "作业-2 Q1–Q7 · 作业-3 Q1 · 作业-5 Q4",
+      "tags": [
+        "有效势",
+        "RK4",
+        "Bertrand",
+        "进动"
+      ],
+      "summary": "将角动量离心项并入势能构成有效势 $V_{\\mathrm{eff}}(r)=V(r)+\\frac{L^2}{2mr^2}$，由曲线几何直接读出转折点、圆轨道稳定性、径向小振动与伯特兰定理。",
+      "sim": "modules/01-effective-potential/index.html",
+      "note": "modules/01-effective-potential/note.html",
+      "color": "#7fe0ff"
+    },
+    {
+      "slug": "02-scattering",
+      "milestone": "M2",
+      "title": "散射与俘获",
+      "src": "作业-3 Q2–Q3",
+      "tags": [
+        "散射",
+        "截面",
+        "俘获",
+        "RK4"
+      ],
+      "summary": "分析中心力场中的散射偏转角 $\\Theta(b)$、微分散射截面 $\\frac{\\mathrm{d}\\sigma}{\\mathrm{d}\\Omega}$ 与吸引势垒俘获截面 $\\sigma=\\pi b_c^2$。",
+      "sim": "modules/02-scattering/index.html",
+      "note": "modules/02-scattering/note.html",
+      "color": "#b79bff"
+    },
+    {
+      "slug": "03-two-body",
+      "milestone": "M3",
+      "title": "两体问题与系外行星",
+      "src": "两体专题",
+      "tags": [
+        "两体",
+        "RV",
+        "多普勒",
+        "系外行星"
+      ],
+      "summary": "引入质心与约化质量 $\\mu=\\frac{M_1M_2}{M_1+M_2}$ 将两体问题化为等效单体，导出开普勒第三定律并反演系外行星视向速度曲线。",
+      "sim": "modules/03-two-body/index.html",
+      "note": "modules/03-two-body/note.html",
+      "color": "#7ff0cf"
+    },
+    {
+      "slug": "06-collisions",
+      "milestone": "M4",
+      "title": "碰撞与变质量",
+      "src": "作业-5 Q1–Q3",
+      "tags": [
+        "碰撞",
+        "变质量",
+        "恢复系数",
+        "雨滴"
+      ],
+      "summary": "结合动量守恒与恢复系数 $e$ 分析一维与二维碰撞，并建立雨滴连续吸积等变质量系统的动力学方程。",
+      "sim": "modules/06-collisions/index.html",
+      "note": "modules/06-collisions/note.html",
+      "color": "#ff9d6b"
+    },
+    {
+      "slug": "08-kinematics",
+      "milestone": "M5",
+      "title": "圆柱脱离与运动学",
+      "src": "作业-1",
+      "tags": [
+        "运动学",
+        "极坐标",
+        "圆柱脱离",
+        "约束"
+      ],
+      "summary": "建立极坐标与自然坐标下的速度、加速度分解与伽利略变换，并以圆柱滑落脱离角 $\\cos\\theta=\\frac{2}{3}$ 演示单面约束失效。",
+      "sim": "modules/08-kinematics/index.html?mode=cylinder",
+      "note": "modules/08-kinematics/note.html",
+      "color": "#9fd8ff"
+    },
+    {
+      "slug": "14-foucault-rose",
+      "milestone": "M6",
+      "title": "傅科摆与玫瑰线",
+      "src": "手稿 ch01 · 转动参考系",
+      "tags": [
+        "傅科摆",
+        "科里奥利力",
+        "转动参考系",
+        "进动"
+      ],
+      "summary": "在地球转动参考系中计入科里奥利力，导出傅科摆进动周期 $T_F=\\frac{2\\pi}{\\Omega|\\sin\\lambda|}$ 与地面玫瑰线轨迹。",
+      "sim": "modules/14-foucault-rose/index.html",
+      "note": "chapters/01-newton/manuscripts/book.html",
+      "color": "#ffd76e"
+    },
+    {
+      "slug": "15-lagrange-points",
+      "milestone": "M7",
+      "title": "拉格朗日点",
+      "src": "手稿 ch01 · 转动参考系 · 有效势",
+      "tags": [
+        "拉格朗日点",
+        "限制性三体",
+        "有效势",
+        "蝌蚪轨道"
+      ],
+      "summary": "研究旋转参考系下的圆限制性三体问题（CR3BP）：五个拉格朗日平稳点 $L_1$–$L_5$、雅可比常数零速度曲线与 $L_4/L_5$ 蝌蚪/马蹄轨道。",
+      "sim": "modules/15-lagrange-points/index.html",
+      "note": "chapters/01-newton/manuscripts/book.html",
+      "color": "#c678dd"
+    },
+    {
+      "slug": "04-variational",
+      "milestone": "M8",
+      "title": "等时摆（摆线）",
+      "src": "作业-6",
+      "tags": [
+        "变分",
+        "摆线",
+        "等时性",
+        "时间泛函"
+      ],
+      "summary": "由变分法导出摆线为重力场中的最速降线，并证明沿摆线任意位置释放均严格等时，周期 $T=\\pi\\sqrt{a/g}$ 与振幅无关。",
+      "sim": "modules/04-variational/index.html?mode=cycloid",
+      "note": "modules/04-variational/note.html",
+      "color": "#ff9fc4"
+    },
+    {
+      "slug": "04-variational",
+      "milestone": "M9",
+      "title": "折射定律",
+      "src": "作业-6",
+      "tags": [
+        "变分",
+        "费马原理",
+        "折射",
+        "Snell"
+      ],
+      "summary": "将费马光程泛函 $\\int n\\,\\mathrm{d}s$ 取驻值，直接导出光学折射的 Snell 定律 $n_1\\sin\\theta_1=n_2\\sin\\theta_2$。",
+      "sim": "modules/04-variational/index.html?mode=refraction",
+      "note": "modules/04-variational/note.html",
+      "color": "#ff9fc4"
+    },
+    {
+      "slug": "04-variational",
+      "milestone": "M10",
+      "title": "最短路径",
+      "src": "作业-6",
+      "tags": [
+        "变分",
+        "测地线",
+        "最短路径",
+        "E–L"
+      ],
+      "summary": "对弧长泛函 $\\int\\mathrm{d}s$ 应用欧拉–拉格朗日方程，证明欧氏平面最短路径为直线，并推广至曲面测地线。",
+      "sim": "modules/04-variational/index.html?mode=shortest",
+      "note": "modules/04-variational/note.html",
+      "color": "#ff9fc4"
+    },
+    {
+      "slug": "05-virtual-work",
+      "milestone": "M11",
+      "title": "虚功原理与静力学",
+      "src": "作业-7",
+      "tags": [
+        "虚功",
+        "静力学",
+        "梯子",
+        "平衡"
+      ],
+      "summary": "利用理想约束力不做虚功的原理 $\\delta W=0$ 与势能驻值 $\\delta V=0$ 求解静力平衡，分析梯子临界角 $\\tan\\theta_{\\min}=\\frac{1}{2\\mu}$ 与稳定性。",
+      "sim": "modules/05-virtual-work/index.html",
+      "note": "modules/05-virtual-work/note.html",
+      "color": "#ffc46b"
+    },
+    {
+      "slug": "09-atwood-pulley",
+      "milestone": "M12",
+      "title": "有转动惯量的 Atwood 机",
+      "src": "作业-8 Q1",
+      "tags": [
+        "Atwood",
+        "转动惯量",
+        "张力差",
+        "拉格朗日"
+      ],
+      "summary": "以广义坐标求解含滑轮转动惯量 $I$ 的 Atwood 机，得等效质量 $m_1+m_2+I/R^2$ 与绳两端张力差 $T_2-T_1=Ia/R^2$。",
+      "sim": "modules/09-atwood-pulley/index.html",
+      "note": "modules/09-atwood-pulley/note.html",
+      "color": "#7fe0ff"
+    },
+    {
+      "slug": "10-coupled-systems",
+      "milestone": "M13",
+      "title": "斜面上的滑块",
+      "src": "作业-8 Q3 · Q4 · Q5",
+      "tags": [
+        "耦合",
+        "循环坐标",
+        "斜面",
+        "约束"
+      ],
+      "summary": "利用可动斜面的水平循环坐标 $X$ 得动量 $p_X$ 守恒，求解滑块相对加速度 $a_{\\mathrm{rel}}$ 与约束反力的动能分配。",
+      "sim": "modules/10-coupled-systems/index.html?scene=wedge",
+      "note": "modules/10-coupled-systems/note.html",
+      "color": "#b79bff"
+    },
+    {
+      "slug": "10-coupled-systems",
+      "milestone": "M14",
+      "title": "弹簧摆",
+      "src": "作业-8 Q3 · Q4 · Q5",
+      "tags": [
+        "耦合",
+        "弹簧摆",
+        "简正坐标",
+        "小振动"
+      ],
+      "summary": "对弹簧摆在平衡长度 $r_0=l_0+mg/k$ 附近线性化，分解径向 $\\omega_r=\\sqrt{k/m}$ 与摆动 $\\omega_\\theta=\\sqrt{g/r_0}$ 两支简正振动。",
+      "sim": "modules/10-coupled-systems/index.html?scene=spring",
+      "note": "modules/10-coupled-systems/note.html",
+      "color": "#b79bff"
+    },
+    {
+      "slug": "10-coupled-systems",
+      "milestone": "M15",
+      "title": "小车与单摆",
+      "src": "作业-8 Q3 · Q4 · Q5",
+      "tags": [
+        "耦合",
+        "小车单摆",
+        "动量守恒",
+        "小振动"
+      ],
+      "summary": "由水平动量守恒 $p_X=0$ 消去小车位移，导出小车–单摆耦合系统的小振动频率 $\\omega=\\sqrt{\\frac{g(M+m)}{Ml}}$ 与反冲规律。",
+      "sim": "modules/10-coupled-systems/index.html?scene=cart",
+      "note": "modules/10-coupled-systems/note.html",
+      "color": "#b79bff"
+    },
+    {
+      "slug": "08b-nonlinear",
+      "milestone": "M16",
+      "title": "单摆周期修正",
+      "src": "作业-1",
+      "tags": [
+        "单摆",
+        "周期修正",
+        "Lindstedt",
+        "相空间"
+      ],
+      "summary": "用微扰展开与 Lindstedt 方法计算单摆大角周期修正 $T\\approx T_0\\left(1+\\frac{\\theta_0^2}{16}+\\frac{11\\theta_0^4}{3072}\\right)$，观察非线性相图。",
+      "sim": "modules/08-kinematics/index.html?mode=pendulum",
+      "note": "modules/08-kinematics/note.html",
+      "color": "#ffa07a"
+    },
+    {
+      "slug": "08b-nonlinear",
+      "milestone": "M17",
+      "title": "双摆混沌",
+      "src": "作业-1",
+      "tags": [
+        "双摆",
+        "混沌",
+        "初值敏感",
+        "相空间"
+      ],
+      "summary": "模拟两自由度双摆在大振幅下的初值敏感性与轨迹指数分离，对比可积与混沌动力学行为。",
+      "sim": "modules/08-kinematics/index.html?mode=double",
+      "note": "modules/08-kinematics/note.html",
+      "color": "#ffa07a"
+    },
+    {
+      "slug": "07-rigid-body",
+      "milestone": "M18",
+      "title": "刚体几何与角动量",
+      "src": "作业-4",
+      "tags": [
+        "刚体",
+        "角动量",
+        "球壳",
+        "质心"
+      ],
+      "summary": "建立刚体转动惯量、平行轴定理 $I=I_{\\mathrm{cm}}+md^2$ 与角动量守恒，涵盖球壳定理、球冠质心与薄圆盘角动量。",
+      "sim": "modules/07-rigid-body/index.html",
+      "note": "modules/07-rigid-body/note.html",
+      "color": "#c9b8ff"
+    },
+    {
+      "slug": "17-free-rigid-body",
+      "milestone": "M19",
+      "title": "自由刚体与网球拍效应",
+      "src": "手稿 ch05 · 欧拉方程 · 自由刚体",
+      "tags": [
+        "欧拉方程",
+        "自由刚体",
+        "网球拍定理",
+        "角动量"
+      ],
+      "summary": "在惯量主轴系中积分无力矩欧拉方程 $I_1\\dot\\omega_1=(I_2-I_3)\\omega_2\\omega_3$，演示中间轴不稳定与网球拍翻转效应。",
+      "sim": "modules/17-free-rigid-body/index.html",
+      "note": "chapters/05-rigid-body/manuscripts/book.html",
+      "color": "#e6c98c"
+    },
+    {
+      "slug": "11-rotation-and-field",
+      "milestone": "M20",
+      "title": "旋转圆环上的珠子",
+      "src": "作业-8 Q5 · Q6",
+      "tags": [
+        "旋转参考系",
+        "有效势",
+        "分岔",
+        "雅可比积分"
+      ],
+      "summary": "建立旋转圆环上珠子的有效势与雅可比积分，观察超过临界转速 $\\Omega_c=\\sqrt{g/R}$ 时的超临界叉式分岔。",
+      "sim": "modules/11-rotation-and-field/index.html?scene=ring",
+      "note": "modules/11-rotation-and-field/note.html",
+      "color": "#7ff0cf"
+    },
+    {
+      "slug": "11-rotation-and-field",
+      "milestone": "M21",
+      "title": "磁场中的带电粒子",
+      "src": "作业-8 Q5 · Q6",
+      "tags": [
+        "磁场",
+        "回旋运动",
+        "诺特荷",
+        "正则动量"
+      ],
+      "summary": "分析均匀磁场中带电粒子的规范正则动量与平移诺特荷 $Q_x,Q_y$，揭示守恒荷如何锁定回旋圆心位置。",
+      "sim": "modules/11-rotation-and-field/index.html?scene=cyclotron",
+      "note": "modules/11-rotation-and-field/note.html",
+      "color": "#7ff0cf"
+    },
+    {
+      "slug": "18-phase-space",
+      "milestone": "M22",
+      "title": "相空间与刘维尔",
+      "src": "手稿 ch06 · 相空间流 · 刘维尔定理",
+      "tags": [
+        "相空间",
+        "刘维尔",
+        "单摆",
+        "面积保持"
+      ],
+      "summary": "在单摆相平面 $(q,p)$ 中区分摆动、转动与分界线 $E=2K$，以相点云演化直观验证哈密顿流的刘维尔保面积定理。",
+      "sim": "modules/18-phase-space/index.html?scene=phase",
+      "note": "chapters/06-hamiltonian/manuscripts/book.html",
+      "color": "#b79bff"
+    },
+    {
+      "slug": "18-phase-space",
+      "milestone": "M23",
+      "title": "辛积分器比较",
+      "src": "手稿 ch06 · 辛积分 · 能量误差",
+      "tags": [
+        "辛积分",
+        "Verlet",
+        "能量误差",
+        "长期稳定性"
+      ],
+      "summary": "对比显式 Euler、辛 Euler 与 Störmer–Verlet 积分器在谐振子上的相面积保持与长期能量误差行为。",
+      "sim": "modules/18-phase-space/index.html?scene=integrator",
+      "note": "chapters/06-hamiltonian/manuscripts/book.html",
+      "color": "#7fe0ff"
+    },
+    {
+      "slug": "13-lightcone-worldlines",
+      "milestone": "M24",
+      "title": "光锥与世界线",
+      "src": "手稿 ch07 · 时空间隔与光锥",
+      "tags": [
+        "光锥",
+        "世界线",
+        "时空间隔",
+        "同时性"
+      ],
+      "summary": "在闵可夫斯基时空图中绘制光锥与世界线，实时判定类时/类光/类空间隔 $s^2=c^2t^2-x^2$、同时线倾斜与双生子固有时。",
+      "sim": "modules/13-lightcone-worldlines/index.html",
+      "note": "chapters/07-relativity/manuscripts/book.html",
+      "color": "#7ec8ff"
+    },
+    {
+      "slug": "16-doppler-beaming",
+      "milestone": "M25",
+      "title": "相对论多普勒与车头灯效应",
+      "src": "手稿 ch07 · 多普勒效应与光行差",
+      "tags": [
+        "多普勒效应",
+        "光行差",
+        "车头灯效应",
+        "星场"
+      ],
+      "summary": "由波四矢量洛伦兹变换导出相对论多普勒频移 $\\omega'=\\gamma\\omega(1-\\beta\\cos\\alpha)$，呈现星场光行差与车头灯集束效应。",
+      "sim": "modules/16-doppler-beaming/index.html",
+      "note": "chapters/07-relativity/manuscripts/book.html",
+      "color": "#ff7a9e"
+    },
+    {
+      "slug": "19-relativistic-collisions",
+      "milestone": "M26",
+      "title": "相对论碰撞与不变质量",
+      "src": "手稿 ch07 · 四动量守恒 · 阈能",
+      "tags": [
+        "四动量",
+        "不变质量",
+        "阈能",
+        "碰撞"
+      ],
+      "summary": "利用四动量守恒与系统不变质量 $M_{\\mathrm{inv}}=\\sqrt{(\\sum E)^2-(\\sum\\mathbf{p})^2}$ 分析弹性与完全非弹性相对论碰撞。",
+      "sim": "modules/19-relativistic-collisions/index.html",
+      "note": "chapters/07-relativity/manuscripts/book.html",
+      "color": "#8fe8ff"
+    },
+    {
+      "slug": "20-forced-resonance",
+      "milestone": "M27",
+      "title": "受迫振动与共振",
+      "src": "手稿 ch04 · 阻尼与受迫响应 · 拍",
+      "tags": [
+        "受迫振动",
+        "共振",
+        "品质因数",
+        "拍频"
+      ],
+      "summary": "研究受迫阻尼振子 $\\ddot q+2\\gamma\\dot q+\\omega_0^2 q=F_0\\cos\\omega t$ 的稳态响应、幅值/功率双共振曲线、半功率带宽 $2\\gamma$、品质因数 $Q$ 与拍频。",
+      "sim": "modules/20-forced-resonance/index.html",
+      "note": "chapters/04-oscillations/manuscripts/book.html",
+      "color": "#ff9e64"
+    },
+    {
+      "slug": "21-heavy-top",
+      "milestone": "M28",
+      "title": "重陀螺的进动与章动",
+      "src": "手稿 ch05 · 重对称陀螺 · 睡眠陀螺",
+      "tags": [
+        "进动",
+        "章动",
+        "睡眠陀螺",
+        "有效势"
+      ],
+      "summary": "消去循环欧拉角得重对称陀螺倾角有效势 $V_{\\mathrm{eff}}(\\theta)$，演示稳恒进动慢支/快支、章动与睡眠陀螺阈值 $\\omega_{3c}=\\frac{\\sqrt{4I_1Mgl}}{I_3}$。",
+      "sim": "modules/21-heavy-top/index.html",
+      "note": "chapters/05-rigid-body/manuscripts/book.html",
+      "color": "#d8b48a"
+    },
+    {
+      "slug": "22-legendre-routh",
+      "milestone": "M29",
+      "title": "勒让德变换与罗斯约化",
+      "src": "手稿 ch06 · 勒让德变换与正则方程 · 罗斯约化",
+      "tags": [
+        "勒让德变换",
+        "正则方程",
+        "罗斯约化",
+        "循环坐标"
+      ],
+      "summary": "以切线构造展示勒让德变换 $L(q,\\dot q)\\leftrightarrow H(q,p)$，对照正则方程与拉格朗日方程，并用罗斯约化消去循环坐标。",
+      "sim": "modules/22-legendre-routh/index.html",
+      "note": "chapters/06-hamiltonian/manuscripts/book.html",
+      "color": "#e7d39b"
+    },
+    {
+      "slug": "23-hyperbolic-motion",
+      "milestone": "M30",
+      "title": "双曲运动与恒固有加速度",
+      "src": "手稿 ch07 · 恒力运动与固有加速度",
+      "tags": [
+        "双曲运动",
+        "固有加速度",
+        "快度",
+        "Rindler视界"
+      ],
+      "summary": "研究恒固有加速度双曲世界线 $x^2-(ct)^2=(c^2/a)^2$，演示快度线性增长 $\\eta=a\\tau/c$、固有时与 Rindler 视界。",
+      "sim": "modules/23-hyperbolic-motion/index.html",
+      "note": "chapters/07-relativity/manuscripts/book.html",
+      "color": "#9fe6e6"
+    },
+    {
+      "slug": "12-relativity",
+      "milestone": "S7",
+      "title": "狭义相对论",
+      "src": "书稿 ch07 · 相对论",
+      "tags": [
+        "洛伦兹变换",
+        "同时性",
+        "四维动量",
+        "不变质量"
+      ],
+      "summary": "由光速不变与相对性原理建立洛伦兹变换，串联同时性、时空间隔与光锥、相对论多普勒效应与四维动量动力学。",
+      "sim": "chapters/07-relativity/index.html",
+      "note": "chapters/07-relativity/manuscripts/book.html",
+      "color": "#8fe8ff"
+    },
+    {
+      "milestone": "M31",
+      "slug": "31-rocket-massflow",
+      "title": "火箭方程与质量流",
+      "src": "书稿 ch01 · 变质量系统",
+      "tags": [
+        "火箭方程",
+        "质量流",
+        "动量通量",
+        "齐奥尔科夫斯基"
+      ],
+      "summary": "将喷气动量通量计入开放系统，导出齐奥尔科夫斯基火箭方程 $\\Delta v=v_e\\ln(m_0/m)$，分析质量比与推进剂占比。",
+      "sim": "modules/31-rocket-massflow/index.html",
+      "note": "modules/31-rocket-massflow/note.html",
+      "color": "#ffb56b"
+    },
+    {
+      "milestone": "M32",
+      "slug": "32-two-link-jacobian",
+      "title": "二连杆雅可比与奇异位形",
+      "src": "书稿 ch01 · 关节雅可比",
+      "tags": [
+        "雅可比",
+        "奇异位形",
+        "机械臂",
+        "自由度"
+      ],
+      "summary": "以二连杆机械臂演示位形映射 $\\delta\\mathbf{x}=J\\delta\\boldsymbol{\\theta}$，当 $\\det J=l_1l_2\\sin\\theta_2=0$ 时出现奇异位形与自由度退化。",
+      "sim": "modules/32-two-link-jacobian/index.html",
+      "note": "modules/32-two-link-jacobian/note.html",
+      "color": "#7fe0ff"
+    },
+    {
+      "milestone": "M33",
+      "slug": "33-rolling-cylinder",
+      "title": "圆柱沿斜面纯滚动",
+      "src": "书稿 ch05 · 刚体平面运动",
+      "tags": [
+        "纯滚动",
+        "静摩擦",
+        "惯量",
+        "斜面"
+      ],
+      "summary": "引入无量纲惯量系数 $k=I/(mR^2)$ 分析圆柱沿斜面纯滚动，给出加速度 $a=\\frac{g\\sin\\alpha}{1+k}$ 与不打滑条件 $\\mu\\ge\\frac{k\\tan\\alpha}{1+k}$。",
+      "sim": "modules/33-rolling-cylinder/index.html",
+      "note": "modules/33-rolling-cylinder/note.html",
+      "color": "#b79bff"
+    },
+    {
+      "milestone": "M34",
+      "slug": "34-compton-scattering",
+      "title": "康普顿散射运动学",
+      "src": "书稿 ch07 · 四动量守恒",
+      "tags": [
+        "康普顿散射",
+        "四动量",
+        "波长增量",
+        "反冲电子"
+      ],
+      "summary": "用四动量守恒推导康普顿散射波长增量 $\\Delta\\lambda=\\lambda_C(1-\\cos\\theta)$ 与反冲电子能量分布。",
+      "sim": "modules/34-compton-scattering/index.html",
+      "note": "modules/34-compton-scattering/note.html",
+      "color": "#8fe8a0"
+    },
+    {
+      "milestone": "M35",
+      "slug": "35-lattice-dispersion",
+      "title": "周期链色散与群速度",
+      "src": "书稿 ch04 · 耦合振动",
+      "tags": [
+        "色散关系",
+        "群速度",
+        "波包",
+        "长波极限"
+      ],
+      "summary": "将离散质量链推广至无限周期晶格，导出色散关系 $\\omega(k)=2\\sqrt{K/m}\\,|\\sin(ka/2)|$、群速度 $v_g$ 与长波声速极限。",
+      "sim": "modules/35-lattice-dispersion/index.html",
+      "note": "modules/35-lattice-dispersion/note.html",
+      "color": "#ff9fc4"
+    },
+    {
+      "milestone": "M36",
+      "slug": "36-virial-power-law",
+      "title": "位力定理与幂次势",
+      "src": "书稿 ch01 · 位力定理",
+      "tags": [
+        "位力定理",
+        "幂次势",
+        "时间平均",
+        "束缚运动"
+      ],
+      "summary": "对幂次中心势 $V\\propto r^n$ 的束缚轨道做数值时间平均，实时验证位力定理 $2\\langle T\\rangle=n\\langle V\\rangle$。",
+      "sim": "modules/36-virial-power-law/index.html",
+      "note": "modules/36-virial-power-law/note.html",
+      "color": "#b79bff"
+    },
+    {
+      "milestone": "M37",
+      "slug": "37-catenary-min-energy",
+      "title": "悬链线与最小势能",
+      "src": "书稿 ch02 · 变分法",
+      "tags": [
+        "悬链线",
+        "最小势能",
+        "双曲余弦",
+        "张力"
+      ],
+      "summary": "在绳长约束下极小化均匀柔绳的重力势能，导出悬链线方程 $y=a\\cosh(x/a)$，反解参数 $a=T_0/(\\lambda g)$ 与张力分布。",
+      "sim": "modules/37-catenary-min-energy/index.html",
+      "note": "modules/37-catenary-min-energy/note.html",
+      "color": "#ffd27a"
+    },
+    {
+      "milestone": "M38",
+      "slug": "38-three-atom-modes",
+      "title": "三原子链简正模",
+      "src": "书稿 ch04 · 简正坐标",
+      "tags": [
+        "简正模",
+        "本征频率",
+        "相位",
+        "耦合振子"
+      ],
+      "summary": "对三原子耦合质量链做质量加权对角化，求解三种离散简正振型与本征频率 $\\omega_p=2\\sqrt{K/m}\\sin(p\\pi/8)$。",
+      "sim": "modules/38-three-atom-modes/index.html",
+      "note": "modules/38-three-atom-modes/note.html",
+      "color": "#7fe0ff"
+    },
+    {
+      "milestone": "M39",
+      "slug": "39-physical-pendulum-period",
+      "title": "复摆周期与最短摆长",
+      "src": "书稿 ch05 · 刚体转动",
+      "tags": [
+        "复摆",
+        "转动惯量",
+        "小角周期",
+        "大角修正"
+      ],
+      "summary": "结合平行轴定理导出均匀杆复摆小角周期 $T_0=2\\pi\\sqrt{\\frac{L^2/12+d^2}{gd}}$，求最短周期悬点 $d=L/\\sqrt{12}$ 与大角修正。",
+      "sim": "modules/39-physical-pendulum-period/index.html",
+      "note": "modules/39-physical-pendulum-period/note.html",
+      "color": "#ff9fc4"
+    },
+    {
+      "milestone": "M40",
+      "slug": "40-threshold-collider",
+      "title": "固定靶阈能与对撞机",
+      "src": "书稿 ch07 · 四动量不变量",
+      "tags": [
+        "阈能",
+        "对撞机",
+        "四动量",
+        "不变量s"
+      ],
+      "summary": "利用四动量不变量 $s=(\\sum E)^2-(\\sum\\mathbf{p})^2$ 定量对比固定靶（$E\\propto M^2$）与对撞机（$E\\propto M$）产生重粒子所需的束流阈能。",
+      "sim": "modules/40-threshold-collider/index.html",
+      "note": "modules/40-threshold-collider/note.html",
+      "color": "#8fe8a0"
+    }
+  ]
 }

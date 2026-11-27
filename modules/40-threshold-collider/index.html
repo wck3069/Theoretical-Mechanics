@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M40 · 固定靶阈能与对撞机 · 理论力学</title><style>
+:root{--bg:#05070f;--panel:rgba(16,22,40,.9);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
+.app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.brand{position:absolute;left:24px;top:20px;pointer-events:none;max-width:min(760px,72vw)}.brand h1{font-size:19px;margin:0}.brand p{font-size:12.5px;color:var(--muted);margin:5px 0 0;line-height:1.55}
+.intro{color:#b9c6ea!important}
+.hud{position:absolute;left:24px;bottom:22px;display:flex;gap:18px;font-size:12.5px;color:var(--muted);pointer-events:none;flex-wrap:wrap}.hud b{color:var(--a);font-variant-numeric:tabular-nums}
+.panel{width:330px;flex:none;padding:20px;overflow:auto;background:var(--panel);border-left:1px solid var(--line);backdrop-filter:blur(12px)}
+.eq{font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.9;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(5,9,20,.6);color:#cfe0ff;margin-bottom:16px}
+.group{margin-bottom:15px}.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.val{font-family:ui-monospace,monospace;color:var(--b)}
+input[type=range]{width:100%;accent-color:var(--a)}input[type=checkbox]{accent-color:var(--a)}
+.hint{color:#8290b6;font-size:11.5px;line-height:1.65;margin:6px 0 2px;padding-left:9px;border-left:2px solid rgba(120,165,255,.22)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.btns button{margin:0}.btns button.full{grid-column:1/-1}
+button{font:inherit;font-size:12.5px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(127,224,255,.12);color:var(--text);cursor:pointer}
+button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weight:600}
+.doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+.tag{color:#6d7ba3;font-size:10.5px;line-height:1.6;border-top:1px solid rgba(120,165,255,.14);padding-top:10px}
+#errbox{position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}
+@media(max-width:820px){.app{flex-direction:column}.panel{width:auto;height:45vh;border-left:0;border-top:1px solid var(--line)}.stage{height:55vh}.brand{left:14px;top:12px;max-width:92vw}.brand h1{font-size:16px}.hud{left:14px;bottom:10px;gap:12px}}
+.modnav{display:flex;gap:8px;align-items:center;margin:0 0 12px}.modnav a.backlink{flex:none;color:#bfefff;text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(127,224,255,.10)}.modnav a.backlink:hover{border-color:#7fe0ff}.modnav select{flex:1;min-width:0;font:inherit;font-size:12.5px;padding:8px;border-radius:9px;border:1px solid var(--line);background:rgba(10,16,32,.7);color:var(--text)}
+
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+</style><!-- TM-SEO:START -->
+<meta name="description" content="M40 · 固定靶阈能与对撞机 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/40-threshold-collider/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="M40 · 固定靶阈能与对撞机 · 理论力学">
+<meta property="og:description" content="M40 · 固定靶阈能与对撞机 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/40-threshold-collider/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="M40 · 固定靶阈能与对撞机 · 理论力学">
+<meta name="twitter:description" content="M40 · 固定靶阈能与对撞机 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<link rel="stylesheet" href="../../assets/tm-atelier.css">
+</head><body>
+<div class="app"><div class="stage"><canvas id="cv"></canvas>
+<div class="brand"><h1>M40 · 固定靶阈能与对撞机</h1><p>同样质量要产生新粒子，固定靶需要的束流能量随 M² 增长，对撞机只线性增长。</p><p class="intro">M 是末态总质量阈值（强制 M≥mₐ+m_b）。第一步看阈能 T_lab 与对撞机总动能 M−mₐ−m_b 的差距；再换重靶看固定靶的优势区。</p></div>
+<div class="hud"><span>E_lab/T_lab <b id="elab">–</b></span><span>对撞 Eₐ+E_b <b id="ebeam">–</b></span><span>动能比 <b id="ratio">–</b></span></div></div><aside class="panel">
+<div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="" disabled>▣ M40 固定靶阈能与对撞机（当前）</option></select></div>
+<div class="eq">固定靶 Eₐ=(M²−mₐ²−m_b²)/2m_b &nbsp; | &nbsp; 对撞 Eₐ=(M²+mₐ²−m_b²)/2M</div><div class="group"><div class="row"><label>入射粒子质量 mₐ</label><span class="val" id="maV">1</span></div><input id="ma" type="range" min="0.5" max="10" step="0.1" value="1"><div class="hint">质子质量取 1 作单位。</div></div><div class="group"><div class="row"><label>靶质量 m_b</label><span class="val" id="mbV">1</span></div><input id="mb" type="range" min="0.5" max="30" step="0.5" value="1"><div class="hint">固定靶中靶越重，达到同样 √s 所需束流能量越低。</div></div><div class="group"><div class="row"><label>产生质量 M</label><span class="val" id="MV">6</span></div><input id="M" type="range" min="1" max="120" step="1" value="6"><div class="hint">新粒子质量越大，固定靶优势越明显。</div></div>
+<div class="btns"><button class="primary" id="play">暂停/继续</button><button id="reset">重置</button><button class="full" id="p1">反质子阈能 M=4（T=6mₚ）</button><button class="full" id="p2">高能 M=100</button><button class="full" id="p3">重靶 (1,20,22)</button></div>
+<p class="hint">口径：束流总能量 E（含静能）与动能 T=E−m 分开标注；对撞机两束动量等大反向，能量可不相等。忽略部分子分布与同步辐射损失。</p><a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">相对论运动学 · c=1 · 四动量不变量 s · 出处：书稿 ch07.tex:822</div>
+</aside></div><div id="selftestPanel" class="selftest" hidden></div>
+<script>
+window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
+(function(){
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+function shell(c,w,h,seed){c.clearRect(0,0,w,h);var g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#0b1226');g.addColorStop(.55,'#060a16');g.addColorStop(1,'#02030a');c.fillStyle=g;c.fillRect(0,0,w,h);var f=function(v){return v-Math.floor(v)};for(var i=0;i<90;i++){var x=f(Math.sin(i*12.9898+seed)*43758.5453)*w,y=f(Math.sin(i*78.233+seed*3)*24634.6345)*h,a=.08+f(Math.sin(i*4.17)*9157.13)*.22;c.fillStyle='rgba(207,224,255,'+a.toFixed(3)+')';c.fillRect(x,y,1.2,1.2)}c.strokeStyle='rgba(120,160,255,.055)';c.lineWidth=1;c.beginPath();for(var x2=60;x2<w;x2+=80){c.moveTo(x2,0);c.lineTo(x2,h)}for(var y2=60;y2<h;y2+=80){c.moveTo(0,y2);c.lineTo(w,y2)}c.stroke()}
+function resize(){var b=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);resize();
+let playing=true,t=0;
+function reset(){t=0}
+function step(dt){t+=dt}
+function draw(){var w=cv.clientWidth,h=cv.clientHeight,ma=Number(document.getElementById('ma').value),mb=Number(document.getElementById('mb').value),M=Number(document.getElementById('M').value);shell(ctx,w,h,1041);
+var clamped=false;if(M<ma+mb){M=ma+mb;clamped=true}
+var Elab=(M*M-ma*ma-mb*mb)/(2*mb),Tlab=Elab-ma,Eca=(M*M+ma*ma-mb*mb)/(2*M),Ecb=(M*M+mb*mb-ma*ma)/(2*M),Tcoll=Math.max(0,M-ma-mb),ratio=Tlab/Math.max(Tcoll,1e-6);var bx=w*.5,by=h*.42,S=Math.min(w,h)*.11;
+ctx.strokeStyle='rgba(150,180,240,.55)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(bx-S,by,14,0,Math.PI*2);ctx.arc(bx+S,by,14,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#7fe0ff';ctx.beginPath();ctx.arc(bx-S,by,14,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(bx+S,by,14,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(127,224,255,.8)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(bx-S+16,by);ctx.lineTo(bx-4,by);ctx.stroke();
+var x0=w*.12,maxv=Math.max(Elab,M,2),bw=w*.58,LG=function(v){return bw*Math.log10(Math.max(v,.1)+1)/Math.log10(maxv+1)};
+ctx.fillStyle='rgba(150,160,190,.45)';ctx.fillRect(x0,h*.62,LG(ma),22);ctx.fillStyle='rgba(127,224,255,.75)';ctx.fillRect(x0+LG(ma),h*.62,LG(Tlab),22);
+ctx.fillStyle='rgba(150,160,190,.45)';ctx.fillRect(x0,h*.70,LG(ma+mb),22);ctx.fillStyle='rgba(255,210,122,.8)';ctx.fillRect(x0+LG(ma+mb),h*.70,LG(Tcoll),22);
+ctx.fillStyle='#8d9cc4';ctx.font='12px ui-monospace,monospace';ctx.fillText('固定靶：静能(灰)+动能(蓝)，末态整体前冲，动能部分浪费',x0,h*.62-6);ctx.fillText('对撞机：静能+动能(橙)，末态可静止，动能全部可用',x0,h*.70-6);ctx.fillStyle='#dce6ff';ctx.fillText(Elab.toFixed(2),x0+LG(ma)+LG(Tlab)+8,h*.62+16);ctx.fillText(M.toFixed(2),x0+LG(ma+mb)+LG(Tcoll)+8,h*.70+16);
+ctx.fillStyle='#b9c6ea';ctx.fillText('条形为对数刻度；T_lab=E_lab−mₐ='+(Tlab).toFixed(2)+'，对撞总动能 M−mₐ−m_b='+Tcoll.toFixed(2),x0,h*.78);
+if(clamped){ctx.fillStyle='#ff9a9a';ctx.fillText('已强制 M≥mₐ+m_b（末态至少包含原粒子）',x0,h*.84)}
+document.getElementById('elab').textContent=Elab.toFixed(2)+'/'+Tlab.toFixed(2);document.getElementById('ebeam').textContent=M.toFixed(2)+' (Eₐ='+Eca.toFixed(2)+',E_b='+Ecb.toFixed(2)+')';document.getElementById('ratio').textContent=ratio.toFixed(1)+'×';document.getElementById('maV').textContent=ma.toFixed(1);document.getElementById('mbV').textContent=mb.toFixed(1);document.getElementById('MV').textContent=M.toFixed(1)}
+document.getElementById('play').onclick=function(){playing=!playing};document.getElementById('reset').onclick=function(){reset()};
+document.getElementById('p1').onclick=function(){document.getElementById('ma').value=1;document.getElementById('mb').value=1;document.getElementById('M').value=4};document.getElementById('p2').onclick=function(){document.getElementById('ma').value=1;document.getElementById('mb').value=1;document.getElementById('M').value=100};document.getElementById('p3').onclick=function(){document.getElementById('ma').value=1;document.getElementById('mb').value=20;document.getElementById('M').value=22};
+var last=performance.now();function frame(now){var dt=Math.min(.05,(now-last)/1000);last=now;if(playing)step(dt);draw();requestAnimationFrame(frame)}requestAnimationFrame(frame);
+
+  /* ---------------- 自检（?selftest=1） ---------------- */
+  function runSelfTest() {
+    var lines = [], passN = 0, failN = 0;
+    function relLine(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = isFinite(rel) && rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+    function absLine(name, exp, act, tol, unit) {
+      var err = Math.abs(act - exp);
+      var ok = isFinite(err) && err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(6) +
+        ' actual=' + act.toFixed(6) + ' ' + unit + '=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+
+    function thr(ma, mb, M) {
+      var Elab = (M * M - ma * ma - mb * mb) / (2 * mb), Tlab = Elab - ma;
+      var Eca = (M * M + ma * ma - mb * mb) / (2 * M), Ecb = (M * M + mb * mb - ma * ma) / (2 * M);
+      return { Elab: Elab, Tlab: Tlab, Eca: Eca, Ecb: Ecb, Tcoll: Math.max(0, M - ma - mb) };
+    }
+    var t1 = thr(1, 1, 4);
+    absLine('ST1 不变量 s=ma^2+mb^2+2mb*Elab 等于 M^2（残差）', 0,
+      Math.abs(1 + 1 + 2 * 1 * t1.Elab - 16), 1e-9, 'abs');
+    relLine('ST2 固定靶阈值 Elab=(M^2-(ma+mb)^2)/(2mb)+ma',
+      (16 - 4) / 2 + 1, t1.Elab, 1e-12);
+    relLine('ST3 共动系能量守恒 Ea+Eb=M', 4, t1.Eca + t1.Ecb, 1e-12);
+    relLine('ST3b 共动系动量相消 Ea^2-ma^2=Eb^2-mb^2', t1.Ecb * t1.Ecb - 1, t1.Eca * t1.Eca - 1, 1e-12);
+    absLine('ST4 ma=mb=1,M=4：固定靶动能 6', 6, t1.Tlab, 1e-12, 'abs');
+    absLine('ST4b 同上：对撞机总动能 2', 2, t1.Tcoll, 1e-12, 'abs');
+    relLine('ST4c 损失比 Tlab/Tcoll=3', 3, t1.Tlab / t1.Tcoll, 1e-12);
+    var t2 = thr(1, 1, 100);
+    relLine('ST5 M>>m 时 Tlab/Tcoll 趋近 M/(2mb)=50', 50, t2.Tlab / t2.Tcoll, 0.03);
+    var t3 = thr(1, 20, 22);
+    absLine('ST6 末态静质量合法时 Tcoll=M-ma-mb=1', 1, t3.Tcoll, 1e-12, 'abs');
+    relLine('ST6b 重靶 Tlab=(M-ma)=Δ(2(ma+mb)+Δ)/(2mb)',
+      (22 - 1 - 20) * (2 * 21 + 1) / (2 * 20), t3.Tlab, 1e-12);
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\nSELFTEST ' + passN + '/' + (passN + failN) + (failN ? ' \u2717' : ' \u2713');
+    window.__selftest = { passed: passN, failed: failN, details: lines.join('\n') };
+  }
+  if (/[?&]selftest=1/.test(location.search)) {
+    try { runSelfTest(); } catch (e) {
+      var pp = document.getElementById('selftestPanel');
+      if (pp) { pp.hidden = false; pp.textContent = 'selftest 异常 : ' + (e && e.message); }
+      window.__selftest = { passed: 0, failed: 1, details: String(e && e.message) };
+    }
+  }
+
+})();</script><script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+</body></html>
