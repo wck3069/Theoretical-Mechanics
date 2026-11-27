@@ -230,59 +230,55 @@ select:hover, select:focus {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.35) !important;
 }
 .tm-orbit-nav {
-  background: rgba(8, 14, 30, 0.78) !important;
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+  bottom: 12px !important;
+  right: 356px !important;
+  z-index: 60 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: rgba(8, 14, 30, 0.84) !important;
   backdrop-filter: blur(14px) saturate(1.2) !important;
   -webkit-backdrop-filter: blur(14px) saturate(1.2) !important;
   border: 1px solid var(--at-line) !important;
   border-radius: 999px !important;
   corner-shape: round !important;
   padding: 5px 8px !important;
-  box-shadow: var(--at-spec), 0 12px 34px rgba(2, 5, 16, 0.55) !important;
+  box-shadow: var(--at-spec), 0 12px 34px rgba(2, 5, 16, 0.58) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+  font-size: 11.5px !important;
 }
 .tm-orbit-nav a, .tm-orbit-nav button {
   border-radius: 999px !important;
   corner-shape: round !important;
-  border-color: rgba(148, 188, 255, 0.20) !important;
-  transition: all 0.16s ease !important;
-}
-.tm-orbit-nav a:hover, .tm-orbit-nav button:hover {
-  background: rgba(127, 224, 255, 0.14) !important;
-  border-color: rgba(127, 224, 255, 0.45) !important;
-  color: #ffffff !important;
-}
-.tm-orbit-nav--auto {
-  position: fixed !important;
-  bottom: 12px !important;
-  right: 356px !important;
-  z-index: 40 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
-  font-size: 11.5px !important;
-}
-.stage .tm-orbit-nav--auto, .sim-stage .tm-orbit-nav--auto, .canvas-wrap .tm-orbit-nav--auto {
-  position: absolute !important;
-  bottom: 10px !important;
-  right: 12px !important;
-}
-.tm-orbit-nav--auto a {
+  border: 1px solid rgba(148, 188, 255, 0.24) !important;
+  background: rgba(127, 224, 255, 0.08) !important;
   color: #cfefff !important;
   text-decoration: none !important;
   padding: 5px 10px !important;
-  border: 1px solid rgba(148, 188, 255, 0.24) !important;
-  background: rgba(127, 224, 255, 0.08) !important;
   white-space: nowrap !important;
+  transition: all 0.16s ease !important;
 }
-.tm-orbit-nav--auto a.tm-nav-exit {
+.tm-orbit-nav a:hover, .tm-orbit-nav button:hover {
+  background: rgba(127, 224, 255, 0.16) !important;
+  border-color: rgba(127, 224, 255, 0.48) !important;
+  color: #ffffff !important;
+}
+.tm-orbit-nav a[data-tm-nav="exit"], .tm-orbit-nav a.tm-nav-exit {
   color: #ffd27a !important;
-  background: rgba(255, 210, 122, 0.08) !important;
-  border-color: rgba(255, 210, 122, 0.30) !important;
+  background: rgba(255, 210, 122, 0.09) !important;
+  border-color: rgba(255, 210, 122, 0.32) !important;
+}
+body[data-tm-mx] .wrap {
+  padding-bottom: 72px !important;
 }
 @media (max-width: 960px) {
-  .tm-orbit-nav--auto {
+  .tm-orbit-nav {
     right: 12px !important;
     left: 12px !important;
+    bottom: 10px !important;
     justify-content: center !important;
     flex-wrap: wrap !important;
   }

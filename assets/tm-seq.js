@@ -6,7 +6,7 @@
 
   var SEQ = [
     /* 第 1 章：牛顿力学 */
-    { slug: '00-binet', mx: 'M0', chap: 'chapter-01-newton', title: '比奈方程' },
+    { slug: '00-binet', mx: 'M0', chap: 'chapter-01-newton', title: '比奈方程（现有样板）' },
     { slug: '01-effective-potential', mx: 'M1', chap: 'chapter-01-newton', title: '有效势与轨道稳定性' },
     { slug: '02-scattering', mx: 'M2', chap: 'chapter-01-newton', title: '散射与俘获' },
     { slug: '03-two-body', mx: 'M3', chap: 'chapter-01-newton', title: '两体问题与系外行星' },
@@ -18,7 +18,7 @@
     { slug: '32-two-link-jacobian', mx: 'M32', chap: 'chapter-01-newton', title: '二连杆雅可比与奇异位形' },
     { slug: '36-virial-power-law', mx: 'M36', chap: 'chapter-01-newton', title: '位力定理与幂次势' },
     /* 第 2 章：变分法 */
-    { slug: '04-variational', mx: 'M8', chap: 'chapter-02-variational', title: '等时摆与摆线', param: 'mode', value: 'cycloid' },
+    { slug: '04-variational', mx: 'M8', chap: 'chapter-02-variational', title: '等时摆（摆线）', param: 'mode', value: 'cycloid' },
     { slug: '04-variational', mx: 'M9', chap: 'chapter-02-variational', title: '折射定律', param: 'mode', value: 'refraction' },
     { slug: '04-variational', mx: 'M10', chap: 'chapter-02-variational', title: '最短路径', param: 'mode', value: 'shortest' },
     { slug: '37-catenary-min-energy', mx: 'M37', chap: 'chapter-02-variational', title: '悬链线与最小势能' },
@@ -96,12 +96,7 @@
       '<a href="#" data-tm-nav="next">下一章 \u203a</a>' +
       '<a href="../../index.html" data-tm-nav="exit" class="tm-nav-exit">退出模拟</a>' +
       '<a href="#" data-tm-nav="ask">问星</a>';
-    var stage = document.querySelector('.stage, .sim-stage, .canvas-wrap');
-    if (stage && getComputedStyle(stage).position !== 'static') {
-      stage.appendChild(nav);
-    } else {
-      document.body.appendChild(nav);
-    }
+    document.body.appendChild(nav);
     return nav;
   }
 
