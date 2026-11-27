@@ -2041,6 +2041,32 @@ body.ms-reader .definition { border-left-color: var(--at-solar) !important; }
 body.ms-reader .example { border-left-color: #8fe8a0 !important; }
 body.ms-reader .modernbox { border-left-color: #c88aff !important; }
 
+/* 书稿插图（覆盖 <figure><img> 与裸 <p><img>，柔和月白底板确保黑线 TikZ 图 100% 清晰且不刺眼） */
+body.ms-reader .ms-body img {
+  display: block;
+  margin: 18px auto;
+  max-width: min(100%, 680px);
+  height: auto;
+  background: linear-gradient(180deg, #f2f6fc 0%, #e7eef9 100%) !important;
+  border: 1px solid rgba(154, 192, 255, 0.38) !important;
+  border-radius: 14px !important;
+  corner-shape: round !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 12px 34px rgba(2, 5, 18, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+body.ms-reader .ms-body figure {
+  margin: 26px auto;
+  text-align: center;
+}
+body.ms-reader .ms-body figure img {
+  margin: 0 auto;
+}
+body.ms-reader .ms-body figcaption {
+  color: #a6b9df !important;
+  font-size: 13px !important;
+  margin-top: 10px !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   body[data-cosmos="page"] .card,
   body[data-cosmos="page"] .home,
