@@ -159,6 +159,16 @@ MODULE_EQUATIONS = {
     "M29": "$p=\\partial L/\\partial\\dot q$，$H=p\\dot q-L$；罗斯 $R=L-p_\\theta\\dot\\theta$",
     "M30": "$x^2-t^2=1/a^2$（$c=1$）；$v=\\tanh(a\\tau)$，$\\tau=\\mathrm{asinh}(at)/a$",
     "S7": "$\\gamma=1/\\sqrt{1-\\beta^2}$；$t'=\\gamma(t-\\beta x)$，$x'=\\gamma(x-\\beta t)$（$c=1$）",
+    "M31": "$\\Delta v=v_e\\ln(m_0/m)$；质量比 $R=m_0/m_f$ 决定速度增量",
+    "M32": "$\\delta\\mathbf{x}=J\\delta\\boldsymbol{\\theta}$，$\\det J=l_1l_2\\sin\\theta_2=0$ 时奇异位形、自由度退化",
+    "M33": "$a=\\frac{g\\sin\\alpha}{1+k}$（$k=I/mR^2$）；不打滑条件 $\\mu\\ge\\frac{k\\tan\\alpha}{1+k}$",
+    "M34": "$\\Delta\\lambda=\\lambda_C(1-\\cos\\theta)$，$\\lambda_C=h/(m_ec)$；反冲电子动能 $T_e=E_\\gamma-E'_\\gamma$",
+    "M35": "$\\omega(k)=2\\sqrt{K/m}\\,|\\sin(ka/2)|$；长波极限声速 $v_s=a\\sqrt{K/m}$，群速度 $v_g=d\\omega/dk$",
+    "M36": "幂次势 $V\\propto r^n$ 束缚态满足位力定理 $2\\langle T\\rangle=n\\langle V\\rangle$；总能量 $E=\\frac{n+2}{2}\\langle V\\rangle$",
+    "M37": "$y=a\\cosh(x/a)$，参数 $a=T_0/(\\lambda g)$；水平张力恒为 $T_0$，竖直分量随弧长线性增加",
+    "M38": "三原子链本征频率 $\\omega_p=2\\sqrt{K/m}\\sin(p\\pi/8)$（$p=1,2,3$）；质量加权对角化解耦简正模",
+    "M39": "$T_0=2\\pi\\sqrt{\\frac{L^2/12+d^2}{gd}}$；最短周期悬点 $d=L/\\sqrt{12}$，大角修正 $T\\approx T_0(1+\\theta_0^2/16)$",
+    "M40": "$s=(\\sum E)^2-(\\sum\\mathbf{p})^2$；固定靶阈能 $E_{th}\\propto M^2/m$，对撞机阈能 $E_{beam}\\propto M$",
 }
 
 

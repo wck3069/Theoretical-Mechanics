@@ -460,14 +460,14 @@ window.TMART = (function () {
 </script>
 <!-- TM-THEME-HEAD:END -->
 <!-- TM-SEO:START -->
-<meta name="description" content="比奈方程 · 行星运动模拟：可拖拽交互演示、公式推导与数值自测。">
+<meta name="description" content="比奈方程 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="author" content="wck3069">
 <meta name="theme-color" content="#05060f">
 <link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/00-binet/index.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="理论力学：从质点到哈密顿">
-<meta property="og:title" content="比奈方程 · 行星运动模拟">
-<meta property="og:description" content="比奈方程 · 行星运动模拟：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:title" content="比奈方程 · 理论力学">
+<meta property="og:description" content="比奈方程 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/00-binet/index.html">
 <meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -475,8 +475,8 @@ window.TMART = (function () {
 <meta property="og:image:alt" content="理论力学：从质点到哈密顿">
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="比奈方程 · 行星运动模拟">
-<meta name="twitter:description" content="比奈方程 · 行星运动模拟：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:title" content="比奈方程 · 理论力学">
+<meta name="twitter:description" content="比奈方程 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
   <link rel="stylesheet" href="../../assets/ui-liquid.css">
@@ -496,6 +496,7 @@ window.TMART = (function () {
       <span>极角 θ <b id="hudT">–</b></span>
       <span>轨道 <b id="hudType">–</b></span>
     </div>
+    <div id="selftestPanel" class="selftest" hidden></div>
   </div>
 
   <aside class="panel">
@@ -1020,6 +1021,170 @@ window.TMART = (function () {
     render();
   }, { passive: false });
 
+  /* ---------- 数值自检：?selftest=1 ---------- */
+  function runSelftest() {
+    if (!/[?&]selftest=1(?:&|$)/.test(location.search)) return;
+    var lines = [], fails = 0;
+    function chk(name, ok, detail) {
+      lines.push((ok ? 'PASS  ' : 'FAIL  ') + name + (detail ? '  [' + detail + ']' : ''));
+      if (!ok) fails += 1;
+    }
+
+    function integrate(C, e, lam, mu, dth, steps) {
+      function d(u) { return C + lam * u * u + mu * u * u * u - u; }
+      var u = C * (1 + e), up = 0, th = 0;
+      var us = new Float64Array(steps + 1), ups = new Float64Array(steps + 1);
+      var ths = new Float64Array(steps + 1);
+      us[0] = u; ups[0] = up; ths[0] = 0;
+      for (var i = 1; i <= steps; i++) {
+        var k1u = up, k1p = d(u);
+        var u2 = u + 0.5 * dth * k1u, p2 = up + 0.5 * dth * k1p;
+        var k2u = p2, k2p = d(u2);
+        var u3 = u + 0.5 * dth * k2u, p3 = up + 0.5 * dth * k2p;
+        var k3u = p3, k3p = d(u3);
+        var u4 = u + dth * k3u, p4 = up + dth * k3p;
+        var k4u = p4, k4p = d(u4);
+        u += dth / 6 * (k1u + 2 * k2u + 2 * k3u + k4u);
+        up += dth / 6 * (k1p + 2 * k2p + 2 * k3p + k4p);
+        th += dth;
+        us[i] = u; ups[i] = up; ths[i] = th;
+      }
+      return { u: us, up: ups, th: ths, n: steps, dth: dth };
+    }
+
+    function perihelia(sol) {
+      var out = [], p = sol.up, t = sol.th, h = sol.dth;
+      for (var i = 1; i <= sol.n; i++) {
+        if (p[i - 1] > 0 && p[i] <= 0) {
+          out.push(t[i - 1] + h * p[i - 1] / (p[i - 1] - p[i]));
+        }
+      }
+      return out;
+    }
+
+    function radialPeriodByQuadrature(C, e, lam, mu) {
+      var a = C * (1 + e);
+      var kap = a * a - 2 * C * a - (2 * lam / 3) * a * a * a - (mu / 2) * a * a * a * a;
+      function F(u) {
+        return 2 * C * u + (2 * lam / 3) * u * u * u + (mu / 2) * u * u * u * u - u * u + kap;
+      }
+      var hi = a - 1e-6, lo = hi;
+      for (var k = 0; k < 8000; k++) {
+        lo -= a * 1e-4;
+        if (lo <= 1e-10 || F(lo) < 0) break;
+      }
+      for (var it = 0; it < 200; it++) {
+        var mid = 0.5 * (lo + hi);
+        if (F(mid) > 0) hi = mid; else lo = mid;
+      }
+      var b = 0.5 * (lo + hi);
+      var m = 0.5 * (a + b), half = 0.5 * (a - b), sum = 0, N = 40000;
+      for (var i = 0; i < N; i++) {
+        var chi = (i + 0.5) * Math.PI / N;
+        var uu = m + half * Math.cos(chi);
+        var fv = F(uu);
+        if (fv > 0) sum += half * Math.sin(chi) / Math.sqrt(fv) * (Math.PI / N);
+      }
+      return 2 * sum;
+    }
+
+    var REV = 2 * Math.PI, C0 = 1, STEPS = Math.round(REV / 5e-5), DTH = REV / STEPS;
+
+    var s1 = integrate(C0, 0.6, 0, 0, DTH, STEPS);
+    var err1 = 0;
+    for (var i1 = 0; i1 <= s1.n; i1++) {
+      err1 = Math.max(err1, Math.abs(s1.u[i1] - C0 * (1 + 0.6 * Math.cos(s1.th[i1]))));
+    }
+    chk('ST1 开普勒椭圆 u=C(1+e·cosθ) 数值解一致', err1 < 1e-7, 'maxΔu=' + err1.toExponential(1));
+
+    var s2 = integrate(C0, 1, 0, 0, DTH, STEPS);
+    var cross2 = NaN, err2 = 0;
+    for (var i2 = 1; i2 <= s2.n; i2++) {
+      if (s2.u[i2] <= 0 && isNaN(cross2)) {
+        cross2 = s2.th[i2 - 1] + DTH * s2.u[i2 - 1] / (s2.u[i2 - 1] - s2.u[i2]);
+      }
+      if (s2.th[i2] < Math.PI - 0.1) {
+        err2 = Math.max(err2, Math.abs(s2.u[i2] - C0 * (1 + Math.cos(s2.th[i2]))));
+      }
+    }
+    chk('ST2 抛物线 e=1：渐近线 θ∞=π、r→∞ 且解一致',
+        Math.abs(cross2 - Math.PI) < 1e-3 && err2 < 1e-7,
+        'θ∞=' + cross2.toFixed(6) + ' maxΔu=' + err2.toExponential(1));
+
+    var eh = 1.5, thInf = Math.acos(-1 / eh);
+    var sh = integrate(C0, eh, 0, 0, DTH, Math.round(thInf / DTH) + 2000);
+    var crossH = NaN, errH = 0;
+    for (var ih = 1; ih <= sh.n; ih++) {
+      if (sh.u[ih] <= 0 && isNaN(crossH)) {
+        crossH = sh.th[ih - 1] + DTH * sh.u[ih - 1] / (sh.u[ih - 1] - sh.u[ih]);
+      }
+      if (sh.th[ih] < thInf - 0.1) {
+        errH = Math.max(errH, Math.abs(sh.u[ih] - C0 * (1 + eh * Math.cos(sh.th[ih]))));
+      }
+    }
+    chk('ST3 双曲线：渐近线 θ∞=arccos(-1/e) 且解一致',
+        Math.abs(crossH - thInf) < 1e-3 && errH < 1e-7,
+        'θ∞=' + crossH.toFixed(6) + '/' + thInf.toFixed(6));
+
+    var s1long = integrate(C0, 0.6, 0, 0, DTH, 3 * STEPS + 2000);
+    var per1 = perihelia(s1long);
+    var dPer = per1.length >= 2 ? (per1[per1.length - 1] - per1[0]) / (per1.length - 1) : NaN;
+    var closeU = Math.abs(s1.u[s1.n] - s1.u[0]);
+    var closeP = Math.abs(s1.up[s1.n] - s1.up[0]);
+    chk('ST4 μ=0 轨道严格闭合（近日点间隔 2π、状态回归）',
+        Math.abs(dPer - REV) < 1e-4 && closeU < 1e-7 && closeP < 1e-7,
+        'Δθ=' + dPer.toFixed(9) + ' Δu=' + closeU.toExponential(1));
+
+    var stepsP = Math.round(4 * REV / DTH);
+    var sp = integrate(C0, 0.6, 0, 0.004, DTH, stepsP);
+    var perP = perihelia(sp);
+    var dP = perP.length >= 3 ? (perP[perP.length - 1] - perP[0]) / (perP.length - 1) : NaN;
+    var dQuad = radialPeriodByQuadrature(C0, 0.6, 0, 0.004);
+    chk('ST5 μ>0 近日点进动为正且与独立拱点积分一致',
+        dP - REV > 0.03 && Math.abs(dP - dQuad) < 1e-4,
+        'Δθ-2π=' + (dP - REV).toFixed(6) + ' quadrature=' + dQuad.toFixed(6));
+
+    var sp2 = integrate(C0, 0.6, 0, 0.002, DTH, stepsP);
+    var perP2 = perihelia(sp2);
+    var dP2 = perP2.length >= 3 ? (perP2[perP2.length - 1] - perP2[0]) / (perP2.length - 1) : NaN;
+    var theo = 3 * Math.PI * 0.002 * C0 * C0 * (4 + 0.6 * 0.6) / 4;
+    chk('ST6 μ 进动量级符合一阶摄动理论 3πμC²(4+e²)/4',
+        Math.abs((dP2 - REV) - theo) / theo < 0.05,
+        'num=' + (dP2 - REV).toFixed(6) + ' theo=' + theo.toFixed(6));
+
+    var sp4 = integrate(C0, 0.6, 0, 0.008, DTH, stepsP);
+    var perP4 = perihelia(sp4);
+    var dP4 = perP4.length >= 3 ? (perP4[perP4.length - 1] - perP4[0]) / (perP4.length - 1) : NaN;
+    var ratio = (dP4 - REV) / (dP - REV);
+    chk('ST7 进动量与 μ 成正比（μ 加倍 → 进动加倍）',
+        Math.abs(ratio - 2) < 0.15, 'ratio=' + ratio.toFixed(4));
+
+    var lamX = 0.02, muX = 0.003;
+    var sx = integrate(C0, 0.6, lamX, muX, DTH, STEPS);
+    var ax = C0 * (1 + 0.6);
+    var kap0 = ax * ax - 2 * C0 * ax - (2 * lamX / 3) * ax * ax * ax - (muX / 2) * ax * ax * ax * ax;
+    var kapDrift = 0, residual = 0;
+    for (var ik = 0; ik <= sx.n; ik++) {
+      var uu = sx.u[ik], vv = sx.up[ik];
+      var kv = vv * vv + uu * uu - 2 * C0 * uu - (2 * lamX / 3) * uu * uu * uu - (muX / 2) * uu * uu * uu * uu;
+      kapDrift = Math.max(kapDrift, Math.abs(kv - kap0));
+    }
+    for (var ir = 1; ir < sx.n; ir++) {
+      var fdd = (sx.u[ir + 1] - 2 * sx.u[ir] + sx.u[ir - 1]) / (DTH * DTH);
+      var rhs = C0 + lamX * sx.u[ir] * sx.u[ir] + muX * sx.u[ir] * sx.u[ir] * sx.u[ir] - sx.u[ir];
+      residual = Math.max(residual, Math.abs(fdd - rhs));
+    }
+    chk('ST8 角动量/比奈第一积分守恒且方程残差极小',
+        kapDrift < 1e-8 && residual < 1e-5,
+        'κ漂移=' + kapDrift.toExponential(1) + ' 残差=' + residual.toExponential(1));
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\n-- ' + (fails ? fails + ' FAIL' : 'ALL PASS');
+    if (fails) panel.classList.add('fail');
+    window.__selftest = { passed: lines.length - fails, failed: fails };
+  }
+
   /* ---------- 启动 ---------- */
   // 支持通过 URL 参数分享配置，例如 ?C=0.6&e=0.8&mu=0.004
   const q = new URLSearchParams(location.search);
@@ -1042,6 +1207,11 @@ window.TMART = (function () {
   if (q.get('paused') === '1') {
     state.paused = true;
     document.getElementById('pause').textContent = '继续';
+  }
+
+  try { runSelftest(); } catch (e) {
+    var stEl = document.getElementById('selftestPanel');
+    if (stEl) { stEl.hidden = false; stEl.textContent = 'FAIL  自检异常: ' + (e && e.message); }
   }
 
   resize();

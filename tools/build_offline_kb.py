@@ -44,8 +44,9 @@ FAQ = [
      "雨滴质量随时间增加（$r=r_0+\\lambda t$），重力持续加速；在“静止雨水”模型（$u=0$）下 $v\\sim gt/4$，没有终端速度。", "M6", "雨滴"),
     ("转动惯量是什么？",
      "$I=\\sum mr^2$，是“难不难被转起来”的量度，地位相当于平动里的质量；平行轴定理 $I=I_{cm}+md^2$。", "M7", "转动惯量"),
-    ("甲虫绕环一圈为什么只转 180°？",
-     "角动量守恒：甲虫相对环走一圈，环反向转 $\\pi$；甲虫的世界角是相对角加环转角，正好到对侧。M18 的甲虫模式可以看拖尾与角度读数。", "M7", "甲虫"),
+    ("甲虫绕环一圈为什么环反转 120°、甲虫实验室方位转 240°？",
+     "角动量守恒：自由环 $M=1$、甲虫 $m=1$ 时，环反转 $\\Delta\\theta_{\\rm ring}=-2\\pi m/(M+2m)=-120^\\circ$，"
+     "甲虫相对质心的实验室方位转 $2\\pi(M+m)/(M+2m)=240^\\circ$（不是环只转 $180^\\circ$）。M18 的甲虫模式可以看拖尾与角度读数。", "M7", "甲虫"),
     ("球壳内部为什么没有引力？",
      "均匀球壳内部各方向引力抵消，势为常数 $-GM/R$，场强为零；壳外才等效为全部质量集中在球心。", "M7", "球壳"),
     ("圆柱脱离角为什么总是 48.19°？",
@@ -160,7 +161,7 @@ TEX_SYMBOLS = {
     "\\neq": "≠", "\\ne": "≠", "\\approx": "≈", "\\equiv": "≡",
     "\\propto": "∝", "\\sim": "∼", "\\simeq": "≃", "\\cong": "≅",
     "\\to": "→", "\\rightarrow": "→", "\\leftarrow": "←", "\\Rightarrow": "⇒",
-    "\\leftrightarrow": "↔", "\\mapsto": "↦", "\\infty": "∞",
+    "\\leftrightarrow": "↔", "\\mapsto": "↦", "\\infty": "∞", "\\odot": "☉",
     "\\partial": "∂", "\\nabla": "∇", "\\int": "∫", "\\oint": "∮",
     "\\sum": "∑", "\\prod": "∏", "\\angle": "∠", "\\in": "∈",
     "\\notin": "∉", "\\subset": "⊂", "\\supset": "⊃", "\\cup": "∪",
@@ -199,16 +200,18 @@ def clean(text: str) -> str:
     text = re.sub(r"\\sqrt\{([^{}]*)\}", r"√(\1)", text)
     text = re.sub(r"\\(" + ARG_COMMANDS + r")\{([^{}]*)\}", r"\2", text)
     text = re.sub(r"\\(" + ARG_COMMANDS + r")\s+", "", text)
-    for a, b in TEX_SYMBOLS.items():
-        text = text.replace(a, b)
+    for x in ("\\left", "\\right", "\\big", "\\Big", "\\bigg", "\\Bigg"):
+        text = text.replace(x, "")
+    for a in sorted(TEX_SYMBOLS, key=len, reverse=True):
+        b = TEX_SYMBOLS[a]
+        text = re.sub(re.escape(a) + r"(?![A-Za-z])", b, text)
     for a, b in (("\\,", " "), ("\\;", " "), ("\\!", ""), ("\\ ", " "),
                  ("\\quad", " "), ("\\qquad", " "), ("\\\\", " ")):
         text = text.replace(a, b)
-    text = text.replace("\\left", "").replace("\\right", "")
-    for x in ("\\big", "\\Big", "\\bigg", "\\Bigg"):
-        text = text.replace(x, "")
     text = text.replace("\\{", "{").replace("\\}", "}").replace("\\%", "%")
     text = text.replace("\\_", "_").replace("\\&", "&").replace("\\#", "#")
+    for op in ["min", "max", "sin", "cos", "tan", "cot", "sec", "csc", "sinh", "cosh", "tanh", "arcsin", "arccos", "arctan", "ln", "log", "exp", "lim", "det", "sup", "inf", "arg", "deg"]:
+        text = text.replace(f"\\{op}", op)
     text = re.sub(r"\\[a-zA-Z]+\*?", "", text)
     text = text.replace("{", "").replace("}", "").replace("&", " ").replace("~", " ")
     text = text.replace("\\", "")

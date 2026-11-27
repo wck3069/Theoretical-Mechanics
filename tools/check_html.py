@@ -9,7 +9,10 @@
   1.  内联 JS 语法：每个无 src 的 <script> 块用 esprima 解析
       （提取脚本块前先剔除 HTML 注释；node/npm 缺失，esprima 为
       记录的替代方案，见 qa/global/toolchain.md）
-  2a. 全文无 http://、https://（含属性、CSS、JS 字符串、注释）
+  2a. 全文无 http://、https://（含属性、CSS、JS 字符串、注释）；
+      唯一例外：书稿页（manuscripts/*.html）文末参考文献中的纯超链接
+      <a href="https://..."> 学术外链（<a> 不加载外部资源；其它资源标签、
+      CSS url()、fetch/XHR、CDN 仍由 2b–2e 严格禁止）
   2b. 无协议相对地址 //（资源属性、CSS url()、字符串字面量）
   2c. 资源标签（script src / link href / img·iframe·embed·audio·video·
       source·track src / object data）只允许本地相对路径
@@ -39,6 +42,13 @@ SCHEME_RE = re.compile(r"https?://", re.IGNORECASE)
 META_TAG_RE = re.compile(r"<meta\b[^>]*>", re.IGNORECASE)
 CANONICAL_LINK_RE = re.compile(
     r"<link\b[^>]*\brel\s*=\s*[\"']canonical[\"'][^>]*>", re.IGNORECASE)
+# 书稿页文末参考文献中的纯文字学术超链接：豁免整个 <a href="https://...">…</a>
+# 元素（含把 URL 当作可见文字的情况）。<a> 不会加载外部资源，因此不破坏
+# 2c–2e 对 script/link/img/iframe/CSS url()/fetch/XHR/CDN 的严格禁令。
+MANUSCRIPT_RE = re.compile(r"(?:^|/)manuscripts/[^/]+\.html$")
+ANCHOR_HTTPS_RE = re.compile(
+    r"""<\s*a\b[^>]*\bhref\s*=\s*["']https://[^"']*["'][^>]*>.*?</\s*a\s*>""",
+    re.IGNORECASE | re.DOTALL)
 PROTO_REL_ATTR_RE = re.compile(r"""(?:src|href|data)\s*=\s*["']//""")
 PROTO_REL_CSS_RE = re.compile(r"""url\(\s*["']?//""")
 PROTO_REL_STR_RE = re.compile(r"""["']//""")
@@ -168,6 +178,8 @@ def check_file(path: Path) -> bool:
     masked = LOOPBACK_RE.sub(lambda m: " " * len(m.group(0)), text)
     masked = META_TAG_RE.sub(lambda m: " " * len(m.group(0)), masked)
     masked = CANONICAL_LINK_RE.sub(lambda m: " " * len(m.group(0)), masked)
+    if MANUSCRIPT_RE.search(path.as_posix()):
+        masked = ANCHOR_HTTPS_RE.sub(lambda m: " " * len(m.group(0)), masked)
     fails = [f"第 {line_of(text, m.start())} 行发现 {m.group(0)}"
              for m in SCHEME_RE.finditer(masked)]
     report("2a", "无 http 或 https 外链", fails, "全文未出现")

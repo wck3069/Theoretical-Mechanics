@@ -22,14 +22,14 @@ button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#041
 
   .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
 </style><!-- TM-SEO:START -->
-<meta name="description" content="M39 · 复摆周期与最短摆长 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="description" content="复摆周期与最短摆长 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="author" content="wck3069">
 <meta name="theme-color" content="#05060f">
 <link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/39-physical-pendulum-period/index.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="理论力学：从质点到哈密顿">
-<meta property="og:title" content="M39 · 复摆周期与最短摆长 · 理论力学">
-<meta property="og:description" content="M39 · 复摆周期与最短摆长 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:title" content="复摆周期与最短摆长 · 理论力学">
+<meta property="og:description" content="复摆周期与最短摆长 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/39-physical-pendulum-period/index.html">
 <meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -37,20 +37,20 @@ button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#041
 <meta property="og:image:alt" content="理论力学：从质点到哈密顿">
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="M39 · 复摆周期与最短摆长 · 理论力学">
-<meta name="twitter:description" content="M39 · 复摆周期与最短摆长 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:title" content="复摆周期与最短摆长 · 理论力学">
+<meta name="twitter:description" content="复摆周期与最短摆长 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
 <link rel="stylesheet" href="../../assets/tm-atelier.css">
 </head><body>
 <div class="app"><div class="stage"><canvas id="cv"></canvas>
 <div class="brand"><h1>复摆周期与最短摆长</h1><p>刚体绕水平轴小振动的周期由 I/(mgd) 决定；固定杆长时存在使周期最短的悬点。</p><p class="intro">第一步：找周期最小的 d/L；再把振幅拉大，看大角修正怎样把周期推高。</p></div>
-<div class="hud"><span>T₀ <b id="t0">–</b> s</span><span>T(θ₀) <b id="tA">–</b> s</span><span>d/L <b id="dr">–</b></span></div></div><aside class="panel">
+<div class="hud"><span>T₀ <b id="t0">–</b> s</span><span>T(θ₀) <b id="tA">–</b> s</span><span>d/L <b id="dr">–</b></span></div><div id="selftestPanel" class="selftest" hidden></div></div><aside class="panel">
 <div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="" disabled>▣ M39 复摆周期与最短摆长（当前）</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
 <div class="eq">T₀ = 2π√[(L²/12 + d²)/(gd)]</div><div class="group"><div class="row"><label>悬点距质心 d/L</label><span class="val" id="dV">0.29</span></div><input id="d" type="range" min="0.05" max="0.5" step="0.005" value="0.29"><div class="hint">d→0 与 d→L/2 周期都会变大，最小值在 d/L=1/√12。</div></div><div class="group"><div class="row"><label>杆长 L</label><span class="val" id="LV">1 m</span></div><input id="L" type="range" min="0.5" max="3" step="0.1" value="1"><div class="hint">整根均匀杆长度；周期随 √L 缩放。</div></div><div class="group"><div class="row"><label>初始振幅 θ₀</label><span class="val" id="thV">15°</span></div><input id="theta" type="range" min="5" max="80" step="1" value="15"><div class="hint">大角周期比小角公式长，修正约 1+θ₀²/16。</div></div>
 <div class="btns"><button class="primary" id="play">暂停/继续</button><button id="reset">重置</button><button class="full" id="p1">最短周期 d=L/√12</button><button class="full" id="p2">端点悬挂 d=L/2</button><button class="full" id="p3">共轭支点 d=L/6</button><button class="full" id="p4">近质心 d=0.05L</button></div>
 <p class="hint">动画按非线性单摆积分，虚影为小角简谐参考；T(θ₀)=T₀/AGM(1,cos(θ₀/2)) 为精确椭圆积分（算术几何平均）。d=L/6 与 d=L/2 周期相同（可逆摆）。</p><a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">均匀细杆 · g=9.81 m/s² · 对应书稿：第 5 章 刚体力学</div>
-</aside></div><div id="selftestPanel" class="selftest" hidden></div>
+</aside></div>
 <script>
 window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
 (function(){

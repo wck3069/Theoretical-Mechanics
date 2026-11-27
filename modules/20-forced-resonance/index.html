@@ -48,20 +48,22 @@
   table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;color:var(--muted)}
   th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
   .foot{margin-top:14px;color:var(--muted);font-size:12px;opacity:.8}
+  .doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+  .doc:hover{border-color:#7fe0ff}
   @media (max-width: 1020px){
     .app{grid-template-columns:1fr}
     .stage{min-height:520px}
   }
 </style>
 <!-- TM-SEO:START -->
-<meta name="description" content="20 · 受迫振动与共振 | Forced Oscillations &amp;amp; Resonance：可拖拽交互演示、公式推导与数值自测。">
+<meta name="description" content="受迫振动与共振 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="author" content="wck3069">
 <meta name="theme-color" content="#05060f">
 <link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/20-forced-resonance/index.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="理论力学：从质点到哈密顿">
-<meta property="og:title" content="20 · 受迫振动与共振 | Forced Oscillations &amp;amp; Resonance">
-<meta property="og:description" content="20 · 受迫振动与共振 | Forced Oscillations &amp;amp; Resonance：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:title" content="受迫振动与共振 · 理论力学">
+<meta property="og:description" content="受迫振动与共振 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/20-forced-resonance/index.html">
 <meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -69,8 +71,8 @@
 <meta property="og:image:alt" content="理论力学：从质点到哈密顿">
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="20 · 受迫振动与共振 | Forced Oscillations &amp;amp; Resonance">
-<meta name="twitter:description" content="20 · 受迫振动与共振 | Forced Oscillations &amp;amp; Resonance：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:title" content="受迫振动与共振 · 理论力学">
+<meta name="twitter:description" content="受迫振动与共振 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
 </head>
@@ -146,6 +148,7 @@
         </table>
         <p>方程与公式取自《理论力学》第4章（小振动）手稿：稳态幅值 A(ω)、相位滞后 tanδ = 2γω/(ω₀²−ω²)、平均功率 P̄、共振幅值频率与功率频率分离、半功率带宽与品质因数、拍的包络。单位制：m = 1。</p>
       </details>
+      <a class="doc" href="./note.html">📄 阅读推导与出处 →</a>
       <p class="foot">数值方法：四阶 Runge-Kutta（RK4）。当前参数会自动保存在浏览器地址栏中，复制链接即可分享当前实验状态。</p>
     </aside>
   </main>

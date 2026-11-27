@@ -22,14 +22,14 @@ button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#041
 
   .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
 </style><!-- TM-SEO:START -->
-<meta name="description" content="M36 · 位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="description" content="位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="author" content="wck3069">
 <meta name="theme-color" content="#05060f">
 <link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/36-virial-power-law/index.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="理论力学：从质点到哈密顿">
-<meta property="og:title" content="M36 · 位力定理与幂次势 · 理论力学">
-<meta property="og:description" content="M36 · 位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:title" content="位力定理与幂次势 · 理论力学">
+<meta property="og:description" content="位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/36-virial-power-law/index.html">
 <meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -37,20 +37,20 @@ button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#041
 <meta property="og:image:alt" content="理论力学：从质点到哈密顿">
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="M36 · 位力定理与幂次势 · 理论力学">
-<meta name="twitter:description" content="M36 · 位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:title" content="位力定理与幂次势 · 理论力学">
+<meta name="twitter:description" content="位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
 <link rel="stylesheet" href="../../assets/tm-atelier.css">
 </head><body>
 <div class="app"><div class="stage"><canvas id="cv"></canvas>
 <div class="brand"><h1>位力定理与幂次势</h1><p>束缚定常运动的动能与势能平均值由势能幂次锁定：2⟨T⟩ = n⟨V⟩。</p><p class="intro">第一步：把幂次 n 设为 −1（库仑/引力）看 2T≈−V；再切到 n=2（谐振子）看 2T≈2V。</p></div>
-<div class="hud"><span>2⟨T⟩ <b id="h1">–</b></span><span>⟨rV′⟩ <b id="h2">–</b></span><span>偏差% <b id="h3">–</b></span></div></div><aside class="panel">
+<div class="hud"><span>2⟨T⟩ <b id="h1">–</b></span><span>⟨rV′⟩ <b id="h2">–</b></span><span>偏差% <b id="h3">–</b></span></div><div id="selftestPanel" class="selftest" hidden></div></div><aside class="panel">
 <div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="" disabled>▣ M36 位力定理与幂次势（当前）</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
 <div class="eq">V ∝ rⁿ ⇒ 2⟨T⟩ = ⟨rV′⟩（n≠0 时 = n⟨V⟩）</div><div class="group"><div class="row"><label>势能幂次 n</label><span class="val" id="nv">-1</span></div><input id="n" type="range" min="-2" max="4" step="0.1" value="-1"><div class="hint">n=−1 开普勒，n=2 谐振子；n=0 为对数势 V=k·ln r（力 −k/r，⟨rV′⟩=k）。n=−2 无稳定束缚轨道。</div></div><div class="group"><div class="row"><label>初始切向速度</label><span class="val" id="v0v">0.9</span></div><input id="v0" type="range" min="0.3" max="1.6" step="0.01" value="0.9"><div class="hint">速度太大则轨道不再束缚，平均值会漂移；观察偏差读数。</div></div><div class="group"><div class="row"><label>力常数 k</label><span class="val" id="kv">1</span></div><input id="kk" type="range" min="0.5" max="2" step="0.1" value="1"><div class="hint">只改变尺度，不改变位力比。</div></div>
 <div class="btns"><button class="primary" id="play">暂停/继续</button><button id="reset">重置</button><button class="full" id="p1">开普勒 n=−1</button><button class="full" id="p2">谐振子 n=2</button><button class="full" id="p3">对数势 n=0</button><button class="full" id="p4">逃逸反例 v₀=1.5</button></div>
 <p class="hint">曲线是所选幂次的势能形状，轨迹为数值积分；平均值取最近一段轨道的时间平均。</p><a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">幂次中心势 · 辛欧拉小步长 dt=0.01 · 对应书稿：第 1 章 牛顿力学</div>
-</aside></div><div id="selftestPanel" class="selftest" hidden></div>
+</aside></div>
 <script>
 window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
 (function(){

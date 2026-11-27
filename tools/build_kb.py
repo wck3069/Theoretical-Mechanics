@@ -306,11 +306,17 @@ def main() -> int:
         if not OUT.exists():
             print("KB missing:", OUT)
             return 1
+        reg = DATA / "modules.json"
+        if reg.exists():
+            expected = len(json.loads(reg.read_text(encoding="utf-8")).get("modules", []))
+        else:
+            expected = len(MODULES_META)
         data = json.loads(OUT.read_text(encoding="utf-8"))
         mods = data.get("modules", [])
         cc = data.get("chunk_count", 0)
-        ok = len(mods) == len(MODULES_META) and cc > 0
+        ok = len(mods) == expected and cc > 0
         print(f"modules={len(mods)} chunks={cc} chars={data.get('char_count')}")
+        print("提示：建议改用 tools/recover_kb.py --check 按注册表里程碑校验。")
         return 0 if ok else 1
 
     if args.stats:

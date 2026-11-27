@@ -512,7 +512,7 @@ window.TMART = (function () {
 
   <header class="top">
     <h1>相对论多普勒与车头灯效应</h1>
-    <span class="sub">M22 · 第 7 章 狭义相对论 · ch07 · 多普勒效应与光行差</span>
+    <span class="sub">M25 · 第 7 章 狭义相对论 · ch07 · 多普勒效应与光行差</span>
   </header>
   <p class="lede">想象你驾驶飞船以速度 $\beta$（光速取 $c=1$）穿过一片静止、各向同性的星场。下方画布按手稿约定 $\omega'=\gamma\omega(1-\beta\cos\alpha)$ 与光行差公式实时重绘你「看到」的天空：正前方（画面中心）星光蓝移、增亮、汇聚，身后退行方向的星光红移、变暗，并被压缩到画面边缘。</p>
 
@@ -600,6 +600,7 @@ window.TMART = (function () {
     
   </div>
 </div>
+<div id="selftestPanel" class="selftest" hidden></div>
 
 <!-- TM-THEME-BODY:START -->
 <canvas class="tm-stars" aria-hidden="true"></canvas>
@@ -607,7 +608,7 @@ window.TMART = (function () {
   <a data-tm-nav="index" href="../../index.html">✦ 星图</a>
   <a data-tm-nav="prev" href="#">‹ 上一章</a>
   <a data-tm-nav="next" href="#">下一章 ›</a>
-  <a data-tm-nav="exit" href="../../chapters/07-relativity/index.html?ret=M22" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
+  <a data-tm-nav="exit" href="../../chapters/07-relativity/index.html?ret=M25" title="退出模拟，返回章节门户" aria-label="退出模拟，返回章节门户">退出模拟</a>
   <a data-tm-nav="ask" href="../../index.html?ask=1">问星</a>
 </nav>
 <script id="tm-theme-js">
@@ -1030,28 +1031,42 @@ window.TMART = (function () {
   window.addEventListener('resize', render);
 
   /* ---------- 自测：index.html?selftest=1 ---------- */
-  if (/[?&]selftest=1/.test(location.search)) {
+  if (/[?&]selftest=1(?:&|$)/.test(location.search)) {
     var lines = [], ok = true;
     function chk(name, got, want) {
-      var pass = Math.abs(got - want) < 1e-9;
+      var pass = isFinite(got) && Math.abs(got - want) < 1e-9;
       if (!pass) ok = false;
       lines.push((pass ? 'PASS ' : 'FAIL ') + name + ' = ' + got.toFixed(6) + ' (期望 ' + want + ')');
     }
-    var b = 0.6;
-    chk('γ(β=.6)', gammaOf(b), 1.25);
-    chk('D(α=0,β=.6)=γ(1−β)', doppler(b, 0), 0.5);
-    chk('√((1−β)/(1+β))', Math.sqrt((1 - b) / (1 + b)), 0.5);
-    chk('D(α=180,β=.6)=γ(1+β)', doppler(b, PI), 2);
-    chk('√((1+β)/(1−β))', Math.sqrt((1 + b) / (1 - b)), 2);
-    chk('D(α=90,β=.6)=γ', doppler(b, PI / 2), 1.25);
-    chk('光行差 abcos(.6,cos90°)', abcos(b, Math.cos(PI / 2)), -0.6);
-    chk('α′=90 ⇔ cos α=β', abcos(b, b), 0);
-    chk('D(α=0,β=.99)', doppler(0.99, 0), Math.sqrt(0.01 / 1.99));
-    chk('1/γ(β=.99)', 1 / gammaOf(0.99), Math.sqrt(1 - 0.99 * 0.99));
-    var div = document.createElement('div');
-    div.className = 'selftest' + (ok ? '' : ' fail');
-    div.textContent = 'SELFTEST ' + (ok ? 'PASS' : 'FAIL') + '\n' + lines.join('\n');
-    document.body.appendChild(div);
+    function sourceBeamingFactor(beta, cosTheta) {
+      return 1 / (gammaOf(beta) * (1 - beta * cosTheta));
+    }
+    function headlightBrightness(delta) { return Math.pow(delta, 4); }
+    var b = 0.6, gam = gammaOf(b);
+    var deltaFront = sourceBeamingFactor(b, 1), deltaBack = sourceBeamingFactor(b, -1);
+    chk('β=0: γ=1', gammaOf(0), 1);
+    chk('β=0: ω′/ω=1', doppler(0, 0.73), 1);
+    chk('β=0: cosα′=cosα', abcos(0, 0.8), 0.8);
+    chk('γ(β=.6)=5/4', gam, 1.25);
+    chk('ω′/ω=γ(1−βcosα)，β=.6、cosα=.8', doppler(b, Math.acos(0.8)), 0.65);
+    chk('正前方 α=180° 蓝移：D=√((1+β)/(1−β))', doppler(b, PI), 2);
+    chk('正后方 α=0° 红移：D=√((1−β)/(1+β))', doppler(b, 0), 0.5);
+    chk('正前方蓝移 D>1', doppler(b, PI) > 1 ? 1 : 0, 1);
+    chk('正后方红移 D<1', doppler(b, 0) < 1 ? 1 : 0, 1);
+    chk('前后多普勒因子互为倒数', doppler(b, PI) * doppler(b, 0), 1);
+    chk('横向多普勒（页面约定）：D(α=90°)=γ', doppler(b, PI / 2), gam);
+    chk('光行差公式：β=.6、cosα=.8', abcos(b, 0.8), 5 / 13);
+    chk('光行差：α=0° → cosα′=1', abcos(b, 1), 1);
+    chk('光行差：α=180° → cosα′=−1', abcos(b, -1), -1);
+    chk('光行差：cosα=β → α′=90°', abcos(b, b), 0);
+    chk('车头灯聚束亮度 I/I₀=δ⁴，β=0', headlightBrightness(sourceBeamingFactor(0, 1)), 1);
+    chk('车头灯聚束亮度 I/I₀=δ⁴，正前方 β=.6', headlightBrightness(deltaFront), 16);
+    chk('车头灯聚束亮度 I/I₀=δ⁴，正后方 β=.6', headlightBrightness(deltaBack), 1 / 16);
+    chk('车头灯前后亮度比=(δ前/δ后)⁴', headlightBrightness(deltaFront) / headlightBrightness(deltaBack), 256);
+    var panel = $('selftestPanel');
+    panel.hidden = false;
+    panel.classList.toggle('fail', !ok);
+    panel.textContent = 'SELFTEST ' + (ok ? 'PASS' : 'FAIL') + '\n' + lines.join('\n');
   }
 
   resize();

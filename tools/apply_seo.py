@@ -4,7 +4,10 @@
 from __future__ import annotations
 
 import html
+import json
 import re
+import subprocess
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +19,34 @@ END = "<!-- TM-SEO:END -->"
 TITLE_RE = re.compile(r"<title>(.*?)</title>", re.DOTALL | re.IGNORECASE)
 BLOCK_RE = re.compile(re.escape(START) + r".*?" + re.escape(END), re.DOTALL)
 KB_RE = re.compile(r'(<script id="tm-offline-kb">\n).*?(\n</script>)', re.DOTALL)
+
+
+def site_stats() -> tuple[int, int, int]:
+    """从数据源动态读取章数、单元数、跨章关联数。"""
+    def load(name: str) -> dict:
+        return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
+
+    chapters = len(load("chapters.json")["chapters"])
+    modules = len(load("modules.json")["modules"])
+    links = len(load("links.json")["links"])
+    return chapters, modules, links
+
+
+CHAPTER_COUNT, MODULE_COUNT, LINK_COUNT = site_stats()
+
+
+def lastmod() -> str:
+    """sitemap 的 lastmod：git 最新提交日期，失败则回退当天日期。"""
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(ROOT), "log", "-1", "--date=short", "--format=%cd"],
+            capture_output=True, text=True, timeout=10, check=True,
+        ).stdout.strip()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", out):
+            return out
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return datetime.now().strftime("%Y-%m-%d")
 
 
 def pages() -> list[Path]:
@@ -30,15 +61,19 @@ def title_of(text: str, path: Path) -> str:
     m = TITLE_RE.search(text)
     if not m:
         return path.stem
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m.group(1))).strip()
+    title = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m.group(1))).strip()
+    return html.unescape(title)
 
 
 def description(path: Path, title: str) -> str:
     rel = path.relative_to(ROOT).as_posix()
     if rel == "index.html":
-        return "理论力学交互讲义：从质点到哈密顿。七章星图导航、12 个交互模块、四份手写手稿 HTML 版与本地 AI 助教。"
+        return (f"理论力学交互讲义：从质点到哈密顿。{CHAPTER_COUNT} 章星图导航、"
+                f"{MODULE_COUNT} 个交互与知识单元、{LINK_COUNT} 条跨章知识关联，"
+                f"含手写书稿 HTML 版与本地 AI 助教。")
     if rel == "catalog.html":
-        return "理论力学站点目录：七章、12 个交互模块（M0–M11）、四份手写手稿与作业页。"
+        return (f"理论力学站点目录：{CHAPTER_COUNT} 章、{MODULE_COUNT} 个交互与知识单元、"
+                f"{LINK_COUNT} 条跨章知识关联，附手写书稿与作业页。")
     if rel == "binet.html":
         return "比奈方程专题页：中心力、圆锥曲线、轨道进动与交互演示。"
     if "/manuscripts/" in rel:
@@ -51,8 +86,8 @@ def description(path: Path, title: str) -> str:
 def block(path: Path, text: str) -> str:
     rel = path.relative_to(ROOT).as_posix()
     url = BASE + ("/" if rel == "index.html" else "/" + rel)
-    title = title_of(text, path)
-    desc = description(path, title)
+    title = html.unescape(title_of(text, path))
+    desc = html.unescape(description(path, title))
     og_type = "article" if (rel.startswith("modules/") or "/manuscripts/" in rel) else "website"
     vals = {
         "title": html.escape(title, quote=True),
@@ -112,11 +147,12 @@ def main() -> int:
             continue
         path.write_text(text, encoding="utf-8")
 
+    mod = lastmod()
     urls = []
     for path in items:
         rel = path.relative_to(ROOT).as_posix()
         loc = BASE + ("/" if rel == "index.html" else "/" + rel)
-        urls.append("  <url><loc>%s</loc><lastmod>2026-11-02</lastmod></url>" % html.escape(loc))
+        urls.append("  <url><loc>%s</loc><lastmod>%s</lastmod></url>" % (html.escape(loc), mod))
     (ROOT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

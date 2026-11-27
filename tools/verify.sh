@@ -12,7 +12,7 @@ fi
   chapters/*/index.html chapters/*/manuscripts/*.html \
   modules/*/index.html
 "$PY" tools/check_links.py --root .
-"$PY" tools/build_kb.py --check
+"$PY" tools/recover_kb.py --check
 "$PY" tools/build_offline_kb.py
 "$PY" tools/apply_seo.py
 git diff --exit-code

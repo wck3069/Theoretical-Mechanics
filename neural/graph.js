@@ -23,7 +23,10 @@
   unitIds.forEach(function (mid) {
     var m = modules[mid];
     if (ownerOf[mid] === undefined) ownerOf[mid] = chapters.length - 1;
-    if (m && m.slug && !byModuleSlug[m.slug]) byModuleSlug[m.slug] = mid;
+    if (m && m.slug) {
+      if (!byModuleSlug[m.slug]) byModuleSlug[m.slug] = [];
+      if (byModuleSlug[m.slug].indexOf(mid) < 0) byModuleSlug[m.slug].push(mid);
+    }
   });
 
   var $ = function (id) { return document.getElementById(id); };
@@ -79,6 +82,25 @@
     return null;
   }
   function typeOf(t) { return ltypes[t] || { label: t || '关联', color: '#d7b48a', desc: '' }; }
+  function modeOf(mid) {
+    var m = modules[mid];
+    if (!m || !m.href) return '';
+    var parts = String(m.href).split('?');
+    var mm = parts.length > 1 ? /(?:^|&)mode=([^&]+)/.exec(parts[1]) : null;
+    return mm ? decodeURIComponent(mm[1]) : '';
+  }
+  // 同一个 slug 可能对应多个里程碑（如 M16/M17 都是 08b-nonlinear）。
+  // 默认仍取首个（兼容旧链接），有提示时用 chunk id 前缀或 href 的 mode 消歧。
+  function bySlug(slug, hint) {
+    var list = byModuleSlug[slug];
+    if (!list || !list.length) return null;
+    if (hint) {
+      var i;
+      for (i = 0; i < list.length; i++) if (hint.indexOf(list[i] + '-') === 0) return list[i];
+      for (i = 0; i < list.length; i++) if (modeOf(list[i]) === hint) return list[i];
+    }
+    return list[0];
+  }
   function shortTitle(t) {
     return String(t || '').replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').trim();
   }
@@ -1384,18 +1406,22 @@
       var up = p[1].toUpperCase();
       if (modules[up]) p[1] = up;
     }
-    if (p[0] === 'u' && modules[p[1]]) { out.kind = 'unit'; out.mid = p[1]; out.cid = p[2] || null; return out; }
+    if (p[0] === 'u' && p[1]) {
+      var uk = p[1];
+      var umid = modules[uk] ? uk : (modules[uk.toUpperCase()] ? uk.toUpperCase() : bySlug(uk, p[2]));
+      if (umid) { out.kind = 'unit'; out.mid = umid; out.cid = p[2] || null; return out; }
+    }
     if (p[0] === 'l' && linkOf(p[1])) { out.kind = 'link'; out.id = p[1]; return out; }
     var slug = LEGACY[p[0]] || p[0];
     if (byChapterSlug[slug]) {
       if (p[1]) {
         var up2 = p[1].toUpperCase();
-        var mid = modules[p[1]] ? p[1] : (modules[up2] ? up2 : byModuleSlug[p[1]]);
+        var mid = modules[p[1]] ? p[1] : (modules[up2] ? up2 : bySlug(p[1], p[2]));
         if (mid) { out.kind = 'unit'; out.mid = mid; out.cid = p[2] || null; return out; }
       }
       out.kind = 'chapter'; out.slug = slug; return out;
     }
-    var m2 = modules[p[0]] || modules[p[0].toUpperCase()] || byModuleSlug[p[0]];
+    var m2 = modules[p[0]] || modules[p[0].toUpperCase()] || bySlug(p[0]);
     if (m2) { out.kind = 'unit'; out.mid = m2; out.cid = p[1] || null; return out; }
     return { kind: 'unknown' };
   }

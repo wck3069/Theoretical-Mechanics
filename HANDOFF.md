@@ -1,26 +1,31 @@
 # 理论力学交互讲义 · 交接记录
 
-日期：2026-11-23（文档于 2026-11-26 按仓库与机器实况重写）  
+日期：2026-11-27（文档于 2026-11-27 按仓库与机器实况重写）
 项目：`/home/wck/Theoretical-Mechanics`  
 标题：**理论力学：从质点到哈密顿**  
 仓库：`https://github.com/wck3069/Theoretical-Mechanics`（`main` 与 `origin/main` 同步，工作区干净）
 
-> 本文件取代 2026-11-01 版本。更早的重构背景见 `HANDOFF-NEURAL.md`（11-10）与
+> 本文件取代 2026-11-23 版本。更早的重构背景见 `HANDOFF-NEURAL.md`（11-10）与
 > `MORNING-REVIEW.md`（11-11）；11-23 各轮的原始证据在 `qa/global/*-2026-11-23.md`。
 
 ## 1. 当前状态（一句话）
 
-**七章（牛顿 → 相对论）+ 31 个交互单元（M0–M30）+ 狭义相对论章节导读单元 S7**，
-由 23 个模块目录承载（部分目录用 `?mode=` / `?scene=` 承载多个单元）。
-首页星图 7 行星 → 章节页 / 知识网络（`neural/`）→ 模块；AI 助教（RAG）知识库 32 单元 / 329 chunks。
+**七章（牛顿 → 相对论）+ 41 个交互单元（M0–M40）+ 狭义相对论章节导读单元 S7**，
+由 33 个模块目录承载（部分目录用 `?mode=` / `?scene=` 承载多个单元）。
+首页星图 7 行星 → 章节页 / 知识网络（`neural/`）→ 模块；AI 助教（RAG）知识库 42 单元 / 438 chunks。
 
 > [!NOTE]
-> 首页 hero 与 `HOMEPAGE.md` 写的是“27 个交互模拟”，与注册表 31 个 M 单元不一致（计数口径历史上
-> 23→25→27 逐轮累加）。如需统一，改 `index.html` hero 与 `HOMEPAGE.md`。
+> 首页 hero、`HOMEPAGE.md`、`catalog.html` 与注册表已统一为 **42 个知识与交互单元**（含 S7）。
+> 跨章知识关联共 **68 条**。如需调整计数，请同步修改上述四处及 `data/chapters.json`。
 
 ## 2. 最近提交
 
 ```text
+af2ef38 style(modules): dock right control sidebar full-height on M27/M29/M30 to match legacy modules
+4ef2868 fix(chapters): restore vivid planetary portal background images behind frosted glass cards
+a02442c style(modules): unify M27-M40 visual palette (solar title, glass panel, starlight buttons, eq cards) & fix Cs-137 typo
+079485c fix(modules): replace raw URL query dump in M27/M29/M30 footers with readable text
+86ad709 fix(modules): unify fixed viewport position of .tm-orbit-nav across all 33 modules
 ef5ffd7 2026-11-23 fix(neural): close button dead on desktop preview panel
 1edce75 2026-11-23 feat(site): seven-chapter cosmos restructure, true knowledge network, recovered KB
 a177fa5 2026-11-23 fix(home): star-map portal iframe race and bfcache freeze
@@ -31,22 +36,22 @@ a177fa5 2026-11-23 fix(home): star-map portal iframe race and bfcache freeze
 64f7ae8 2026-11-06 feat(tools): add static preview server and dist rebuild watcher
 ```
 
-共 125 次提交。`1edce75` 一次性收下 11-07 至 11-23 的大量未提交重构（403 文件，+65,925 / −8,052）。
-`gh-pages` 最后发布：2026-11-23 22:46。
+共 **>125** 次提交（新增 M31–M40 相关提交）。`1edce75` 一次性收下 11-07 至 11-23 的大量未提交重构（403 文件，+65,925 / −8,052）。
+`gh-pages` 最后发布：需重新执行 `bash tools/publish_pages.sh` 以包含 M31–M40。
 
 ## 3. 七章与单元映射
 
-数据源：`data/chapters.json`（章 → 单元）、`data/modules.json`（单元注册表，32 条）。
+数据源：`data/chapters.json`（章 → 单元）、`data/modules.json`（单元注册表，**42 条**）。
 
 | 章 | 名称 | 行星纹理 | 单元 |
 |---|---|---|---|
-| C1 | 牛顿力学 `chapters/01-newton` | 水星 | M0–M7 |
-| C2 | 变分法 `chapters/02-variational` | 金星 | M8–M10 |
+| C1 | 牛顿力学 `chapters/01-newton` | 水星 | M0–M7, M31, M32, M36 |
+| C2 | 变分法 `chapters/02-variational` | 金星 | M8–M10, M37 |
 | C3 | 拉格朗日力学 `chapters/03-lagrangian` | 地球 | M11–M12 |
-| C4 | 小振动 `chapters/04-oscillations` | 火星 | M13–M17、M27 |
-| C5 | 刚体力学 `chapters/05-rigid-body` | 木星 | M18、M19、M28 |
-| C6 | 哈密顿力学 `chapters/06-hamiltonian` | 土星 | M20–M23、M29 |
-| C7 | 狭义相对论 `chapters/07-relativity` | 天王星 | S7、M24–M26、M30 |
+| C4 | 小振动 `chapters/04-oscillations` | 火星 | M13–M17, M27, M35, M38 |
+| C5 | 刚体力学 `chapters/05-rigid-body` | 木星 | M18, M19, M28, M33, M39 |
+| C6 | 哈密顿力学 `chapters/06-hamiltonian` | 土星 | M20–M23, M29 |
+| C7 | 狭义相对论 `chapters/07-relativity` | 天王星 | S7, M24–M26, M30, M34, M40 |
 
 ### 3.1 单元 ↔ 目录
 
@@ -76,11 +81,21 @@ a177fa5 2026-11-23 fix(home): star-map portal iframe race and bfcache freeze
 | M28 | 重陀螺的进动与章动 | `21-heavy-top` |
 | M29 | 勒让德变换与罗斯约化 | `22-legendre-routh` |
 | M30 | 双曲运动与恒固有加速度 | `23-hyperbolic-motion` |
+| **M31** | **火箭方程与质量流** | `31-rocket-massflow` |
+| **M32** | **二连杆雅可比与奇异位形** | `32-two-link-jacobian` |
+| **M33** | **圆柱沿斜面纯滚动** | `33-rolling-cylinder` |
+| **M34** | **康普顿散射运动学** | `34-compton-scattering` |
+| **M35** | **周期链色散与群速度** | `35-lattice-dispersion` |
+| **M36** | **位力定理与幂次势** | `36-virial-power-law` |
+| **M37** | **悬链线与最小势能** | `37-catenary-min-energy` |
+| **M38** | **三原子链简正模** | `38-three-atom-modes` |
+| **M39** | **复摆周期与最短摆长** | `39-physical-pendulum-period` |
+| **M40** | **固定靶阈能与对撞机** | `40-threshold-collider` |
 | S7 | 狭义相对论（章节导读） | `chapters/07-relativity` |
 
 > [!IMPORTANT]
-> **目录号 ≠ 单元号**（如 `20-forced-resonance` 是 M27，`06-collisions` 是 M4）。AI 引用、知识库、
-> 章节卡一律以 `data/modules.json` 的 `milestone` 为准。目录 `12-*` 不存在（S7 的 slug 为 `12-relativity`，指向章节页）。
+> **目录号 ≠ 单元号**。AI 引用、知识库、章节卡一律以 `data/modules.json` 的 `milestone` 为准。
+> 新增模块 M31–M40 已创建对应目录（如 `31-rocket-massflow`）。
 
 ### 3.2 旧章节路径
 
@@ -95,7 +110,7 @@ a177fa5 2026-11-23 fix(home): star-map portal iframe race and bfcache freeze
 公式用本地 `assets/mathjax/tex-svg.js`（离线）。
 旧版 `hw1.html` / `intro.html` / `chapter2.html` / `variational.html` 已不存在。
 
-## 4. 11-23 四轮工作摘要
+## 4. 11-23 四轮工作摘要 & 11-27 新增模块
 
 ### 4.1 KB 恢复（`qa/global/kb-recovery-2026-11-23.md`）
 
@@ -122,6 +137,16 @@ a177fa5 2026-11-23 fix(home): star-map portal iframe race and bfcache freeze
 
 - M27 13/13、M28 8/8、M29 15/15、M30 20/20 自检通过；每个模块含 `index.html` + `knowledge.draft.json` + README。
 - 桌面端预览态 `closeDetail()` / `goUp()` 缺 preview 分支 → 已补；回归 `tools/qa-neural/panel_close_audit.py`。
+
+### 4.5 M31–M40 新增（2026-11-27）
+
+- **新增模块**：M31 (火箭), M32 (雅可比), M33 (滚动圆柱), M34 (康普顿), M35 (晶格色散), M36 (位力定理), M37 (悬链线), M38 (三原子链), M39 (复摆), M40 (阈能)。
+- **数据更新**：
+  - `data/modules.json`：新增 10 条记录，总数 42。
+  - `data/chapters.json`：单元分配已更新（见第 3 节表格）。
+  - `data/links.json`：跨章关联增至 **68 条**。
+  - `data/knowledge.json`：知识库更新至 **42 单元 / 438 chunks**。
+- **前端同步**：首页 hero、`HOMEPAGE.md`、`catalog.html` 计数已统一为 42。
 
 ## 5. 首页 / 星图要点
 
@@ -152,92 +177,4 @@ a177fa5 2026-11-23 fix(home): star-map portal iframe race and bfcache freeze
 
 - 开放预览：`~/.local/state/tm/demo-url`（→ `/tmp/tm-demo-url`）
 - 登录门：`~/.local/state/tm/login-url`（→ `/tmp/tm-login-url`）
-- GitHub Pages（静态、AI 仅离线检索）：`https://wck3069.github.io/Theoretical-Mechanics/`
-
-配置（不提交）：`~/.config/tm-ai.env`（AI key、Basic Auth、模型）、`~/.config/tm-login.env`。
-AI 上游校园网关（xplt）DOWN，当前走本机 strata（127.0.0.1:8080），`pipeline: local_only`。
-
-固定域名：`deploy/named-tunnel.sh tm.<域名>` 一键脚本已写好（见 `deploy/cloudflared.md`），**尚未安装**
-（无 `tm-named-tunnel.service`）；需要一个 Cloudflare 托管域名。校园 NAT 映射申请见 `deploy/campus-mapping.md`。
-
-常用：
-
-```bash
-systemctl --user status tm-ai tm-login tm-static-server tm-static-sync tm-tunnel tm-demo-tunnel
-systemctl --user restart tm-ai           # 改了 ai_server.py / knowledge.json 后
-bash tools/export_static.sh              # 手动导出 dist/（通常由 tm-static-sync 自动完成）
-bash tools/publish_pages.sh              # 强制更新 gh-pages
-```
-
-## 7. 数据与构建管线
-
-```text
-data/modules.json + data/chapters.json + data/links.json
-        │
-        ├─ tools/merge_kb_drafts.py   ← modules/*/knowledge.draft.json
-        ├─ tools/recover_kb.py        （灾备：从 neural/data.js 反建 KB，--check 校验）
-        ▼
-data/knowledge.json  ──► tools/build_neural_data.py ──► neural/data.js
-        │                └─► tools/build_offline_kb.py（Pages 离线 KB / FAQ）
-        └─► tools/ai_server.py（tm-ai，重启生效）
-```
-
-新增模块的集成流程（按 11-23 M27–M30 的做法）：注册 `modules.json` → 加入 `chapters.json` 对应章 →
-`merge_kb_drafts.py` → `links.json` 加边 → 章节卡（进入模拟 / 阅读书稿 / 知识网络）→
-`ai_server.py` 的 `MODULE_EQUATIONS` / `CHAPTER_KEYWORDS` → `build_offline_kb.py` FAQ 映射 →
-`build_neural_data.py` → 首页 hero 与 `HOMEPAGE.md` 计数 → 重启 `tm-ai`。
-
-## 8. 验证命令与 11-23 结果
-
-```bash
-cd /home/wck/Theoretical-Mechanics
-~/.venv-tm/bin/python tools/check_html.py index.html modules/*/index.html chapters/*/index.html neural/index.html
-python3 tools/check_links.py --root .      # 或 --root dist
-python3 tools/verify_selftest.py
-~/.venv-tm/bin/python tools/build_neural_data.py
-python3 tools/qa-home/star_map_loop.py
-python3 tools/qa-neural/interaction_audit.py; python3 tools/qa-neural/audit_current.py; python3 tools/qa-neural/panel_close_audit.py
-~/.venv-tm/bin/python tools/ai_server.py --check
-```
-
-11-23 最后一轮记录的结果（本文件重写时未重跑）：
-
-- `verify_selftest`：**23/23** 通过。
-- `check_links`：**61 页 / 605 链 / 0 缺失**；`check_html` 抽查页 6/6。
-- `build_neural_data`：7 章 / 32 单元 / 47 边（20 跨章）。
-- `tm-ai`：`kb_chunks=329`，M29/M30 检索命中。
-- 星图回归两模式 GREEN；neural 三项审计 exit 0。
-
-## 9. 已知问题 / 下一步
-
-1. **计数不一致**：hero/HOMEPAGE “27 个交互模拟” vs 注册表 31 个 M 单元 / 23 个目录。确定口径后统一。
-2. **模块页内导航**：`00-binet`…`17-free-rigid-body` 的上一页/下一页数组 `CHAPTERS` 仍是 11-01 的 12 个旧目录
-   （`00-binet`…`11-rotation-and-field`）；`18`–`23` 没有该数组。未与七章 / 新编号统一，需改模块页或引入章节级导航。
-3. **章节页是手写 HTML**：7 个 `chapters/0N-*/index.html` 无生成器；新增单元要手动加卡片。可补 `tools/build_chapters.py`。
-4. **i18n 覆盖不全**：`assets/i18n/reader-*` 只覆盖旧模块目录，M13 以后的新模块/场景未翻译。
-5. **`16-doppler-beaming`（M25）** 自测面板不符合 `verify_selftest` 的 `#selftestPanel` 契约（被 SKIP）；`00-binet` 同样无自检契约。
-6. **固定域名未落地**：仍依赖 quick tunnel，地址会变；`named-tunnel.sh` 待有域名后执行。
-7. **AI 上游**：校园网关 DOWN，助教只用本机 strata；单卡并发有限，公开访问需限流（`deploy/README.md`）。
-8. **遗留工具**：`build_kb.py` 硬编码旧 12 模块编号，仅保留作参考，已加守卫。
-9. **氢原子**：不属于本站，在 `/home/wck/Quantum-Mechanics`（`https://wck3069.github.io/Quantum-Mechanics/`），自 11-01 无更新。
-10. **流程注意**：11-23 有子代理违规自行 commit（已 `reset --soft` 撤回）；委派时需明确禁止提交，并在合并前检查 `git log`。
-
-## 10. 关键文件
-
-- `index.html`：首页星图（7 行星、飞行/portal、太阳缩放拖动、星空）。
-- `chapters/0N-*/index.html`：七章总览；`chapters/0N-*/manuscripts/book.html`：网页版书稿。
-- `neural/index.html` + `neural/data.js` + `neural/structure.js`：知识网络。
-- `modules/*/index.html`：交互模块（单文件）；新模块附 `knowledge.draft.json`、README。
-- `data/*.json`：注册表、章节、知识库、跨章关联、模式。
-- `tools/ai_server.py`、`tools/static_server.py`、`tools/export_static.sh`、`tools/publish_pages.sh`。
-- `tools/recover_kb.py`、`tools/merge_kb_drafts.py`、`tools/build_neural_data.py`、`tools/build_offline_kb.py`。
-- `tools/qa-home/`、`tools/qa-neural/`、`tools/verify_selftest.py`、`tools/check_links.py`、`tools/check_html.py`。
-- `deploy/`：systemd 单元、cloudflared / named tunnel、Caddy / nginx、Tailscale、校园网说明。
-- `~/TM-Login/`：登录门（Flask + SQLite）。
-- `qa/global/`：各轮验收证据。
-
-## 11. 新对话建议开场
-
-> 读取 `/home/wck/Theoretical-Mechanics/HANDOFF.md`，先检查 `git status`、最近提交与
-> `systemctl --user status 'tm-*'`。当前为七章 + M0–M30 + S7（23 个模块目录），单元编号以
-> `data/modules.json` 为准。先不要改代码，告诉我未提交文件、Pages 与隧道状态，以及 `verify_selftest` 是否仍为 23/23。
+- GitHub

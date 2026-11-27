@@ -50,20 +50,22 @@
   table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;color:var(--muted)}
   th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
   .foot{margin-top:14px;color:var(--muted);font-size:12px;opacity:.8}
+  .doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+  .doc:hover{border-color:#7fe0ff}
   @media (max-width: 1020px){
     .app{grid-template-columns:1fr}
     .stage{min-height:520px}
   }
 </style>
 <!-- TM-SEO:START -->
-<meta name="description" content="23 · 双曲运动与恒固有加速度 | Hyperbolic Motion：可拖拽交互演示、公式推导与数值自测。">
+<meta name="description" content="双曲运动与恒固有加速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="author" content="wck3069">
 <meta name="theme-color" content="#05060f">
 <link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/23-hyperbolic-motion/index.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="理论力学：从质点到哈密顿">
-<meta property="og:title" content="23 · 双曲运动与恒固有加速度 | Hyperbolic Motion">
-<meta property="og:description" content="23 · 双曲运动与恒固有加速度 | Hyperbolic Motion：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:title" content="双曲运动与恒固有加速度 · 理论力学">
+<meta property="og:description" content="双曲运动与恒固有加速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/23-hyperbolic-motion/index.html">
 <meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -71,8 +73,8 @@
 <meta property="og:image:alt" content="理论力学：从质点到哈密顿">
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="23 · 双曲运动与恒固有加速度 | Hyperbolic Motion">
-<meta name="twitter:description" content="23 · 双曲运动与恒固有加速度 | Hyperbolic Motion：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:title" content="双曲运动与恒固有加速度 · 理论力学">
+<meta name="twitter:description" content="双曲运动与恒固有加速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
 </head>
@@ -148,6 +150,7 @@
         </table>
         <p>公式取自《理论力学》第7章手稿：恒固有加速度运动 t=sinh(aτ)/a、x=cosh(aτ)/a（起点 x₀=1/a）、x²−t²=1/a²、固有时积分 τ=∫√(1−v²)dt、恒力例 α=F/m、坐标加速度 (F/m)[1+(Ft/mc)²]^(−3/2)。本页取单位制 <b>c=1</b>：x、t、1/a 用同一单位。</p>
       </details>
+      <a class="doc" href="./note.html">📄 阅读推导与出处 →</a>
       <p class="foot">数值方法：四阶 Runge-Kutta（RK4，h=0.001，联立积分 dv/dt=a(1−v²)^(3/2)、dx/dt=v、dτ/dt=√(1−v²)）。单位制：c=1。已知限制：v 截断于 1−1e-12（HUD 会提示截断）。当前参数会自动保存在浏览器地址栏中，复制链接即可分享当前实验状态。</p>
     </aside>
   </main>

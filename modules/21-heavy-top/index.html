@@ -83,6 +83,8 @@
   .hint{font-size:11.5px; color:#75809c; margin-top:5px; line-height:1.5}
   .tag{display:block; margin-top:14px; font-size:11.5px; color:#77839f; line-height:1.65}
   .tag span{color:var(--accent2)}
+  .doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+  .doc:hover{border-color:#7fe0ff}
   .selftest{position:absolute; top:14px; right:14px; max-width:72%; max-height:70vh;
     overflow-y:auto; white-space:pre-wrap; z-index:999; padding:10px 14px;
     font-family:ui-monospace,monospace; font-size:11.5px; line-height:1.65; border-radius:10px;
@@ -266,6 +268,7 @@ window.TMART = (function () {
       <button id="btnReset" aria-label="复位到当前参数初始条件">复位</button>
     </div>
 
+    <a class="doc" href="./note.html">📄 阅读推导与出处 →</a>
     <span class="tag"><span>数值方法：</span>定步长 RK4（h=0.002，按倍率折算子步数）积分 Routh 约化方程 I₁θ̈=−V_eff′(θ)，φ、ψ 由守恒动量重构。<br>
     <span>单位制：</span>无量纲演示单位（I₁=1；实数量纲示例见 README）。<br>
     <span>已知限制：</span>仅对称陀螺 I₁=I₂；欧拉角在 sinθ→0 处奇异——程序以恒等式改写 p_φ=p_ψ 情形、其余按 |sinθ|≥10⁻³ 截断并在 HUD 提示；不含摩擦与章动阻尼；θ 超出 [0,π] 的姿态以 |θ| 读数。</span>

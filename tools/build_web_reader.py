@@ -320,7 +320,6 @@ window.MathJax={{tex:{{inlineMath:[['$','$'],['\\\\(','\\\\)']],displayMath:[['$
 <script src="{assets}/tm-i18n-data.js"></script>
 <script src="{assets}/tm-i18n.js"></script>
 <script src="{assets}/mathjax/tex-svg.js"></script>
-</body>
 <script src="{assets}/ui-motion.js" defer></script>
 </body>
 </html>

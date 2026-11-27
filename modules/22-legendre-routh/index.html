@@ -48,20 +48,22 @@
   table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;color:var(--muted)}
   th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
   .foot{margin-top:14px;color:var(--muted);font-size:12px;opacity:.8}
+  .doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+  .doc:hover{border-color:#7fe0ff}
   @media (max-width: 1020px){
     .app{grid-template-columns:1fr}
     .stage{min-height:540px}
   }
 </style>
 <!-- TM-SEO:START -->
-<meta name="description" content="22 · 勒让德变换与罗斯约化 | Legendre Transform &amp;amp; Routh Reduction：可拖拽交互演示、公式推导与数值自测。">
+<meta name="description" content="勒让德变换与罗斯约化 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="author" content="wck3069">
 <meta name="theme-color" content="#05060f">
 <link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/22-legendre-routh/index.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="理论力学：从质点到哈密顿">
-<meta property="og:title" content="22 · 勒让德变换与罗斯约化 | Legendre Transform &amp;amp; Routh Reduction">
-<meta property="og:description" content="22 · 勒让德变换与罗斯约化 | Legendre Transform &amp;amp; Routh Reduction：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:title" content="勒让德变换与罗斯约化 · 理论力学">
+<meta property="og:description" content="勒让德变换与罗斯约化 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/22-legendre-routh/index.html">
 <meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -69,8 +71,8 @@
 <meta property="og:image:alt" content="理论力学：从质点到哈密顿">
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="22 · 勒让德变换与罗斯约化 | Legendre Transform &amp;amp; Routh Reduction">
-<meta name="twitter:description" content="22 · 勒让德变换与罗斯约化 | Legendre Transform &amp;amp; Routh Reduction：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:title" content="勒让德变换与罗斯约化 · 理论力学">
+<meta name="twitter:description" content="勒让德变换与罗斯约化 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
 <meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
 <!-- TM-SEO:END -->
 </head>
@@ -163,6 +165,7 @@
         θ 循环时 μ = p_θ 才可固定为常数。平面中心力约化：R = (m/2)ṙ² − [V + ℓ²/(2mr²)]，
         离心项符号来自固定动量的变分问题，故 m r̈ = −V′ + ℓ²/(mr³)。单位制 m = l = g = k = 1。</p>
       </details>
+      <a class="doc" href="./note.html">📄 阅读推导与出处 →</a>
       <p class="foot">数值方法：四阶 Runge-Kutta（RK4），步长按系统频率归一（谐振子 h = T/1600；中心力 h = 0.0012）。
       单位制：m = l = g = k = 1 无量纲。已知限制：非相对论点粒子、平面运动、无阻力无辐射；
       单摆精确分界线 E = +mgl 与 r→0 库仑奇点为理想模型极限。当前参数会自动保存在浏览器地址栏中，复制链接即可分享当前实验状态。</p>
