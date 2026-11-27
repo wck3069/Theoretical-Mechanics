@@ -91,7 +91,7 @@ window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$
 <p>学习时始终核对三个条件：变换是否局部可逆？使用的是正则动量还是机械动量？结论是局部坐标中的关系，还是覆盖完整周期的全局描述？含耗散、奇异约束或非完整系统不能未经重建就套用本章普通正则方程。</p>
 </div>
 <h2 id="勒让德变换与正则方程"><span class="ms-secno">6.1</span>勒让德变换与正则方程</h2>
-<h3 id="先作变量变换再使用运动方程"><span class="ms-secno">6.1.1</span>先作变量变换，再使用运动方程</h3>
+<h3 id="先作变量变换再使用运动方程"><span class="ms-secno">6.1.1</span>先作变量变换，再使用运动方程 <a class="ms-demo" href="../../../modules/22-legendre-routh/index.html">✦ 交互模拟：勒让德变换与罗斯约化 ↗</a></h3>
 <p>设 <span class="math inline">\(L(q,\dot q,t)\)</span> 光滑，<span class="math inline">\(q=(q_1,\ldots,q_s)\)</span> 是独立局部坐标。定义 <span class="math display">\[p_a=L_{\dot q_a},\qquad W_{ab}=L_{\dot q_a\dot q_b}.
 
 \tag{6.1}\]</span> 在 <span class="math inline">\(\det W\ne0\)</span> 的一个点附近，隐函数定理保证可局部反解 <span class="math inline">\(\dot q=v(q,p,t)\)</span>。定义 <span class="math display">\[H(q,p,t)=\sum_a p_av_a(q,p,t)-L(q,v(q,p,t),t).
@@ -110,7 +110,7 @@ H=\tfrac12(p-a)^{\mathsf T}M^{-1}(p-a)+V.\]</span> 速度一次项不会使变�
 p=\frac{E_*}{v_*}(u^3-u).\]</span> <span class="math inline">\(p=0\)</span> 对应 <span class="math inline">\(u=0,\pm1\)</span>，三处Hessian分别为 <span class="math inline">\(-E_*/v_*^2,2E_*/v_*^2,2E_*/v_*^2\)</span>，均非零，但同一动量对应不同速度分支。各分支局部可用 <span class="math display">\[H=E_*(3u^4/4-u^2/2)+V(q),\]</span> 并不能据局部非退化就任意选成一个全局函数。严格凸性可保证动量映射在适当凸域中的单射性，覆盖整个动量域还需全局条件。普通正则理论不要求Hessian正定，但稳定性和全局性是另外的问题。</em></p>
 </div>
 <p>若 <span class="math inline">\(L\)</span> 含未消去的乘子，或某个速度根本不出现，Hessian可奇异，例如 <span class="math inline">\(L=(\dot x-y)^2/2\)</span> 有 <span class="math inline">\(p_y=0\)</span>。不能照常反解所有速度；约束哈密顿理论需另外建立，本章不展开。</p>
-<h3 id="能量循环坐标与含时表示"><span class="ms-secno">6.1.2</span>能量、循环坐标与含时表示</h3>
+<h3 id="能量循环坐标与含时表示"><span class="ms-secno">6.1.2</span>能量、循环坐标与含时表示 <a class="ms-demo" href="../../../modules/11-rotation-and-field/index.html?scene=ring">✦ 交互模拟：旋转圆环上的珠子 ↗</a></h3>
 <p>沿正则运动 <span class="math display">\[\frac{\mathrm{d}H}{\mathrm{d}t}=\sum_a(H_{q_a}\dot q_a+H_{p_a}\dot p_a)+H_t=H_t.
 
 \tag{6.4}\]</span> 所以 <span class="math inline">\(H_t=0\)</span> 给出 <span class="math inline">\(H\)</span> 守恒。它是否等于实验室系机械能，仍需建模条件：定常自然系统的 <span class="math inline">\(L=T-V\)</span>、<span class="math inline">\(T\)</span> 为齐二次型时，<span class="math inline">\(H=T+V\)</span>。电磁速度一次项也可抵消而给 <span class="math inline">\(H=T+e\phi\)</span>；不能简单断言“凡含速度势，<span class="math inline">\(H\)</span> 必不等于能量”。含时坐标或全导数改变则可能改变这种识别。</p>
@@ -144,7 +144,7 @@ p_\varphi=mr^2\sin^2\theta\dot\varphi.\]</span> 逐项勒让德变换得到 <spa
 \dot\varphi&amp;=p_\varphi/(mr^2\sin^2\theta),&amp;\dot p_\varphi&amp;=0.
 \end{aligned}\]</span> <span class="math inline">\(p_\varphi\)</span> 是角动量的 <span class="math inline">\(z\)</span> 分量。若初态 <span class="math inline">\(\theta=\pi/2,p_\theta=0\)</span>，方程保持这两个条件，化为 <span class="math display">\[\dot p_r=\frac{\ell^2}{mr^3}-\frac\kappa{r^2},\quad \ell=p_\varphi.\]</span> 与第一章 <span class="math inline">\(m(\ddot r-r\dot\varphi^2)=-\kappa/r^2\)</span> 一致。坐标轴极点处的分母奇异是球坐标图问题，不代表质点动力学必然奇异；<span class="math inline">\(r=0\)</span> 的库仑势奇异则是另一回事。</em></p>
 </div>
-<h3 id="带电粒子与规范变换"><span class="ms-secno">6.2.2</span>带电粒子与规范变换</h3>
+<h3 id="带电粒子与规范变换"><span class="ms-secno">6.2.2</span>带电粒子与规范变换 <a class="ms-demo" href="../../../modules/11-rotation-and-field/index.html?scene=cyclotron">✦ 交互模拟：磁场中的带电粒子 ↗</a></h3>
 <p>带电量记为 <span class="math inline">\(e\)</span>（可正可负），与广义坐标 <span class="math inline">\(q\)</span> 区分。外电磁势给定，质量 <span class="math inline">\(m\)</span> 恒定且不计辐射反作用： <span class="math display">\[L=\tfrac12m\mathbf{v}^2+e\mathbf{A}(\mathbf{r},t)\cdot\mathbf{v}-e\phi(\mathbf{r},t),\qquad
 \mathbf{p}=m\mathbf{v}+e\mathbf{A}.\]</span> 故 <span class="math display">\[H(\mathbf{r},\mathbf{p},t)=\frac{[\mathbf{p}-e\mathbf{A}(\mathbf{r},t)]^2}{2m}+e\phi(\mathbf{r},t).
 
@@ -181,7 +181,7 @@ H&#39;(\mathbf{r},\mathbf{p}&#39;,t)=H(\mathbf{r},\mathbf{p}&#39;-e\nabla\chi,t)
 <img src="figs/ch06-fig2.svg" style="width:86.0%" />
 <figcaption>单摆相图的展开表示：蓝线<span class="math inline">\(E/K_0=1\)</span>，红虚线为分离曲线<span class="math inline">\(E/K_0=2\)</span>，绿点划线为<span class="math inline">\(E/K_0=3\)</span>。上下半平面时间方向相反；左右边按周期识别。</figcaption>
 </figure>
-<h3 id="散度流映射与密度"><span class="ms-secno">6.3.2</span>散度、流映射与密度</h3>
+<h3 id="散度流映射与密度"><span class="ms-secno">6.3.2</span>散度、流映射与密度 <a class="ms-demo" href="../../../modules/18-phase-space/index.html?scene=phase">✦ 交互模拟：相空间与刘维尔 ↗</a></h3>
 <p>设 <span class="math inline">\(H\)</span> 二阶偏导连续，<span class="math inline">\(\mathcal D_t\)</span> 是随流移动的相区域。速度场散度为 <span class="math display">\[\nabla_z\cdot\dot z=\sum_a(\partial_{q_a}H_{p_a}-\partial_{p_a}H_{q_a})=0.\]</span> 由输运定理， <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\int_{\mathcal D_t}\mathrm{d}^sq\,\mathrm{d}^sp=0.
 
 \tag{6.8}\]</span> 等价地，流映射 <span class="math inline">\(z(t)=\Phi_{t,t_0}(z_0)\)</span> 的雅可比行列式满足 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\det D\Phi=(\nabla_z\cdot\dot z)\det D\Phi=0,
@@ -341,7 +341,7 @@ J_r=\frac{\sqrt{m\kappa a}}\pi\int_0^\pi
 <p>自治一自由度鞍点的指数不稳定不等于混沌；线性拍或短时能量误差也不是混沌判据。继续学习需摄动、微分方程及非共振数论条件。</p>
 </div>
 <h2 id="计算与模拟辛性能量与误差阶"><span class="ms-secno">6.8</span>计算与模拟：辛性、能量与误差阶</h2>
-<h3 id="显式euler与辛euler的不同结构"><span class="ms-secno">6.8.1</span>显式Euler与辛Euler的不同结构</h3>
+<h3 id="显式euler与辛euler的不同结构"><span class="ms-secno">6.8.1</span>显式Euler与辛Euler的不同结构 <a class="ms-demo" href="../../../modules/18-phase-space/index.html?scene=integrator">✦ 交互模拟：辛积分器比较 ↗</a></h3>
 <p>取无量纲谐振子 <span class="math inline">\(H=(q^2+p^2)/2\)</span>，步长 <span class="math inline">\(h\)</span> 固定。显式Euler为 <span class="math display">\[q_{n+1}=q_n+hp_n,\quad p_{n+1}=p_n-hq_n,
 \quad A_E=\begin{pmatrix}1&amp;h\\-h&amp;1\end{pmatrix}.\]</span> 它满足 <span class="math inline">\(H_{n+1}=(1+h^2)H_n\)</span>、<span class="math inline">\(\det A_E=1+h^2\)</span>，任意非零步长都会产生非物理的面积和能量增长。</p>
 <p>先踢动量、后漂移位置的辛Euler为 <span class="math display">\[p_{n+1}=p_n-hq_n,\quad q_{n+1}=q_n+hp_{n+1},\quad

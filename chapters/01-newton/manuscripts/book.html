@@ -148,7 +148,7 @@ window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$
 <p>速度是“位置对时间的变化率”，加速度是“速度对时间的变化率”。二者都是矢量，但方向一般不同：匀速圆周运动的加速度指向圆心，而速度沿切线；一般曲线运动中，加速度总可以分解为切向分量（改变速率）与法向分量（改变速度方向）。</p>
 </div>
 <p>同一运动在不同坐标系中有不同的分量形式。选择坐标系的原则是：让约束和对称性尽可能简单。</p>
-<h3 id="直角坐标与平面极坐标"><span class="ms-secno">1.1.3</span>直角坐标与平面极坐标</h3>
+<h3 id="直角坐标与平面极坐标"><span class="ms-secno">1.1.3</span>直角坐标与平面极坐标 <a class="ms-demo" href="../../../modules/08-kinematics/index.html?mode=cylinder">✦ 交互模拟：圆柱脱离与运动学 ↗</a> <a class="ms-demo" href="../../../modules/32-two-link-jacobian/index.html">✦ 交互模拟：二连杆雅可比与奇异位形 ↗</a></h3>
 <p>在直角坐标系中，基矢量 <span class="math inline">\(\hat{\mathbf{\imath}},\hat{\mathbf{\jmath}},\hat{\mathbf{k}}\)</span> 不随时间变化，因此 <span class="math display">\[\mathbf{v}=\dot x\hat{\mathbf{\imath}}+\dot y\hat{\mathbf{\jmath}}+\dot z\hat{\mathbf{k}},\qquad
 \mathbf{a}=\ddot x\hat{\mathbf{\imath}}+\ddot y\hat{\mathbf{\jmath}}+\ddot z\hat{\mathbf{k}}.
 \tag{1.10}\]</span> 这是最简单的情形：对分量分别求导即可。</p>
@@ -536,7 +536,7 @@ z=a\cos\theta,\]</span> 其中 <span class="math inline">\(\theta\)</span> 从 <
 \tag{1.80}\]</span> 由式 (1.75)，内力和为零，于是 <span class="math display">\[M\ddot{\mathbf{R}}=\sum_i\mathbf{F}_i^{(e)}=\mathbf{F}^{(e)}.
 
 \tag{1.81}\]</span> 这就是<strong>质心运动定理</strong>：质心像一个质量为 <span class="math inline">\(M\)</span>、受全部外力矢量和作用的质点。烟花爆炸、航天器分离时，只要外力变化不大，系统质心的轨迹就与爆炸前相同；内部碎片如何飞散不影响质心运动。</p>
-<h3 id="质点系动量定理与动量守恒"><span class="ms-secno">1.5.2</span>质点系动量定理与动量守恒</h3>
+<h3 id="质点系动量定理与动量守恒"><span class="ms-secno">1.5.2</span>质点系动量定理与动量守恒 <a class="ms-demo" href="../../../modules/31-rocket-massflow/index.html">✦ 交互模拟：火箭方程与质量流 ↗</a></h3>
 <p>由质心定义，系统的总动量为 <span class="math display">\[\mathbf{P}=\sum_i m_i\dot{\mathbf{r}}_i
 =\frac{\mathrm{d}}{\mathrm{d}t}\sum_i m_i\mathbf{r}_i
 =M\dot{\mathbf{R}}.
@@ -614,7 +614,7 @@ T&#39;=\sum_i\frac12 m_i v_i&#39;^2 .
 \tag{1.102}\]</span> 其中 <span class="math inline">\(V_i^{(e)}\)</span> 是外势能，<span class="math inline">\(V_{ij}\)</span> 是第 <span class="math inline">\(i,j\)</span> 个质点间的相互作用势能。由保守力做功与势能的关系 <span class="math inline">\(\mathrm{d}W=-\mathrm{d}V\)</span>，结合式 (1.100) 得 <span class="math display">\[\mathrm{d}(T+V)=0,
 \tag{1.103}\]</span> 即 <span class="math display">\[E=T+V=\text{常量}.
 \tag{1.104}\]</span> 这就是质点系的<strong>机械能守恒定律</strong>。</p>
-<h3 id="两体问题与约化质量"><span class="ms-secno">1.5.5</span>两体问题与约化质量</h3>
+<h3 id="两体问题与约化质量"><span class="ms-secno">1.5.5</span>两体问题与约化质量 <a class="ms-demo" href="../../../modules/03-two-body/index.html">✦ 交互模拟：两体问题与系外行星 ↗</a></h3>
 <p>考虑两个质点 <span class="math inline">\(m_1,m_2\)</span>，只受彼此的内力作用。由牛顿第二定律， <span class="math display">\[m_1\ddot{\mathbf{r}}_1=\mathbf{F}_{12},\qquad
 m_2\ddot{\mathbf{r}}_2=\mathbf{F}_{21},\qquad
 \mathbf{F}_{21}=-\mathbf{F}_{12}.
@@ -661,7 +661,7 @@ V=-\frac{m}{M+m}u.\]</span> 质心不受额外外力，继续沿原轨道运动�
 <div class="example">
 <p><strong>例 1.21</strong> (地月系统的质心).  <em>地球质量 <span class="math inline">\(M_E\approx5.97\times10^{24}\,\mathrm{kg}\)</span>，月球质量 <span class="math inline">\(M_m\approx7.35\times10^{22}\,\mathrm{kg}\)</span>，地月距离 <span class="math inline">\(d\approx3.84\times10^8\,\mathrm{m}\)</span>。约化质量为 <span class="math display">\[\mu=\frac{M_EM_m}{M_E+M_m}\approx7.25\times10^{22}\,\mathrm{kg}.\]</span> 质心到地心的距离为 <span class="math display">\[d_E=\frac{M_m}{M_E+M_m}d\approx4.67\times10^6\,\mathrm{m},\]</span> 小于地球平均半径（约 <span class="math inline">\(6.37\times10^6\,\mathrm{m}\)</span>），所以地月质心位于地球内部。严格说，地球和月球都绕这个共同质心运动；把月球看作绕静止地球只是近似。</em></p>
 </div>
-<h3 id="碰撞质心系为什么能简化计算"><span class="ms-secno">1.5.6</span>碰撞：质心系为什么能简化计算？</h3>
+<h3 id="碰撞质心系为什么能简化计算"><span class="ms-secno">1.5.6</span>碰撞：质心系为什么能简化计算？ <a class="ms-demo" href="../../../modules/06-collisions/index.html">✦ 交互模拟：碰撞与变质量 ↗</a></h3>
 <p>碰撞时间很短，若外力冲量相对接触冲量可忽略，则总动量在碰撞前后近似守恒。不应把这一近似写成“碰撞时外力一定为零”。考虑一维正碰，初速度为 <span class="math inline">\(u_1,u_2\)</span>，末速度为 <span class="math inline">\(v_1,v_2\)</span>，取 <span class="math inline">\(u_1-u_2&gt;0\)</span> 表示接近。质心速度 <span class="math display">\[V_G=\frac{m_1u_1+m_2u_2}{m_1+m_2}
 =\frac{m_1v_1+m_2v_2}{m_1+m_2}\]</span> 在碰撞中不变。用恢复系数描述分离相对速度： <span class="math display">\[v_1-v_2=-e(u_1-u_2),\qquad 0\le e\le1.\]</span> 令 <span class="math inline">\(w=u_1-u_2\)</span>，解动量及相对速度两式可得 <span class="math display">\[\begin{aligned}
 v_1&amp;=V_G-\frac{m_2}{m_1+m_2}ew,\\
@@ -679,7 +679,7 @@ v_2=\frac{2m}{m+M}u.\]</span> 若 <span class="math inline">\(m=M\)</span>，二
 <img src="figs/ch01-fig21.svg" style="width:86.0%" />
 <figcaption>质心系中的一维弹性碰撞。箭头表示动量，各物体速度还须分别除以自身质量；两物体的动量相消，但动能不为零。</figcaption>
 </figure>
-<h3 id="位力定理"><span class="ms-secno">1.5.7</span>位力定理</h3>
+<h3 id="位力定理"><span class="ms-secno">1.5.7</span>位力定理 <a class="ms-demo" href="../../../modules/36-virial-power-law/index.html">✦ 交互模拟：位力定理与幂次势 ↗</a></h3>
 <p>定义位力 <span class="math display">\[G=\sum_i\mathbf{p}_i\cdot\mathbf{r}_i .
 \tag{1.114}\]</span> 利用 <span class="math inline">\(\dot{\mathbf{p}}_i=\mathbf{F}_i\)</span> 和 <span class="math inline">\(\mathbf{p}_i=m_i\dot{\mathbf{r}}_i\)</span>，对时间求导： <span class="math display">\[\dot G=\sum_i\dot{\mathbf{p}}_i\cdot\mathbf{r}_i+\sum_i\mathbf{p}_i\cdot\dot{\mathbf{r}}_i
 =\sum_i\mathbf{F}_i\cdot\mathbf{r}_i+2T .
@@ -759,7 +759,7 @@ v_2=\frac{2m}{m+M}u.\]</span> 若 <span class="math inline">\(m=M\)</span>，二
 <img src="figs/ch01-fig23.svg" style="width:86.0%" />
 <figcaption>明确取 <span class="math inline">\(\mathbf{\omega}\)</span> 垂直纸面向外。(b) 粒子位于 <span class="math inline">\(+x&#39;\)</span> 轴且相对速度沿 <span class="math inline">\(+y&#39;\)</span>，于是 <span class="math inline">\(-2m\mathbf{\omega}\times\mathbf{v}&#39;\)</span> 和离心力都沿 <span class="math inline">\(+x&#39;\)</span>；离心力箭头为便于辨认平移绘出。</figcaption>
 </figure>
-<h3 id="地球自转效应"><span class="ms-secno">1.6.4</span>地球自转效应</h3>
+<h3 id="地球自转效应"><span class="ms-secno">1.6.4</span>地球自转效应 <a class="ms-demo" href="../../../modules/14-foucault-rose/index.html">✦ 交互模拟：傅科摆与玫瑰线 ↗</a></h3>
 <p>在地球表面，取随地球转动的参考系。地球自转角速度记为 <span class="math inline">\(\omega\)</span>。把 <span class="math inline">\(\mathbf{\omega}\)</span> 分解为当地竖直分量和水平分量： <span class="math display">\[\mathbf{\omega}=\omega\left(\cos\lambda\,\hat{\mathbf{\jmath}}_{\rm north}
 +\sin\lambda\,\hat{\mathbf{k}}_{\rm up}\right),
 \tag{1.128}\]</span> 其中 <span class="math inline">\(\lambda\)</span> 为地理纬度。科里奥利力 <span class="math display">\[\mathbf{F}_C=-2m\mathbf{\omega}\times\mathbf{v}&#39;
@@ -800,7 +800,7 @@ T(r)-T_t
 </div>
 <h2 id="有心力"><span class="ms-secno">1.7</span>有心力</h2>
 <p>有心力是质点力学中最重要的一类力：行星绕日、电子绕核、散射实验都归结为有心力问题。由于力始终指向或背离一个固定点，角动量守恒，运动被限制在一个平面内；再结合能量守恒，就可以把二维问题化为一维的径向问题。本节从这些基本性质出发，导出比内公式、开普勒定律、有效势能、轨道稳定性、伯特兰定理、散射截面和潮汐力。</p>
-<h3 id="有心力的基本性质与比内公式"><span class="ms-secno">1.7.1</span>有心力的基本性质与比内公式</h3>
+<h3 id="有心力的基本性质与比内公式"><span class="ms-secno">1.7.1</span>有心力的基本性质与比内公式 <a class="ms-demo" href="../../../modules/00-binet/index.html">✦ 交互模拟：比奈方程 ↗</a></h3>
 <p>若力始终指向或背离某一固定点，且大小只与到该点的距离有关， <span class="math display">\[\mathbf{F}=F(r)\hat{\mathbf{e}}_r,
 
 \tag{1.134}\]</span> 则称为<strong>有心力</strong>。取力心为原点，则 <span class="math display">\[\mathbf{M}=\mathbf{r}\times\mathbf{F}=F(r)\,\mathbf{r}\times\hat{\mathbf{e}}_r=0,
@@ -876,7 +876,7 @@ T^2=\frac{4\pi^2a^3}{GM}.\]</span> 这个推导先把力心视为固定。对真
 <img src="figs/ch01-fig30.svg" style="width:86.0%" />
 <figcaption>两块区域由椭圆弧和焦点连线围成。取 <span class="math inline">\(a=2,b=1.6,e=0.6\)</span>，偏近点角区间按相等的 <span class="math inline">\(\Delta(E-e\sin E)\)</span> 计算，从而表示相等时间与相等扫掠面积，不能以任意直线三角形替代扇形。</figcaption>
 </figure>
-<h3 id="有效势能轨道分类与稳定性"><span class="ms-secno">1.7.3</span>有效势能、轨道分类与稳定性</h3>
+<h3 id="有效势能轨道分类与稳定性"><span class="ms-secno">1.7.3</span>有效势能、轨道分类与稳定性 <a class="ms-demo" href="../../../modules/01-effective-potential/index.html">✦ 交互模拟：有效势与轨道稳定性 ↗</a></h3>
 <p>由式 (1.139)，径向运动等价于一维问题： <span class="math display">\[\frac12m\dot r^2+V_{\rm eff}(r)=E.
 \tag{1.151}\]</span> 圆轨道满足 <span class="math display">\[V_{\rm eff}&#39;(r_0)=0
 \quad\Longleftrightarrow\quad
@@ -940,7 +940,7 @@ w=w_0(1+d\epsilon^2+\cdots).\]</span> 二阶常数项及倍频项给出 <span cl
 \frac{|J|\,\mathrm{d}r}{r^2\sqrt{2m[E-V(r)]-J^2/r^2}}.
 \tag{1.161}\]</span> 这里从近心到远心只积分一次；再乘2才是一个完整径向周期的转角。进一步阅读可用本章参考的中心力讲义，并在第六章用作用变量重新讨论周期。</p>
 </div>
-<h3 id="散射截面与卢瑟福散射"><span class="ms-secno">1.7.5</span>散射截面与卢瑟福散射</h3>
+<h3 id="散射截面与卢瑟福散射"><span class="ms-secno">1.7.5</span>散射截面与卢瑟福散射 <a class="ms-demo" href="../../../modules/02-scattering/index.html">✦ 交互模拟：散射与俘获 ↗</a></h3>
 <p>考虑质量为 <span class="math inline">\(m\)</span> 的粒子以初速 <span class="math inline">\(v_0\)</span>、瞄准距 <span class="math inline">\(b\)</span> 射向力心。角动量和能量为 <span class="math display">\[J=mv_0b,\qquad E=\frac12mv_0^2 .
 \tag{1.162}\]</span> 粒子在有心力场中偏转，出射方向与入射方向的夹角 <span class="math inline">\(\Theta\)</span> 称为<strong>散射角</strong>。所有瞄准距在 <span class="math inline">\(b\sim b+\mathrm{d}b\)</span> 内的粒子，被散射到 <span class="math inline">\(\Theta\sim\Theta+\mathrm{d}\Theta\)</span> 的立体角内。在轴对称、每个散射角只对应一个瞄准距的分支上，入射环带面积为 <span class="math inline">\(\mathrm{d}\sigma=2\pi b|\mathrm{d}b|\)</span>，出射角环的立体角为 <span class="math inline">\(\mathrm{d}\Omega=2\pi\sin\Theta|\mathrm{d}\Theta|\)</span>。两者相除，定义<strong>微分散射截面</strong> <span class="math display">\[\frac{\mathrm{d}\sigma}{\mathrm{d}\Omega}=\frac{b}{\sin\Theta}\left|\frac{\mathrm{d}b}{\mathrm{d}\Theta}\right|,
 
@@ -1000,7 +1000,7 @@ e^2=1+\frac{2EJ^2}{mk^2}.\]</span> 无穷远的渐近角满足 <span class="math
 <div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
 <p>在广义相对论中，潮汐力对应时空曲率引起的<em>测地线偏离</em>。等效原理只能在一个自由落体参考系的局部邻域内消去引力加速度，但无法消去潮汐力；因此潮汐力是“引力的不可消除部分”，也是探测引力波的基本原理：引力波通过时，空间中的自由检验质量会发生差分振荡。</p>
 </div>
-<h3 id="拉格朗日点与限制性三体问题"><span class="ms-secno">1.7.7</span>拉格朗日点与限制性三体问题</h3>
+<h3 id="拉格朗日点与限制性三体问题"><span class="ms-secno">1.7.7</span>拉格朗日点与限制性三体问题 <a class="ms-demo" href="../../../modules/15-lagrange-points/index.html">✦ 交互模拟：拉格朗日点 ↗</a></h3>
 <p>拉格朗日点是限制性三体问题中最著名的结果。设两个大质量天体 <span class="math inline">\(M_1,M_2\)</span> 绕共同质心作圆轨道，间距为 <span class="math inline">\(a\)</span>，角速度为 <span class="math inline">\(\Omega\)</span>，满足 <span class="math display">\[\Omega^2=\frac{G(M_1+M_2)}{a^3}.
 \tag{1.172}\]</span> 第三个物体质量 <span class="math inline">\(m\ll M_1,M_2\)</span>，它对两个大天体的引力影响可以忽略，但仍在它们的引力场中运动。这就是<strong>限制性三体问题</strong>。</p>
 <p>取随两个大天体一起转动的参考系，令 <span class="math inline">\(M_1\)</span> 位于 <span class="math inline">\(x=0\)</span>，<span class="math inline">\(M_2\)</span> 位于 <span class="math inline">\(x=a\)</span>。总质量 <span class="math inline">\(M=M_1+M_2\)</span>，质心位于 <span class="math inline">\(x=a\mu\)</span>，其中 <span class="math display">\[\mu=\frac{M_2}{M_1+M_2}.

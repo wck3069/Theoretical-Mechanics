@@ -52,7 +52,7 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 </head>
 <body>
 <div class="app"><div class="stage"><canvas id="cv"></canvas>
-<div class="brand"><h1>M33 · 圆柱沿斜面纯滚动</h1><p>平动与转动由静摩擦耦合；纯滚动要求 μ ≥ k tanα/(1+k)，k = I/(mR²)。</p><p class="intro">第一步：把 μ 降到 0.1，看状态怎样从纯滚动切成滑动；再比较实心圆柱与薄圆环。</p></div>
+<div class="brand"><h1>圆柱沿斜面纯滚动</h1><p>平动与转动由静摩擦耦合；纯滚动要求 μ ≥ k tanα/(1+k)，k = I/(mR²)。</p><p class="intro">第一步：把 μ 降到 0.1，看状态怎样从纯滚动切成滑动；再比较实心圆柱与薄圆环。</p></div>
 <div class="hud"><span>a <b id="acc">0</b> m/s²</span><span>所需 μ <b id="need">0</b></span><span>状态 <b id="state">纯滚动</b></span></div>
 </div><aside class="panel">
 <div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="" disabled>▣ M33 圆柱沿斜面纯滚动（当前）</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
@@ -64,8 +64,8 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 <div class="group"><div class="row"><label>静摩擦系数 μ</label><span class="val" id="muv">0.60</span></div><input id="mu" type="range" min="0" max="1" step="0.05" value="0.6">
 <div class="hint">静摩擦提供转动所需力矩；判据等价于 k·tanα > (1+k)μ。滑动后按 μ_k=μ_s 处理，接触点滑移速度 v_P=v−ωR 在图中标出。蓝色纯滚，红色打滑。</div></div>
 <div class="btns"><button class="primary" id="play">开始滚动</button><button id="reset">重置</button><button class="full" id="p1">实心圆柱纯滚 (20°,μ=.6)</button><button class="full" id="p2">薄环打滑 (30°,μ=.25)</button><button class="full" id="p3">临界纯滚 (μ≈μ_min)</button><button class="full" id="p4">光滑滑块 k=0</button></div>
-<p class="hint">圆环 k=1、实心圆柱 k=1/2、实心球 k=2/5；k 越小同角度下加速越快。若摩擦不足则变为滑动+转动。出处：书稿 ch05.tex:990。</p>
-<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">刚体平面运动 · g=9.81 m/s² · 纯滚动判据来自静摩擦上限 · 出处：书稿 ch05.tex:990</div></aside></div>
+<p class="hint">圆环 k=1、实心圆柱 k=1/2、实心球 k=2/5；k 越小同角度下加速越快。若摩擦不足则变为滑动+转动。对应书稿：第 5 章 刚体力学。</p>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">刚体平面运动 · g=9.81 m/s² · 纯滚动判据来自静摩擦上限 · 对应书稿：第 5 章 刚体力学</div></aside></div>
 <div id="selftestPanel" class="selftest" hidden></div>
 <script>
 window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
@@ -79,7 +79,7 @@ function shell(c,w,h,seed){
 }
 
  const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),alpha=document.getElementById('alpha'),k=document.getElementById('k'),mu=document.getElementById('mu');
- let s=0,om=0,playing=false,v=0,last=0,trail=[];
+ let s=0,ang=0,omega=0,playing=false,v=0,last=0,trail=[];
  function resize(){const b=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);resize();
  function phys(){const a=alpha.value*Math.PI/180,kk=Number(k.value),need=kk*Math.tan(a)/(1+kk),ok=Number(mu.value)>=need;
   const acc=ok?9.81*Math.sin(a)/(1+kk):9.81*(Math.sin(a)-Number(mu.value)*Math.cos(a));return {a,kk,need,ok,acc}}
@@ -90,15 +90,15 @@ function shell(c,w,h,seed){
   const x0=cx-L*Math.cos(P.a),y0=cy-L*Math.sin(P.a),x1=cx+L*Math.cos(P.a),y1=cy+L*Math.sin(P.a);
   ctx.save();ctx.shadowColor='rgba(127,224,255,.45)';ctx.shadowBlur=10;ctx.strokeStyle='rgba(170,205,255,.72)';ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();ctx.restore();
   ctx.strokeStyle='rgba(170,205,255,.48)';ctx.lineWidth=1;for(let i=0;i<7;i++){const x=x0+i/6*(x1-x0),y=y0+i/6*(y1-y0);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+18);ctx.stroke()}
-  const px=x0+(s*20+40)*Math.cos(P.a),py=y0+(s*20+40)*Math.sin(P.a)-R/Math.cos(P.a);
+  const px=x0+(s*20+40)*Math.cos(P.a)+R*Math.sin(P.a),py=y0+(s*20+40)*Math.sin(P.a)-R*Math.cos(P.a);
   ctx.save();ctx.translate(px,py);ctx.rotate(-P.a);
   const g=ctx.createRadialGradient(-R*.3,-R*.3,1,0,0,R);g.addColorStop(0,'#d8e9ff');g.addColorStop(1,'#4a6aa0');ctx.fillStyle=g;
   ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle=P.ok?'#7fe0ff':'#ff9c8a';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.stroke();
-  ctx.rotate(om);ctx.strokeStyle='rgba(5,9,20,.6)';ctx.lineWidth=3;
+  ctx.rotate(ang);ctx.strokeStyle='rgba(5,9,20,.6)';ctx.lineWidth=3;
   for(let sp=0;sp<3;sp++){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(R*.85*Math.cos(sp*2.094),R*.85*Math.sin(sp*2.094));ctx.stroke()}
   ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(R*.85,0,3.4,0,Math.PI*2);ctx.fill();ctx.restore();
-  const rmx=px+R*.85*Math.cos(om-P.a),rmy=py+R*.85*Math.sin(om-P.a);
+  const rmx=px+R*.85*Math.cos(ang-P.a),rmy=py+R*.85*Math.sin(ang-P.a);
   if(playing){trail.push([rmx,rmy]);if(trail.length>360)trail.shift()}
   if(trail.length>2){ctx.strokeStyle='rgba(255,210,122,.5)';ctx.lineWidth=1.2;ctx.beginPath();trail.forEach((q,i)=>{i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])});ctx.stroke()}
   function vec(dx,dy,col,lab){ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+dx,py+dy);ctx.stroke();ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(px+dx,py+dy);ctx.lineTo(px+dx-dy*0.08-dx*0.08,py+dy+dx*0.08-dy*0.08);ctx.lineTo(px+dx+dy*0.08-dx*0.08,py+dy-dx*0.08+dy*0.08);ctx.closePath();ctx.fill();ctx.textAlign='left';ctx.fillText(lab,px+dx+4,py+dy-2)}
@@ -106,20 +106,20 @@ function shell(c,w,h,seed){
   vec(0,Fs,'rgba(220,230,255,.8)','mg');
   vec(Fs*Nc*Math.sin(P.a),-Fs*Nc*Math.cos(P.a),'rgba(140,255,190,.8)','N');
   vec(-Fs*ff*Math.cos(P.a),-Fs*ff*Math.sin(P.a),'rgba(255,170,120,.9)','f'+(P.ok?'(静)':'(=μN)'));
-  const Rm=R/20,vP=v-om*Rm;
+  const Rm=R/20,vP=P.ok?0:(v-omega*Rm);
   ctx.fillStyle=P.ok?'#8d9cc4':'#ff9c8a';ctx.textAlign='left';ctx.font='12px ui-monospace,monospace';
   ctx.fillText(P.ok?'接触点静止：v_P = v−ωR = 0':'滑移 v_P = v−ωR = '+vP.toFixed(2)+' m/s，β = μg·cosα/(kR) = '+(9.81*Number(mu.value)*Math.cos(P.a)/(Math.max(P.kk,.01)*Rm)).toFixed(2)+' rad/s²',w*.04,h*.93);
   document.getElementById('acc').textContent=P.acc.toFixed(2);document.getElementById('need').textContent=P.need.toFixed(2);
   const st=document.getElementById('state');st.textContent=P.kk<0.01?'无摩擦平动（不滚）':(P.ok?'纯滚动':'滑动+转动');st.className=P.ok?'':'warn';
   document.getElementById('av').textContent=alpha.value+'°';document.getElementById('kv').textContent=Number(k.value).toFixed(2);document.getElementById('muv').textContent=Number(mu.value).toFixed(2);
   if(playing){const dt=Math.min(0.04,(t-last)/1000);last=t;const Rm2=R/20;v+=P.acc*dt;s+=v*dt;
-   if(P.kk>0.01)om+=(P.ok?v/Rm2:(9.81*Number(mu.value)*Math.cos(P.a)/(P.kk*Rm2)))*dt;
-   if(s>6){s=0;v=0;om=0;trail=[]}}
+   if(P.kk>0.01){if(P.ok){omega=v/Rm2;}else{omega+=(9.81*Number(mu.value)*Math.cos(P.a)/(P.kk*Rm2))*dt;}ang+=omega*dt;}
+   if(s>6){s=0;v=0;ang=0;omega=0;trail=[]}}
   requestAnimationFrame(draw)
  }
  document.getElementById('play').addEventListener('click',()=>{playing=!playing;last=performance.now()});
- document.getElementById('reset').addEventListener('click',()=>{playing=false;s=0;v=0;om=0;trail=[]});
- function go(al,kk,mm){alpha.value=al;k.value=kk;mu.value=mm;s=0;v=0;om=0;trail=[];playing=true;last=performance.now()}
+ document.getElementById('reset').addEventListener('click',()=>{playing=false;s=0;v=0;ang=0;omega=0;trail=[]});
+ function go(al,kk,mm){alpha.value=al;k.value=kk;mu.value=mm;s=0;v=0;ang=0;omega=0;trail=[];playing=true;last=performance.now()}
  document.getElementById('p1').onclick=function(){go(20,.5,.6)};document.getElementById('p2').onclick=function(){go(30,1,.25)};document.getElementById('p3').onclick=function(){go(30,.5,.2)};document.getElementById('p4').onclick=function(){go(30,0,0)};
  requestAnimationFrame(draw)
 

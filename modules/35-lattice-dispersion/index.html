@@ -52,7 +52,7 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 </head>
 <body>
 <div class="app"><div class="stage"><canvas id="cv"></canvas>
-<div class="brand"><h1>M35 · 周期链色散与群速度</h1><p>整条布里渊区 ω(k)=2√(K/m)|sin(ka/2)|：割线斜率是相速度 v_p，切线斜率是群速度 v_g（带符号，负 q 左行）。</p><p class="intro">第一步：把 q 拉到 0.98，看波包几乎停住（v_g→0，驻波）；第二步：回到 q=0.1，割线与虚线声速渐近线几乎重合。</p></div>
+<div class="brand"><h1>周期链色散与群速度</h1><p>整条布里渊区 ω(k)=2√(K/m)|sin(ka/2)|：割线斜率是相速度 v_p，切线斜率是群速度 v_g（带符号，负 q 左行）。</p><p class="intro">第一步：把 q 拉到 0.98，看波包几乎停住（v_g→0，驻波）；第二步：回到 q=0.1，割线与虚线声速渐近线几乎重合。</p></div>
 <div class="hud"><span>ω <b id="om">0</b></span><span>v_g（含符号）<b id="vg">0</b></span><span>λ/a <b id="lam">0</b></span></div>
 </div><aside class="panel">
 <div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="" disabled>▣ M35 周期链色散与群速度（当前）</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
@@ -62,8 +62,8 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 <div class="group"><div class="row"><label>波数 q = ka/π</label><span class="val" id="qv">0.25</span></div><input id="q" type="range" min="-0.98" max="0.98" step="0.01" value="0.25">
 <div class="hint">q→0 时 ω→c_s·k（虚线渐近线，c_s=πa√(K/m)…按 q 归一），v_g 取正号；q→±1 到区界，v_g→0，波包停住成驻波。</div></div>
 <div class="btns"><button class="primary" id="play">暂停/继续波包</button><button id="reset">重置</button><button class="full" id="p1">长波 q=0.1, K=1</button><button class="full" id="p2">一般 q=0.5, K=1</button><button class="full" id="p3">区界 q→1</button><button class="full" id="p4">硬弹簧 q=0.5, K=3</button></div>
-<p class="hint">横波显示（位移垂直于链），振幅取 A≤0.25a 的小振动域；波包为高斯（σ=8 格点）以 v_g 平移、周期回绕。ω(k) 图含 −π/a..π/a 全区与折叠。出处：书稿 ch04.tex:698、751。</p>
-<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">一维单原子链 · a=1 · 横波 · A≤0.25a · 出处：书稿 ch04.tex:698、751</div></aside></div>
+<p class="hint">横波显示（位移垂直于链），振幅取 A≤0.25a 的小振动域；波包为高斯（σ=8 格点）以 v_g 平移、周期回绕。ω(k) 图含 −π/a..π/a 全区与折叠。对应书稿：第 4 章 小振动。</p>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">一维单原子链 · a=1 · 横波 · A≤0.25a · 对应书稿：第 4 章 小振动</div></aside></div>
 <div id="selftestPanel" class="selftest" hidden></div>
 <script>
 window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});

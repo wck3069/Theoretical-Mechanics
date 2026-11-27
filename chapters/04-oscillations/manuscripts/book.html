@@ -133,7 +133,7 @@ e^{-\gamma t}(A\cos\omega_dt+B\sin\omega_dt),&amp;0\le\gamma&lt;\omega_0,\\
 A e^{s_+t}+B e^{s_-t},&amp;\gamma&gt;\omega_0,
 \end{cases}\quad \omega_d=\sqrt{\omega_0^2-\gamma^2}.\]</span> 临界阻尼是实特征根转为复特征根的边界；对给定惯性和刚度，它的渐近衰减指数优于过阻尼慢支。是否越过平衡、首次回零或进入误差带的时间，仍依赖初值，不能把它一概称为“任何初值下最快返回”。</p>
 <p>对这个黏性模型定义品质因数 <span class="math inline">\(Q=\omega_0/(2\gamma)\)</span>。弱阻尼时，每个近似周期 <span class="math inline">\(2\pi/\omega_0\)</span> 的能量损失为 <span class="math inline">\(\Delta E\simeq(4\pi\gamma/\omega_0)E\)</span>，所以 <span class="math inline">\(Q\simeq2\pi E/\Delta E\)</span>；这里不是 <span class="math inline">\(E/\Delta E\)</span>，而且单周期近似要求 <span class="math inline">\(Q\gg1\)</span>。</p>
-<h3 id="稳态相位和平均吸收功率"><span class="ms-secno">4.2.3</span>稳态、相位和平均吸收功率</h3>
+<h3 id="稳态相位和平均吸收功率"><span class="ms-secno">4.2.3</span>稳态、相位和平均吸收功率 <a class="ms-demo" href="../../../modules/20-forced-resonance/index.html">✦ 交互模拟：受迫振动与共振 ↗</a></h3>
 <p>对 <span class="math inline">\(F_0\cos\omega t\)</span>，<span class="math inline">\(\omega&gt;0,\gamma&gt;0\)</span>，复振幅法给出 <span class="math display">\[\begin{aligned}
 q_{\rm st}(t)&amp;=\operatorname{Re}[Xe^{i\omega t}]=A\cos(\omega t-\delta),\\
 X&amp;=\frac{F_0/m}{\omega_0^2-\omega^2+2i\gamma\omega},\quad
@@ -207,7 +207,7 @@ T_2=\frac12\sum_r(a_r^{\mathsf T}Ma_r)\dot c_r^2.\]</span> 这与质量归一化
 <p>若二次拉格朗日量含 <span class="math inline">\(\dot\eta^{\mathsf T}A\eta\)</span>，常矩阵 <span class="math inline">\(A\)</span> 的对称部分是全导数，反对称部分却给出 <span class="math display">\[M\ddot\eta+(A-A^{\mathsf T})\dot\eta+K\eta=0.\]</span> 其频率方程为 <span class="math inline">\(\det[K-\omega^2M+i\omega(A-A^{\mathsf T})]=0\)</span>。例如旋转参考系中的科里奥利项属于此类，不能只查 <span class="math inline">\(K\)</span> 的符号就套用前文判据。理解这一拓展需要第三章的速度耦合及复线性代数；本章核心仍限于无此项的自然系统。</p>
 </div>
 <h2 id="耦合振动的典型模型"><span class="ms-secno">4.4</span>耦合振动的典型模型</h2>
-<h3 id="双振子耦合摆与拍"><span class="ms-secno">4.4.1</span>双振子、耦合摆与拍</h3>
+<h3 id="双振子耦合摆与拍"><span class="ms-secno">4.4.1</span>双振子、耦合摆与拍 <a class="ms-demo" href="../../../modules/10-coupled-systems/index.html?scene=wedge">✦ 交互模拟：斜面上的滑块 ↗</a> <a class="ms-demo" href="../../../modules/10-coupled-systems/index.html?scene=spring">✦ 交互模拟：弹簧摆 ↗</a></h3>
 <div class="example">
 <p><strong>例 1.4</strong> (交叉项的符号决定哪个振型频率低).  <em>设两个长度坐标的二次拉格朗日量为 <span class="math display">\[L_2=\frac m2(\dot x^2+\dot y^2)
 -\frac{m\omega_0^2}{2}(x^2+y^2)+m\kappa xy,
@@ -240,7 +240,7 @@ K=\begin{pmatrix}mgl+kl^2&amp;-kl^2\\-kl^2&amp;mgl+kl^2\end{pmatrix}.\]</span> �
 <img src="figs/ch04-fig4.svg" style="width:86.0%" />
 <figcaption>耦合摆的拍：蓝线严格取正文的线性叠加解，红虚线为其有符号包络的正负两支。包络消失并不代表两个简正模的能量消失。</figcaption>
 </figure>
-<h3 id="不等质量与双摆"><span class="ms-secno">4.4.2</span>不等质量与双摆</h3>
+<h3 id="不等质量与双摆"><span class="ms-secno">4.4.2</span>不等质量与双摆 <a class="ms-demo" href="../../../modules/10-coupled-systems/index.html?scene=cart">✦ 交互模拟：小车与单摆 ↗</a> <a class="ms-demo" href="../../../modules/08-kinematics/index.html?mode=double">✦ 交互模拟：双摆混沌 ↗</a></h3>
 <div class="example">
 <p><strong>例 1.7</strong> (欧氏不正交，质量内积仍正交).  <em>两质点质量为 <span class="math inline">\(m,2m\)</span>，左端与墙连接劲度 <span class="math inline">\(k\)</span> 的弹簧，两质点间连接劲度 <span class="math inline">\(2k\)</span> 的弹簧，第二质点与右墙也连接劲度 <span class="math inline">\(2k\)</span> 的弹簧。沿直线的平衡位移为 <span class="math inline">\(x_1,x_2\)</span>，质量矩阵为 <span class="math inline">\(M=m\operatorname{diag}(1,2)\)</span>，刚度矩阵为 <span class="math display">\[K=k\begin{pmatrix}3&amp;-2\\-2&amp;4\end{pmatrix}.\]</span> 记 <span class="math inline">\(z=m\lambda/k\)</span>，久期式为 <span class="math display">\[(3-z)(4-2z)-4=2(z-1)(z-4)=0.\]</span> 故 <span class="math inline">\(\omega_1^2=k/m,\omega_2^2=4k/m\)</span>，未归一化振型为 <span class="math inline">\((1,1)\)</span> 与 <span class="math inline">\((2,-1)\)</span>。其普通点积为1，而 <span class="math display">\[(1,1)M(2,-1)^{\mathsf T}=0.\]</span> 质量归一化矩阵及投影为 <span class="math display">\[G=\left(\frac{(1,1)^{\mathsf T}}{\sqrt{3m}},
 \frac{(2,-1)^{\mathsf T}}{\sqrt{6m}}\right),\quad
@@ -262,7 +262,7 @@ K=mgl\begin{pmatrix}2&amp;0\\0&amp;1\end{pmatrix}.\]</span> 令 <span class="mat
 <img src="figs/ch04-fig5.svg" style="width:86.0%" />
 <figcaption>双摆两振型，取 <span class="math inline">\(\theta_1=8^\circ,\theta_2=\pm\sqrt2\theta_1\)</span> 画几何快照。红箭头表示质点横向位移的线性近似：第二球位移是 <span class="math inline">\(l(\theta_1+\theta_2)\)</span>，不只由第二杆角度决定。</figcaption>
 </figure>
-<h3 id="纵向三原子模型与零模"><span class="ms-secno">4.4.3</span>纵向三原子模型与零模</h3>
+<h3 id="纵向三原子模型与零模"><span class="ms-secno">4.4.3</span>纵向三原子模型与零模 <a class="ms-demo" href="../../../modules/38-three-atom-modes/index.html">✦ 交互模拟：三原子链简正模 ↗</a></h3>
 <div class="example">
 <p><strong>例 1.9</strong> (伸缩频率与质心分离).  <em>三个质点沿轴运动，质量为 <span class="math inline">\(m,\mu,m\)</span>，两条相同轻弹簧劲度为 <span class="math inline">\(k\)</span>，用 <span class="math inline">\(x_i\)</span> 表示相对平衡的轴向位移。模型只保留纵向自由度： <span class="math display">\[M=\operatorname{diag}(m,\mu,m),\quad
 V_2=\tfrac k2(x_2-x_1)^2+\tfrac k2(x_3-x_2)^2,\quad
@@ -306,7 +306,7 @@ D(\omega)&amp;=(k+\kappa-m\omega^2)(\kappa-\mu\omega^2)-\kappa^2.
 <figcaption>理想调谐吸振器。附加质量的运动产生补偿主驱动的弹簧力；主质量反共振频率与两自由度系统的本征频率不同。</figcaption>
 </figure>
 <h2 id="从有限链到长波连续极限"><span class="ms-secno">4.6</span>从有限链到长波连续极限</h2>
-<h3 id="周期边界色散与模态计数"><span class="ms-secno">4.6.1</span>周期边界、色散与模态计数</h3>
+<h3 id="周期边界色散与模态计数"><span class="ms-secno">4.6.1</span>周期边界、色散与模态计数 <a class="ms-demo" href="../../../modules/35-lattice-dispersion/index.html">✦ 交互模拟：周期链色散与群速度 ↗</a></h3>
 <p>把 <span class="math inline">\(N\ge3\)</span> 个质量为 <span class="math inline">\(m\)</span> 的质点放在一维周期单元中，相邻间隔为 <span class="math inline">\(a\)</span>，纵向位移为 <span class="math inline">\(u_n\)</span>，周期边界 <span class="math inline">\(u_{n+N}=u_n\)</span>。这里只把周期边界当作理想无限链的有限近似，不引入实际圆环弯曲的几何力。相邻弹簧劲度均为 <span class="math inline">\(k\)</span>，则 <span class="math display">\[m\ddot u_n=k(u_{n+1}+u_{n-1}-2u_n).
 
 \tag{4.18}\]</span> 试解 <span class="math inline">\(u_n=Ae^{i(pna-\omega t)}\)</span>，周期边界要求 <span class="math inline">\(p=2\pi j/(Na)\)</span>，<span class="math inline">\(j\)</span> 为整数。代入并消去公共因子，得到 <span class="math display">\[-m\omega^2=k(e^{ipa}+e^{-ipa}-2)=-4k\sin^2(pa/2),\]</span> 所以 <span class="math display">\[\omega(p)=2\sqrt{k/m}\,|\sin(pa/2)|.
@@ -337,7 +337,7 @@ c_s^2=\mathcal C/\rho.\]</span> 变分给出波动方程，同时边界项为 <s
 </div>
 <h2 id="进一步探索线性理论之外"><span class="ms-secno">4.7</span>进一步探索：线性理论之外</h2>
 <p>本节不把弱非线性结果混入前文的精确线性叠加。它回答两个问题：被略去的项首先改变什么？周期改变参数为何不同于施加外力？</p>
-<h3 id="幅频移动与组合频率"><span class="ms-secno">4.7.1</span>幅频移动与组合频率</h3>
+<h3 id="幅频移动与组合频率"><span class="ms-secno">4.7.1</span>幅频移动与组合频率 <a class="ms-demo" href="../../../modules/08-kinematics/index.html?mode=pendulum">✦ 交互模拟：单摆周期修正 ↗</a></h3>
 <div class="example">
 <p><strong>例 1.13</strong> (对称四次势能的首阶频移).  <em>取 <span class="math display">\[V(q)=\tfrac12m\omega_0^2q^2+\tfrac14\beta q^4,\qquad
 \ddot q+\omega_0^2q+\frac\beta m q^3=0.\]</span> <span class="math inline">\(\beta\)</span> 在势能和方程中的含义保持一致。令转折振幅为 <span class="math inline">\(A\)</span>，小参数为 <span class="math inline">\(|\beta|A^2/(m\omega_0^2)\ll1\)</span>。最低阶取 <span class="math inline">\(q=A\cos\omega t\)</span>，用 <span class="math inline">\(\cos^3z=(3\cos z+\cos3z)/4\)</span>，基频项系数为 <span class="math display">\[A\left[-\omega^2+\omega_0^2+\frac{3\beta A^2}{4m}\right].\]</span> 消除这一阶的基频残差，得到 <span class="math display">\[\omega=\omega_0+\frac{3\beta A^2}{8m\omega_0}

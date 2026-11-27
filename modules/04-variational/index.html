@@ -917,7 +917,7 @@ function setNotice(msg, bad){
   noticeEl.hidden = false; noticeEl.textContent = msg;
   noticeEl.className = bad ? 'notice bad' : 'notice';
 }
-var MODE_LABEL = {cycloid:'等时摆（摆线）', refraction:'折射', shortest:'最短路径'};
+var MODE_LABEL = {cycloid:'等时摆与摆线', refraction:'折射', shortest:'最短路径'};
 function updateHUD(){
   if (P.mode === 'cycloid') {
     var allDone = particles.length > 0 && particles.every(function(p){ return p.done; });

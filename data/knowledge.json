@@ -6,7 +6,7 @@
       "id": "M0",
       "slug": "00-binet",
       "milestone": "M0",
-      "title": "比奈方程（现有样板）",
+      "title": "比奈方程",
       "tags": [
         "中心力",
         "比奈方程",
@@ -923,7 +923,7 @@
       "id": "M8",
       "slug": "04-variational",
       "milestone": "M8",
-      "title": "等时摆（摆线）",
+      "title": "等时摆与摆线",
       "tags": [
         "变分",
         "摆线",

@@ -99,7 +99,7 @@ window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$
 <div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
 <p>比较路径是理论中的操作，不是光线预先知道终点。在短波长近似中，邻近光学路径的相位由光程决定；远离驻相区域的贡献容易相消。这个图像说明几何光学与波动光学的联系，但不能用一句“自然总在优化”代替对容许路径和适用极限的规定。</p>
 </div>
-<h3 id="折射定律先做一个普通极值问题"><span class="ms-secno">2.1.3</span>折射定律：先做一个普通极值问题</h3>
+<h3 id="折射定律先做一个普通极值问题"><span class="ms-secno">2.1.3</span>折射定律：先做一个普通极值问题 <a class="ms-demo" href="../../../modules/04-variational/index.html?mode=refraction">✦ 交互模拟：折射定律 ↗</a></h3>
 <div class="example">
 <p><strong>例 1.1</strong> (固定两端的平面折射).  <em>界面为 <span class="math inline">\(y=0\)</span>，<span class="math inline">\(A=(0,h_1)\)</span>、<span class="math inline">\(B=(d,-h_2)\)</span>，<span class="math inline">\(h_1,h_2,d&gt;0\)</span>，两侧均匀折射率为 <span class="math inline">\(n_1,n_2&gt;0\)</span>。先在各均匀介质中取直线段，令折射点 <span class="math inline">\(P=(\xi,0)\)</span>，则 <span class="math display">\[\mathcal L(\xi)=n_1\sqrt{\xi^2+h_1^2}+n_2\sqrt{(d-\xi)^2+h_2^2}.\]</span> 求导得到 <span class="math display">\[\mathcal L&#39;(\xi)=n_1\frac{\xi}{\sqrt{\xi^2+h_1^2}}
 -n_2\frac{d-\xi}{\sqrt{(d-\xi)^2+h_2^2}}.\]</span> 定义两侧光线与法线的夹角为 <span class="math inline">\(\theta_1,\theta_2\)</span>，驻值条件为 <span class="math display">\[\boxed{n_1\sin\theta_1=n_2\sin\theta_2.}\]</span> 而 <span class="math display">\[\mathcal L&#39;&#39;(\xi)=\frac{n_1h_1^2}{(\xi^2+h_1^2)^{3/2}}
@@ -203,7 +203,7 @@ P=F_{y&#39;y&#39;},\quad Q=F_{yy}-\frac{\mathrm{d}F_{yy&#39;}}{\mathrm{d}x}.
 <p>在 <span class="math inline">\(P&gt;0\)</span> 且系数正则的标量问题中，固定起点 <span class="math inline">\(a\)</span>，若存在非平凡解满足 <span class="math inline">\(\eta(a)=\eta(c)=0\)</span>，则称 <span class="math inline">\(c&gt;a\)</span> 与 <span class="math inline">\(a\)</span> 共轭。它不是要求区间内完全不存在非零解，而是要求不存在具有指定两个零点的解。加强勒让德条件与区间 <span class="math inline">\((a,b]\)</span> 上无共轭点相结合，给出通常的固定端点严格弱极小判据；证明涉及二次型分解，作为进阶阅读，不用它替代前面已给出的直接检查。</p>
 <p>谐振子中 <span class="math inline">\(P=m,Q=-m\omega^2\)</span>，雅可比方程是 <span class="math inline">\(\ddot\eta+\omega^2\eta=0\)</span>，起点为零的非平凡解正比于 <span class="math inline">\(\sin\omega t\)</span>，首个共轭时刻正是 <span class="math inline">\(\pi/\omega\)</span>，与上面的模态计算一致。学习这个拓展需要二阶线性常微分方程和边值问题。</p>
 <h2 id="几何与力学中的变分问题"><span class="ms-secno">2.5</span>几何与力学中的变分问题</h2>
-<h3 id="平面最短路径与曲面测地线"><span class="ms-secno">2.5.1</span>平面最短路径与曲面测地线</h3>
+<h3 id="平面最短路径与曲面测地线"><span class="ms-secno">2.5.1</span>平面最短路径与曲面测地线 <a class="ms-demo" href="../../../modules/04-variational/index.html?mode=shortest">✦ 交互模拟：最短路径 ↗</a></h3>
 <p>长度泛函的被积函数不显含 <span class="math inline">\(y\)</span>，由式 (2.13) 得 <span class="math inline">\(y&#39;/\sqrt{1+y&#39;^2}=C\)</span>，所以 <span class="math inline">\(y&#39;\)</span> 为常数，端点确定直线。</p>
 <p>在曲面上，使用局部坐标 <span class="math inline">\(q^1,q^2\)</span>，定义正定度规 <span class="math display">\[\mathrm{d}s^2=g_{ij}(q)\mathrm{d}q^i\mathrm{d}q^j,\]</span> 重复指标求和，<span class="math inline">\(g_{ij}=g_{ji}\)</span>，逆矩阵为 <span class="math inline">\(g^{ij}\)</span>。用任意正则参数 <span class="math inline">\(u\)</span> 表示曲线，令 <span class="math display">\[N=\sqrt{g_{ij}q&#39;^iq&#39;^j},\qquad \mathcal L=\int N\mathrm{d}u,\]</span> 此处撇号表示 <span class="math inline">\(\mathrm{d}/\mathrm{d}u\)</span>，<span class="math inline">\(u\)</span> 不必是物理时间。先求偏导： <span class="math display">\[N_{q&#39;^k}=\frac{g_{kj}q&#39;^j}{N},\qquad
 N_{q^k}=\frac{\partial_kg_{ij}q&#39;^iq&#39;^j}{2N}.\]</span> 将它们代入欧拉–拉格朗日方程，乘以 <span class="math inline">\(N\)</span> 并展开： <span class="math display">\[g_{kj}q&#39;&#39;^j+\partial_i g_{kj}q&#39;^iq&#39;^j
@@ -221,7 +221,7 @@ N_{q^k}=\frac{\partial_kg_{ij}q&#39;^iq&#39;^j}{2N}.\]</span> 将它们代入欧
 <img src="figs/ch02-fig5.svg" style="width:86.0%" />
 <figcaption>在过球心的大圆平面中观察两端点。短、长两弧均是球面测地线；满足驻值方程不等于在所有连接路径中长度最小。</figcaption>
 </figure>
-<h3 id="悬链线坐标方向长度约束与张力"><span class="ms-secno">2.5.2</span>悬链线：坐标方向、长度约束与张力</h3>
+<h3 id="悬链线坐标方向长度约束与张力"><span class="ms-secno">2.5.2</span>悬链线：坐标方向、长度约束与张力 <a class="ms-demo" href="../../../modules/37-catenary-min-energy/index.html">✦ 交互模拟：悬链线与最小势能 ↗</a></h3>
 <div class="example">
 <p><strong>例 1.7</strong> (均匀柔绳的平衡形状).  <em>柔绳线密度为 <span class="math inline">\(\rho_\ell\)</span>，两端固定，绳长为 <span class="math inline">\(\ell\)</span>，不可伸长，忽略弯曲刚度，均匀重力竖直向下。本例取 <span class="math inline">\(y\)</span> 向上，故势能应为 <span class="math display">\[V[y]=\rho_\ell g\int y\mathrm{d}s
 =\rho_\ell g\int y\sqrt{1+y&#39;^2}\mathrm{d}x,\]</span> 不能写成与向上坐标相反的负号。固定长度 <span class="math inline">\(\mathcal L=\int\sqrt{1+y&#39;^2}\mathrm{d}x=\ell\)</span>，将常数 <span class="math inline">\(\rho_\ell g\)</span> 提出，并用长度量纲的乘子 <span class="math inline">\(\lambda\)</span>，得到 <span class="math display">\[\widetilde F=(y-\lambda)\sqrt{1+y&#39;^2}.\]</span> 由于不显含 <span class="math inline">\(x\)</span>，式 (2.11) 给出 <span class="math display">\[\frac{y-\lambda}{\sqrt{1+y&#39;^2}}=a.\]</span> 选择实际下垂、张力为正的分支 <span class="math inline">\(a&gt;0\)</span>。由平方关系 <span class="math display">\[y&#39;^2=\frac{(y-\lambda)^2-a^2}{a^2}\]</span> 分离变量。在最低点右侧取正斜率，左侧取负斜率，两支合起来为 <span class="math display">\[y=\lambda+a\cosh\frac{x-x_0}{a}
@@ -240,7 +240,7 @@ H-y_{\min}=a[\cosh(d/a)-1].\]</span> 当 <span class="math inline">\(\ell&gt;2d\
 <div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
 <p>均匀绳的重量按<em>弧长</em>均匀分布，产生悬链线；若悬索负载主要按<em>水平长度</em>均匀分布，受力方程不同，可得到抛物线。曲线看起来接近不代表模型相同。悬链线在 <span class="math inline">\(|x-x_0|\ll a\)</span> 时也有局部展开 <span class="math inline">\(y\simeq y_{\min}+(x-x_0)^2/(2a)\)</span>。</p>
 </div>
-<h3 id="最速降线解端点与时间验证"><span class="ms-secno">2.5.3</span>最速降线：解、端点与时间验证</h3>
+<h3 id="最速降线解端点与时间验证"><span class="ms-secno">2.5.3</span>最速降线：解、端点与时间验证 <a class="ms-demo" href="../../../modules/04-variational/index.html?mode=cycloid">✦ 交互模拟：等时摆与摆线 ↗</a></h3>
 <p>本例重新取 <span class="math inline">\(y\)</span> 向下。内部 <span class="math inline">\(y&gt;0\)</span> 时，令 <span class="math display">\[F=\frac{\sqrt{1+y&#39;^2}}{\sqrt{2gy}},
 \qquad F-y&#39;F_{y&#39;}=\frac1{\sqrt{2gy}\sqrt{1+y&#39;^2}}=C&gt;0.\]</span> 定义 <span class="math inline">\(a=1/(4gC^2)&gt;0\)</span>，得到 <span class="math display">\[y&#39;^2=\frac{2a-y}{y}.
 \tag{2.24}\]</span> 作 <span class="math inline">\(y=a(1-\cos\theta)\)</span>，可用参数化方式同时覆盖斜率换号： <span class="math display">\[\boxed{x=a(\theta-\sin\theta),\qquad y=a(1-\cos\theta).}

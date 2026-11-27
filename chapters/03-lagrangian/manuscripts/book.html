@@ -147,7 +147,7 @@ window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$
 \tag{3.5}\]</span> 真实位移可能包含约束随时间变化产生的项，虚位移没有这一项。若选用无显式时间依赖的定常参数化，<span class="math inline">\(\partial\mathbf{r}_i/\partial t=0\)</span>，两者的容许切向形式相同，但真实位移由实际速度确定，虚位移则仍可独立选取；对于非定常约束，两者一般不同。</p>
 <p>作用在第 <span class="math inline">\(i\)</span> 个质点上的力为 <span class="math inline">\(\mathbf{F}_i\)</span>，在虚位移上作的功 <span class="math display">\[\delta W=\sum_{i=1}^{n}\mathbf{F}_i\cdot\delta\mathbf{r}_i\]</span> 称为<strong>虚功</strong>。把力分成主动力 <span class="math inline">\(\mathbf{F}_i^{(a)}\)</span> 和约束力 <span class="math inline">\(\mathbf{N}_i\)</span>，则 <span class="math display">\[\delta W=\sum_i\mathbf{F}_i^{(a)}\cdot\delta\mathbf{r}_i
 +\sum_i\mathbf{N}_i\cdot\delta\mathbf{r}_i.\]</span></p>
-<h3 id="虚功原理"><span class="ms-secno">3.2.2</span>虚功原理</h3>
+<h3 id="虚功原理"><span class="ms-secno">3.2.2</span>虚功原理 <a class="ms-demo" href="../../../modules/05-virtual-work/index.html">✦ 交互模拟：虚功原理与静力学 ↗</a></h3>
 <p>若约束是理想的，第二项为零。于是虚功原理可以表述为：</p>
 <div class="keybox"><div class="ms-callout-title">核心结论 · KEY RESULT</div>
 <p>受理想双侧约束的力学系统，在静止的定常约束上、排除奇异位形时，主动力可由理想约束反力平衡的条件是：对任意满足约束（或其线性化条件）的虚位移，主动力所作的总虚功为零， <span class="math display">\[\delta W=\sum_{i=1}^{n}\mathbf{F}_i^{(a)}\cdot\delta\mathbf{r}_i=0.
@@ -232,7 +232,7 @@ Q_a=\sum_{i=1}^{n}\mathbf{F}_i^{(a)}\cdot\frac{\partial \mathbf{r}_i}{\partial q
 <div class="example">
 <p><strong>例 1.3</strong> (有阻尼和关节驱动力矩的单摆).  <em>固定摆长 <span class="math inline">\(l\)</span>，角度从向下方向量起，<span class="math inline">\(L=ml^2\dot\theta^2/2+mgl\cos\theta\)</span>。若关节黏滞力矩为 <span class="math inline">\(-b\dot\theta\)</span>，驱动力矩为 <span class="math inline">\(\tau(t)\)</span>，则 <span class="math display">\[ml^2\ddot\theta+b\dot\theta+mgl\sin\theta=\tau(t).\]</span> 以最低点势能为零的机械能 <span class="math inline">\(E=ml^2\dot\theta^2/2+mgl(1-\cos\theta)\)</span> 满足 <span class="math display">\[\dot E=-b\dot\theta^2+\tau\dot\theta.\]</span> 无驱动时单调耗散；驱动可输入或取出能量。<span class="math inline">\(b=\tau=0\)</span> 恢复第一章单摆。这既训练广义力矩，也给数值计算提供可检查的能量收支。</em></p>
 </div>
-<h3 id="典型应用"><span class="ms-secno">3.3.4</span>典型应用</h3>
+<h3 id="典型应用"><span class="ms-secno">3.3.4</span>典型应用 <a class="ms-demo" href="../../../modules/09-atwood-pulley/index.html">✦ 交互模拟：有转动惯量的 Atwood 机 ↗</a></h3>
 <p>本节依次训练三个步骤：先用坐标自动满足约束，再从惯性速度构造动能，最后以守恒量或牛顿方程独立验算。所有绳、杆均按题目理想化，工程背景只用于说明模型用途，不代表具体设备的实测参数。</p>
 <div class="example">
 <p><strong>例 1.4</strong> (阿特伍德机).  <em>质量分别为 <span class="math inline">\(m_1,m_2\)</span> 的两物体用不可伸长的轻绳跨过定滑轮，绳与滑轮间无滑动，滑轮质量和转动惯量均忽略不计。取 <span class="math inline">\(q\)</span> 为 <span class="math inline">\(m_1\)</span> 下落的距离，则 <span class="math inline">\(m_2\)</span> 上升 <span class="math inline">\(q\)</span>。动能和势能分别为 <span class="math display">\[T=\frac12(m_1+m_2)\dot q^2,

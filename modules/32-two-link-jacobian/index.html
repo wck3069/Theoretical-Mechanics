@@ -52,7 +52,7 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 </head>
 <body>
 <div class="app"><div class="stage"><canvas id="cv"></canvas>
-<div class="brand"><h1>M32 · 二连杆雅可比与奇异位形</h1><p>关节速度经雅可比映射为末端速度；det J = l₁l₂ sinθ₂，零时失去一个方向的控制。</p><p class="intro">第一步：把 θ₂ 拉到 0°，看末端速度椭圆压成一条线；那就是机械臂的奇异位形。</p></div>
+<div class="brand"><h1>二连杆雅可比与奇异位形</h1><p>关节速度经雅可比映射为末端速度；det J = l₁l₂ sinθ₂，零时失去一个方向的控制。</p><p class="intro">第一步：把 θ₂ 拉到 0°，看末端速度椭圆压成一条线；那就是机械臂的奇异位形。</p></div>
 <div class="hud"><span>σ₁/σ₂ <b id="sv">0</b></span><span>κ=σ₁/σ₂ <b id="kap">0</b></span><span>状态 <b id="state">正常</b></span></div>
 </div><aside class="panel">
 <div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="" disabled>▣ M32 二连杆雅可比与奇异位形（当前）</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
@@ -65,7 +65,7 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 <div class="hint">l₂≠l₁ 时内边界圆 |l₁−l₂|>0，折叠奇异不再落在基座；真各向同性在 l₁=√2l₂、θ₂=135°。</div></div>
 <div class="btns"><button class="primary" id="sweep">扫过奇异位形</button><button id="reset">复位</button><button class="full" id="p1">折叠奇异 θ₂=180°</button><button class="full" id="p2">最大可操作度位 θ₂=90°</button><button class="full" id="p3">近奇异 θ₂=10°</button><button class="full" id="p4">反向构型 θ₂=−90°</button></div>
 <p class="hint">末端椭圆是 ‖δθ‖=1 经 J 映射的速度可操作度椭圆（半轴=奇异值，方向=左奇异向量）；θ₂=90° 只使面积最大，κ≈2.62 并非各向同性。cyan/橙箭头 = 雅可比两列 j₁、j₂。</p>
-<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">平面二连杆 · 速度可操作度椭圆 · 出处：书稿 ch01.tex:532</div></aside></div>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">平面二连杆 · 速度可操作度椭圆 · 对应书稿：第 1 章 牛顿力学</div></aside></div>
 <div id="selftestPanel" class="selftest" hidden></div>
 <script>
 window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});

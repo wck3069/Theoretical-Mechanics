@@ -52,7 +52,7 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 </head>
 <body>
 <div class="app"><div class="stage"><canvas id="cv"></canvas>
-<div class="brand"><h1>M31 · 火箭方程与质量流</h1><p>开放系统：喷气动量通量给出 Δv = vₑ ln(m₀/m)；尾气在实验室（惯性）系的速度是 v−vₑ，可以向前。</p><p class="intro">第一步：点播放，看尾气相对火箭以 vₑ 向后喷，而它的实验室系方向在 v 越过 vₑ 后翻向；第二步：把质量比拉到 e，Δv 恰等于 vₑ。</p></div>
+<div class="brand"><h1>火箭方程与质量流</h1><p>开放系统：喷气动量通量给出 Δv = vₑ ln(m₀/m)；尾气在实验室（惯性）系的速度是 v−vₑ，可以向前。</p><p class="intro">第一步：点播放，看尾气相对火箭以 vₑ 向后喷，而它的实验室系方向在 v 越过 vₑ 后翻向；第二步：把质量比拉到 e，Δv 恰等于 vₑ。</p></div>
 <div class="hud"><span>推力 F=vₑ|ṁ| <b id="F">0</b> N</span><span>加速度 a=F/m <b id="ac">0</b> m/s²</span><span>尾气实验室系速度 <b id="vg">–</b></span></div>
 </div><aside class="panel">
 <div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="" disabled>▣ M31 火箭方程与质量流（当前）</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
@@ -64,8 +64,8 @@ button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weig
 <div class="group"><div class="row"><label>目标质量比 m₀/m</label><span class="val" id="rv">8.0</span></div><input id="r" type="range" min="1" max="20" step="0.1" value="8">
 <div class="hint">左图横轴取对数 x=ln(m₀/m)：曲线是过原点的直线，x=1（比值=e）处 Δv=vₑ，已在图上标出。</div></div>
 <div class="btns"><button class="primary" id="play">播放质量流</button><button id="reset">重置</button><button class="full" id="p1">液氧煤油 vₑ=3，比 10</button><button class="full" id="p2">液氢液氧 vₑ=4.5，比 6</button><button class="full" id="p3">离子推 vₑ=30，比 1.3</button><button class="full" id="p4">基准：比值 = e</button></div>
-<p class="hint">前提：无重力、无阻力，vₑ 与 |ṁ| 恒定。每个粒子携带发射时刻的惯性速度 v−vₑ，之后匀速直线运动——v>vₑ 时尾气在实验室系里向前。出处：书稿 ch01.tex:1322。</p>
-<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">理想火箭方程 · 无重力无阻力 · 尾气实验室系 = v−vₑ · 出处：书稿 ch01.tex:1322</div></aside></div>
+<p class="hint">前提：无重力、无阻力，vₑ 与 |ṁ| 恒定。每个粒子携带发射时刻的惯性速度 v−vₑ，之后匀速直线运动——v>vₑ 时尾气在实验室系里向前。对应书稿：第 1 章 牛顿力学。</p>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">理想火箭方程 · 无重力无阻力 · 尾气实验室系 = v−vₑ · 对应书稿：第 1 章 牛顿力学</div></aside></div>
 <div id="selftestPanel" class="selftest" hidden></div>
 <script>
 window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});

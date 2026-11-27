@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M37 · 悬链线与最小势能 · 理论力学</title><style>
+<title>悬链线与最小势能 · 理论力学</title><style>
 :root{--bg:#05070f;--panel:rgba(16,22,40,.9);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
 .app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
@@ -44,12 +44,12 @@ button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#041
 <link rel="stylesheet" href="../../assets/tm-atelier.css">
 </head><body>
 <div class="app"><div class="stage"><canvas id="cv"></canvas>
-<div class="brand"><h1>M37 · 悬链线与最小势能</h1><p>均匀柔绳在重力下的平衡形状是双曲余弦，不是抛物线；参数 a=T₀/(λg)。</p><p class="intro">第一步：固定跨度把下垂量调大，看 a 怎样变小；再把张力读数与形状对应起来。</p></div>
+<div class="brand"><h1>悬链线与最小势能</h1><p>均匀柔绳在重力下的平衡形状是双曲余弦，不是抛物线；参数 a=T₀/(λg)。</p><p class="intro">第一步：固定跨度把下垂量调大，看 a 怎样变小；再把张力读数与形状对应起来。</p></div>
 <div class="hud"><span>a <b id="aV">–</b></span><span>绳长 <b id="len">–</b></span><span>T₀/T_max <b id="t0">–</b></span></div></div><aside class="panel">
 <div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="" disabled>▣ M37 悬链线与最小势能（当前）</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
 <div class="eq">y = a cosh(x/a), &nbsp; s = a[cosh(L/2a) − 1]</div><div class="group"><div class="row"><label>跨度 L</label><span class="val" id="spanV">8 m</span></div><input id="span" type="range" min="2" max="12" step="0.1" value="8"><div class="hint">两支点等高，跨度越大同样下垂量下水平张力越大。</div></div><div class="group"><div class="row"><label>下垂量 s</label><span class="val" id="sagV">1.2 m</span></div><input id="sag" type="range" min="0.1" max="4" step="0.05" value="1.2"><div class="hint">最低点到支点连线的竖直距离；s 越小绳越紧。</div></div>
 <div class="btns"><button class="primary" id="play">暂停/继续</button><button id="reset">重置</button><button class="full" id="p1">浅垂 s=0.4</button><button class="full" id="p2">深垂 s=2.5</button><button class="full" id="p3">近拉直 s=0.12</button></div>
-<p class="hint">a 由二分法求 root：a·cosh(L/2a)−a−s=0。支点张力最大：T_max=λg(a+s)，s→0 时发散（重绳拉不直）；虚线是同跨同绳长的抛物线，其质心更高（ΔV>0）。</p><a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">均匀柔绳 · λg=1 · 出处：书稿 ch02.tex:455</div>
+<p class="hint">a 由二分法求 root：a·cosh(L/2a)−a−s=0。支点张力最大：T_max=λg(a+s)，s→0 时发散（重绳拉不直）；虚线是同跨同绳长的抛物线，其质心更高（ΔV>0）。</p><a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">均匀柔绳 · λg=1 · 对应书稿：第 2 章 变分法</div>
 </aside></div><div id="selftestPanel" class="selftest" hidden></div>
 <script>
 window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
