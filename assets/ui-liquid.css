@@ -1923,6 +1923,43 @@ select:hover, select:focus {
   border-color: rgba(127, 224, 255, 0.45) !important;
   color: #ffffff !important;
 }
+.tm-orbit-nav--auto {
+  position: fixed !important;
+  bottom: 12px !important;
+  right: 356px !important;
+  z-index: 40 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+  font-size: 11.5px !important;
+}
+.stage .tm-orbit-nav--auto, .sim-stage .tm-orbit-nav--auto, .canvas-wrap .tm-orbit-nav--auto {
+  position: absolute !important;
+  bottom: 10px !important;
+  right: 12px !important;
+}
+.tm-orbit-nav--auto a {
+  color: #cfefff !important;
+  text-decoration: none !important;
+  padding: 5px 10px !important;
+  border: 1px solid rgba(148, 188, 255, 0.24) !important;
+  background: rgba(127, 224, 255, 0.08) !important;
+  white-space: nowrap !important;
+}
+.tm-orbit-nav--auto a.tm-nav-exit {
+  color: #ffd27a !important;
+  background: rgba(255, 210, 122, 0.08) !important;
+  border-color: rgba(255, 210, 122, 0.30) !important;
+}
+@media (max-width: 960px) {
+  .tm-orbit-nav--auto {
+    right: 12px !important;
+    left: 12px !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+}
 
 /* M31–M40 新模块顶部导航与操作按钮统一升级 */
 .modnav {
