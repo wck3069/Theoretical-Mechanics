@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>变分原理与等时摆 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>变分原理与等时摆</h1>
+<p class="ms-lead">本讲义处理变分原理：费马原理导出折射定律，最短路径导出直线， 等时摆问题证明摆线的等时性。对摆线 ， 下滑时间 与释放位置无关； 推广到 ，共同时间 。 全部解析结果由配套脚本 qa/numeric\_check.py 逐项数值验证。 本模块覆盖作业-6。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">变分原理与等时摆 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#sec:map">1作业映射</a></li>
+<li class="l2"><a href="#sec:model">2模型与假设</a></li>
+<li class="l2"><a href="#sec:derive">3推导</a></li>
+<li class="l3"><a href="#sub:fermat">3.1费马原理与折射定律（作业-6 Q1）</a></li>
+<li class="l3"><a href="#sub:euler-lagrange">3.2Euler–Lagrange 方程</a></li>
+<li class="l3"><a href="#sub:shortest">3.3最短路径（作业-6 Q2）</a></li>
+<li class="l3"><a href="#sub:cycloid">3.4摆线的等时性（作业-6 Q3）</a></li>
+<li class="l3"><a href="#sub:general">3.5一般等时条件（作业-6 Q3(d)）</a></li>
+<li class="l2"><a href="#sec:result">4解析结果</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l3"><a href="#sub:brachistochrone">5.1最速降线（Brachistochrone）</a></li>
+<li class="l3"><a href="#sub:graded">5.2渐变介质中的光线</a></li>
+<li class="l2"><a href="#sec:history">6变分原理的历史</a></li>
+<li class="l3"><a href="#sub:snell-vector">6.1Snell 定律的矢量形式</a></li>
+<li class="l3"><a href="#sub:action">6.2最小作用量原理</a></li>
+<li class="l2"><a href="#sec:discuss">7讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="sec:map"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-6 Q1</td>
+<td style="text-align: left;">用费马原理和变分法证明折射定律</td>
+<td style="text-align: left;">泛函变分、Snell 定律</td>
+<td style="text-align: center;"><a href="#sub:fermat" data-reference-type="ref" data-reference="sub:fermat">3.1</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-6 Q2</td>
+<td style="text-align: left;">二维平面内，极坐标证明直线距离最短</td>
+<td style="text-align: left;">测地线、Euler–Lagrange</td>
+<td style="text-align: center;"><a href="#sub:shortest" data-reference-type="ref" data-reference="sub:shortest">3.3</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-6 Q3</td>
+<td style="text-align: left;">摆线：<span class="math inline">\(s=4a\cos(\theta/2)\)</span>，<span class="math inline">\(h=s^2/(8a)\)</span>； 从 <span class="math inline">\(s_0\)</span> 释放，证明下滑时间与 <span class="math inline">\(s_0\)</span> 无关</td>
+<td style="text-align: left;">等时摆、时间积分</td>
+<td style="text-align: center;"><a href="#sub:cycloid" data-reference-type="ref" data-reference="sub:cycloid">3.4</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-6 Q3(d)</td>
+<td style="text-align: left;">若 <span class="math inline">\(h=C s^2\)</span>，证明时间仍与 <span class="math inline">\(s_0\)</span> 无关，求 <span class="math inline">\(T_0\)</span> 与 <span class="math inline">\(C\)</span> 的关系</td>
+<td style="text-align: left;">一般等时条件</td>
+<td style="text-align: center;"><a href="#sub:general" data-reference-type="ref" data-reference="sub:general">3.5</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:model"><span class="ms-secno">2</span>模型与假设</h2>
+<ol>
+<li><p><strong>费马原理</strong>：光在介质中沿耗时最短的路径传播。</p></li>
+<li><p><strong>变分原理</strong>：物理路径使作用量（或时间泛函）取驻值。</p></li>
+<li><p><strong>无摩擦</strong>：摆线下滑只有重力做功，机械能守恒。</p></li>
+<li><p><strong>小振幅不假设</strong>：等时性对任意振幅成立（非小角近似）。</p></li>
+<li><p><strong>单位制</strong>：<span class="math inline">\(g\)</span> 为重力加速度，<span class="math inline">\(a\)</span> 为摆线参数。</p></li>
+<li><p><strong>坐标约定</strong>：<span class="math inline">\(h\)</span> 向下为正（高度降为正），<span class="math inline">\(s\)</span> 从最低点向上量取。</p></li>
+</ol>
+<h2 id="sec:derive"><span class="ms-secno">3</span>推导</h2>
+<h3 id="sub:fermat"><span class="ms-secno">3.1</span>费马原理与折射定律（作业-6 Q1）</h3>
+<p>光在介质中速度 <span class="math inline">\(v=c/n\)</span>（<span class="math inline">\(n\)</span> 为折射率）。费马原理：光程时间 <span class="math display">\[T=\int \frac{n(s)}{c}\,\mathrm ds
+\tag{1}\]</span> 取驻值。考虑两层介质界面（<span class="math inline">\(y=0\)</span>），折射率 <span class="math inline">\(n_1\)</span>（上）、<span class="math inline">\(n_2\)</span>（下）。 路径从 <span class="math inline">\(A=(x_1,y_1)\)</span> 到 <span class="math inline">\(B=(x_2,y_2)\)</span>，在界面点 <span class="math inline">\((x,0)\)</span> 折射。 时间泛函 <span class="math display">\[T(x)=\frac{n_1}{c}\sqrt{(x-x_1)^2+y_1^2}
+  +\frac{n_2}{c}\sqrt{(x-x_2)^2+y_2^2}.
+\tag{2}\]</span> 驻值条件 <span class="math inline">\(\mathrm dT/\mathrm dx=0\)</span>： <span class="math display">\[\frac{n_1}{c}\frac{x-x_1}{\sqrt{(x-x_1)^2+y_1^2}}
+  +\frac{n_2}{c}\frac{x-x_2}{\sqrt{(x-x_2)^2+y_2^2}}=0.
+\tag{3}\]</span> 设入射角 <span class="math inline">\(\theta_1\)</span>、折射角 <span class="math inline">\(\theta_2\)</span>（均与法线夹角），则 <span class="math display">\[\boxed{\;n_1\sin\theta_1=n_2\sin\theta_2\;}
+\tag{4}\]</span> 即 Snell 折射定律。</p>
+<h3 id="sub:euler-lagrange"><span class="ms-secno">3.2</span>Euler–Lagrange 方程</h3>
+<p>变分原理的核心工具。给定泛函 <span class="math inline">\(J[y]=\int_{x_1}^{x_2} L(x,y,y&#39;)\,\mathrm dx\)</span>， 驻值条件 <span class="math inline">\(\delta J=0\)</span> 导出 <span class="math display">\[\frac{\partial L}{\partial y}-\frac{\mathrm d}{\mathrm dx}\frac{\partial L}{\partial y&#39;}=0.
+\tag{5}\]</span> 这是 Euler–Lagrange 方程。本模块的折射定律、最短路径、等时摆 均由此方程导出。</p>
+<h3 id="sub:shortest"><span class="ms-secno">3.3</span>最短路径（作业-6 Q2）</h3>
+<p>二维平面中，两点间最短路径使弧长泛函 <span class="math display">\[S=\int \mathrm ds=\int\sqrt{\dot x^2+\dot y^2}\,\mathrm dt
+\tag{6}\]</span> 取驻值。Euler-Lagrange 方程：<span class="math inline">\(L=\sqrt{\dot x^2+\dot y^2}\)</span>， <span class="math inline">\(\partial L/\partial x=0\)</span>，<span class="math inline">\(\partial L/\partial\dot x=\dot x/\sqrt{\dot x^2+\dot y^2}\)</span>， <span class="math inline">\(\mathrm d/\mathrm dt(\partial L/\partial\dot x)=0\)</span>，故 <span class="math inline">\(\dot x/\sqrt{\dot x^2+\dot y^2}=\mathrm{const}\)</span>。 同理 <span class="math inline">\(\dot y/\sqrt{\dot x^2+\dot y^2}=\mathrm{const}\)</span>。两式相除：<span class="math inline">\(\dot y/\dot x=\mathrm{const}\)</span>， 即 <span class="math inline">\(y=kx+c\)</span>，直线。</p>
+<h5 id="极坐标证明">极坐标证明。</h5>
+<p>弧长 <span class="math inline">\(\mathrm ds=\sqrt{\dot r^2+r^2\dot\theta^2}\,\mathrm dt\)</span>。 Lagrange 方程对 <span class="math inline">\(\theta\)</span>：<span class="math inline">\(\partial L/\partial\theta=0\)</span>（旋转对称）， 故 <span class="math inline">\(\partial L/\partial\dot\theta=r^2\dot\theta/\sqrt{\dot r^2+r^2\dot\theta^2}=\mathrm{const}=h\)</span>。 这给出角动量守恒。结合径向方程，积分得 <span class="math inline">\(r\sin(\theta-\theta_0)=\mathrm{const}\)</span>， 即直线的极坐标方程。</p>
+<h3 id="sub:cycloid"><span class="ms-secno">3.4</span>摆线的等时性（作业-6 Q3）</h3>
+<p>摆线参数方程： <span class="math display">\[x=a(\theta-\sin\theta),\qquad
+  h=a(1+\cos\theta),\qquad 0\le\theta\le\pi,
+\tag{7}\]</span> <span class="math inline">\(h\)</span> 为相对最低点（<span class="math inline">\(\theta=\pi\)</span>）的竖直高度。弧长从最低点向上： <span class="math display">\[s=\int_\theta^\pi 2a\sin(t/2)\,\mathrm dt
+  =4a\cos(\theta/2).
+\tag{8}\]</span> 高度： <span class="math display">\[h=a(1+\cos\theta)=2a\cos^2(\theta/2)=\frac{s^2}{8a}.
+\tag{9}\]</span> （作业-6 Q3(a)：<span class="math inline">\(s=4a\cos(\theta/2)\)</span>，<span class="math inline">\(h=s^2/(8a)\)</span>）</p>
+<p>能量守恒：从 <span class="math inline">\(s_0\)</span> 释放，到达 <span class="math inline">\(s\)</span> 时下降高度为 <span class="math inline">\(h_0-h=(s_0^2-s^2)/(8a)\)</span>，故 <span class="math display">\[v(s)=\sqrt{2g(h_0-h)}=\sqrt{\frac{g}{4a}}\,\sqrt{s_0^2-s^2}.
+\tag{10}\]</span> 下滑时间从 <span class="math inline">\(s_0\)</span> 到 <span class="math inline">\(0\)</span>： <span class="math display">\[T=\int_0^{s_0}\frac{\mathrm ds}{v(s)}
+  =\sqrt{\frac{4a}{g}}\int_0^{s_0}\frac{\mathrm ds}{\sqrt{s_0^2-s^2}}
+  =\sqrt{\frac{4a}{g}}\cdot\frac{\pi}{2}
+  =\pi\sqrt{\frac{a}{g}}.
+\tag{11}\]</span> <span class="math inline">\(T\)</span> 与 <span class="math inline">\(s_0\)</span> 无关，等时性得证（作业-6 Q3(c)）。</p>
+<h3 id="sub:general"><span class="ms-secno">3.5</span>一般等时条件（作业-6 Q3(d)）</h3>
+<p>若高度满足 <span class="math inline">\(h(s)=C s^2\)</span>（<span class="math inline">\(C&gt;0\)</span>），则下降高度 <span class="math inline">\(h_0-h=C(s_0^2-s^2)\)</span>， 速度 <span class="math inline">\(v(s)=\sqrt{2gC(s_0^2-s^2)}\)</span>，下滑时间 <span class="math display">\[T_0=\int_0^{s_0}\frac{\mathrm ds}{\sqrt{2gC(s_0^2-s^2)}}
+  =\frac{1}{\sqrt{2gC}}\cdot\frac{\pi}{2}
+  =\frac{\pi}{2\sqrt{2gC}}.
+\tag{12}\]</span> <span class="math inline">\(T_0\)</span> 与 <span class="math inline">\(s_0\)</span> 无关。与摆线对应：<span class="math inline">\(C=1/(8a)\)</span> 时 <span class="math inline">\(T_0=\pi/(2\sqrt{2g/(8a)})=\pi\sqrt{a/g}\)</span>，与 Q3(c) 一致。</p>
+<h2 id="sec:result"><span class="ms-secno">4</span>解析结果</h2>
+<ol>
+<li><p>折射定律：<span class="math inline">\(n_1\sin\theta_1=n_2\sin\theta_2\)</span>（<a href="#sub:fermat" data-reference-type="ref" data-reference="sub:fermat">3.1</a>）。</p></li>
+<li><p>最短路径：直线 <span class="math inline">\(y=kx+c\)</span>（<a href="#sub:shortest" data-reference-type="ref" data-reference="sub:shortest">3.3</a>）。</p></li>
+<li><p>摆线等时：<span class="math inline">\(T=\pi\sqrt{a/g}\)</span>，与 <span class="math inline">\(s_0\)</span> 无关（<a href="#sub:cycloid" data-reference-type="ref" data-reference="sub:cycloid">3.4</a>）。</p></li>
+<li><p>一般等时：<span class="math inline">\(T_0=\pi/(2\sqrt{2gC})\)</span>，<span class="math inline">\(h=C s^2\)</span>（<a href="#sub:general" data-reference-type="ref" data-reference="sub:general">3.5</a>）。</p></li>
+</ol>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>全部数值实验由配套脚本 <code>qa/numeric_check.py</code> 完成（仅依赖 numpy）。</p>
+<div id="tab:numeric">
+<table>
+<caption>数值验证汇总。全部数值取自 <code>qa/numeric_check.py</code> 的实际输出。</caption>
+<thead>
+<tr>
+<th style="text-align: left;">物理量</th>
+<th style="text-align: center;">解析值</th>
+<th style="text-align: center;">数值值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(T\)</span>（摆线，<span class="math inline">\(a=1,g=1,s_0=1\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(\pi=3.14159\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3.14159\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(T\)</span>（摆线，<span class="math inline">\(a=1,g=1,s_0=0.5\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(\pi=3.14159\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3.14159\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(T_0\)</span>（<span class="math inline">\(C=1/8,g=1\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(\pi=3.14159\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3.14159\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(T_0\)</span>（<span class="math inline">\(C=1/4,g=1\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(\pi/(2\sqrt{0.5})=2.221\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(2.221\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="sub:brachistochrone"><span class="ms-secno">5.1</span>最速降线（Brachistochrone）</h3>
+<p>最速降线问题：给定两点 <span class="math inline">\(A\)</span>、<span class="math inline">\(B\)</span>，求使质点从 <span class="math inline">\(A\)</span> 滑到 <span class="math inline">\(B\)</span> 时间最短的曲线。 变分法给出摆线为解。时间泛函 <span class="math display">\[T=\int_A^B \frac{\mathrm ds}{\sqrt{2g\,h(s)}},
+\tag{13}\]</span> 其中 <span class="math inline">\(h(s)\)</span> 为下降高度。Euler-Lagrange 方程求解得摆线参数方程。 这与等时摆的关系：等时摆是等时性（时间与振幅无关）， 最速降线是极值性（时间取最小值）。</p>
+<h3 id="sub:graded"><span class="ms-secno">5.2</span>渐变介质中的光线</h3>
+<p>若折射率 <span class="math inline">\(n(y)\)</span> 连续变化，费马原理给出 <span class="math display">\[\frac{\mathrm d}{\mathrm ds}\left(n\frac{\mathrm d\mathbf r}{\mathrm ds}\right)=\nabla n.
+\tag{14}\]</span> 这是光线在非均匀介质中的轨迹方程。</p>
+<h2 id="sec:history"><span class="ms-secno">6</span>变分原理的历史</h2>
+<p>变分原理的发展历程：Fermat（1662，光程最短）、Maupertuis（1744，最小作用量）、 Euler（1744，Euler-Lagrange 方程）、Lagrange（1788，分析力学）、 Hamilton（1834，Hamilton 原理）。这些原理统一了力学、光学、几何。</p>
+<h3 id="sub:snell-vector"><span class="ms-secno">6.1</span>Snell 定律的矢量形式</h3>
+<p>折射定律的矢量形式：<span class="math inline">\(n_1(\mathbf e_1\times\mathbf n)=n_2(\mathbf e_2\times\mathbf n)\)</span>， 其中 <span class="math inline">\(\mathbf n\)</span> 为界面法线，<span class="math inline">\(\mathbf e_1\)</span>、<span class="math inline">\(\mathbf e_2\)</span> 为入射/折射方向。 这等价于切向波矢守恒：<span class="math inline">\(k_{1,\parallel}=k_{2,\parallel}\)</span>。</p>
+<h3 id="sub:action"><span class="ms-secno">6.2</span>最小作用量原理</h3>
+<p>Hamilton 原理：<span class="math inline">\(\delta S=0\)</span>，<span class="math inline">\(S=\int L\,\mathrm dt\)</span>。Euler-Lagrange 方程 <span class="math display">\[\frac{\partial L}{\partial q_i}-\frac{\mathrm d}{\mathrm dt}\frac{\partial L}{\partial\dot q_i}=0
+\tag{15}\]</span> 是所有经典力学方程的统一来源。费马原理是 <span class="math inline">\(L=n/c\)</span> 的特例（光程）， 最短路径是 <span class="math inline">\(L=\sqrt{\dot x^2+\dot y^2}\)</span> 的特例。</p>
+<h2 id="sec:discuss"><span class="ms-secno">7</span>讨论</h2>
+<h5 id="等时摆的历史">等时摆的历史。</h5>
+<p>Christiaan Huygens 于 1656 年发现摆线的等时性，用于制造精确的摆钟。</p>
+<h5 id="与简谐振子的区别">与简谐振子的区别。</h5>
+<p>简谐振子（小角度单摆）仅在小振幅下近似等时； 摆线对任意振幅严格等时。</p>
+<h5 id="变分法的普适性">变分法的普适性。</h5>
+<p>变分原理统一了力学（最小作用量）、光学（费马原理）、 几何（最短路径）三大领域。Euler-Lagrange 方程是核心工具。</p>
+<h5 id="变分法的数值实现">变分法的数值实现。</h5>
+<p>在交互页中，最短路径与等时性可通过离散化验证： 对给定曲线族，计算时间积分并比较。等时摆的数值验证见 <code>qa/numeric_check.py</code>。</p>
+<h5 id="等时摆的实验验证">等时摆的实验验证。</h5>
+<p>Huygens 的摆钟利用等时性实现等时振荡，不受振幅影响。 现代精密测量中，等时摆原理用于重力加速度测定。</p>
+<h5 id="变分法的适用范围">变分法的适用范围。</h5>
+<p>变分原理适用于保守系统。非保守系统（含摩擦）需引入 Rayleigh 耗散函数。</p>
+<h5 id="与作业题的对照">与作业题的对照。</h5>
+<p>表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 覆盖了作业-6 Q3(c)(d) 的等时性验证。</p>
+<div class="thebibliography">
+<p><span>9</span></p>
+<p>H. Goldstein, C. P. Poole, J. L. Safko, <em>Classical Mechanics</em>, 3rd ed., Pearson, 2002. （变分原理与约束。）</p>
+<p>C. Huygens, <em>Horologium Oscillatorium</em>, 1673. （等时摆的原始发现。）</p>
+<p>周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （变分原理与最小作用量。）</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>变分原理与等时摆 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

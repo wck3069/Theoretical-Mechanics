@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>虚功原理与静力学 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>虚功原理与静力学</h1>
+<p class="ms-lead">本讲义处理虚功原理与静力学：从虚功原理推导平衡条件， 用势能驻值法求解约束系统平衡，分析梯子临界角与弹簧杆平衡。 全部解析结果由配套脚本 qa/numeric\_check.py 逐项数值验证。 本模块覆盖作业-7。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">虚功原理与静力学 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#sec:map">1作业映射</a></li>
+<li class="l2"><a href="#sec:model">2模型与假设</a></li>
+<li class="l2"><a href="#sec:derive">3推导</a></li>
+<li class="l3"><a href="#sub:virtual-work">3.1虚功原理</a></li>
+<li class="l3"><a href="#sub:rod-bowl">3.2半球碗中的均质棒（作业-7 Q1）</a></li>
+<li class="l3"><a href="#sub:right-angle">3.3直角摆（作业-7 Q2）</a></li>
+<li class="l3"><a href="#sub:ladder">3.4梯子临界角（作业-7 Q4）</a></li>
+<li class="l3"><a href="#sub:spring-rod">3.5弹簧杆平衡（作业-7 Q5）</a></li>
+<li class="l3"><a href="#sub:cylinders">3.6圆槽中的两圆柱（作业-7 Q3）</a></li>
+<li class="l2"><a href="#sec:result">4解析结果</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l3"><a href="#sub:diff-vw">5.1虚功原理的微分形式</a></li>
+<li class="l3"><a href="#sub:potential-surface">5.2势能面与稳定平衡</a></li>
+<li class="l3"><a href="#sub:lagrange-multipliers">5.3Lagrange 乘子法</a></li>
+<li class="l3"><a href="#sub:stability">5.4稳定性的判定</a></li>
+<li class="l2"><a href="#sec:examples">6虚功原理的应用实例</a></li>
+<li class="l2"><a href="#sec:constraints">7约束与自由度</a></li>
+<li class="l2"><a href="#sec:vw-action">8虚功原理与最小作用量</a></li>
+<li class="l2"><a href="#sec:history-statics">9静力学的历史</a></li>
+<li class="l2"><a href="#sec:dalembert">10d’Alembert 原理</a></li>
+<li class="l2"><a href="#sec:discuss">11讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="sec:map"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-7 Q1</td>
+<td style="text-align: left;">半球形碗中的均质棒，虚功原理求棒长</td>
+<td style="text-align: left;">虚功、约束、平衡</td>
+<td style="text-align: center;"><a href="#sub:rod-bowl" data-reference-type="ref" data-reference="sub:rod-bowl">3.2</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-7 Q2</td>
+<td style="text-align: left;">两棒固连成直角摆，虚功原理求平衡角</td>
+<td style="text-align: left;">势能驻值、平衡</td>
+<td style="text-align: center;"><a href="#sub:right-angle" data-reference-type="ref" data-reference="sub:right-angle">3.3</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-7 Q3</td>
+<td style="text-align: left;">圆槽中的两圆柱，平衡角与压力</td>
+<td style="text-align: left;">虚功、约束力</td>
+<td style="text-align: center;"><a href="#sub:cylinders" data-reference-type="ref" data-reference="sub:cylinders">3.6</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-7 Q4</td>
+<td style="text-align: left;">梯子靠墙，临界倾角与摩擦关系</td>
+<td style="text-align: left;">虚功、摩擦、临界平衡</td>
+<td style="text-align: center;"><a href="#sub:ladder" data-reference-type="ref" data-reference="sub:ladder">3.4</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-7 Q5</td>
+<td style="text-align: left;">铰接杆+弹簧，平衡方程与非竖直平衡条件</td>
+<td style="text-align: left;">势能驻值、弹簧</td>
+<td style="text-align: center;"><a href="#sub:spring-rod" data-reference-type="ref" data-reference="sub:spring-rod">3.5</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:model"><span class="ms-secno">2</span>模型与假设</h2>
+<ol>
+<li><p><strong>虚功原理</strong>：系统处于平衡时，所有约束允许的虚位移下 虚功 <span class="math inline">\(\delta W=0\)</span>。</p></li>
+<li><p><strong>保守系统</strong>：对保守力，<span class="math inline">\(\delta W=-\delta V\)</span>，平衡等价于 <span class="math inline">\(\delta V=0\)</span>（势能驻值）。</p></li>
+<li><p><strong>刚体</strong>：物体为刚体，变形忽略。</p></li>
+<li><p><strong>光滑约束</strong>：碗、槽、墙为光滑（无摩擦），地面有摩擦。</p></li>
+<li><p><strong>单位制</strong>：<span class="math inline">\(g\)</span> 为重力加速度，<span class="math inline">\(P\)</span> 为重量。</p></li>
+</ol>
+<h2 id="sec:derive"><span class="ms-secno">3</span>推导</h2>
+<h3 id="sub:virtual-work"><span class="ms-secno">3.1</span>虚功原理</h3>
+<p>对 <span class="math inline">\(N\)</span> 质点系统，虚位移 <span class="math inline">\(\delta\mathbf r_i\)</span> 满足约束 <span class="math inline">\(\sum \mathbf F_i^{\mathrm{(a)}}\cdot\delta\mathbf r_i=0\)</span> （主动力求和），即 <span class="math display">\[\sum_{i=1}^N \mathbf F_i\cdot\delta\mathbf r_i=0
+  \quad\Longleftrightarrow\quad
+  \delta W=0.
+  
+\tag{1}\]</span> 对保守系统 <span class="math inline">\(\mathbf F_i=-\nabla_i V\)</span>，(1) 化为 <span class="math display">\[\delta V=0.
+  
+\tag{2}\]</span> 即平衡态是势能的驻值点。这是本模块的核心方法。</p>
+<h3 id="sub:rod-bowl"><span class="ms-secno">3.2</span>半球碗中的均质棒（作业-7 Q1）</h3>
+<p>均质棒斜靠在半球形碗缘，一端在碗内（长 <span class="math inline">\(c\)</span>），一端在碗外。 用虚功原理：虚位移 <span class="math inline">\(\delta\theta\)</span> 下，棒的质心高度变化与约束力做功为零。 平衡条件给出棒长 <span class="math inline">\(L\)</span> 与 <span class="math inline">\(c\)</span>、碗半径 <span class="math inline">\(r\)</span> 的关系。</p>
+<h3 id="sub:right-angle"><span class="ms-secno">3.3</span>直角摆（作业-7 Q2）</h3>
+<p>两棒（长 <span class="math inline">\(2a\)</span>、<span class="math inline">\(2b\)</span>）固连成直角，组成摆。设棒 1 与竖直方向夹角为 <span class="math inline">\(\phi\)</span>，则棒 2 为 <span class="math inline">\(\phi+90^\circ\)</span>。 两棒质心到悬点的竖直距离分别为 <span class="math inline">\(a\cos\phi\)</span> 与 <span class="math inline">\(-b\sin\phi\)</span>（以向下为正），故 <span class="math display">\[V(\phi)=-2\rho g\left(a^2\cos\phi-b^2\sin\phi\right),
+\tag{3}\]</span> 其中 <span class="math inline">\(2\rho a\)</span>、<span class="math inline">\(2\rho b\)</span> 为两棒质量。平衡 <span class="math inline">\(\mathrm dV/\mathrm d\phi=0\)</span> 给出 <span class="math display">\[\tan\phi=-\frac{b^2}{a^2},
+  \qquad \phi=-\arctan\!\left(\frac{b^2}{a^2}\right).
+\tag{4}\]</span> <span class="math inline">\(a=b\)</span> 时 <span class="math inline">\(\phi=-45^\circ\)</span>（不是 <span class="math inline">\(0\)</span> 或 <span class="math inline">\(\pi\)</span>）。</p>
+<h3 id="sub:ladder"><span class="ms-secno">3.4</span>梯子临界角（作业-7 Q4）</h3>
+<p>均质梯子 AB，长 <span class="math inline">\(l\)</span>，重量 <span class="math inline">\(P\)</span>，角度 <span class="math inline">\(\theta\)</span>（与水平面）。 地面摩擦系数 <span class="math inline">\(\mu\)</span>，墙光滑。</p>
+<p>力平衡： <span class="math display">\[N_g=P,\qquad f=N_w,\qquad N_w l\sin\theta = P\frac{l}{2}\cos\theta.
+\tag{5}\]</span> 临界状态 <span class="math inline">\(f=\mu N_g\)</span>，代入： <span class="math display">\[\mu P = \frac{P}{2\tan\theta}
+  \quad\Longrightarrow\quad
+  \boxed{\;\tan\theta_{\min}=\frac{1}{2\mu}\;}
+  
+\tag{6}\]</span> <span class="math inline">\(\theta_{\min}=\arctan(1/(2\mu))\)</span>。<span class="math inline">\(\mu\)</span> 增大时 <span class="math inline">\(\theta_{\min}\)</span> 减小 （允许更小的倾角）。</p>
+<h3 id="sub:spring-rod"><span class="ms-secno">3.5</span>弹簧杆平衡（作业-7 Q5）</h3>
+<p>杆 AB 长 <span class="math inline">\(l\)</span>，重量 <span class="math inline">\(P\)</span>，铰链 A，弹簧连接 B 与 C（C 在 A 上方 <span class="math inline">\(h\)</span> 处）。 设杆与水平线夹角 <span class="math inline">\(\theta\)</span>（<span class="math inline">\(\theta&gt;0\)</span> 表示 B 在 A 上方）。</p>
+<p>势能（<span class="math inline">\(\theta&gt;0\)</span> 表示 B 在 A 上方，故重力势为正）： <span class="math display">\[V(\theta)=+\frac{Pl}{2}\sin\theta+\frac12 k\left(L-l_0\right)^2,
+  \qquad L=\sqrt{h^2+l^2-2hl\sin\theta}.
+\tag{7}\]</span> 平衡：<span class="math inline">\(\mathrm dV/\mathrm d\theta=0\)</span>： <span class="math display">\[\frac{Pl}{2}\cos\theta
+  + k\left(L-l_0\right)\frac{-hl\cos\theta}{L}=0.
+\tag{8}\]</span> 非竖直平衡（<span class="math inline">\(\cos\theta\ne0\)</span>）条件： <span class="math display">\[\frac{P}{2}=k\left(L-l_0\right)\frac{h}{L}.
+\tag{9}\]</span> 竖直平衡（<span class="math inline">\(\theta=\pi/2\)</span>）始终存在。</p>
+<h3 id="sub:cylinders"><span class="ms-secno">3.6</span>圆槽中的两圆柱（作业-7 Q3）</h3>
+<p>半径 <span class="math inline">\(R\)</span> 的光滑圆槽，两圆柱半径 <span class="math inline">\(r\)</span>，重量 <span class="math inline">\(P_1\)</span>、<span class="math inline">\(P_2\)</span>。 两柱相切且都与槽相切时，几何关系固定： <span class="math display">\[\sin\phi=\frac{r}{R-r},
+\tag{10}\]</span> 其中 <span class="math inline">\(\phi\)</span> 为每柱中心与槽底方向的夹角。两柱作为整体还可绕槽心转动角度 <span class="math inline">\(\alpha\)</span>， 势能 <span class="math inline">\(V=-(P_1+P_2)(R-r)\cos\phi\cos\alpha\)</span> 在 <span class="math inline">\(\alpha=0\)</span> 取极小， 故平衡时两柱关于槽底对称；<span class="math inline">\(\phi\)</span> 由几何决定，不能由 <span class="math inline">\(\mathrm dV/\mathrm d\phi=0\)</span> 定出 （<span class="math inline">\(\phi=0\)</span> 意味着两柱中心重合，几何上不可能）。</p>
+<p>对等重 <span class="math inline">\(P_1=P_2=P\)</span> 的情形，单柱径向平衡给出 <span class="math display">\[N=P\cos\phi+F\sin\phi,\qquad F=P\tan\phi
+  \;\Longrightarrow\;
+  N=\frac{P}{\cos\phi}.
+\tag{11}\]</span> <span class="math inline">\(P_1\ne P_2\)</span> 时接触力不再水平，需联立两柱的径向与切向平衡消去 <span class="math inline">\(F\)</span> 后求 <span class="math inline">\(N_1,N_2\)</span>。</p>
+<h2 id="sec:result"><span class="ms-secno">4</span>解析结果</h2>
+<ol>
+<li><p>虚功原理：<span class="math inline">\(\delta W=0\)</span>，保守系统 <span class="math inline">\(\delta V=0\)</span>（(1)、(2)）。</p></li>
+<li><p>梯子临界角：<span class="math inline">\(\tan\theta_{\min}=1/(2\mu)\)</span>（(6)）。</p></li>
+<li><p>弹簧杆平衡：<span class="math inline">\(\mathrm dV/\mathrm d\theta=0\)</span>（<a href="#sub:spring-rod" data-reference-type="ref" data-reference="sub:spring-rod">3.5</a>）。</p></li>
+<li><p>圆柱平衡：<span class="math inline">\(\phi=0\)</span>（底部，稳定）。</p></li>
+</ol>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>全部数值实验由配套脚本 <code>qa/numeric_check.py</code> 完成（仅依赖 numpy）。</p>
+<div id="tab:numeric">
+<table>
+<caption>数值验证汇总。全部数值取自 <code>qa/numeric_check.py</code> 的实际输出。</caption>
+<thead>
+<tr>
+<th style="text-align: left;">物理量</th>
+<th style="text-align: center;">解析值</th>
+<th style="text-align: center;">数值值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\theta_{\min}\)</span>（<span class="math inline">\(\mu=0.5\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(\arctan(1)=45.0^\circ\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(45.0^\circ\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\theta_{\min}\)</span>（<span class="math inline">\(\mu=0.25\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(\arctan(2)=63.4^\circ\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(63.4^\circ\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\theta_{\min}\)</span>（<span class="math inline">\(\mu=1.0\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(\arctan(0.5)=26.6^\circ\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(26.6^\circ\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="sub:diff-vw"><span class="ms-secno">5.1</span>虚功原理的微分形式</h3>
+<p>虚功原理的微分形式：<span class="math inline">\(\sum \mathbf F_i\cdot\delta\mathbf r_i=0\)</span>。 对含 <span class="math inline">\(n\)</span> 个自由度的系统，选择 <span class="math inline">\(n\)</span> 个广义坐标 <span class="math inline">\(q_j\)</span>， 虚位移 <span class="math inline">\(\delta\mathbf r_i=\sum_j (\partial\mathbf r_i/\partial q_j)\delta q_j\)</span>。 代入得广义力 <span class="math inline">\(Q_j=\sum_i \mathbf F_i\cdot\partial\mathbf r_i/\partial q_j\)</span>， 平衡条件 <span class="math inline">\(Q_j=0\)</span>（<span class="math inline">\(j=1,\ldots,n\)</span>）。</p>
+<h3 id="sub:potential-surface"><span class="ms-secno">5.2</span>势能面与稳定平衡</h3>
+<p>平衡态对应势能驻值。稳定平衡要求势能为局部极小（Hessian 正定）， 不稳定平衡对应势能极大或鞍点。</p>
+<h3 id="sub:lagrange-multipliers"><span class="ms-secno">5.3</span>Lagrange 乘子法</h3>
+<p>约束 <span class="math inline">\(\phi_k(q)=0\)</span> 下的平衡：<span class="math inline">\(\partial V/\partial q_j=\sum_k \lambda_k \partial\phi_k/\partial q_j\)</span>。 <span class="math inline">\(\lambda_k\)</span> 为约束力（Lagrange 乘子）。这等价于虚功原理。</p>
+<h3 id="sub:stability"><span class="ms-secno">5.4</span>稳定性的判定</h3>
+<p>平衡稳定 iff 势能 Hessian 矩阵正定： <span class="math display">\[\frac{\partial^2 V}{\partial q_i\partial q_j}\bigg|_{\rm eq} \succ 0.
+\tag{12}\]</span> 注意：梯子靠摩擦维持平衡，临界状态是摩擦饱和 <span class="math inline">\(f=\mu N\)</span>，不是势能 Hessian 奇异；势能 <span class="math inline">\(V=P(l/2)\sin\theta\)</span> 在该处并没有极小。</p>
+<h2 id="sec:examples"><span class="ms-secno">6</span>虚功原理的应用实例</h2>
+<h5 id="例1斜面滑块">例1：斜面滑块。</h5>
+<p>质量 <span class="math inline">\(m\)</span> 的滑块在倾角 <span class="math inline">\(\alpha\)</span> 的斜面上，重力 <span class="math inline">\(mg\)</span> 沿斜面分量 <span class="math inline">\(mg\sin\alpha\)</span>。 虚功原理：<span class="math inline">\(\delta W=mg\sin\alpha\,\delta s=0\)</span> 仅在 <span class="math inline">\(\alpha=0\)</span> 时平衡， 否则滑块加速下滑。</p>
+<h5 id="例2阿特伍德机">例2：阿特伍德机。</h5>
+<p>两个质量 <span class="math inline">\(m_1\)</span>、<span class="math inline">\(m_2\)</span> 通过轻绳连接跨过滑轮。 虚功：<span class="math inline">\((m_2-m_1)g\,\delta x=0\)</span> 要求 <span class="math inline">\(m_1=m_2\)</span> 平衡； <span class="math inline">\(m_1\ne m_2\)</span> 时系统加速。</p>
+<h5 id="例3杆秤平衡">例3：杆秤平衡。</h5>
+<p>不等臂杆秤：<span class="math inline">\(m_1 l_1=m_2 l_2\)</span> 为平衡条件，直接由力矩平衡（虚功特例）得到。</p>
+<h2 id="sec:constraints"><span class="ms-secno">7</span>约束与自由度</h2>
+<p>一个含 <span class="math inline">\(N\)</span> 质点的系统有 <span class="math inline">\(3N\)</span> 个自由度。每个约束减少一个自由度。 完整约束（位置约束）：<span class="math inline">\(f(\mathbf r_i,t)=0\)</span>，减少 1 个自由度。 非完整约束（速度约束）：<span class="math inline">\(\sum a_i\cdot\mathrm d\mathbf r_i=0\)</span>， 减少自由度但不减少坐标数。虚功原理适用于所有约束。</p>
+<h5 id="完整约束的分类">完整约束的分类。</h5>
+<p>固定端约束：质点位置固定（3 个约束）。 刚体约束：两点间距离固定（1 个约束）。 曲面约束：质点在曲面上运动（1 个约束）。</p>
+<h5 id="自由度计数">自由度计数。</h5>
+<p>单摆：1 个质点，1 个约束（绳长），自由度 <span class="math inline">\(3-1=2\)</span>（平面运动）或 <span class="math inline">\(1\)</span>（平面内）。 双摆：2 个质点，2 个约束，自由度 <span class="math inline">\(6-2=4\)</span>（平面内 2）。</p>
+<h2 id="sec:vw-action"><span class="ms-secno">8</span>虚功原理与最小作用量</h2>
+<p>虚功原理 <span class="math inline">\(\delta W=0\)</span> 与最小作用量原理 <span class="math inline">\(\delta S=0\)</span> 密切相关。 对于保守系统，虚功 <span class="math inline">\(\delta W=-\delta V\)</span>，平衡条件 <span class="math inline">\(\delta V=0\)</span>。 最小作用量原理在时间维度上推广了这一思想：作用量 <span class="math inline">\(S=\int L\,\mathrm dt\)</span> 取驻值。两者都是变分原理，只是变分的量不同（空间 vs 时空）。</p>
+<h5 id="dalembert-原理">d’Alembert 原理。</h5>
+<p><span class="math inline">\(\sum(\mathbf F_i-\dot{\mathbf p}_i)\cdot\delta\mathbf r_i=0\)</span>。 这是虚功原理的动态推广，适用于非平衡系统。</p>
+<h2 id="sec:history-statics"><span class="ms-secno">9</span>静力学的历史</h2>
+<p>从 Archimedes 的杠杆原理（公元前 3 世纪）到 Stevin 的斜面问题（1586）， 再到 d’Alembert 的虚功原理（1743）和 Lagrange 的分析力学（1788）， 静力学的发展历程体现了从几何直观到分析方法的演进。</p>
+<h5 id="archimedes-杠杆">Archimedes 杠杆。</h5>
+<p>杠杆平衡条件 <span class="math inline">\(F_1 d_1=F_2 d_2\)</span> 是虚功原理的最早形式。</p>
+<h5 id="stevin-斜面">Stevin 斜面。</h5>
+<p>Stevin 用“珠链”思想证明斜面机械优势为斜面长与高之比。</p>
+<h5 id="dalembert-原理-1">d’Alembert 原理。</h5>
+<p>将动力学问题转化为静力学问题：<span class="math inline">\(\mathbf F-\dot{\mathbf p}=0\)</span>。</p>
+<h2 id="sec:dalembert"><span class="ms-secno">10</span>d’Alembert 原理</h2>
+<p>d’Alembert 原理将动力学问题转化为静力学： <span class="math display">\[\sum_{i=1}^N (\mathbf F_i-\dot{\mathbf p}_i)\cdot\delta\mathbf r_i=0.
+\tag{13}\]</span> 其中 <span class="math inline">\(\mathbf F_i\)</span> 为主动力，<span class="math inline">\(\dot{\mathbf p}_i\)</span> 为惯性力。 这等价于在加速参考系中引入惯性力 <span class="math inline">\(-\dot{\mathbf p}\)</span>， 使系统处于“动态平衡”。</p>
+<h5 id="与虚功原理的关系">与虚功原理的关系。</h5>
+<p>虚功原理是 d’Alembert 原理在静态（<span class="math inline">\(\dot{\mathbf p}=0\)</span>）下的特例。 d’Alembert 原理推广了虚功原理到动力学问题。</p>
+<h2 id="sec:discuss"><span class="ms-secno">11</span>讨论</h2>
+<h5 id="虚功法的优势">虚功法的优势。</h5>
+<p>虚功法直接利用约束条件，避免求解约束力，适合复杂约束系统。</p>
+<h5 id="势能法的局限">势能法的局限。</h5>
+<p>势能法仅适用于保守系统；非保守力（摩擦）需用虚功原理直接处理。</p>
+<h5 id="虚功法与牛顿法的对比">虚功法与牛顿法的对比。</h5>
+<p>牛顿法需列出所有约束力并联立方程组；虚功法直接利用约束， 只需主动力，方程数等于自由度数。对复杂约束系统，虚功法更简洁。</p>
+<h5 id="与作业题的对照">与作业题的对照。</h5>
+<p>表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 覆盖了作业-7 Q4 的临界角验证。</p>
+<div class="thebibliography">
+<p><span>9</span></p>
+<p>H. Goldstein, C. P. Poole, J. L. Safko, <em>Classical Mechanics</em>, 3rd ed., Pearson, 2002. （约束与虚功。）</p>
+<p>L. D. Landau, E. M. Lifshitz, <em>Mechanics</em>, 3rd ed., Butterworth–Heinemann, 1976. （虚功原理。）</p>
+<p>周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （虚功原理与静力学。）</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>虚功原理与静力学 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

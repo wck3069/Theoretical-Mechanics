@@ -1,0 +1,15 @@
+Earth daymap used by the neural-page orb (../assets/img/earth.jpg)
+Source: https://www.solarsystemscope.com/textures/download/8k_earth_daymap.jpg
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Author: Solar System Scope (https://www.solarsystemscope.com/)
+
+Modification: the original 8K JPEG (8192x4096) was downsampled with a
+Lanczos filter to 2048x1024 and re-encoded as progressive JPEG
+(quality 88, 4:4:4 subsampling) on 2026-11-11 to keep the added payload
+under 300 KB. Map projection (equirectangular) and image content are
+unchanged; the renderer in neural/index.html does the spherical mapping.
+
+Attribution (CC BY 4.0) travels with this file; the sibling planetary
+textures used by the same orb carry the same license and credit
+(see ../assets/textures/LICENSE.txt). neural/NOTICE.md covers only the
+visual-language credit, not the planetary textures.

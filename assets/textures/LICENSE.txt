@@ -1,0 +1,26 @@
+Solar System Scope planetary textures
+Source: https://www.solarsystemscope.com/textures/
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Author: Solar System Scope (https://www.solarsystemscope.com/)
+Files: 2k_sun.webp, 2k_mercury.webp, 2k_venus_surface.webp, 2k_earth_daymap.webp,
+       2k_mars.webp, 2k_jupiter.webp, 2k_saturn.webp, 2k_uranus.webp
+
+Modification: the original 2K JPEG textures were re-encoded to WebP
+(quality 82, method 6) on 2026-11-01 to reduce page weight. Pixel
+dimensions (2048x1024) and image content are unchanged.
+NASA Solar Dynamics Observatory image
+Source: https://images.nasa.gov/details/GSFC_20171208_Archive_e001661
+Title: "Magnificent CME Erupts on the Sun - August 31" (SDO/AIA, 2012-08-31)
+License: NASA images are not copyrighted (public domain); courtesy credit
+  to NASA/GSFC requested per NASA media usage guidelines.
+Files: nasa_sun_cme.webp (re-encoded 1920x1920 JPEG -> WebP q82 method 6,
+        content otherwise unchanged)
+
+High-resolution textures for the planet zoom animation (assets/textures/hi/)
+Source: https://www.solarsystemscope.com/textures/ (same CC BY 4.0 terms and
+author as above), plus the site's own 4K portal images for earth/jupiter/mars/sun.
+Files: hi/saturn.webp, hi/mercury.webp, hi/venus.webp, hi/uranus.webp
+(re-encoded from the 8K/2K Solar System Scope JPEGs, downscaled to <=2560 px,
+WebP quality 82-90) and hi/earth.webp, hi/jupiter.webp, hi/mars.webp,
+hi/sun.webp (re-encoded from assets/img/portal/*.jpg).
+These files are loaded only when a visitor clicks a planet, not on page load.

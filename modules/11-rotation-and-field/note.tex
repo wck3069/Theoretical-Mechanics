@@ -1,0 +1,225 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M11《旋转参考系与磁场》note.tex
+% 覆盖作业-8 第 5 题（旋转圆环）与第 6 题（磁场中的带电粒子）
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{旋转参考系与磁场}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义合并作业-8 的最后两个单粒子问题：电机驱动的竖直圆环上的珠子（Q5），
+以及均匀磁场中的带电粒子（Q6）。前者用有效势研究相对平衡、稳定性与雅可比积分
+$\mathcal E$；后者说明机械动量与规范动量都不守恒，但平移对称性仍给出守恒的诺特荷，
+它们正好锁定回旋圆心。两题都适合用拉格朗日方法一步写出运动方程。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{作业映射}
+
+\begin{center}
+\small
+\begin{tabular}{cp{5.9cm}p{3.2cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-8 Q5 & 圆环绕竖直直径以 $\Omega$ 转动，珠子沿环滑动 &
+  有效势、相对平衡、稳定性、$\mathcal E$ & \ref{sec:ring} \\
+作业-8 Q6 & 带电粒子在均匀磁场中运动 &
+  诺特荷、回旋圆心、规范动量 & \ref{sec:cyc} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{旋转圆环上的珠子（Q5）}\label{sec:ring}
+
+\subsection{拉格朗日量}
+
+圆环半径 $R$，绕竖直直径以恒定角速度 $\Omega>0$ 转动；珠子质量 $m$，
+$\theta$ 从最低点量起，圆心为重力势能零点。珠子的位置用球坐标描述：
+到转轴的水平距离 $R\sin\theta$，高度 $-R\cos\theta$。
+速度有两个正交分量：沿环的 $R\dot\theta$ 与随环转动的 $\Omega R\sin\theta$，故
+\begin{equation}
+  T=\frac12mR^2\left(\dot\theta^2+\Omega^2\sin^2\theta\right),
+  \qquad
+  V=-mgR\cos\theta,
+  \label{eq:r-TV}
+\end{equation}
+\begin{equation}
+  L=\frac12mR^2\dot\theta^2+\frac12mR^2\Omega^2\sin^2\theta+mgR\cos\theta .
+  \label{eq:r-L}
+\end{equation}
+
+\subsection{运动方程与相对平衡}
+
+拉格朗日方程给出
+\begin{equation}
+  mR^2\ddot\theta=mR^2\Omega^2\sin\theta\cos\theta-mgR\sin\theta,
+\end{equation}
+即
+\begin{equation}
+  \boxed{\ \ddot\theta=\left(\Omega^2\cos\theta-\frac{g}{R}\right)\sin\theta\ }.
+  \label{eq:r-eom}
+\end{equation}
+平衡条件 $\ddot\theta=0$ 给出两类解：
+\begin{equation}
+  \sin\theta=0:\quad \theta=0\ (\text{最低点}),\quad \theta=\pi\ (\text{最高点});
+  \label{eq:r-eq1}
+\end{equation}
+\begin{equation}
+  \cos\theta=\frac{g}{\Omega^2R},\quad
+  \text{仅当}\ \Omega\ge\Omega_c\equiv\sqrt{\frac{g}{R}}\ \text{存在}.
+  \label{eq:r-eq2}
+\end{equation}
+记这个非平凡平衡为 $\theta_{\rm eq}=\arccos\!\left(g/\Omega^2R\right)$。
+
+\subsection{稳定性与临界角速度}
+
+定义有效势
+\begin{equation}
+  V_{\rm eff}(\theta)=-\frac12mR^2\Omega^2\sin^2\theta-mgR\cos\theta,
+  \label{eq:r-Veff}
+\end{equation}
+使 $\ddot\theta=-\frac{1}{mR^2}V_{\rm eff}'(\theta)$。其二阶导数为
+\begin{equation}
+  V_{\rm eff}''(\theta)=-mR^2\Omega^2\cos2\theta+mgR\cos\theta .
+  \label{eq:r-Veff2}
+\end{equation}
+在三个平衡点处：
+\begin{align}
+  V_{\rm eff}''(0)&=mR\left(g-R\Omega^2\right)
+   \begin{cases}
+     >0, & \Omega<\Omega_c\ (\text{稳定}),\\
+     <0, & \Omega>\Omega_c\ (\text{不稳定});
+   \end{cases} \label{eq:r-st0}\\
+  V_{\rm eff}''(\pi)&=-mR\left(g+R\Omega^2\right)<0 \quad(\text{恒不稳定}); \label{eq:r-stpi}\\
+  V_{\rm eff}''(\theta_{\rm eq})&=mR^2\Omega^2\sin^2\theta_{\rm eq}>0 \quad(\text{稳定}). \label{eq:r-steq}
+\end{align}
+所以 $\Omega_c=\sqrt{g/R}$ 是分岔点：低于它最低点稳定；高于它最低点失稳，
+出现一对对称的稳定斜平衡 $\pm\theta_{\rm eq}$。
+
+\subsection{雅可比积分 $\mathcal E$}
+
+由于 $\partial L/\partial t=0$，雅可比积分守恒：
+\begin{equation}
+  \mathcal E=\dot\theta\frac{\partial L}{\partial\dot\theta}-L
+  =\frac12mR^2\dot\theta^2-\frac12mR^2\Omega^2\sin^2\theta-mgR\cos\theta .
+  \label{eq:r-E}
+\end{equation}
+而惯性系中的机械能为
+\begin{equation}
+  E_{\rm mech}=\frac12mR^2\left(\dot\theta^2+\Omega^2\sin^2\theta\right)-mgR\cos\theta
+  =\mathcal E+mR^2\Omega^2\sin^2\theta .
+  \label{eq:r-Emech}
+\end{equation}
+二者不相等：差值 $mR^2\Omega^2\sin^2\theta$ 是珠子随环转动的方位动能，
+由电机维持 $\Omega$ 时输入。$\mathcal E$ 是旋转约束下的有效能量，不是惯性系机械能。
+
+\section{均匀磁场中的带电粒子（Q6）}\label{sec:cyc}
+
+\subsection{拉格朗日量与运动方程}
+
+取 $B$ 沿 $z$ 轴、无电场，拉格朗日量
+\begin{equation}
+  L=\frac12m\left(\dot x^2+\dot y^2\right)+\frac{qB}{2}\left(x\dot y-y\dot x\right).
+  \label{eq:c-L}
+\end{equation}
+拉格朗日方程给出
+\begin{equation}
+  m\ddot x=qB\dot y,\qquad m\ddot y=-qB\dot x,
+  \label{eq:c-eom}
+\end{equation}
+即 $\ddot{\mathbf v}=\omega_c\,\mathbf v\times\hat z$，其中
+\begin{equation}
+  \omega_c=\frac{qB}{m}.
+  \label{eq:c-w}
+\end{equation}
+轨迹是半径 $r_c=v_0/|\omega_c|$ 的圆，周期 $T=2\pi/|\omega_c|$。
+
+\subsection{动量守恒与诺特荷}
+
+机械动量 $\mathbf p_{\rm mech}=m\mathbf v$ 的方向不断改变，不守恒；
+正则动量
+\begin{equation}
+  p_x=m\dot x-\frac{qB}{2}y,\qquad p_y=m\dot y+\frac{qB}{2}x
+  \label{eq:c-p}
+\end{equation}
+也不守恒，因为 $L$ 显含 $x,y$。但 $x,y$ 平移只让 $L$ 改变一个全导数，
+诺特荷仍然存在：
+\begin{align}
+  Q_x&=m\dot x-qBy, \label{eq:c-Qx}\\
+  Q_y&=m\dot y+qBx. \label{eq:c-Qy}
+\end{align}
+直接求导可验证 $\dot Q_x=\dot Q_y=0$。
+
+\subsection{守恒量与回旋圆心}
+
+定义回旋圆心
+\begin{equation}
+  X_c=x+\frac{\dot y}{\omega_c},\qquad
+  Y_c=y-\frac{\dot x}{\omega_c}.
+  \label{eq:c-center}
+\end{equation}
+用 \eqref{eq:c-Qx}--\eqref{eq:c-Qy} 可得
+\begin{equation}
+  Q_y=m\omega_c X_c,\qquad Q_x=-m\omega_c Y_c .
+  \label{eq:c-center-Q}
+\end{equation}
+所以两个守恒的诺特荷（相差常数因子）就是回旋圆心的坐标：
+平移对称性锁定的是圆心，而不是粒子的瞬时动量。
+
+\section{数值验证}\label{sec:numeric}
+
+交互页对圆环方程 \eqref{eq:r-eom} 作四阶 Runge--Kutta 积分（步长 $2\times10^{-3}\,\mathrm{s}$），
+对磁场问题用解析解 \eqref{eq:c-eom} 采样。
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\toprule
+量 & 参数 & 解析值 & 数值/检查值 \\
+\midrule
+Q5 $\Omega_c$ & $R=1.2$ & $2.8592\ \mathrm{rad/s}$ & $2.8592$ \\
+Q5 $\theta_{\rm eq}$ & $\Omega=3.0$ & $24.72^\circ$ & $24.72^\circ$ \\
+Q5 $V_{\rm eff}''(0)$ & $\Omega>\Omega_c$ & $<0$ & 失稳 \\
+Q5 $V_{\rm eff}''(\theta_{\rm eq})$ & $\Omega=3.0$ & $2.267>0$ & 稳定 \\
+Q5 $\Delta\mathcal E$ & RK4，$2\,\mathrm{s}$ & 0 & $<10^{-6}$ \\
+Q6 $r_c$ & $B=1.2,v_0=1$ & $0.8333$ & $0.8333$ \\
+Q6 $Q_x$ & 同上 & $1$ & $1$（$\Delta Q_x<10^{-12}$） \\
+Q6 $Q_y$ & 同上 & $0$ & $0$（$\Delta Q_y<10^{-12}$） \\
+Q6 $\Delta p_x$ & 一个回旋周期 & $\neq0$ & $1.000$ \\
+Q6 $Q_y=m\omega_cX_c$ & 圆心 $(0,-0.8333)$ & $0$ & 一致 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{讨论}
+
+\begin{enumerate}
+  \item \textbf{两个“能量”.} 圆环问题里 $\mathcal E$ 守恒而 $E_{\rm mech}$ 不守恒，
+        差值由电机做功补上；这与“约束随时间变化时机械能不守恒”是同一件事。
+  \item \textbf{两个“动量”.} 磁场问题里机械动量与规范动量都不守恒，
+        但平移导致的诺特荷守恒；守恒量对应回旋圆心，而非瞬时速度。
+  \item \textbf{分岔.} $\Omega$ 从下方穿过 $\Omega_c$ 时，$\theta=0$ 由稳定变不稳定，
+        一对斜平衡同时出现，是典型的超临界叉式分岔。
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{landau} L. D. Landau, E. M. Lifshitz, \emph{Mechanics}, 3rd ed., Pergamon, 1976.
+\bibitem{goldstein} H. Goldstein, C. Poole, J. Safko, \emph{Classical Mechanics}, 3rd ed., Addison-Wesley, 2002.
+\bibitem{jackson} J. D. Jackson, \emph{Classical Electrodynamics}, 3rd ed., Wiley, 1999.
+\end{thebibliography}
+
+\end{document}

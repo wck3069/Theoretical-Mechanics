@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>悬链线与最小势能 · 理论力学</title><style>
+:root{--bg:#05070f;--panel:rgba(16,22,40,.9);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
+.app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.brand{position:absolute;left:24px;top:20px;pointer-events:none;max-width:min(760px,72vw)}.brand h1{font-size:19px;margin:0}.brand p{font-size:12.5px;color:var(--muted);margin:5px 0 0;line-height:1.55}
+.intro{color:#b9c6ea!important}
+.hud{position:absolute;left:24px;bottom:22px;display:flex;gap:18px;font-size:12.5px;color:var(--muted);pointer-events:none;flex-wrap:wrap}.hud b{color:var(--a);font-variant-numeric:tabular-nums}
+.panel{width:330px;flex:none;padding:20px;overflow:auto;background:var(--panel);border-left:1px solid var(--line);backdrop-filter:blur(12px)}
+.eq{font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.9;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(5,9,20,.6);color:#cfe0ff;margin-bottom:16px}
+.group{margin-bottom:15px}.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.val{font-family:ui-monospace,monospace;color:var(--b)}
+input[type=range]{width:100%;accent-color:var(--a)}input[type=checkbox]{accent-color:var(--a)}
+.hint{color:#8290b6;font-size:11.5px;line-height:1.65;margin:6px 0 2px;padding-left:9px;border-left:2px solid rgba(120,165,255,.22)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.btns button{margin:0}.btns button.full{grid-column:1/-1}
+button{font:inherit;font-size:12.5px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(127,224,255,.12);color:var(--text);cursor:pointer}
+button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weight:600}
+.doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+.tag{color:#6d7ba3;font-size:10.5px;line-height:1.6;border-top:1px solid rgba(120,165,255,.14);padding-top:10px}
+#errbox{position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}
+@media(max-width:820px){.app{flex-direction:column}.panel{width:auto;height:45vh;border-left:0;border-top:1px solid var(--line)}.stage{height:55vh}.brand{left:14px;top:12px;max-width:92vw}.brand h1{font-size:16px}.hud{left:14px;bottom:10px;gap:12px}}
+.modnav{display:flex;gap:8px;align-items:center;margin:0 0 12px}.modnav a.backlink{flex:none;color:#bfefff;text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(127,224,255,.10)}.modnav a.backlink:hover{border-color:#7fe0ff}.modnav select{flex:1;min-width:0;font:inherit;font-size:12.5px;padding:8px;border-radius:9px;border:1px solid var(--line);background:rgba(10,16,32,.7);color:var(--text)}
+
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+</style><!-- TM-SEO:START -->
+<meta name="description" content="悬链线与最小势能 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/37-catenary-min-energy/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="悬链线与最小势能 · 理论力学">
+<meta property="og:description" content="悬链线与最小势能 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/37-catenary-min-energy/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="悬链线与最小势能 · 理论力学">
+<meta name="twitter:description" content="悬链线与最小势能 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<link rel="stylesheet" href="../../assets/tm-atelier.css">
+</head><body>
+<div class="app"><div class="stage"><canvas id="cv"></canvas>
+<div class="brand"><h1>悬链线与最小势能</h1><p>均匀柔绳在重力下的平衡形状是双曲余弦，不是抛物线；参数 a=T₀/(λg)。</p><p class="intro">第一步：固定跨度把下垂量调大，看 a 怎样变小；再把张力读数与形状对应起来。</p></div>
+<div class="hud"><span>a <b id="aV">–</b></span><span>绳长 <b id="len">–</b></span><span>T₀/T_max <b id="t0">–</b></span></div><div id="selftestPanel" class="selftest" hidden></div></div><aside class="panel">
+<div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="" disabled>▣ M37 悬链线与最小势能（当前）</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
+<div class="eq">y = a cosh(x/a), &nbsp; s = a[cosh(L/2a) − 1]</div><div class="group"><div class="row"><label>跨度 L</label><span class="val" id="spanV">8 m</span></div><input id="span" type="range" min="2" max="12" step="0.1" value="8"><div class="hint">两支点等高，跨度越大同样下垂量下水平张力越大。</div></div><div class="group"><div class="row"><label>下垂量 s</label><span class="val" id="sagV">1.2 m</span></div><input id="sag" type="range" min="0.1" max="4" step="0.05" value="1.2"><div class="hint">最低点到支点连线的竖直距离；s 越小绳越紧。</div></div>
+<div class="btns"><button class="primary" id="play">暂停/继续</button><button id="reset">重置</button><button class="full" id="p1">浅垂 s=0.4</button><button class="full" id="p2">深垂 s=2.5</button><button class="full" id="p3">近拉直 s=0.12</button></div>
+<p class="hint">a 由二分法求 root：a·cosh(L/2a)−a−s=0。支点张力最大：T_max=λg(a+s)，s→0 时发散（重绳拉不直）；虚线是同跨同绳长的抛物线，其质心更高（ΔV>0）。</p><a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">均匀柔绳 · λg=1 · 对应书稿：第 2 章 变分法</div>
+</aside></div>
+<script>
+window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
+(function(){
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+function shell(c,w,h,seed){c.clearRect(0,0,w,h);var g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#0b1226');g.addColorStop(.55,'#060a16');g.addColorStop(1,'#02030a');c.fillStyle=g;c.fillRect(0,0,w,h);var f=function(v){return v-Math.floor(v)};for(var i=0;i<90;i++){var x=f(Math.sin(i*12.9898+seed)*43758.5453)*w,y=f(Math.sin(i*78.233+seed*3)*24634.6345)*h,a=.08+f(Math.sin(i*4.17)*9157.13)*.22;c.fillStyle='rgba(207,224,255,'+a.toFixed(3)+')';c.fillRect(x,y,1.2,1.2)}c.strokeStyle='rgba(120,160,255,.055)';c.lineWidth=1;c.beginPath();for(var x2=60;x2<w;x2+=80){c.moveTo(x2,0);c.lineTo(x2,h)}for(var y2=60;y2<h;y2+=80){c.moveTo(0,y2);c.lineTo(w,y2)}c.stroke()}
+function resize(){var b=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);resize();
+let playing=true,t=0;
+function solveA(L,s){var lo=1e-3,hi=1e4;for(var i=0;i<200;i++){var a=(lo+hi)/2,f=a*Math.cosh(L/(2*a))-a-s;if(f>0)lo=a;else hi=a}return (lo+hi)/2}
+function reset(){t=0}
+function step(dt){t+=dt}
+function draw(){var w=cv.clientWidth,h=cv.clientHeight,L=Number(document.getElementById('span').value),s=Number(document.getElementById('sag').value),a=solveA(L,s);shell(ctx,w,h,731);
+var ox=w*.5,oy=h*.34,k=Math.min(w*.72/L,h*.45/Math.max(s,1));
+var ropeLen=2*a*Math.sinh(L/(2*a));
+for(var seg=0;seg<200;seg++){var xa=-L/2+L*seg/200,xb=-L/2+L*(seg+1)/200,ya=a*Math.cosh(xa/a)-a,yb=a*Math.cosh(xb/a)-a;var fq=(Math.cosh((xa+xb)/(2*a))-1)/Math.max(Math.cosh(L/(2*a))-1,1e-9);ctx.strokeStyle='rgba('+(170+85*fq|0)+','+(205-15*fq|0)+','+(255-133*fq|0)+',.8)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ox+xa*k,oy+s*k-ya*k);ctx.lineTo(ox+xb*k,oy+s*k-yb*k);ctx.stroke()}
+ctx.fillStyle='#8d9cc4';[-L/2,L/2].forEach(function(x){ctx.fillRect(ox+x*k-6,oy-20,12,22)});ctx.beginPath();ctx.moveTo(ox-L*k/2,oy);ctx.lineTo(ox+L*k/2,oy);ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(150,180,240,.28)';ctx.stroke();ctx.setLineDash([]);
+ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(ox,oy+s*k,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#b9c6ea';ctx.font='12px ui-monospace,monospace';ctx.fillText('最低点',ox+10,oy+s*k+4);
+ctx.fillStyle='#7fe0ff';ctx.font='12px ui-monospace,monospace';ctx.fillText('y=a cosh(x/a)',w*.06,h*.74);
+function parLen(cp){var s2=0;for(var i2=0;i2<100;i2++){var xx=-L/2+L*i2/100,dy=cp*(2*xx+L/100)*L/100;s2+=Math.sqrt((L/100)*(L/100)+dy*dy)}return s2}
+var plo=0,phi=20;for(var b2=0;b2<60;b2++){var cm=(plo+phi)/2;if(parLen(cm)<ropeLen)plo=cm;else phi=cm}var cp=(plo+phi)/2;
+var Ic=0,Ip=0,Dc=0,Dp=0;for(var i3=0;i3<200;i3++){var xr=-L/2+L*(i3+.5)/200,ds1=Math.sqrt(1+Math.pow(Math.sinh(xr/a),2))*L/200,yc=a*Math.cosh(xr/a)-a;Dc+=(s-yc)*ds1;Ic+=ds1;var yq=cp*(xr*xr-L*L/4),ds2=Math.sqrt(1+Math.pow(2*cp*xr,2))*L/200;Dp+=(s-yq)*ds2;Ip+=ds2}
+ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(255,210,122,.55)';ctx.beginPath();for(var i4=0;i4<=100;i4++){var xp=-L/2+L*i4/100,yp=cp*(xp*xp-L*L/4);ctx.lineTo(ox+xp*k,oy+s*k-yp*k)}ctx.stroke();ctx.setLineDash([]);
+var yc1=oy+(s-Dc/Ic)*k,yc2=oy+(s-Dp/Ip)*k;ctx.fillStyle='#7fe0ff';ctx.beginPath();ctx.arc(ox,yc1,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(ox,yc2,4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#b9c6ea';ctx.font='12px ui-monospace,monospace';ctx.fillText('悬链线质心(低) vs 同长抛物线(高) Δh='+((Dp/Ip-Dc/Ic)).toFixed(3)+' m',w*.06,h*.78);
+ctx.fillText('张力色标：支点最大 T_max=λg(a+s)='+((a+s)).toFixed(2),w*.06,h*.82);
+document.getElementById('aV').textContent=a.toFixed(2);document.getElementById('len').textContent=ropeLen.toFixed(2);document.getElementById('t0').textContent=a.toFixed(2)+'/'+(a+s).toFixed(2);document.getElementById('spanV').textContent=L.toFixed(1)+' m';document.getElementById('sagV').textContent=s.toFixed(2)+' m'}
+document.getElementById('play').onclick=function(){playing=!playing};document.getElementById('reset').onclick=function(){reset()};
+document.getElementById('p1').onclick=function(){document.getElementById('span').value=8;document.getElementById('sag').value=.4};document.getElementById('p2').onclick=function(){document.getElementById('span').value=8;document.getElementById('sag').value=2.5};document.getElementById('p3').onclick=function(){document.getElementById('span').value=8;document.getElementById('sag').value=.12};
+var last=performance.now();function frame(now){var dt=Math.min(.05,(now-last)/1000);last=now;if(playing)step(dt);draw();requestAnimationFrame(frame)}requestAnimationFrame(frame);
+
+  /* ---------------- 自检（?selftest=1） ---------------- */
+  function runSelfTest() {
+    var lines = [], passN = 0, failN = 0;
+    function relLine(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = isFinite(rel) && rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+    function absLine(name, exp, act, tol, unit) {
+      var err = Math.abs(act - exp);
+      var ok = isFinite(err) && err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(6) +
+        ' actual=' + act.toFixed(6) + ' ' + unit + '=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+
+    var cases = [[8, 0.4], [8, 2.5], [3, 0.12]], ci2, maxRes = 0;
+    for (ci2 = 0; ci2 < cases.length; ci2++) {
+      var Lc = cases[ci2][0], sc = cases[ci2][1], ac = solveA(Lc, sc);
+      var res = Math.abs(ac * Math.cosh(Lc / (2 * ac)) - ac - sc);
+      if (res > maxRes) { maxRes = res; }
+    }
+    absLine('ST1 solveA 残差 |a cosh(L/2a)-a-s|（3 组参数最大值）', 0, maxRes, 1e-6, 'abs');
+    var L1 = 8, s1 = 0.4, a1 = solveA(L1, s1), len1 = 2 * a1 * Math.sinh(L1 / (2 * a1));
+    absLine('ST2 绳长=2a sinh(L/2a) 与弦长 L 的差', len1 - L1,
+      (2 * a1 * Math.sinh(L1 / (2 * a1))) - L1, 1e-9, 'abs');
+    absLine('ST2b 绳长必大于跨距', 1, len1 > L1 ? 1 : 0, 0.5, 'bool');
+    var Ls = 8, ss = 0.05, as = solveA(Ls, ss);
+    relLine('ST3 小垂度极限 a 趋近 L^2/(8s)', Ls * Ls / (8 * ss), as, 0.03);
+    relLine('ST4 支点张力恒等式 a cosh(L/2a)=a+s', a1 + s1, a1 * Math.cosh(L1 / (2 * a1)), 1e-9);
+    absLine('ST5 a(s) 随垂度单调减（a~L^2/(8s)）', 1, solveA(8, 2.5) < solveA(8, 0.4) ? 1 : 0, 0.5, 'bool');
+    function centroids(L, s, a) {
+      var Ic = 0, Ip = 0, Dc = 0, Dp = 0, i3, plo = 0, phi = 20, b2, cm, cp;
+      function parLen(cp2) {
+        var s2 = 0, i2, xx, dy;
+        for (i2 = 0; i2 < 100; i2++) {
+          xx = -L / 2 + L * i2 / 100; dy = cp2 * (2 * xx + L / 100) * L / 100;
+          s2 += Math.sqrt((L / 100) * (L / 100) + dy * dy);
+        }
+        return s2;
+      }
+      var ropeLen = 2 * a * Math.sinh(L / (2 * a));
+      for (b2 = 0; b2 < 60; b2++) {
+        cm = (plo + phi) / 2;
+        if (parLen(cm) < ropeLen) { plo = cm; } else { phi = cm; }
+      }
+      cp = (plo + phi) / 2;
+      for (i3 = 0; i3 < 200; i3++) {
+        var xr = -L / 2 + L * (i3 + 0.5) / 200;
+        var ds1 = Math.sqrt(1 + Math.pow(Math.sinh(xr / a), 2)) * L / 200, yc = a * Math.cosh(xr / a) - a;
+        Dc += (s - yc) * ds1; Ic += ds1;
+        var yq = cp * (xr * xr - L * L / 4), ds2 = Math.sqrt(1 + Math.pow(2 * cp * xr, 2)) * L / 200;
+        Dp += (s - yq) * ds2; Ip += ds2;
+      }
+      return { cat: Dc / Ic, par: Dp / Ip };
+    }
+    var cg = centroids(8, 1.0, solveA(8, 1.0));
+    absLine('ST6 悬链线质心低于同长抛物线（最小势能）', 1, cg.cat < cg.par ? 1 : 0, 0.5, 'bool');
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\nSELFTEST ' + passN + '/' + (passN + failN) + (failN ? ' \u2717' : ' \u2713');
+    window.__selftest = { passed: passN, failed: failN, details: lines.join('\n') };
+  }
+  if (/[?&]selftest=1/.test(location.search)) {
+    try { runSelfTest(); } catch (e) {
+      var pp = document.getElementById('selftestPanel');
+      if (pp) { pp.hidden = false; pp.textContent = 'selftest 异常 : ' + (e && e.message); }
+      window.__selftest = { passed: 0, failed: 1, details: String(e && e.message) };
+    }
+  }
+
+})();</script><script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+<script defer src="../../assets/tm-seq.js"></script>
+</body></html>

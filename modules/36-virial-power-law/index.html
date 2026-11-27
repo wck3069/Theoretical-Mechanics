@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>位力定理与幂次势 · 理论力学</title><style>
+:root{--bg:#05070f;--panel:rgba(16,22,40,.9);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
+.app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.brand{position:absolute;left:24px;top:20px;pointer-events:none;max-width:min(760px,72vw)}.brand h1{font-size:19px;margin:0}.brand p{font-size:12.5px;color:var(--muted);margin:5px 0 0;line-height:1.55}
+.intro{color:#b9c6ea!important}
+.hud{position:absolute;left:24px;bottom:22px;display:flex;gap:18px;font-size:12.5px;color:var(--muted);pointer-events:none;flex-wrap:wrap}.hud b{color:var(--a);font-variant-numeric:tabular-nums}
+.panel{width:330px;flex:none;padding:20px;overflow:auto;background:var(--panel);border-left:1px solid var(--line);backdrop-filter:blur(12px)}
+.eq{font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.9;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(5,9,20,.6);color:#cfe0ff;margin-bottom:16px}
+.group{margin-bottom:15px}.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.val{font-family:ui-monospace,monospace;color:var(--b)}
+input[type=range]{width:100%;accent-color:var(--a)}input[type=checkbox]{accent-color:var(--a)}
+.hint{color:#8290b6;font-size:11.5px;line-height:1.65;margin:6px 0 2px;padding-left:9px;border-left:2px solid rgba(120,165,255,.22)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.btns button{margin:0}.btns button.full{grid-column:1/-1}
+button{font:inherit;font-size:12.5px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(127,224,255,.12);color:var(--text);cursor:pointer}
+button:hover{border-color:var(--a)}button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weight:600}
+.doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+.tag{color:#6d7ba3;font-size:10.5px;line-height:1.6;border-top:1px solid rgba(120,165,255,.14);padding-top:10px}
+#errbox{position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}
+@media(max-width:820px){.app{flex-direction:column}.panel{width:auto;height:45vh;border-left:0;border-top:1px solid var(--line)}.stage{height:55vh}.brand{left:14px;top:12px;max-width:92vw}.brand h1{font-size:16px}.hud{left:14px;bottom:10px;gap:12px}}
+.modnav{display:flex;gap:8px;align-items:center;margin:0 0 12px}.modnav a.backlink{flex:none;color:#bfefff;text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(127,224,255,.10)}.modnav a.backlink:hover{border-color:#7fe0ff}.modnav select{flex:1;min-width:0;font:inherit;font-size:12.5px;padding:8px;border-radius:9px;border:1px solid var(--line);background:rgba(10,16,32,.7);color:var(--text)}
+
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+</style><!-- TM-SEO:START -->
+<meta name="description" content="位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/36-virial-power-law/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="位力定理与幂次势 · 理论力学">
+<meta property="og:description" content="位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/36-virial-power-law/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="位力定理与幂次势 · 理论力学">
+<meta name="twitter:description" content="位力定理与幂次势 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<link rel="stylesheet" href="../../assets/tm-atelier.css">
+</head><body>
+<div class="app"><div class="stage"><canvas id="cv"></canvas>
+<div class="brand"><h1>位力定理与幂次势</h1><p>束缚定常运动的动能与势能平均值由势能幂次锁定：2⟨T⟩ = n⟨V⟩。</p><p class="intro">第一步：把幂次 n 设为 −1（库仑/引力）看 2T≈−V；再切到 n=2（谐振子）看 2T≈2V。</p></div>
+<div class="hud"><span>2⟨T⟩ <b id="h1">–</b></span><span>⟨rV′⟩ <b id="h2">–</b></span><span>偏差% <b id="h3">–</b></span></div><div id="selftestPanel" class="selftest" hidden></div></div><aside class="panel">
+<div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="../35-lattice-dispersion/index.html">M35 周期链色散与群速度</option><option value="" disabled>▣ M36 位力定理与幂次势（当前）</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
+<div class="eq">V ∝ rⁿ ⇒ 2⟨T⟩ = ⟨rV′⟩（n≠0 时 = n⟨V⟩）</div><div class="group"><div class="row"><label>势能幂次 n</label><span class="val" id="nv">-1</span></div><input id="n" type="range" min="-2" max="4" step="0.1" value="-1"><div class="hint">n=−1 开普勒，n=2 谐振子；n=0 为对数势 V=k·ln r（力 −k/r，⟨rV′⟩=k）。n=−2 无稳定束缚轨道。</div></div><div class="group"><div class="row"><label>初始切向速度</label><span class="val" id="v0v">0.9</span></div><input id="v0" type="range" min="0.3" max="1.6" step="0.01" value="0.9"><div class="hint">速度太大则轨道不再束缚，平均值会漂移；观察偏差读数。</div></div><div class="group"><div class="row"><label>力常数 k</label><span class="val" id="kv">1</span></div><input id="kk" type="range" min="0.5" max="2" step="0.1" value="1"><div class="hint">只改变尺度，不改变位力比。</div></div>
+<div class="btns"><button class="primary" id="play">暂停/继续</button><button id="reset">重置</button><button class="full" id="p1">开普勒 n=−1</button><button class="full" id="p2">谐振子 n=2</button><button class="full" id="p3">对数势 n=0</button><button class="full" id="p4">逃逸反例 v₀=1.5</button></div>
+<p class="hint">曲线是所选幂次的势能形状，轨迹为数值积分；平均值取最近一段轨道的时间平均。</p><a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">幂次中心势 · 辛欧拉小步长 dt=0.01 · 对应书稿：第 1 章 牛顿力学</div>
+</aside></div>
+<script>
+window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
+(function(){
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+function shell(c,w,h,seed){c.clearRect(0,0,w,h);var g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#0b1226');g.addColorStop(.55,'#060a16');g.addColorStop(1,'#02030a');c.fillStyle=g;c.fillRect(0,0,w,h);var f=function(v){return v-Math.floor(v)};for(var i=0;i<90;i++){var x=f(Math.sin(i*12.9898+seed)*43758.5453)*w,y=f(Math.sin(i*78.233+seed*3)*24634.6345)*h,a=.08+f(Math.sin(i*4.17)*9157.13)*.22;c.fillStyle='rgba(207,224,255,'+a.toFixed(3)+')';c.fillRect(x,y,1.2,1.2)}c.strokeStyle='rgba(120,160,255,.055)';c.lineWidth=1;c.beginPath();for(var x2=60;x2<w;x2+=80){c.moveTo(x2,0);c.lineTo(x2,h)}for(var y2=60;y2<h;y2+=80){c.moveTo(0,y2);c.lineTo(w,y2)}c.stroke()}
+function resize(){var b=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);resize();
+let playing=true,t=0,x=1,y=0,vx=0,vy=0.9,sT=0,sV=0,cnt=0,trail=[],esc=0;
+function potV(r,n){return n===0?Math.log(r):Math.pow(r,n)/n}
+function reset(){x=1;y=0;vx=0;vy=Number(document.getElementById('v0').value);sT=0;sV=0;cnt=0;t=0;trail=[];esc=0}
+function step(dt){var n=Number(document.getElementById('n').value),k=Number(document.getElementById('kk').value);for(var j=0;j<20;j++){var h=0.01,r2=x*x+y*y,r=Math.sqrt(r2)||1e-6,c=-k*Math.pow(r,n-2);var ax=c*x,ay=c*y;vx+=ax*h;vy+=ay*h;x+=vx*h;y+=vy*h;var r3=Math.sqrt(x*x+y*y)||1e-6;if(r3>20||r3<0.05){esc=1;break}sT+=0.5*(vx*vx+vy*vy);sV+=k*Math.pow(r3,n);cnt++}trail.push([x,y]);if(trail.length>160)trail.shift();t+=dt}
+function draw(){var w=cv.clientWidth,h=cv.clientHeight,n=Number(document.getElementById('n').value);shell(ctx,w,h,612);
+var ox=w*.42,oy=h*.55,S=Math.min(w,h)*.16;ctx.strokeStyle='rgba(150,180,240,.30)';ctx.beginPath();ctx.arc(ox,oy,S,0,Math.PI*2);ctx.arc(ox,oy,S*2,0,Math.PI*2);ctx.stroke();
+if(trail.length>1){ctx.beginPath();trail.forEach(function(p,i){i?ctx.lineTo(ox+p[0]*S,oy-p[1]*S):ctx.moveTo(ox+p[0]*S,oy-p[1]*S)});ctx.strokeStyle='rgba(127,224,255,.45)';ctx.lineWidth=1.5;ctx.stroke()}
+ctx.strokeStyle='rgba(127,224,255,.8)';ctx.beginPath();ctx.moveTo(ox+x*S,oy-y*S);ctx.lineTo(ox+x*S+vx*S*.12,oy-y*S-vy*S*.12);ctx.stroke();ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(ox+x*S,oy-y*S,6,0,Math.PI*2);ctx.fill();
+var gx=70,gy=h-120,gw=Math.min(280,w*.28),gh=h*.22;ctx.strokeStyle='rgba(150,180,240,.2)';ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(gx+gw,gy);ctx.stroke();ctx.beginPath();var vmax=Math.max(Math.abs(potV(.5,n)),Math.abs(potV(3,n)),.1);for(var i=0;i<=100;i++){var r=.5+2.5*i/100,v=potV(r,n);ctx.lineTo(gx+i/100*gw,gy-v/vmax*gh*.45)}ctx.strokeStyle='#7fe0ff';ctx.lineWidth=2;ctx.stroke();
+var kk2=Number(document.getElementById('kk').value),rr=Math.sqrt(x*x+y*y);var En=.5*(vx*vx+vy*vy)+kk2*potV(rr,n);if(Math.abs(En)<=1.3*vmax){ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,210,122,.75)';ctx.beginPath();ctx.moveTo(gx,gy-En/vmax*gh*.45);ctx.lineTo(gx+gw,gy-En/vmax*gh*.45);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ffd27a';ctx.fillText('E',gx+gw+4,gy-En/vmax*gh*.45+4)}
+if(esc){ctx.fillStyle='#ff9a9a';ctx.font='13px ui-monospace,monospace';ctx.fillText('轨道逃逸或坠心：边界项不闭合，位力定理不适用（点「重置」重试）',w*.06,h*.88)}
+var a=cnt?2*sT/cnt:0,b=cnt?sV/cnt:0;document.getElementById('h1').textContent=a.toFixed(3);document.getElementById('h2').textContent=b.toFixed(3);document.getElementById('h3').textContent=(Math.abs(a-b)/Math.max(Math.abs(a),1e-9)*100).toFixed(1)+'%';
+document.getElementById('nv').textContent=n.toFixed(1);document.getElementById('v0v').textContent=Number(document.getElementById('v0').value).toFixed(2);document.getElementById('kv').textContent=Number(document.getElementById('kk').value).toFixed(1)}
+document.getElementById('play').onclick=function(){playing=!playing};document.getElementById('reset').onclick=function(){reset()};
+document.getElementById('p1').onclick=function(){document.getElementById('n').value=-1;document.getElementById('v0').value=.9;reset()};document.getElementById('p2').onclick=function(){document.getElementById('n').value=2;document.getElementById('v0').value=.6;reset()};document.getElementById('p3').onclick=function(){document.getElementById('n').value=0;document.getElementById('v0').value=.7;reset()};document.getElementById('p4').onclick=function(){document.getElementById('n').value=-1;document.getElementById('v0').value=1.5;reset()};
+var last=performance.now();function frame(now){var dt=Math.min(.05,(now-last)/1000);last=now;if(playing&&!esc)step(dt);draw();requestAnimationFrame(frame)}requestAnimationFrame(frame);
+
+  /* ---------------- 自检（?selftest=1） ---------------- */
+  function runSelfTest() {
+    var lines = [], passN = 0, failN = 0;
+    function relLine(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = isFinite(rel) && rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+    function absLine(name, exp, act, tol, unit) {
+      var err = Math.abs(act - exp);
+      var ok = isFinite(err) && err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(6) +
+        ' actual=' + act.toFixed(6) + ' ' + unit + '=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+
+    relLine('ST1 potV(r,n)=r^n/n（r=2,n=3）', 8 / 3, potV(2, 3), 1e-12);
+    relLine('ST2 potV(r,-1)=r^n/n=-1/r（r=1.5）', -1 / 1.5, potV(1.5, -1), 1e-12);
+    relLine('ST3 potV(r,0)=ln r（r=e）', 1, potV(Math.E, 0), 1e-12);
+    var hd = 1e-6, rq = 1.3, nq, dnum, fExp;
+    for (nq = -1; nq <= 2; nq += 3) {
+      dnum = (potV(rq + hd, nq) - potV(rq - hd, nq)) / (2 * hd);
+      fExp = Math.pow(rq, nq - 1);
+      relLine('ST4 -dV/dr=r^(n-1)（n=' + nq + ', r=1.3）', fExp, dnum, 1e-7);
+    }
+    var sy = { x: x, y: y, vx: vx, vy: vy, sT: sT, sV: sV, cnt: cnt, t: t, esc: esc, trail: trail.slice() };
+    var nSave = document.getElementById('n').value, kSave = document.getElementById('kk').value,
+        vSave = document.getElementById('v0').value;
+    document.getElementById('n').value = -1; document.getElementById('kk').value = 1;
+    document.getElementById('v0').value = 1;
+    reset();
+    var q, kkQ = 1, nQ = -1, eMax = 0, e0 = 0;
+    for (q = 0; q < 120; q++) {
+      step(0.1);
+      var rr = Math.sqrt(x * x + y * y), EE = 0.5 * (vx * vx + vy * vy) + kkQ * potV(rr, nQ);
+      if (q === 5) { e0 = EE; }
+      if (Math.abs(EE - e0) > eMax) { eMax = Math.abs(EE - e0); }
+    }
+    relLine('ST5 页面积分器位力 2<T>=<k r^n>（n=-1 圆轨道，3 周期）',
+      sV / cnt, 2 * (sT / cnt), 0.05);
+    absLine('ST5b n=-1 轨道未逃逸', 0, esc, 0.5, 'bool');
+    document.getElementById('n').value = 2;
+    reset();
+    for (q = 0; q < 120; q++) { step(0.1); }
+    relLine('ST6 n=2 谐振子 2<T>=<k r^2>', sV / cnt, 2 * (sT / cnt), 0.05);
+    function rk4Orbit(nv, kv, r0, vcirc, per, msteps) {
+      var st = [r0, 0, 0, vcirc], hstep = per / msteps, jj;
+      function deriv(s) {
+        var r2 = s[0] * s[0] + s[1] * s[1], r = Math.sqrt(r2) || 1e-9, cc = -kv * Math.pow(r, nv - 2);
+        return [s[2], s[3], cc * s[0], cc * s[1]];
+      }
+      for (jj = 0; jj < msteps; jj++) {
+        var k1 = deriv(st), s2 = [], s3 = [], s4 = [], idx;
+        for (idx = 0; idx < 4; idx++) { s2[idx] = st[idx] + hstep / 2 * k1[idx]; }
+        var k2 = deriv(s2);
+        for (idx = 0; idx < 4; idx++) { s3[idx] = st[idx] + hstep / 2 * k2[idx]; }
+        var k3 = deriv(s3);
+        for (idx = 0; idx < 4; idx++) { s4[idx] = st[idx] + hstep * k3[idx]; }
+        var k4 = deriv(s4);
+        for (idx = 0; idx < 4; idx++) { st[idx] += hstep / 6 * (k1[idx] + 2 * k2[idx] + 2 * k3[idx] + k4[idx]); }
+      }
+      return st;
+    }
+    var endSt = rk4Orbit(-1, 1, 1, 1, 2 * Math.PI, 6283);
+    absLine('ST7 RK4 一周期后回到出发点（n=-1 圆轨道）', 0, Math.hypot(endSt[0] - 1, endSt[1]), 1e-6, 'abs');
+    relLine('ST7b RK4 角动量守恒 h=x*vy-y*vx', 1, Math.abs(endSt[0] * endSt[3] - endSt[1] * endSt[2]), 1e-8);
+    x = sy.x; y = sy.y; vx = sy.vx; vy = sy.vy; sT = sy.sT; sV = sy.sV; cnt = sy.cnt;
+    t = sy.t; esc = sy.esc; trail = sy.trail;
+    document.getElementById('n').value = nSave; document.getElementById('kk').value = kSave;
+    document.getElementById('v0').value = vSave;
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\nSELFTEST ' + passN + '/' + (passN + failN) + (failN ? ' \u2717' : ' \u2713');
+    window.__selftest = { passed: passN, failed: failN, details: lines.join('\n') };
+  }
+  if (/[?&]selftest=1/.test(location.search)) {
+    try { runSelfTest(); } catch (e) {
+      var pp = document.getElementById('selftestPanel');
+      if (pp) { pp.hidden = false; pp.textContent = 'selftest 异常 : ' + (e && e.message); }
+      window.__selftest = { passed: 0, failed: 1, details: String(e && e.message) };
+    }
+  }
+
+})();</script><script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+<script defer src="../../assets/tm-seq.js"></script>
+</body></html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>狭义相对论 · 理论力学</title>
+<link rel="stylesheet" href="../../../assets/manuscript.css">
+<link rel="stylesheet" href="../../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+<!-- TM-SEO:START -->
+<meta name="description" content="狭义相对论 · 理论力学：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/chapters/07-relativity/manuscripts/book.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="狭义相对论 · 理论力学">
+<meta property="og:description" content="狭义相对论 · 理论力学：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/chapters/07-relativity/manuscripts/book.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="狭义相对论 · 理论力学">
+<meta name="twitter:description" content="狭义相对论 · 理论力学：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="../index.html">← 章节门户</a><a href="../../../manuscript/index.html">书稿</a><a href="../../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">书稿 · 网页阅读版</div>
+<h1>狭义相对论</h1>
+<p class="ms-lead">本章书稿全文，可检索、可复制。</p>
+<div class="ms-links"><b>相关</b><a href="../index.html">狭义相对论 章节</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#经典时空观的边界">7.1经典时空观的边界</a></li>
+<li class="l3"><a href="#事件时钟同步与两个基本原理">7.1.1事件、时钟同步与两个基本原理</a></li>
+<li class="l3"><a href="#洛伦兹变换的推导">7.1.2洛伦兹变换的推导</a></li>
+<li class="l2"><a href="#同时性时间与长度的测量">7.2同时性、时间与长度的测量</a></li>
+<li class="l3"><a href="#同时性的相对性">7.2.1同时性的相对性</a></li>
+<li class="l3"><a href="#时间膨胀与固有时">7.2.2时间膨胀与固有时</a></li>
+<li class="l3"><a href="#长度收缩">7.2.3长度收缩</a></li>
+<li class="l2"><a href="#时空间隔光锥与因果性">7.3时空间隔、光锥与因果性</a></li>
+<li class="l3"><a href="#不变间隔">7.3.1不变间隔</a></li>
+<li class="l3"><a href="#时空图中的运动坐标轴">7.3.2时空图中的运动坐标轴</a></li>
+<li class="l3"><a href="#双生子问题比较两条世界线">7.3.3双生子问题：比较两条世界线</a></li>
+<li class="l2"><a href="#速度变换与光的频移">7.4速度变换与光的频移</a></li>
+<li class="l3"><a href="#速度合成">7.4.1速度合成</a></li>
+<li class="l3"><a href="#纵向多普勒效应">7.4.2纵向多普勒效应</a></li>
+<li class="l2"><a href="#四维矢量与相对论动力学">7.5四维矢量与相对论动力学</a></li>
+<li class="l3"><a href="#四位置四速度与四动量">7.5.1四位置、四速度与四动量</a></li>
+<li class="l3"><a href="#三维力与功率">7.5.2三维力与功率</a></li>
+<li class="l2"><a href="#相对论的作用量与哈密顿描述">7.6相对论的作用量与哈密顿描述</a></li>
+<li class="l2"><a href="#四动量守恒与粒子碰撞">7.7四动量守恒与粒子碰撞</a></li>
+<li class="l3"><a href="#系统的不变质量">7.7.1系统的不变质量</a></li>
+<li class="l3"><a href="#固定靶反应的阈能">7.7.2固定靶反应的阈能</a></li>
+<li class="l2"><a href="#关键概念与常见误区">关键概念与常见误区</a></li>
+<li class="l2"><a href="#本章小结">本章小结</a></li>
+<li class="l2"><a href="#分层习题">分层习题</a></li>
+<li class="l2"><a href="#习题提示与结果">习题提示与结果</a></li>
+<li class="l2"><a href="#进一步阅读">进一步阅读</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>前六章改变了力学的描述语言，却始终默认不同惯性系共享同一个时间。现在要检验这个假设：若所有惯性观察者测得的真空光速相同，时间和空间还能分别独立变换吗？本章依次建立洛伦兹变换、时空几何和相对论动力学，并用低速极限检验它们。学习后应能区分事件与物体、坐标时间与固有时、总能量与动能，并能用四动量守恒处理碰撞。</p>
+</div>
+<h2 id="经典时空观的边界"><span class="ms-secno">7.1</span>经典时空观的边界</h2>
+<h3 id="事件时钟同步与两个基本原理"><span class="ms-secno">7.1.1</span>事件、时钟同步与两个基本原理</h3>
+<p>一次闪光或两粒子相遇发生在确定地点和时刻，称为一个<strong>事件</strong>。在惯性系 <span class="math inline">\(S\)</span> 中用 <span class="math inline">\((t,x,y,z)\)</span> 标记事件。这里的 <span class="math inline">\(t\)</span> 是该地点静止且已同步的时钟读数，并不等于远处观察者收到光信号的时刻。远处钟的同步采用爱因斯坦约定：光在 <span class="math inline">\(t_1\)</span> 发出、经远处反射后于 <span class="math inline">\(t_2\)</span> 返回，把反射时刻定义为 <span class="math inline">\((t_1+t_2)/2\)</span>。</p>
+<p>伽利略变换 <span class="math inline">\(x&#39;=x-vt,t&#39;=t\)</span> 给出速度变换 <span class="math inline">\(u&#39;_x=u_x-v\)</span>。若 <span class="math inline">\(u_x=c\)</span>，便有 <span class="math inline">\(u&#39;_x=c-v\)</span>，与惯性系中的真空光速不变不能同时成立。因此需要重新审视绝对时间，而非把牛顿方程中的质量随意改成速度的函数。</p>
+<div class="keybox"><div class="ms-callout-title">核心结论 · KEY RESULT</div>
+<p>狭义相对论的两个基本原理是：物理定律在所有惯性系中具有相同形式；真空中光的传播速度为 <span class="math inline">\(c\)</span>，与光源的运动状态无关。以下只讨论平直时空中的惯性坐标，不引入引力时空曲率。</p>
+</div>
+<p>光速 <span class="math inline">\(c\)</span> 也是时空结构中的不变速度。它限制局域信息传播；介质中的光速可以小于 <span class="math inline">\(c\)</span>，不能把介质光速代入下面的时空变换。</p>
+<h3 id="洛伦兹变换的推导"><span class="ms-secno">7.1.2</span>洛伦兹变换的推导</h3>
+<p>设 <span class="math inline">\(S&#39;\)</span> 相对 <span class="math inline">\(S\)</span> 沿 <span class="math inline">\(+x\)</span> 方向以速度 <span class="math inline">\(v\)</span> 匀速运动，坐标轴平行，原点在 <span class="math inline">\(t=t&#39;=0\)</span> 重合。时空均匀性要求变换为线性，且 <span class="math inline">\(S&#39;\)</span> 原点满足 <span class="math inline">\(x=vt\)</span>，故写成 <span class="math display">\[x&#39;=A(x-vt),\qquad t&#39;=Bt+Dx.\]</span> 对沿正、负 <span class="math inline">\(x\)</span> 传播的光线分别代入 <span class="math inline">\(x=ct,x&#39;=ct&#39;\)</span> 和 <span class="math inline">\(x=-ct,x&#39;=-ct&#39;\)</span>，得到 <span class="math display">\[A(c-v)=cB+c^2D,\qquad A(c+v)=cB-c^2D.\]</span> 相加、相减给出 <span class="math inline">\(B=A,D=-Av/c^2\)</span>。空间各向同性与惯性系互易性要求逆变换具有同一形式、速度改为 <span class="math inline">\(-v\)</span>。于是 <span class="math display">\[x=A(x&#39;+vt&#39;)=A^2(1-v^2/c^2)x.\]</span> 选取 <span class="math inline">\(v=0\)</span> 连续连接到恒等变换的正根，定义 <span class="math display">\[\beta=\frac vc,\qquad \gamma=\frac1{\sqrt{1-\beta^2}},\qquad |v|&lt;c,\]</span> 得到<strong>洛伦兹变换</strong>（Lorentz transformation）： <span class="math display">\[\boxed{x&#39;=\gamma(x-vt),\quad t&#39;=\gamma(t-vx/c^2),\quad y&#39;=y,\quad z&#39;=z.}
+\tag{7.1}\]</span> 逆变换由 <span class="math inline">\(v\to-v\)</span> 且交换撇号得到。沿运动方向的空间坐标和时间坐标混合，横向坐标不变。当 <span class="math inline">\(|v|/c\ll1\)</span>，且考虑的事件满足 <span class="math inline">\(|vx/c^2|\)</span> 相对时间尺度可忽略时，恢复伽利略变换。</p>
+<h2 id="同时性时间与长度的测量"><span class="ms-secno">7.2</span>同时性、时间与长度的测量</h2>
+<h3 id="同时性的相对性"><span class="ms-secno">7.2.1</span>同时性的相对性</h3>
+<p>对两个事件取差，式 (7.1) 给出 <span class="math display">\[\Delta t&#39;=\gamma(\Delta t-v\Delta x/c^2).\]</span> 若它们在 <span class="math inline">\(S\)</span> 中同时，即 <span class="math inline">\(\Delta t=0\)</span>，但地点不同，则 <span class="math inline">\(\Delta t&#39;=-\gamma v\Delta x/c^2\)</span>。同时性是对一组空间分离事件的坐标判断，必须注明参考系。</p>
+<div class="example">
+<p><strong>例 1.1</strong> (同时触发的两盏灯).  <em>在 <span class="math inline">\(S\)</span> 中，位于 <span class="math inline">\(x=0\)</span> 与 <span class="math inline">\(x=L\)</span> 的两灯在 <span class="math inline">\(t=0\)</span> 同时闪光。对沿 <span class="math inline">\(+x\)</span> 运动的 <span class="math inline">\(S&#39;\)</span>，右灯事件减去左灯事件的时间差是 <span class="math inline">\(-\gamma vL/c^2\)</span>，所以右灯先闪。这里已经扣除了光传播延迟，不能用“哪束光先到眼睛”替代事件时间的比较。</em></p>
+</div>
+<h3 id="时间膨胀与固有时"><span class="ms-secno">7.2.2</span>时间膨胀与固有时</h3>
+<p>一只在 <span class="math inline">\(S&#39;\)</span> 原点静止的钟，两次滴答之间有 <span class="math inline">\(\Delta x&#39;=0\)</span>。由逆变换 <span class="math display">\[\Delta t=\gamma\Delta t&#39;.\]</span> 钟沿自身世界线测得的时间称为<strong>固有时</strong> <span class="math inline">\(\Delta\tau=\Delta t&#39;\)</span>，故 <span class="math display">\[\Delta t=\gamma\Delta\tau.
+\tag{7.2}\]</span> 这比较的是同一只移动钟上的两个事件，而不是任意两个事件。对一般变速的有质量粒子，把路径分成短区间，在每一小段使用瞬时共动惯性系，得到 <span class="math display">\[\mathrm{d}\tau=\mathrm{d}t\sqrt{1-u^2(t)/c^2},\qquad
+\tau=\int\sqrt{1-u^2(t)/c^2}\,\mathrm{d}t.
+\tag{7.3}\]</span> 这里 <span class="math inline">\(u(t)\)</span> 是粒子在所选惯性系中的速率，不能误用两个参考系之间的恒定相对速度代替。</p>
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>在静止光钟中，两镜距离为 <span class="math inline">\(h\)</span>，半次滴答用时 <span class="math inline">\(h/c\)</span>。在横向速率为 <span class="math inline">\(v\)</span> 的惯性系中，光在半周期内走斜线，满足 <span class="math inline">\((c\Delta t/2)^2=h^2+(v\Delta t/2)^2\)</span>，于是 <span class="math inline">\(\Delta t=2\gamma h/c\)</span>。改变的不是光速，而是同样两次反射事件在另一惯性系中的时空间隔。相互认为对方的钟慢并不矛盾，因为比较分离时钟时，两系采用的同时事件不同。</p>
+</div>
+<h3 id="长度收缩"><span class="ms-secno">7.2.3</span>长度收缩</h3>
+<p>一根杆在 <span class="math inline">\(S&#39;\)</span> 静止，其端点坐标之差定义<strong>固有长度</strong> <span class="math inline">\(L_0\)</span>。在 <span class="math inline">\(S\)</span> 测量杆长，必须在同一 <span class="math inline">\(t\)</span> 记录两个端点位置。令 <span class="math inline">\(\Delta t=0\)</span>，则 <span class="math display">\[L_0=\Delta x&#39;=\gamma\Delta x,\qquad \boxed{L=L_0/\gamma.}\]</span> 长度收缩只发生在相对运动方向。它是不同同时切片上端点距离的关系；照片还包含光行时效应，不能直接当作上述测长操作。</p>
+<div class="example">
+<p><strong>例 1.2</strong> (明确事件再代公式).  <em>设模型宇宙线粒子的固有平均寿命为 <span class="math inline">\(\tau_0\)</span>，在实验室以 <span class="math inline">\(u=0.8c\)</span> 匀速飞行，不考虑能量损失。则 <span class="math inline">\(\gamma=5/3\)</span>，实验室平均寿命为 <span class="math inline">\(5\tau_0/3\)</span>，平均飞行距离为 <span class="math inline">\(u\gamma\tau_0=4c\tau_0/3\)</span>。在粒子静止系中，地面移动，而到探测器的初始距离缩为实验室距离的 <span class="math inline">\(3/5\)</span>。两种计算对应相同的产生与探测事件。本例参数用于教学，不代表特定观测数据。</em></p>
+</div>
+<h2 id="时空间隔光锥与因果性"><span class="ms-secno">7.3</span>时空间隔、光锥与因果性</h2>
+<h3 id="不变间隔"><span class="ms-secno">7.3.1</span>不变间隔 <a class="ms-demo" href="../../../modules/13-lightcone-worldlines/index.html">✦ 交互模拟：光锥与世界线 ↗</a></h3>
+<p>把洛伦兹变换代入直接展开： <span class="math display">\[c^2\Delta t&#39;^2-\Delta x&#39;^2
+=\gamma^2\bigl[(c\Delta t-v\Delta x/c)^2-(\Delta x-v\Delta t)^2\bigr]
+=c^2\Delta t^2-\Delta x^2.\]</span> 横向坐标不变，因而定义不变量 <span class="math display">\[\Delta s^2=c^2\Delta t^2-\Delta x^2-\Delta y^2-\Delta z^2.
+\tag{7.4}\]</span> 本章固定采用 <span class="math inline">\((+,-,-,-)\)</span> 号差约定。<span class="math inline">\(\Delta s^2&gt;0\)</span> 为<strong>类时</strong>，存在两事件同地发生的惯性系；<span class="math inline">\(\Delta s^2=0\)</span> 为<strong>类光</strong>，可由真空光信号连接；<span class="math inline">\(\Delta s^2&lt;0\)</span> 为<strong>类空</strong>，存在两事件同时发生的惯性系。类空间隔不存在沿这两事件的有质量观察者固有时。</p>
+<figure id="fig:sr-cone">
+<img src="figs/ch07-fig1.svg" style="width:86.0%" />
+<figcaption>在 <span class="math inline">\(x\)</span> 与 <span class="math inline">\(ct\)</span> 使用相同尺度的时空图中，光线与横轴成 <span class="math inline">\(45^\circ\)</span>。有质量粒子的世界线位于光锥内部。阴影表示可能与原点有因果联系的事件区域。</figcaption>
+</figure>
+<h3 id="时空图中的运动坐标轴"><span class="ms-secno">7.3.2</span>时空图中的运动坐标轴</h3>
+<p>在 <span class="math inline">\(ct\)</span>–<span class="math inline">\(x\)</span> 图中，<span class="math inline">\(S&#39;\)</span> 的时间轴由 <span class="math inline">\(x&#39;=0\)</span> 给出，即 <span class="math inline">\(x=\beta ct\)</span>；空间轴由 <span class="math inline">\(t&#39;=0\)</span> 给出，即 <span class="math inline">\(ct=\beta x\)</span>。两轴都向光线倾斜，而非欧氏平面中的正交旋转。</p>
+<figure id="fig:sr-axes">
+<img src="figs/ch07-fig2.svg" style="width:86.0%" />
+<figcaption>取 <span class="math inline">\(\beta=1/2\)</span>。与 <span class="math inline">\(x&#39;\)</span> 轴平行的直线表示 <span class="math inline">\(S&#39;\)</span> 的同时事件；图中轴上未标定长度，不能用欧氏投影读取洛伦兹坐标。</figcaption>
+</figure>
+<p>若两事件类时分离且 <span class="math inline">\(\Delta t&gt;0\)</span>，有 <span class="math inline">\(|\Delta x|&lt;c\Delta t\)</span>。因为 <span class="math inline">\(|v|&lt;c\)</span>，所以 <span class="math inline">\(\Delta t&#39;=\gamma(\Delta t-v\Delta x/c^2)&gt;0\)</span>。因此所有保持时间方向的惯性系都同意因果事件的先后次序；只有类空事件的顺序可以改变。</p>
+<h3 id="双生子问题比较两条世界线"><span class="ms-secno">7.3.3</span>双生子问题：比较两条世界线</h3>
+<p>设地面观察者惯性静止，飞船以速率 <span class="math inline">\(u\)</span> 出发后掉头，以同样速率返回。忽略很短的转向阶段，地面经过时间 <span class="math inline">\(T\)</span>，飞船经过固有时 <span class="math inline">\(T\sqrt{1-u^2/c^2}\)</span>。二者在出发、重逢事件间沿不同世界线运动，飞船没有一个覆盖往返全过程的共动惯性系。因此不能把单程惯性系的对称性机械地应用到全过程。若转向历时不可忽略，应直接用式 (7.3) 积分；年龄差不能单独归因于某瞬间的加速度大小。</p>
+<h2 id="速度变换与光的频移"><span class="ms-secno">7.4</span>速度变换与光的频移</h2>
+<h3 id="速度合成"><span class="ms-secno">7.4.1</span>速度合成</h3>
+<p>对式 (7.1) 微分后相除，令 <span class="math inline">\(u_i=\mathrm{d}x_i/\mathrm{d}t\)</span>，得到 <span class="math display">\[u&#39;_x=\frac{u_x-v}{1-vu_x/c^2},\quad
+u&#39;_y=\frac{u_y}{\gamma(1-vu_x/c^2)},\quad
+u&#39;_z=\frac{u_z}{\gamma(1-vu_x/c^2)}.
+\tag{7.5}\]</span> 沿同向光线 <span class="math inline">\(u_x=c\)</span>，立即得到 <span class="math inline">\(u&#39;_x=c\)</span>。若两速度均远小于 <span class="math inline">\(c\)</span>，分母趋于 1，恢复经典合成。</p>
+<div class="example">
+<p><strong>例 1.3</strong> (飞船发射探测器).  <em>飞船相对实验室以 <span class="math inline">\(0.6c\)</span> 前进，又在自身系中向前发射速度为 <span class="math inline">\(0.6c\)</span> 的探测器。用逆变换，实验室速度为 <span class="math display">\[u=\frac{0.6c+0.6c}{1+0.6^2}=\frac{15}{17}c&lt;c.\]</span> 有限的亚光速速度合成仍小于 <span class="math inline">\(c\)</span>。因此不能把两个速度简单相加后再人为截断到光速。</em></p>
+</div>
+<h3 id="纵向多普勒效应"><span class="ms-secno">7.4.2</span>纵向多普勒效应 <a class="ms-demo" href="../../../modules/16-doppler-beaming/index.html">✦ 交互模拟：相对论多普勒与车头灯效应 ↗</a></h3>
+<p>考虑在 <span class="math inline">\(S\)</span> 中沿 <span class="math inline">\(+x\)</span> 传播的单色平面波，相位为 <span class="math inline">\(\Phi=\omega t-kx\)</span>，其中 <span class="math inline">\(k=\omega/c\)</span>。波峰对应的事件集合不依赖坐标，故相位是标量。代入逆洛伦兹变换，<span class="math inline">\(t&#39;\)</span> 的系数给出 <span class="math display">\[\omega&#39;=\gamma(\omega-vk)=\gamma\omega(1-\beta),\qquad
+\boxed{\frac{\omega&#39;}{\omega}=\sqrt{\frac{1-\beta}{1+\beta}}.}\]</span> 这里 <span class="math inline">\(S&#39;\)</span> 沿光传播方向运动，接收者远离位于后方的静止光源，测得红移。靠近时用 <span class="math inline">\(v\to-v\)</span>，得到蓝移。一般方向的频率变换为 <span class="math inline">\(\omega&#39;=\gamma\omega(1-\beta\cos\alpha)\)</span>，<span class="math inline">\(\alpha\)</span> 是 <span class="math inline">\(S\)</span> 中光线与 <span class="math inline">\(+x\)</span> 的夹角。</p>
+<h2 id="四维矢量与相对论动力学"><span class="ms-secno">7.5</span>四维矢量与相对论动力学</h2>
+<h3 id="四位置四速度与四动量"><span class="ms-secno">7.5.1</span>四位置、四速度与四动量</h3>
+<p>定义四位置 <span class="math inline">\(x^\mu=(ct,x,y,z)\)</span>，其中 <span class="math inline">\(\mu=0,1,2,3\)</span>。令 <span class="math display">\[\eta_{\mu\nu}=\operatorname{diag}(1,-1,-1,-1),\qquad
+A\cdot B=\eta_{\mu\nu}A^\mu B^\nu
+=A^0B^0-\mathbf A\cdot\mathbf B.\]</span> 重复的上下指标求和。与四位置按同一线性规则变换的量称为四矢量；不是任意四个数都构成四矢量。对有静质量且 <span class="math inline">\(u&lt;c\)</span> 的粒子，由固有时不变定义 <span class="math display">\[U^\mu=\frac{\mathrm{d}x^\mu}{\mathrm{d}\tau}=\gamma_u(c,\mathbf{u}),\qquad
+U\cdot U=c^2,\qquad \gamma_u=(1-u^2/c^2)^{-1/2}.\]</span> 质量 <span class="math inline">\(m\)</span> 在本章始终指不变质量。四动量定义为 <span class="math display">\[P^\mu=mU^\mu=(E/c,\mathbf{p}),\qquad
+\mathbf{p}=\gamma_um\mathbf{u},\qquad E=\gamma_umc^2.
+\tag{7.6}\]</span> 这个定义在低速下给出 <span class="math inline">\(\mathbf{p}\to m\mathbf{u}\)</span>；下一节从作用量得到相同结果。由 <span class="math inline">\(P\cdot P=m^2c^2\)</span> 推得 <span class="math display">\[\boxed{E^2=p^2c^2+m^2c^4.}
+\tag{7.7}\]</span> 静止时有 <span class="math inline">\(E_0=mc^2\)</span>；动能是 <span class="math inline">\(K=E-mc^2\)</span>。展开 <span class="math display">\[E=mc^2+\frac12mu^2+\frac38\frac{mu^4}{c^2}+O(u^6/c^4),\]</span> 恢复牛顿动能。对光子不能使用不存在的光子静止系或固有时参数，应直接使用 <span class="math inline">\(m=0\)</span> 的质量壳关系 <span class="math inline">\(E=pc\)</span>，并结合量子关系 <span class="math inline">\(E=\hbar\omega\)</span>。</p>
+<h3 id="三维力与功率"><span class="ms-secno">7.5.2</span>三维力与功率 <a class="ms-demo" href="../../../modules/23-hyperbolic-motion/index.html">✦ 交互模拟：双曲运动与恒固有加速度 ↗</a></h3>
+<p>在指定惯性系中定义三维力 <span class="math inline">\(\mathbf{F}=\mathrm{d}\mathbf{p}/\mathrm{d}t\)</span>。对恒定不变质量粒子，<span class="math inline">\(\dot\gamma_u=\gamma_u^3\mathbf{u}\cdot\mathbf{a}/c^2\)</span>，所以 <span class="math display">\[\mathbf{F}=m\gamma_u\mathbf{a}+
+\frac{m\gamma_u^3}{c^2}(\mathbf{u}\cdot\mathbf{a})\mathbf{u}.
+\tag{7.8}\]</span> 沿瞬时速度与垂直方向分解：<span class="math inline">\(F_\parallel=m\gamma_u^3a_\parallel\)</span>，<span class="math inline">\(\mathbf{F}_\perp=m\gamma_u\mathbf{a}_\perp\)</span>。因此一般不能写 <span class="math inline">\(\mathbf{F}=m\mathbf{a}\)</span>，也不能统一用一个“相对论质量”解决所有方向的关系。对质量壳关系求导，利用 <span class="math inline">\(\mathbf{u}=c^2\mathbf{p}/E\)</span> 得 <span class="math display">\[2E\dot E=2c^2\mathbf{p}\cdot\dot\mathbf{p},
+\qquad \boxed{\dot E=\mathbf{F}\cdot\mathbf{u}.}\]</span> 四力为 <span class="math inline">\(f^\mu=\mathrm{d}P^\mu/\mathrm{d}\tau=\gamma_u(\mathbf{F}\cdot\mathbf{u}/c,\mathbf{F})\)</span>，并满足 <span class="math inline">\(f\cdot U=0\)</span>。这一正交性使用了质量恒定的假设。</p>
+<div class="example">
+<p><strong>例 1.4</strong> (恒定力不能把有质量粒子推到光速).  <em>一维恒力 <span class="math inline">\(F&gt;0\)</span> 作用于初始静止粒子。由 <span class="math inline">\(\dot p=F\)</span> 得 <span class="math inline">\(p=Ft\)</span>，于是 <span class="math display">\[u(t)=\frac{c^2Ft}{\sqrt{m^2c^4+F^2t^2c^2}}
+=\frac{Ft/m}{\sqrt{1+(Ft/mc)^2}}.\]</span> 积分并令 <span class="math inline">\(x(0)=0\)</span>，得到 <span class="math display">\[x(t)=\frac{mc^2}{F}\left[\sqrt{1+(Ft/mc)^2}-1\right].\]</span> 当 <span class="math inline">\(Ft\ll mc\)</span>，有 <span class="math inline">\(x\simeq Ft^2/(2m)\)</span>；任意有限 <span class="math inline">\(t\)</span> 均有 <span class="math inline">\(u&lt;c\)</span>，长期作用使动量、能量继续增大，而速度渐近于 <span class="math inline">\(c\)</span>。</em></p>
+</div>
+<h2 id="相对论的作用量与哈密顿描述"><span class="ms-secno">7.6</span>相对论的作用量与哈密顿描述</h2>
+<p>自由粒子的轨迹不应依赖所选惯性坐标。最简单的局域几何作用量与世界线固有时成正比。取系数使低速动能正确，写为 <span class="math display">\[S=-mc^2\int\mathrm{d}\tau=\int L\mathrm{d}t,\qquad
+L=-mc^2\sqrt{1-u^2/c^2}.
+\tag{7.9}\]</span> 低速展开为 <span class="math inline">\(L=-mc^2+mu^2/2+\cdots\)</span>，常数不改变运动方程。对速度求偏导， <span class="math display">\[p_i=\frac{\partial L}{\partial u_i}=\gamma_u m u_i.\]</span> 自由粒子 <span class="math inline">\(L\)</span> 不依赖位置，欧拉–拉格朗日方程给出 <span class="math inline">\(\dot\mathbf{p}=0\)</span>。勒让德变换得到 <span class="math display">\[H=\mathbf{p}\cdot\mathbf{u}-L
+=\gamma_u m u^2+mc^2/\gamma_u
+=\gamma_u mc^2=\sqrt{m^2c^4+p^2c^2}.\]</span> 哈密顿方程 <span class="math inline">\(\dot x_i=\partial H/\partial p_i=c^2p_i/H\)</span> 正好恢复速度与动量的关系。这说明第六章的正则结构可以保留，需要更换的是与相对论时空相容的作用量。</p>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p>加入电磁耦合 <span class="math inline">\(L=-mc^2\sqrt{1-u^2/c^2}+q\mathbf{A}\cdot\mathbf{u}-q\phi\)</span>，正则动量为 <span class="math inline">\(\mathbf{p}_{\rm can}=\gamma_um\mathbf{u}+q\mathbf{A}\)</span>。机械动量 <span class="math inline">\(\mathbf\pi=\mathbf{p}_{\rm can}-q\mathbf{A}\)</span> 与正则动量必须区分，哈密顿量为 <span class="math display">\[H=\sqrt{m^2c^4+c^2(\mathbf{p}_{\rm can}-q\mathbf{A})^2}+q\phi.\]</span> 正则方程给出 <span class="math inline">\(\dot{\mathbf\pi}=q(\mathbf{E}+\mathbf{u}\times\mathbf{B})\)</span>，功率为 <span class="math inline">\(q\mathbf{E}\cdot\mathbf{u}\)</span>；磁场改变动量方向而不直接做功。这里将场视为给定外场，不计辐射反作用。所需基础是第三、六章的电磁耦合与偏导数运算，可结合本章末的公开讲义继续阅读。</p>
+</div>
+<h2 id="四动量守恒与粒子碰撞"><span class="ms-secno">7.7</span>四动量守恒与粒子碰撞</h2>
+<h3 id="系统的不变质量"><span class="ms-secno">7.7.1</span>系统的不变质量 <a class="ms-demo" href="../../../modules/19-relativistic-collisions/index.html">✦ 交互模拟：相对论碰撞与不变质量 ↗</a> <a class="ms-demo" href="../../../modules/34-compton-scattering/index.html">✦ 交互模拟：康普顿散射运动学 ↗</a></h3>
+<p>对不与外界交换能量、动量的系统，碰撞前后四动量相等： <span class="math display">\[\sum_{\rm in}P^\mu=\sum_{\rm out}P^\mu.\]</span> 对总能量 <span class="math inline">\(E_{\rm tot}\)</span> 和总动量 <span class="math inline">\(\mathbf{P}_{\rm tot}\)</span>，系统不变质量 <span class="math inline">\(M\)</span> 满足 <span class="math display">\[M^2c^4=E_{\rm tot}^2-c^2|\mathbf{P}_{\rm tot}|^2.\]</span> 它一般不等于各粒子质量之和，因为质心系内的运动能和相互作用能也参与系统的质量。在总动量为零的参考系中，<span class="math inline">\(E_{\rm cm}=Mc^2\)</span>。</p>
+<div class="example">
+<p><strong>例 1.5</strong> (完全非弹性碰撞与内能).  <em>两粒子各质量 <span class="math inline">\(m\)</span>，在质心系以速率 <span class="math inline">\(u\)</span> 相向运动，碰后结合成一个静止复合体，且无能量向外辐射。初动量相消，总能量为 <span class="math inline">\(2\gamma_umc^2\)</span>。末态质量因此为 <span class="math display">\[M=2\gamma_um&gt;2m.\]</span> 初始动能转化为复合体内能，质量增加量是 <span class="math inline">\(\Delta M=2(\gamma_u-1)m\)</span>。守恒的是总四动量，而不是各物体静质量之和。若有光子逸出，必须把它们的四动量计入末态。</em></p>
+</div>
+<h3 id="固定靶反应的阈能"><span class="ms-secno">7.7.2</span>固定靶反应的阈能 <a class="ms-demo" href="../../../modules/40-threshold-collider/index.html">✦ 交互模拟：固定靶阈能与对撞机 ↗</a></h3>
+<p>入射粒子质量为 <span class="math inline">\(m_a\)</span>、实验室总能量为 <span class="math inline">\(E_a\)</span>，靶粒子质量为 <span class="math inline">\(m_b&gt;0\)</span> 且初始静止。由质量壳关系，初态不变量为 <span class="math display">\[\mathcal S=(E_a+m_bc^2)^2-c^2p_a^2
+=m_a^2c^4+m_b^2c^4+2m_bc^2E_a.\]</span> 若给定末态通道由自由粒子组成，总静质量为 <span class="math inline">\(M_f=\sum_jm_j\)</span>，在阈值处所有末态粒子在质心系相对静止，故 <span class="math inline">\(\mathcal S_{\rm th}=M_f^2c^4\)</span>。于是 <span class="math display">\[E_{a,\rm th}=\frac{M_f^2-m_a^2-m_b^2}{2m_b}c^2.
+\tag{7.10}\]</span> 这是运动学下限，还要满足电荷等守恒律及反应动力学条件。若该表达式低于 <span class="math inline">\(m_ac^2\)</span>，物理上的最低入射总能量仍至少为 <span class="math inline">\(m_ac^2\)</span>；阈动能为 <span class="math inline">\(K_{a,\rm th}=E_{a,\rm th}-m_ac^2\)</span>（用于正阈值反应）。</p>
+<div class="example">
+<p><strong>例 1.6</strong> (为何对撞比固定靶更有效？).  <em>用假想但质量守恒条件明确的模型：两个质量均为 <span class="math inline">\(m\)</span> 的入射粒子，末态通道总静质量为 <span class="math inline">\(4m\)</span>。固定靶时需 <span class="math inline">\(E_{a,\rm th}=7mc^2\)</span>，即入射动能 <span class="math inline">\(6mc^2\)</span>。对称对撞时总动量本来为零，每束只需总能量 <span class="math inline">\(2mc^2\)</span>，两束总动能为 <span class="math inline">\(2mc^2\)</span>。差别来自固定靶中必须保留末态整体运动的能量。本例只说明运动学，不指定实际反应。</em></p>
+</div>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p>匀强磁场中，粒子垂直入射且忽略辐射损失。洛伦兹力大小为 <span class="math inline">\(|q|uB\)</span>，动量方向以角速率 <span class="math inline">\(u/\rho\)</span> 转动，因此 <span class="math inline">\(|\dot\mathbf{p}|=pu/\rho\)</span>，得到 <span class="math inline">\(p=|q|B\rho\)</span>。结合质量壳关系即可从弯转半径推算能量。回旋角频率为 <span class="math inline">\(|q|B/(\gamma_um)\)</span>，不再与能量无关。这是理解同步加速思想的起点，所需基础只是圆周运动与本章动量定义；高精度束流还需第六章的正则动力学。</p>
+</div>
+<h2 class="unnumbered" id="关键概念与常见误区">关键概念与常见误区</h2>
+<ul>
+<li><p>固有时属于一条类时世界线；时间膨胀须选择同一只钟上的两个事件。</p></li>
+<li><p>测量运动杆长须同时记录两个端点，且“同时”须指定参考系。</p></li>
+<li><p>本章 <span class="math inline">\(m\)</span> 是不变质量，<span class="math inline">\(E\)</span> 是总能量；光子没有静止系。</p></li>
+<li><p>相对论中仍有能量和动量守恒；有内能变化时，各部分静质量之和不必守恒。</p></li>
+<li><p>洛伦兹变换连接惯性坐标；变速运动可在惯性系中描述，固有时用积分计算。</p></li>
+</ul>
+<h2 class="unnumbered" id="本章小结">本章小结</h2>
+<p>光速不变使绝对同时性失效，并把空间和时间统一为具有不变间隔的四维时空。时间膨胀、长度收缩和速度合成是同一变换的不同结果。相对论动力学用四动量统一能量和动量，用不变质量组织碰撞问题；作用量和哈密顿方法则把本章与前面的分析力学连接起来。低速极限下，经典动量、动能和运动方程逐项恢复。</p>
+<h2 class="unnumbered" id="分层习题">分层习题</h2>
+<ol>
+<li><p><strong>概念辨析。</strong> 两事件在某惯性系同时而不同地。证明它们不可能由亚光速信号相连。说明为何它们的时间次序可变而不违反因果性。</p></li>
+<li><p><strong>测量。</strong> 固有长为 <span class="math inline">\(L_0\)</span> 的杆相对实验室以 <span class="math inline">\(0.6c\)</span> 运动。求实验室长度；若取实验室同时测量的端点事件，求两事件在杆系中的时间差。</p></li>
+<li><p><strong>独立推导。</strong> 用速度变换证明：若 <span class="math inline">\(u_x=c\cos\alpha,u_y=c\sin\alpha\)</span>，则 <span class="math inline">\(u_x&#39;^2+u_y&#39;^2=c^2\)</span>。</p></li>
+<li><p><strong>世界线。</strong> 一飞船以 <span class="math inline">\(0.8c\)</span> 匀速飞行，地面时间 <span class="math inline">\(10\)</span> 年后瞬时转向，再飞 <span class="math inline">\(10\)</span> 年返回。分别计算两者固有时，并说明转向理想化如何被平滑世界线替代。</p></li>
+<li><p><strong>动力学。</strong> 完成恒力例题中 <span class="math inline">\(u(t)\)</span> 到 <span class="math inline">\(x(t)\)</span> 的积分，验证 <span class="math inline">\(\mathrm{d}E/\mathrm{d}t=Fu\)</span>。</p></li>
+<li><p><strong>四动量。</strong> 质量为 <span class="math inline">\(M\)</span> 的静止粒子衰变为两个光子。证明光子反向且各能量为 <span class="math inline">\(Mc^2/2\)</span>；再求沿一个光子方向以 <span class="math inline">\(v\)</span> 运动的惯性系中两光子的能量。</p></li>
+<li><p><strong>综合分析。</strong> 质量为 <span class="math inline">\(m\)</span>、总能量为 <span class="math inline">\(E\)</span> 的粒子撞上同质量静止靶并完全结合且不辐射，求复合体质量和速度。</p></li>
+<li><p><strong>计算与模拟。</strong> 取 <span class="math inline">\(z=Ft/(mc)\)</span>，画出 <span class="math inline">\(u/c=z/\sqrt{1+z^2}\)</span> 与经典结果 <span class="math inline">\(u/c=z\)</span>。比较 <span class="math inline">\(z=0.1,1,10\)</span>，并检查解析能量是否满足 <span class="math inline">\(E^2-p^2c^2=m^2c^4\)</span>。用无量纲变量可避免把单位错误误认为物理效应。</p></li>
+</ol>
+<h2 class="unnumbered" id="习题提示与结果">习题提示与结果</h2>
+<ol>
+<li><p>间隔为 <span class="math inline">\(-\Delta r^2&lt;0\)</span>；因果信号只连接类时或类光事件。</p></li>
+<li><p><span class="math inline">\(L=0.8L_0\)</span>；以右端减左端，<span class="math inline">\(\Delta t&#39;=-vL_0/c^2\)</span>。</p></li>
+<li><p>通分后分子利用 <span class="math inline">\(\gamma^{-2}=1-\beta^2\)</span> 化为 <span class="math inline">\((1-\beta\cos\alpha)^2\)</span>。</p></li>
+<li><p>地面 <span class="math inline">\(20\)</span> 年，飞船 <span class="math inline">\(12\)</span> 年；有限转向时直接积分固有时。</p></li>
+<li><p>令 <span class="math inline">\(z=Ft/(mc)\)</span> 作积分；<span class="math inline">\(E=mc^2\sqrt{1+z^2}\)</span>。</p></li>
+<li><p>能量分别为 <span class="math inline">\(\gamma Mc^2(1-\beta)/2\)</span> 与 <span class="math inline">\(\gamma Mc^2(1+\beta)/2\)</span>；两者之和与总动量满足不变质量关系。</p></li>
+<li><p><span class="math inline">\(M_f=\sqrt{2m^2+2mE/c^2}\)</span>，<span class="math inline">\(V=c\sqrt{E^2-m^2c^4}/(E+mc^2)\)</span>。</p></li>
+<li><p>相对论速度约为 <span class="math inline">\(0.09950c,0.70711c,0.99504c\)</span>；经典公式只在 <span class="math inline">\(z\ll1\)</span> 时可靠。</p></li>
+</ol>
+<h2 class="unnumbered" id="进一步阅读">进一步阅读</h2>
+<p>David Tong 的剑桥大学公开讲义 <em>Dynamics and Relativity</em>：<a href="https://davidtong.org/teaching/dynamics-and-relativity/" class="uri">https://davidtong.org/teaching/dynamics-and-relativity/</a>（查阅：2026-11-05）。其中相对论部分可用于继续学习洛伦兹几何与相对论碰撞。本章推导和例题按本书符号重新组织，未使用实际实验参数。</p>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>狭义相对论 · 书稿网页版</span><span><a href="../index.html">返回章节</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
+<script src="../../../assets/tm-i18n-data.js"></script>
+<script src="../../../assets/tm-i18n.js"></script>
+<script src="../../../assets/mathjax/tex-svg.js"></script>
+<script src="../../../assets/ui-motion.js" defer></script>
+</body>
+</html>

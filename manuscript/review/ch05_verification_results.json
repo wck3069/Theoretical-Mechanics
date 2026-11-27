@@ -1,0 +1,71 @@
+{
+  "checks_passed": [
+    "ZXZ矩阵有限差分、体/空间角速度及有限转动次序",
+    "三质点惯量、主轴、动能与张量旋转协变",
+    "平行轴、角点薄板正定性与主惯量约束",
+    "移动矩心绝对/相对角动量及加速度修正的粒子独立核验",
+    "力螺旋、加载梯子平衡与受驱非主轴力矩/功率",
+    "滚动Newton方程、摩擦阈值、功率与瞬时接触加速度",
+    "台球击后滑动转滚动的双动量及能量损失",
+    "自由对称刚体体频率与空间进动方向/符号",
+    "Euler与姿态联合积分、空间守恒、两步长收敛和中间轴早期增长",
+    "重陀螺快慢稳恒根、动量兼容与有效势曲率",
+    "章动势图准确转折点与原方程能量核验",
+    "竖直睡眠解原横向系统与阈值两侧解析核验",
+    "三维单点冲量有效质量、恢复系数、能量与倾杆实例",
+    "四元数主动转动、双覆盖与姿态正交误差",
+    "反作用轮绝对/相对转速、电机功率、两阶段转角与饱和"
+  ],
+  "free_body": {
+    "max_axis": {
+      "h": 0.005,
+      "max_relative_energy_error": 7.549509017942047e-15,
+      "max_relative_J_squared_error": 7.697542027655515e-15,
+      "max_q_norm_squared_error": 1.176836406102666e-14,
+      "max_relative_space_J_error": 2.5479322875585135e-14,
+      "step_difference_ratio": 16.050164358084363,
+      "minimum_omega2": -0.0014142135404177562
+    },
+    "middle_axis": {
+      "h": 0.005,
+      "max_relative_energy_error": 3.6837163119899577e-13,
+      "max_relative_J_squared_error": 3.677054980503538e-13,
+      "max_q_norm_squared_error": 1.0935696792557792e-12,
+      "max_relative_space_J_error": 5.131759254876976e-12,
+      "step_difference_ratio": 16.06916439174993,
+      "minimum_omega2": -0.999253498067116
+    }
+  },
+  "middle_axis_early_growth_rate": 0.5773502685908319,
+  "steady_top_branches": [
+    {
+      "Omega": 0.1560911085414225,
+      "p_phi": 1.117068331406067,
+      "nutation_frequency_squared": 3.418273325624268
+    },
+    {
+      "Omega": 3.8439088914585775,
+      "p_phi": 3.8829316685939332,
+      "nutation_frequency_squared": 14.481726674375736
+    }
+  ],
+  "nutation_max_absolute_energy_error": 1.2391754289353685e-12,
+  "sleeping_top_linear": [
+    {
+      "h": 0.5,
+      "amplitude_ratio": 7.024182715087528,
+      "growth_rate": 0.48733971724044817
+    },
+    {
+      "h": 2.0,
+      "amplitude_ratio": 0.9999999999966668,
+      "growth_rate": 0
+    }
+  ],
+  "wheel": {
+    "motor_torque": 4.5,
+    "acceleration_work": 45.0,
+    "net_two_stage_angle": -2.0,
+    "saturation_seconds": 400.0
+  }
+}

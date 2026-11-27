@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>耦合系统与小振动 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>耦合系统与小振动</h1>
+<p class="ms-lead">本讲义合并作业-8 中三个同类型问题：斜面上的滑块（Q3）、弹簧摆（Q4）、 小车与单摆（Q5）。它们的共同结构是两个广义坐标、一个循环坐标或一组线性化后的 耦合振动。我们分别写出拉格朗日量、运动方程与守恒量，给出小振动频率， 并用交互页的数值积分核对解析结果。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">耦合系统与小振动 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#作业映射">1作业映射</a></li>
+<li class="l2"><a href="#sec:wedge">2斜面上的滑块（Q3）</a></li>
+<li class="l3"><a href="#坐标与拉格朗日量">2.1坐标与拉格朗日量</a></li>
+<li class="l3"><a href="#循环坐标与运动方程">2.2循环坐标与运动方程</a></li>
+<li class="l3"><a href="#动能分配与约束力做功">2.3动能分配与约束力做功</a></li>
+<li class="l2"><a href="#sec:spring">3弹簧摆（Q4）</a></li>
+<li class="l3"><a href="#拉格朗日量与运动方程">3.1拉格朗日量与运动方程</a></li>
+<li class="l3"><a href="#平衡位置与两种小振动">3.2平衡位置与两种小振动</a></li>
+<li class="l2"><a href="#sec:cart">4小车与单摆（Q5）</a></li>
+<li class="l3"><a href="#拉格朗日量与水平动量">4.1拉格朗日量与水平动量</a></li>
+<li class="l3"><a href="#小振动频率">4.2小振动频率</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l2"><a href="#讨论">6讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="作业映射"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-8 Q3</td>
+<td style="text-align: left;">斜面在光滑地面自由平移，物块沿斜面下滑</td>
+<td style="text-align: left;">循环坐标、动能分配、约束力做功</td>
+<td style="text-align: center;"><a href="#sec:wedge" data-reference-type="ref" data-reference="sec:wedge">2</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-8 Q4</td>
+<td style="text-align: left;">弹簧摆：弹簧长度 <span class="math inline">\(r\)</span> 与摆角 <span class="math inline">\(\theta\)</span></td>
+<td style="text-align: left;">耦合方程、平衡位置、两种小振动</td>
+<td style="text-align: center;"><a href="#sec:spring" data-reference-type="ref" data-reference="sec:spring">3</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-8 Q5</td>
+<td style="text-align: left;">小车质量 <span class="math inline">\(M\)</span> 上挂单摆 <span class="math inline">\(m,l\)</span></td>
+<td style="text-align: left;">水平动量守恒、小振动、<span class="math inline">\(M\to\infty\)</span></td>
+<td style="text-align: center;"><a href="#sec:cart" data-reference-type="ref" data-reference="sec:cart">4</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:wedge"><span class="ms-secno">2</span>斜面上的滑块（Q3）</h2>
+<h3 id="坐标与拉格朗日量"><span class="ms-secno">2.1</span>坐标与拉格朗日量</h3>
+<p>斜面质量 <span class="math inline">\(M\)</span>、倾角 <span class="math inline">\(\alpha\)</span>，可在地面自由平移；物块质量 <span class="math inline">\(m\)</span> 沿斜面下滑。 取斜面向右位移 <span class="math inline">\(X\)</span>、物块相对斜面的下滑距离 <span class="math inline">\(s\)</span> 为广义坐标。 物块在地面系中的位置与速度为 <span class="math display">\[x_b=X+s\cos\alpha,\qquad y_b=-s\sin\alpha,
+  
+\tag{1}\]</span> <span class="math display">\[\dot x_b=\dot X+\dot s\cos\alpha,\qquad \dot y_b=-\dot s\sin\alpha.
+  
+\tag{2}\]</span> 动能为 <span class="math display">\[T=\frac12M\dot X^2+\frac12m\left[(\dot X+\dot s\cos\alpha)^2+\dot s^2\sin^2\alpha\right]
+   =\frac12(M+m)\dot X^2+m\dot X\dot s\cos\alpha+\frac12m\dot s^2 .
+  
+\tag{3}\]</span> 取地面为势能零点，<span class="math inline">\(V=-mgs\sin\alpha\)</span>，故 <span class="math display">\[L=\frac12(M+m)\dot X^2+m\dot X\dot s\cos\alpha+\frac12m\dot s^2+mgs\sin\alpha .
+  
+\tag{4}\]</span></p>
+<h3 id="循环坐标与运动方程"><span class="ms-secno">2.2</span>循环坐标与运动方程</h3>
+<p><span class="math inline">\(L\)</span> 不显含 <span class="math inline">\(X\)</span>，故 <span class="math inline">\(X\)</span> 是循环坐标，共轭动量守恒： <span class="math display">\[p_X=\frac{\partial L}{\partial\dot X}=(M+m)\dot X+m\dot s\cos\alpha=\text{常量}.
+  
+\tag{5}\]</span> 系统由静止释放，故 <span class="math inline">\(p_X=0\)</span>，即 <span class="math display">\[\dot X=-\frac{m\cos\alpha}{M+m}\dot s .
+  
+\tag{6}\]</span> 拉格朗日方程给出 <span class="math display">\[\begin{aligned}
+  (M+m)\ddot X+m\ddot s\cos\alpha&amp;=0, \\
+  \ddot s+\ddot X\cos\alpha&amp;=g\sin\alpha. 
+\end{aligned}\tag{7}\]</span> 联立解得 <span class="math display">\[\boxed{\ a_{\rm rel}=\ddot s=\frac{(M+m)g\sin\alpha}{M+m\sin^2\alpha}\ },\qquad
+  \boxed{\ a_X=\ddot X=-\frac{mg\sin\alpha\cos\alpha}{M+m\sin^2\alpha}\ }.
+  
+\tag{8}\]</span> 斜面后退、物块沿斜面下滑：<span class="math inline">\(a_X&lt;0\)</span>，<span class="math inline">\(a_{\rm rel}&gt;0\)</span>。</p>
+<h3 id="动能分配与约束力做功"><span class="ms-secno">2.3</span>动能分配与约束力做功</h3>
+<p>下降高度 <span class="math inline">\(h\)</span> 时 <span class="math inline">\(s=h/\sin\alpha\)</span>，机械能守恒给出总动能 <span class="math inline">\(K=mgh\)</span>。 把 (6) 代入动能，可得分给斜面的比例 <span class="math display">\[\eta\equiv\frac{K_{\rm wedge}}{mgh}
+  =\frac{Mk^2}{Mk^2+m\left(1-2k\cos\alpha+k^2\right)},
+  \qquad k\equiv\frac{m\cos\alpha}{M+m}.
+  
+\tag{9}\]</span> 当 <span class="math inline">\(M=2m,\ \alpha=30^\circ\)</span> 时 <span class="math inline">\(k=\cos\alpha/3=\sqrt3/6\)</span>，代入得 <span class="math display">\[\eta=\frac{2}{9}\approx0.2222 .
+  
+\tag{10}\]</span> 支持力对物块做负功（物块位移有逆法向分量），其反作用力对斜面做正功； 两者是内力，总功为零，所以系统机械能仍守恒，只是能量在斜面与物块之间转移。</p>
+<h2 id="sec:spring"><span class="ms-secno">3</span>弹簧摆（Q4）</h2>
+<h3 id="拉格朗日量与运动方程"><span class="ms-secno">3.1</span>拉格朗日量与运动方程</h3>
+<p>弹簧原长 <span class="math inline">\(l_0\)</span>、劲度 <span class="math inline">\(k\)</span>，小球质量 <span class="math inline">\(m\)</span>；取弹簧长度 <span class="math inline">\(r\)</span> 与弹簧相对竖直向下方向的 夹角 <span class="math inline">\(\theta\)</span> 为广义坐标。速度为 <span class="math inline">\(\dot r\,\hat e_r+r\dot\theta\,\hat e_\theta\)</span>，于是 <span class="math display">\[L=\frac12m\left(\dot r^2+r^2\dot\theta^2\right)-\frac12k(r-l_0)^2+mgr\cos\theta .
+  
+\tag{11}\]</span> 拉格朗日方程给出耦合方程 <span class="math display">\[\begin{aligned}
+  \ddot r&amp;=r\dot\theta^2-\frac{k}{m}(r-l_0)+g\cos\theta, \\
+  r\ddot\theta+2\dot r\dot\theta&amp;=-g\sin\theta. 
+\end{aligned}\tag{12}\]</span></p>
+<h3 id="平衡位置与两种小振动"><span class="ms-secno">3.2</span>平衡位置与两种小振动</h3>
+<p>静平衡取 <span class="math inline">\(\theta=0,\ \dot r=\dot\theta=0\)</span>，由 (12) 得 <span class="math display">\[k(r_0-l_0)=mg
+  \quad\Longrightarrow\quad
+  \boxed{\ r_0=l_0+\frac{mg}{k}\ }.
+  
+\tag{13}\]</span> 在 <span class="math inline">\(r=r_0+\delta,\ \theta\ll1\)</span> 处线性化：<span class="math inline">\(\delta\ddot=-(k/m)\delta\)</span>， <span class="math inline">\(r_0\ddot\theta=-g\theta\)</span>，两种模式解耦，频率为 <span class="math display">\[\boxed{\ \omega_r=\sqrt{\frac{k}{m}}\ },\qquad
+  \boxed{\ \omega_\theta=\sqrt{\frac{g}{r_0}}=\sqrt{\frac{g}{l_0+mg/k}}\ }.
+  
+\tag{14}\]</span> 线性阶两种振动独立；非线性项（<span class="math inline">\(\dot\theta^2\)</span> 与 <span class="math inline">\(2\dot r\dot\theta\)</span>）会让它们耦合， 当 <span class="math inline">\(\omega_r\approx2\omega_\theta\)</span> 时出现内共振，交互页可直接看到拍频与能量交换。</p>
+<h2 id="sec:cart"><span class="ms-secno">4</span>小车与单摆（Q5）</h2>
+<h3 id="拉格朗日量与水平动量"><span class="ms-secno">4.1</span>拉格朗日量与水平动量</h3>
+<p>小车质量 <span class="math inline">\(M\)</span>、单摆质量 <span class="math inline">\(m\)</span>、摆长 <span class="math inline">\(l\)</span>；取小车位置 <span class="math inline">\(X\)</span> 与摆角 <span class="math inline">\(\theta\)</span> 为坐标。 摆球位置为 <span class="math inline">\(x=X+l\sin\theta,\ y=-l\cos\theta\)</span>，故 <span class="math display">\[L=\frac12(M+m)\dot X^2+ml\cos\theta\,\dot X\dot\theta+\frac12ml^2\dot\theta^2+mgl\cos\theta .
+  
+\tag{15}\]</span> <span class="math inline">\(X\)</span> 是循环坐标，水平总动量守恒： <span class="math display">\[p_X=(M+m)\dot X+ml\cos\theta\,\dot\theta=\text{常量}.
+  
+\tag{16}\]</span> 总水平动量为零时 <span class="math display">\[\dot X=-\frac{ml\cos\theta}{M+m}\dot\theta .
+  
+\tag{17}\]</span> <span class="math inline">\(\theta\)</span> 的方程为 <span class="math display">\[\ddot\theta=-\frac{(M+m)g\sin\theta+ml\sin\theta\cos\theta\,\dot\theta^2}
+  {l\left(M+m\sin^2\theta\right)}.
+  
+\tag{18}\]</span></p>
+<h3 id="小振动频率"><span class="ms-secno">4.2</span>小振动频率</h3>
+<p>线性化 <span class="math inline">\(\sin\theta\approx\theta,\ \cos\theta\approx1,\ \dot\theta^2\approx0\)</span>，得 <span class="math display">\[\ddot\theta=-\frac{g(M+m)}{Ml}\theta
+  \quad\Longrightarrow\quad
+  \boxed{\ \omega=\sqrt{\frac{g(M+m)}{Ml}}\ }.
+  
+\tag{19}\]</span> <span class="math inline">\(M\to\infty\)</span> 时 <span class="math inline">\(\omega\to\sqrt{g/l}\)</span>，回到固定悬点的单摆。</p>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>交互页对 Q3 用解析加速度驱动动画，对 Q4、Q5 用四阶 Runge–Kutta（步长 <span class="math inline">\(2\times10^{-3}\,\mathrm{s}\)</span> 与 <span class="math inline">\(4\times10^{-3}\,\mathrm{s}\)</span>）积分非线性方程。</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">量</th>
+<th style="text-align: left;">参数</th>
+<th style="text-align: left;">解析值</th>
+<th style="text-align: left;">数值/检查值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Q3 <span class="math inline">\(a_{\rm rel}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(M=2m,\alpha=30^\circ\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(6.5400\ \mathrm{m/s^2}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(6.5400\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q3 <span class="math inline">\(a_X\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(M=2m,\alpha=30^\circ\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(-1.8879\ \mathrm{m/s^2}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(-1.8879\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q3 <span class="math inline">\(\eta\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(M=2m,\alpha=30^\circ\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(2/9=0.222222\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(0.222222\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q3 动量残差</td>
+<td style="text-align: left;">同上</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><span class="math inline">\(0\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q4 <span class="math inline">\(r_0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(k=80,l_0=0.5,m=1\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(0.622625\ \mathrm{m}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(0.622625\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q4 <span class="math inline">\(\omega_r\)</span></td>
+<td style="text-align: left;">同上</td>
+<td style="text-align: left;"><span class="math inline">\(8.9443\ \mathrm{rad/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(8.9443\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q4 <span class="math inline">\(\omega_\theta\)</span></td>
+<td style="text-align: left;">同上</td>
+<td style="text-align: left;"><span class="math inline">\(3.9694\ \mathrm{rad/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(3.9694\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(\omega\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(M/m=3,l=1\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(3.6166\ \mathrm{rad/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(3.6166\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(M\to\infty\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(l=1\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(3.1321\ \mathrm{rad/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(3.1321\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Q5 <span class="math inline">\(p_X\)</span></td>
+<td style="text-align: left;">任意 <span class="math inline">\(\theta,\dot\theta\)</span></td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><span class="math inline">\(&lt;10^{-12}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="讨论"><span class="ms-secno">6</span>讨论</h2>
+<ol>
+<li><p><strong>循环坐标的共同作用.</strong> Q3 与 Q5 都因平移对称性得到守恒的水平动量； 它把两自由度问题降为一自由度，再线性化得到小振动频率。</p></li>
+<li><p><strong>约束力做功.</strong> Q3 的支持力是内力，对物块做负功、对斜面做正功； 总机械能守恒，能量在两者之间转移。</p></li>
+<li><p><strong>弹簧摆的耦合.</strong> 线性阶 <span class="math inline">\(\omega_r\)</span> 与 <span class="math inline">\(\omega_\theta\)</span> 独立； 非线性耦合在 <span class="math inline">\(\omega_r\approx2\omega_\theta\)</span> 附近最强。</p></li>
+<li><p><strong>大质量极限.</strong> Q5 的 <span class="math inline">\(M\to\infty\)</span> 给出固定悬点单摆，是检验公式的简单极限。</p></li>
+</ol>
+<div class="thebibliography">
+<p><span>9</span> L. D. Landau, E. M. Lifshitz, <em>Mechanics</em>, 3rd ed., Pergamon, 1976. H. Goldstein, C. Poole, J. Safko, <em>Classical Mechanics</em>, 3rd ed., Addison-Wesley, 2002. J. R. Taylor, <em>Classical Mechanics</em>, University Science Books, 2005.</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>耦合系统与小振动 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

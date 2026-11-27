@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周期链色散与群速度 · 理论力学</title>
+<style>
+:root{--bg:#05070f;--panel:rgba(16,22,40,.88);--line:rgba(120,165,255,.18);--text:#dce6ff;--muted:#8d9cc4;--a:#7fe0ff;--b:#ffd27a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1000px 700px at 25% 5%,#0d1730,#04060d 60%,#02030a);color:var(--text);font-family:ui-sans-serif,system-ui,"Noto Sans CJK SC",sans-serif;overflow:hidden}
+.app{display:flex;height:100vh;width:100vw}.stage{position:relative;flex:1;min-width:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.brand{position:absolute;left:24px;top:20px;pointer-events:none}.brand h1{font-size:19px;margin:0}.brand p{font-size:12.5px;color:var(--muted);margin:5px 0 0;line-height:1.5}
+.hud{position:absolute;left:24px;bottom:22px;display:flex;gap:18px;font-size:12.5px;color:var(--muted);pointer-events:none}.hud b{color:var(--a);font-variant-numeric:tabular-nums}
+.panel{width:330px;flex:none;padding:20px;overflow:auto;background:var(--panel);border-left:1px solid var(--line);backdrop-filter:blur(12px)}
+.eq{font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.9;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(5,9,20,.6);color:#cfe0ff;margin-bottom:16px}
+.group{margin-bottom:16px}.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.val{font-family:ui-monospace,monospace;color:var(--b)}
+input[type=range]{width:100%;accent-color:var(--a)}.hint{color:var(--muted);font-size:11.5px;line-height:1.6;margin-top:6px}
+button{font:inherit;font-size:12.5px;padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:rgba(127,224,255,.12);color:var(--text);cursor:pointer;margin-right:8px}
+button.primary{background:var(--a);color:#04101a;border-color:var(--a);font-weight:600}
+@media(max-width:820px){.app{flex-direction:column}.panel{width:auto;height:44vh;border-left:0;border-top:1px solid var(--line)}.stage{height:56vh}.brand h1{font-size:16px}.hud{bottom:12px;left:14px;gap:12px}}
+.intro{margin-top:8px!important;max-width:640px;line-height:1.7;color:#b9c6ea!important}
+.hint{color:#8290b6;font-size:11.5px;line-height:1.65;margin:6px 0 2px;padding-left:9px;border-left:2px solid rgba(120,165,255,.22)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.btns button{margin:0}.btns button.full{grid-column:1/-1}
+.doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+.doc:hover{border-color:#7fe0ff}
+.tag{color:#6d7ba3;font-size:10.5px;line-height:1.6;border-top:1px solid rgba(120,165,255,.14);padding-top:10px}
+#errbox{position:fixed;left:16px;bottom:16px;max-width:70vw;z-index:9999;padding:10px 12px;border-radius:8px;background:rgba(80,10,20,.95);border:1px solid #b44;color:#ffd7d7;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap}
+.modnav{display:flex;gap:8px;align-items:center;margin:0 0 12px}.modnav a.backlink{flex:none;color:#bfefff;text-decoration:none;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:rgba(127,224,255,.10)}.modnav a.backlink:hover{border-color:#7fe0ff}.modnav select{flex:1;min-width:0;font:inherit;font-size:12.5px;padding:8px;border-radius:9px;border:1px solid var(--line);background:rgba(10,16,32,.7);color:var(--text)}
+
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(640px,calc(100% - 28px));max-height:72%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.9);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="周期链色散与群速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/35-lattice-dispersion/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="周期链色散与群速度 · 理论力学">
+<meta property="og:description" content="周期链色散与群速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/35-lattice-dispersion/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="周期链色散与群速度 · 理论力学">
+<meta name="twitter:description" content="周期链色散与群速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+<link rel="stylesheet" href="../../assets/tm-atelier.css">
+</head>
+<body>
+<div class="app"><div class="stage"><canvas id="cv"></canvas>
+<div class="brand"><h1>周期链色散与群速度</h1><p>整条布里渊区 ω(k)=2√(K/m)|sin(ka/2)|：割线斜率是相速度 v_p，切线斜率是群速度 v_g（带符号，负 q 左行）。</p><p class="intro">第一步：把 q 拉到 0.98，看波包几乎停住（v_g→0，驻波）；第二步：回到 q=0.1，割线与虚线声速渐近线几乎重合。</p></div>
+<div class="hud"><span>ω <b id="om">0</b></span><span>v_g（含符号）<b id="vg">0</b></span><span>λ/a <b id="lam">0</b></span></div>
+</div><aside class="panel">
+<div class="modnav"><a class="backlink" href="../../index.html">← 星图目录</a><select aria-label="切换到其他模块" onchange="if(this.value)location.href=this.value"><option value="">其他模块…</option><option value="../31-rocket-massflow/index.html">M31 火箭方程与质量流</option><option value="../32-two-link-jacobian/index.html">M32 二连杆雅可比与奇异位形</option><option value="../33-rolling-cylinder/index.html">M33 圆柱沿斜面纯滚动</option><option value="../34-compton-scattering/index.html">M34 康普顿散射运动学</option><option value="" disabled>▣ M35 周期链色散与群速度（当前）</option><option value="../36-virial-power-law/index.html">M36 位力定理与幂次势</option><option value="../37-catenary-min-energy/index.html">M37 悬链线与最小势能</option><option value="../38-three-atom-modes/index.html">M38 三原子链简正模</option><option value="../39-physical-pendulum-period/index.html">M39 复摆周期与最短摆长</option><option value="../40-threshold-collider/index.html">M40 固定靶阈能与对撞机</option></select></div>
+<div class="eq">ω = 2√(K/m)·|sin(ka/2)| &nbsp;|&nbsp; v_g = a√(K/m)·cos(ka/2)·sgn(q)</div>
+<div class="group"><div class="row"><label>刚度 K/m（ω₀²）</label><span class="val" id="kv">1.0</span></div><input id="kk" type="range" min="0.2" max="3" step="0.1" value="1">
+<div class="hint">ω₀²=K/m 是单弹簧链的基本频率标度；ω_max=2ω₀ 画成水平虚线。</div></div>
+<div class="group"><div class="row"><label>波数 q = ka/π</label><span class="val" id="qv">0.25</span></div><input id="q" type="range" min="-0.98" max="0.98" step="0.01" value="0.25">
+<div class="hint">q→0 时 ω→c_s·k（虚线渐近线，c_s=πa√(K/m)…按 q 归一），v_g 取正号；q→±1 到区界，v_g→0，波包停住成驻波。</div></div>
+<div class="btns"><button class="primary" id="play">暂停/继续波包</button><button id="reset">重置</button><button class="full" id="p1">长波 q=0.1, K=1</button><button class="full" id="p2">一般 q=0.5, K=1</button><button class="full" id="p3">区界 q→1</button><button class="full" id="p4">硬弹簧 q=0.5, K=3</button></div>
+<p class="hint">横波显示（位移垂直于链），振幅取 A≤0.25a 的小振动域；波包为高斯（σ=8 格点）以 v_g 平移、周期回绕。ω(k) 图含 −π/a..π/a 全区与折叠。对应书稿：第 4 章 小振动。</p>
+<a class="doc" href="./note.html">📄 阅读推导与出处 →</a><div class="tag">一维单原子链 · a=1 · 横波 · A≤0.25a · 对应书稿：第 4 章 小振动</div></aside></div>
+<div id="selftestPanel" class="selftest" hidden></div>
+<script>
+window.addEventListener('error',function(e){var d=document.getElementById('errbox');if(!d){d=document.createElement('div');d.id='errbox';document.body.appendChild(d)}d.textContent='脚本错误：'+(e.message||e.error)+'\n'+(e.filename||'')+':'+(e.lineno||'')});
+(function(){
+function shell(c,w,h,seed){
+ c.clearRect(0,0,w,h);
+ var g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#0b1226');g.addColorStop(.55,'#060a16');g.addColorStop(1,'#02030a');c.fillStyle=g;c.fillRect(0,0,w,h);
+ var frac=function(v){return v-Math.floor(v)};
+ for(var i=0;i<90;i++){var x=frac(Math.sin(i*12.9898+seed)*43758.5453)*w,y=frac(Math.sin(i*78.233+seed*3)*24634.6345)*h,a=.08+frac(Math.sin(i*4.17)*9157.13)*.22;c.fillStyle='rgba(207,224,255,'+a.toFixed(3)+')';c.fillRect(x,y,1.2,1.2)}
+ c.strokeStyle='rgba(120,160,255,.055)';c.lineWidth=1;c.beginPath();for(var x2=60;x2<w;x2+=80){c.moveTo(x2,0);c.lineTo(x2,h)}for(var y2=60;y2<h;y2+=80){c.moveTo(0,y2);c.lineTo(w,y2)}c.stroke();
+}
+ const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),kk=document.getElementById('kk'),q=document.getElementById('q');
+ let t=0,playing=true,last=0;
+ function resize(){const b=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(b.width*d);cv.height=Math.round(b.height*d);ctx.setTransform(d,0,0,d,0,0)}addEventListener('resize',resize);resize();
+ function calc(){const K=Number(kk.value),qa=Number(q.value),w0=Math.sqrt(K),w=2*w0*Math.abs(Math.sin(qa*Math.PI/2)),vg=Math.PI*w0*Math.cos(qa*Math.PI/2)*Math.sign(qa===0?1:qa);return {K,w0,qa,w,vg}}
+ function draw(now){
+  const P=calc(),w=cv.clientWidth,h=cv.clientHeight,mid=h*0.50;shell(ctx,w,h,357);
+  const L=70,R=44,T=Math.round(h*0.29),curveH=mid-T-20;
+  const wmax=2*P.w0*1.12,px=x=>L+(x+1)/2*(w-L-R),py=y=>mid-20-y/wmax*curveH;
+  ctx.strokeStyle='rgba(150,180,240,.16)';ctx.beginPath();ctx.moveTo(L,mid-10);ctx.lineTo(w-R,mid-10);ctx.stroke();
+  ctx.setLineDash([5,5]);
+  ctx.strokeStyle='rgba(143,232,160,.4)';ctx.beginPath();ctx.moveTo(px(-1),py(Math.min(P.w0*Math.PI,2*P.w0)));ctx.lineTo(0,py(0));ctx.lineTo(px(1),py(Math.min(P.w0*Math.PI,2*P.w0)));ctx.stroke();
+  ctx.strokeStyle='rgba(255,210,122,.35)';ctx.beginPath();ctx.moveTo(L,py(2*P.w0));ctx.lineTo(w-R,py(2*P.w0));ctx.stroke();
+  [ -1,1].forEach(b=>{ctx.strokeStyle='rgba(255,156,138,.5)';ctx.beginPath();ctx.moveTo(px(b),T);ctx.lineTo(px(b),mid-10);ctx.stroke()});
+  ctx.setLineDash([]);
+  ctx.beginPath();for(let i=0;i<=400;i++){const x=-1+2*i/400;ctx.lineTo(px(x),py(2*P.w0*Math.abs(Math.sin(x*Math.PI/2))))}ctx.strokeStyle='#7fe0ff';ctx.lineWidth=2;ctx.stroke();
+  const cx=px(P.qa),cy=py(P.w);
+  ctx.strokeStyle='rgba(220,230,255,.55)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(px(0),py(0));ctx.lineTo(cx,cy);ctx.stroke();
+  ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#8d9cc4';ctx.font='11px ui-monospace,monospace';ctx.textAlign='left';
+  ctx.fillText('ω(k)',L+4,T+4);ctx.fillText('0',L-14,mid-16);ctx.fillText('−π/a',L-10,mid-28);ctx.fillText('π/a',w-R-24,mid-28);
+  ctx.fillStyle='rgba(255,210,122,.8)';ctx.fillText('ω_max=2√(K/m)',L+6,py(2*P.w0)-6);
+  ctx.fillStyle='rgba(143,232,160,.8)';ctx.fillText('声速渐近线 ω=c_s|k|',px(0.06),py(Math.min(P.w0*Math.PI,2*P.w0))-8);
+  ctx.fillStyle='rgba(220,230,255,.75)';ctx.fillText('割线 = v_p = ω/k',(px(0)+cx)/2+6,(py(0)+cy)/2-8);
+  ctx.fillStyle='rgba(255,156,138,.8)';ctx.fillText('区界',px(1)-40,T+10);
+  const N=42,x0=60,x1=w-50,base=h*0.77,scale=h*0.13;
+  ctx.strokeStyle='rgba(150,180,240,.12)';ctx.beginPath();ctx.moveTo(x0,base);ctx.lineTo(x1,base);ctx.stroke();
+  const nc=((N/2+P.vg*t*1.1)%N+N)%N;
+  function wrapd(n){let d=n-nc;d=((d+N/2)%N+N)%N-N/2;return d}
+  const pts=[];for(let n=0;n<N;n++){const x=x0+n/(N-1)*(x1-x0),env=Math.exp(-Math.pow(wrapd(n)/8,2)/2),y=base-scale*env*Math.sin(P.qa*Math.PI*n-P.w*t*0.55);pts.push([x,y,env])}
+  ctx.strokeStyle='rgba(127,224,255,.8)';ctx.lineWidth=1.6;ctx.beginPath();pts.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.stroke();
+  pts.forEach((p,i)=>{ctx.fillStyle=p[2]>0.5?'#ffd27a':'#b9c6ea';ctx.beginPath();ctx.arc(p[0],p[1],3.4,0,Math.PI*2);ctx.fill()});
+  const exi=nc/(N-1),ex=x0+exi*(x1-x0);
+  if(Math.abs(P.vg)>0.02){const dir=Math.sign(P.vg),al=Math.min(60,18+Math.abs(P.vg)*10);ctx.strokeStyle='#8fe8a0';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ex,base-scale-24);ctx.lineTo(ex+dir*al,base-scale-24);ctx.stroke();ctx.fillStyle='#8fe8a0';ctx.beginPath();ctx.moveTo(ex+dir*al,base-scale-24);ctx.lineTo(ex+dir*(al-8),base-scale-29);ctx.lineTo(ex+dir*(al-8),base-scale-19);ctx.closePath();ctx.fill();ctx.fillText('v_g = '+P.vg.toFixed(2),ex+dir*al*0.2,base-scale-32)}
+  else{ctx.fillStyle='#ff9c8a';ctx.textAlign='center';ctx.fillText('v_g→0：驻波，波包停住',w/2,base-scale-30)}
+  document.getElementById('om').textContent=P.w.toFixed(2);document.getElementById('vg').textContent=P.vg.toFixed(2);
+  document.getElementById('lam').textContent=(2/Math.max(Math.abs(P.qa),0.02)).toFixed(1);document.getElementById('kv').textContent=P.K.toFixed(1);document.getElementById('qv').textContent=P.qa.toFixed(2);
+  const dt=Math.min(0.05,(now-last)/1000);last=now;if(playing)t+=dt;
+  requestAnimationFrame(draw)
+ }
+ document.getElementById('play').addEventListener('click',()=>{playing=!playing});
+ document.getElementById('reset').addEventListener('click',()=>{t=0;kk.value=1;q.value=0.25});
+ document.getElementById('p1').onclick=function(){kk.value=1;q.value=.1;t=0};
+ document.getElementById('p2').onclick=function(){kk.value=1;q.value=.5;t=0};
+ document.getElementById('p3').onclick=function(){kk.value=1;q.value=.98;t=0};
+ document.getElementById('p4').onclick=function(){kk.value=3;q.value=.5;t=0};
+ requestAnimationFrame(draw)
+
+  /* ---------------- 自检（?selftest=1） ---------------- */
+  function runSelfTest() {
+    var lines = [], passN = 0, failN = 0;
+    function relLine(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = isFinite(rel) && rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+    function absLine(name, exp, act, tol, unit) {
+      var err = Math.abs(act - exp);
+      var ok = isFinite(err) && err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(6) +
+        ' actual=' + act.toFixed(6) + ' ' + unit + '=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { passN++; } else { failN++; }
+    }
+
+    var kSave = kk.value, qSave = q.value;
+    function wOf(K, qa) { return 2 * Math.sqrt(K) * Math.abs(Math.sin(qa * Math.PI / 2)); }
+    kk.value = 3; q.value = 0.3;
+    var K = Number(kk.value), qa = Number(q.value), w0 = Math.sqrt(K), c0 = calc();
+    relLine('ST1 omega(qa)=2*sqrt(K/m)|sin(pi*qa/2)|（m=1）', wOf(K, qa), c0.w, 1e-12);
+    relLine('ST2 与 omega^2=2K(1-cos ka) 等价（ka=pi*qa）', 2 * K * (1 - Math.cos(qa * Math.PI)), c0.w * c0.w, 1e-12);
+    relLine('ST3 群速度与 pi*sqrt(K)*cos(pi*qa/2) 一致',
+      Math.PI * w0 * Math.cos(qa * Math.PI / 2), c0.vg, 1e-9);
+    q.value = q.max; var qm = Number(q.value), cE = calc();
+    relLine('ST4 区边 qa=qmax 时 omega=2*sqrt(K)*|sin|', wOf(K, qm), cE.w, 1e-12);
+    absLine('ST4b 区边 qa=0.98 时群速度趋于 0', 1,
+      Math.abs(cE.vg) < 0.05 * Math.PI * w0 ? 1 : 0, 0.5, 'bool');
+    q.value = 0.02; var qs = Number(q.value), cM = calc();
+    relLine('ST5 长波极限 omega≈pi*sqrt(K)*qa', Math.PI * w0 * qs, cM.w, 1e-3);
+    relLine('ST5b 长波极限 vg≈pi*sqrt(K)', Math.PI * w0, cM.vg, 1e-3);
+    q.value = -0.37; var cNeg = calc();
+    q.value = 0.37; var cPos = calc();
+    relLine('ST6 色散对称 omega(-q)=omega(q)', cPos.w, cNeg.w, 1e-12);
+    kk.value = kSave; q.value = qSave;
+
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n') + '\nSELFTEST ' + passN + '/' + (passN + failN) + (failN ? ' \u2717' : ' \u2713');
+    window.__selftest = { passed: passN, failed: failN, details: lines.join('\n') };
+  }
+  if (/[?&]selftest=1/.test(location.search)) {
+    try { runSelfTest(); } catch (e) {
+      var pp = document.getElementById('selftestPanel');
+      if (pp) { pp.hidden = false; pp.textContent = 'selftest 异常 : ' + (e && e.message); }
+      window.__selftest = { passed: 0, failed: 1, details: String(e && e.message) };
+    }
+  }
+
+})();
+</script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+<script defer src="../../assets/tm-seq.js"></script>
+</body></html>

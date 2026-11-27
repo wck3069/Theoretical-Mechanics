@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刚体几何与角动量 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>刚体几何与角动量</h1>
+<p class="ms-lead">本讲义处理刚体几何与角动量：球冠质心、甲虫-圆环角动量守恒、 圆盘角动量、Newton 球壳定理。全部解析结果由配套脚本 qa/numeric\_check.py 逐项数值验证。本模块覆盖作业-4。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">刚体几何与角动量 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#sec:map">1作业映射</a></li>
+<li class="l2"><a href="#sec:model">2模型与假设</a></li>
+<li class="l2"><a href="#sec:derive">3推导</a></li>
+<li class="l3"><a href="#sub:spherical-cap">3.1球冠质心（作业-4 Q1）</a></li>
+<li class="l3"><a href="#sub:beetle">3.2甲虫与圆环（作业-4 Q2）</a></li>
+<li class="l3"><a href="#sub:disk">3.3薄圆盘角动量（作业-4 Q3）</a></li>
+<li class="l3"><a href="#sub:shell">3.4Newton 球壳定理（作业-4 Q4）</a></li>
+<li class="l2"><a href="#sec:result">4解析结果</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l2"><a href="#sec:parallel-axis">6转动惯量与平行轴定理</a></li>
+<li class="l2"><a href="#sec:angular-momentum-apps">7角动量守恒的应用</a></li>
+<li class="l2"><a href="#sec:shell-proof">8Newton 球壳定理的证明概要</a></li>
+<li class="l2"><a href="#sec:moment-inertia">9转动惯量的计算方法</a></li>
+<li class="l2"><a href="#sec:history-rigid">10刚体动力学的历史</a></li>
+<li class="l2"><a href="#sec:appendix-inertia">11附录：常见形状的转动惯量</a></li>
+<li class="l2"><a href="#sec:discuss">12讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="sec:map"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-4 Q1</td>
+<td style="text-align: left;">球冠质心（球冠高度 <span class="math inline">\(h\)</span>）</td>
+<td style="text-align: left;">质心积分、几何</td>
+<td style="text-align: center;"><a href="#sub:spherical-cap" data-reference-type="ref" data-reference="sub:spherical-cap">3.1</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-4 Q2</td>
+<td style="text-align: left;">甲虫在光滑圆环上爬行，环转角</td>
+<td style="text-align: left;">角动量守恒、约束</td>
+<td style="text-align: center;"><a href="#sub:beetle" data-reference-type="ref" data-reference="sub:beetle">3.2</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-4 Q3</td>
+<td style="text-align: left;">薄圆盘绕中心轴角动量</td>
+<td style="text-align: left;">转动惯量、角动量</td>
+<td style="text-align: center;"><a href="#sub:disk" data-reference-type="ref" data-reference="sub:disk">3.3</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-4 Q4</td>
+<td style="text-align: left;">球壳对质点的引力势能</td>
+<td style="text-align: left;">Newton 球壳定理</td>
+<td style="text-align: center;"><a href="#sub:shell" data-reference-type="ref" data-reference="sub:shell">3.4</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:model"><span class="ms-secno">2</span>模型与假设</h2>
+<ol>
+<li><p><strong>刚体</strong>：物体为刚体，形状不变。</p></li>
+<li><p><strong>质点/连续体</strong>：按问题需要取质点或连续体模型。</p></li>
+<li><p><strong>光滑约束</strong>：圆环光滑，无摩擦。</p></li>
+<li><p><strong>单位制</strong>：SI 单位。</p></li>
+</ol>
+<h2 id="sec:derive"><span class="ms-secno">3</span>推导</h2>
+<h3 id="sub:spherical-cap"><span class="ms-secno">3.1</span>球冠质心（作业-4 Q1）</h3>
+<p>球半径 <span class="math inline">\(R\)</span>，切割平面距球心 <span class="math inline">\(b\)</span>（<span class="math inline">\(0\le b\le R\)</span>），球冠高度 <span class="math inline">\(h=R-b\)</span>。 球冠体积 <span class="math display">\[V=\int_{b}^{R}\pi(R^2-z^2)\,\mathrm dz
+  =\pi\left[R^2(R-b)-\frac{R^3-b^3}{3}\right]
+  =\frac{\pi(R-b)^2(2R+b)}{3}.
+\tag{1}\]</span> 质心 <span class="math inline">\(z\)</span> 坐标（从球心）： <span class="math display">\[z_{\rm cm}=\frac{1}{V}\int_b^R z\,\pi(R^2-z^2)\,\mathrm dz,
+  \qquad
+  \int_b^R z(R^2-z^2)\,\mathrm dz
+  =\frac{(R^2-b^2)^2}{4},
+\tag{2}\]</span> 代入体积得 <span class="math display">\[z_{\rm cm}=\frac{3(R+b)^2}{4(2R+b)}.
+\tag{3}\]</span> 质心距底面（平面 <span class="math inline">\(z=b\)</span>）的距离： <span class="math display">\[d=z_{\rm cm}-b
+  =\frac{3(R+b)^2}{4(2R+b)}-b
+  =\frac{(R-b)(3R+b)}{4(2R+b)}.
+\tag{4}\]</span> 用球冠高度 <span class="math inline">\(h=R-b\)</span> 表示，即 <span class="math display">\[\boxed{\;d=\frac{h(4R-h)}{4(3R-h)}\;}
+\tag{5}\]</span> 当 <span class="math inline">\(h=R\)</span>（半球）：<span class="math inline">\(d=3R/8\)</span>；当 <span class="math inline">\(h=0\)</span>（无球冠）：<span class="math inline">\(d=0\)</span>。</p>
+<h3 id="sub:beetle"><span class="ms-secno">3.2</span>甲虫与圆环（作业-4 Q2）</h3>
+<p>圆环质量 <span class="math inline">\(M\)</span>，半径 <span class="math inline">\(R\)</span>，甲虫质量 <span class="math inline">\(m\)</span>。圆环放在光滑水平面上，系统初始静止。 设甲虫相对圆环的方位角为 <span class="math inline">\(\theta\)</span>，圆环自转角为 <span class="math inline">\(\phi\)</span>，甲虫相对环心的实验室方位角为 <span class="math display">\[\psi=\phi+\theta.
+\tag{6}\]</span> 水平方向无外力，系统质心固定。取质心为原点，环心与甲虫到质心的距离分别为 <span class="math display">\[a_C=\frac{mR}{M+m},\qquad a_B=\frac{MR}{M+m},
+\tag{7}\]</span> 且 <span class="math display">\[\mathbf r_C=-a_C(\cos\psi,\sin\psi),\qquad
+  \mathbf r_B=+a_B(\cos\psi,\sin\psi).
+\tag{8}\]</span> 关于质心的总角动量守恒。薄环绕自身中心的转动惯量为 <span class="math inline">\(MR^2\)</span>；环心平移和甲虫绕质心转动分别为 <span class="math inline">\(M a_C^2\dot\psi\)</span>、<span class="math inline">\(m a_B^2\dot\psi\)</span>： <span class="math display">\[L=MR^2\dot\phi+\left(Ma_C^2+ma_B^2\right)\dot\psi=0.
+\tag{9}\]</span> 其中 <span class="math display">\[Ma_C^2+ma_B^2
+  =M\frac{m^2R^2}{(M+m)^2}+m\frac{M^2R^2}{(M+m)^2}
+  =\frac{MmR^2}{M+m}.
+\tag{10}\]</span> 因此 <span class="math display">\[\dot\phi=-\frac{m}{M+m}\dot\psi.
+\tag{11}\]</span> 代入 <span class="math inline">\(\psi=\phi+\theta\)</span>： <span class="math display">\[\dot\phi=-\frac{m}{M+2m}\dot\theta,\qquad
+  \dot\psi=\frac{M+m}{M+2m}\dot\theta.
+\tag{12}\]</span> 甲虫相对环爬完一圈 <span class="math inline">\(\theta=2\pi\)</span> 时， <span class="math display">\[\boxed{\;\Delta\phi=-\frac{2\pi m}{M+2m},\qquad
+  \Delta\psi=\frac{2\pi(M+m)}{M+2m}\;}
+\tag{13}\]</span> 即环反转 <span class="math inline">\(2\pi m/(M+2m)\)</span>，甲虫在实验室系中转过 <span class="math inline">\(2\pi(M+m)/(M+2m)\)</span>；质心始终固定，环心绕质心平移。 当 <span class="math inline">\(M=m\)</span> 时恢复 <span class="math inline">\(120^\circ/240^\circ\)</span>。若把环心固定（外部约束），才会得到环转 <span class="math inline">\(180^\circ\)</span>，但那时质心并不固定。</p>
+<h5 id="与均匀实心球的对比">与均匀实心球的对比。</h5>
+<p>均匀实心球内部 <span class="math display">\[V_{\rm solid}(r)=-\frac{GMm}{2a}\left(3-\frac{r^2}{a^2}\right)\quad(r&lt;a),
+\tag{14}\]</span> 外部仍为 <span class="math inline">\(-GMm/r\)</span>。球壳内部 <span class="math inline">\(V\)</span> 为常数；实心球内部随 <span class="math inline">\(r\)</span> 二次下降， 中心处比球壳表面低 <span class="math inline">\(GMm/(2a)\)</span>。两者在 <span class="math inline">\(r=a\)</span> 连续，且 <span class="math inline">\(r&gt;a\)</span> 完全相同。</p>
+<h3 id="sub:disk"><span class="ms-secno">3.3</span>薄圆盘角动量（作业-4 Q3）</h3>
+<p>薄圆盘质量 <span class="math inline">\(M\)</span>，半径 <span class="math inline">\(R\)</span>，绕中心垂直轴以角速度 <span class="math inline">\(\omega_0\)</span> 转动。 转动惯量 <span class="math inline">\(I=\frac12 MR^2\)</span>。角动量 <span class="math display">\[\boxed{\;L=I\omega_0=\frac12 MR^2\omega_0\;}
+\tag{15}\]</span></p>
+<h3 id="sub:shell"><span class="ms-secno">3.4</span>Newton 球壳定理（作业-4 Q4）</h3>
+<p>质量为 <span class="math inline">\(M\)</span> 的均匀球壳，半径 <span class="math inline">\(a\)</span>。质点质量 <span class="math inline">\(m\)</span> 在距中心 <span class="math inline">\(r\)</span> 处。取无穷远处势能为 0，即 <span class="math inline">\(V(\infty)=0\)</span>。</p>
+<h5 id="壳内ra">壳内（<span class="math inline">\(r&lt;a\)</span>）：</h5>
+<p>引力势能为常数： <span class="math display">\[V=-\frac{GMm}{a}.
+\tag{16}\]</span> 引力为零。</p>
+<h5 id="壳外ra">壳外（<span class="math inline">\(r&gt;a\)</span>）：</h5>
+<p>等效于质量 <span class="math inline">\(M\)</span> 集中于中心： <span class="math display">\[V=-\frac{GMm}{r}.
+\tag{17}\]</span></p>
+<h5 id="球壳表面ra">球壳表面（<span class="math inline">\(r=a\)</span>）：</h5>
+<p><span class="math inline">\(V=-GMm/a\)</span>，与壳内连续。</p>
+<h2 id="sec:result"><span class="ms-secno">4</span>解析结果</h2>
+<ol>
+<li><p>球冠质心：<span class="math inline">\(d=h(4R-h)/[4(3R-h)]\)</span>（<a href="#sub:spherical-cap" data-reference-type="ref" data-reference="sub:spherical-cap">3.1</a>，<span class="math inline">\(h\)</span> 为球冠高度）。</p></li>
+<li><p>甲虫-圆环（自由环）：环反转 <span class="math inline">\(2\pi m/(M+2m)\)</span>，甲虫实验室方位转过 <span class="math inline">\(2\pi(M+m)/(M+2m)\)</span>；<span class="math inline">\(M=m\)</span> 时为 <span class="math inline">\(120^\circ/240^\circ\)</span>，质心固定（<a href="#sub:beetle" data-reference-type="ref" data-reference="sub:beetle">3.2</a>）。</p></li>
+<li><p>圆盘角动量：<span class="math inline">\(L=\frac12 MR^2\omega_0\)</span>（<a href="#sub:disk" data-reference-type="ref" data-reference="sub:disk">3.3</a>）。</p></li>
+<li><p>Newton 球壳：<span class="math inline">\(r&lt;a\)</span> 时 <span class="math inline">\(V=-GMm/a\)</span>（常数），<span class="math inline">\(r&gt;a\)</span> 时 <span class="math inline">\(V=-GMm/r\)</span> （<a href="#sub:shell" data-reference-type="ref" data-reference="sub:shell">3.4</a>）。</p></li>
+</ol>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>全部数值实验由配套脚本 <code>qa/numeric_check.py</code> 完成（仅依赖 numpy）。</p>
+<div id="tab:numeric">
+<table>
+<caption>数值验证汇总。全部数值取自 <code>qa/numeric_check.py</code> 的实际输出。</caption>
+<thead>
+<tr>
+<th style="text-align: left;">物理量</th>
+<th style="text-align: center;">解析值</th>
+<th style="text-align: center;">数值值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">球冠质心（<span class="math inline">\(R=1,h=R\)</span>，半球）</td>
+<td style="text-align: center;"><span class="math inline">\(3/8=0.375\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.375\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">球冠质心（<span class="math inline">\(R=1,h=0.5\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(0.5\cdot3.5/(4\cdot2.5)=0.175\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.175\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">甲虫环反转角（M=m=1）</td>
+<td style="text-align: center;"><span class="math inline">\(2\pi/3=2.09440\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(2.09440\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">圆盘 <span class="math inline">\(L\)</span>（<span class="math inline">\(M=1,R=1,\omega=1\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(0.5\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.5\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">球壳 <span class="math inline">\(V\)</span>（<span class="math inline">\(r=0.5a\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(-GMm/a\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-GMm/a\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">球壳 <span class="math inline">\(V\)</span>（<span class="math inline">\(r=2a\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(-GMm/(2a)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-GMm/(2a)\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:parallel-axis"><span class="ms-secno">6</span>转动惯量与平行轴定理</h2>
+<p>平行轴定理：<span class="math inline">\(I=I_{\rm cm}+Md^2\)</span>，其中 <span class="math inline">\(d\)</span> 为新轴到质心轴的距离。 对圆盘：<span class="math inline">\(I_{\rm cm}=\frac12 MR^2\)</span>（中心轴），<span class="math inline">\(I_{\rm edge}=I_{\rm cm}+MR^2=\frac32 MR^2\)</span>（边缘轴）。</p>
+<h2 id="sec:angular-momentum-apps"><span class="ms-secno">7</span>角动量守恒的应用</h2>
+<h5 id="滑冰者加速">滑冰者加速。</h5>
+<p>滑冰者收臂时转动惯量减小，角速度增大（角动量守恒）。</p>
+<h5 id="地球-月球系统">地球-月球系统。</h5>
+<p>潮汐摩擦导致地球自转减慢，月球轨道半径增大（角动量守恒）。</p>
+<h2 id="sec:shell-proof"><span class="ms-secno">8</span>Newton 球壳定理的证明概要</h2>
+<p>球壳定理的证明利用高斯定律类比：引力场 <span class="math inline">\(\mathbf g\)</span> 的通量 <span class="math inline">\(\oint \mathbf g\cdot\mathrm d\mathbf A=-4\pi GM_{\rm enc}\)</span>。 壳内 <span class="math inline">\(M_{\rm enc}=0\)</span>，故 <span class="math inline">\(\mathbf g=0\)</span>；壳外 <span class="math inline">\(M_{\rm enc}=M\)</span>， 故 <span class="math inline">\(\mathbf g=-GM/r^2\,\mathbf e_r\)</span>。</p>
+<h2 id="sec:moment-inertia"><span class="ms-secno">9</span>转动惯量的计算方法</h2>
+<p>转动惯量 <span class="math inline">\(I=\int r^2\,\mathrm dm\)</span>。常见形状：</p>
+<ul>
+<li><p>质点：<span class="math inline">\(I=mr^2\)</span>。</p></li>
+<li><p>薄环：<span class="math inline">\(I=MR^2\)</span>。</p></li>
+<li><p>薄盘：<span class="math inline">\(I=\frac12 MR^2\)</span>。</p></li>
+<li><p>实心球：<span class="math inline">\(I=\frac25 MR^2\)</span>。</p></li>
+<li><p>球壳：<span class="math inline">\(I=\frac23 MR^2\)</span>。</p></li>
+</ul>
+<h2 id="sec:history-rigid"><span class="ms-secno">10</span>刚体动力学的历史</h2>
+<p>从 Euler 的刚体运动方程（1750s）到 Lagrange 的分析力学， 刚体动力学的发展经历了从几何到分析的转变。 Euler 方程 <span class="math inline">\(\mathbf I\dot{\mathbf\omega}+\mathbf\omega\times\mathbf I\mathbf\omega=\mathbf M\)</span> 描述了刚体在惯性系中的转动。</p>
+<h5 id="euler-角">Euler 角。</h5>
+<p>三个 Euler 角（<span class="math inline">\(\phi,\theta,\psi\)</span>）描述刚体取向， 是旋转矩阵的参数化。角速度在体坐标系中的分量为 <span class="math inline">\(\omega_1=\dot\theta\cos\psi+\dot\phi\sin\theta\sin\psi\)</span> 等。</p>
+<h5 id="陀螺运动">陀螺运动。</h5>
+<p>重陀螺的进动与章动是 Euler 方程的经典解， 在导航（陀螺仪）中有重要应用。</p>
+<h2 id="sec:appendix-inertia"><span class="ms-secno">11</span>附录：常见形状的转动惯量</h2>
+<div id="tab:inertia">
+<table>
+<caption>常见形状的转动惯量。</caption>
+<thead>
+<tr>
+<th style="text-align: left;">形状</th>
+<th style="text-align: center;"><span class="math inline">\(I\)</span>（中心轴）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">质点</td>
+<td style="text-align: center;"><span class="math inline">\(mr^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">细杆（中心）</td>
+<td style="text-align: center;"><span class="math inline">\(\frac{1}{12}ml^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">细杆（端点）</td>
+<td style="text-align: center;"><span class="math inline">\(\frac{1}{3}ml^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">薄环</td>
+<td style="text-align: center;"><span class="math inline">\(MR^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">薄盘</td>
+<td style="text-align: center;"><span class="math inline">\(\frac12 MR^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">实心球</td>
+<td style="text-align: center;"><span class="math inline">\(\frac25 MR^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">球壳</td>
+<td style="text-align: center;"><span class="math inline">\(\frac23 MR^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">圆柱（轴）</td>
+<td style="text-align: center;"><span class="math inline">\(\frac12 MR^2\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:discuss"><span class="ms-secno">12</span>讨论</h2>
+<h5 id="角动量守恒的普遍性">角动量守恒的普遍性。</h5>
+<p>甲虫-圆环问题是角动量守恒的经典演示。系统初始角动量为零， 甲虫运动时环反向旋转，保持总角动量为零。</p>
+<h5 id="newton-球壳定理的意义">Newton 球壳定理的意义。</h5>
+<p>球壳定理是 Newton 万有引力理论的基石，解释了为什么行星可视为质点， 以及为什么球壳内部引力为零。</p>
+<h5 id="球冠质心的应用">球冠质心的应用。</h5>
+<p>球冠质心公式用于计算球形天体（如行星、恒星）的引力势与转动惯量。</p>
+<h5 id="newton-球壳定理的应用">Newton 球壳定理的应用。</h5>
+<p>球壳定理解释了为什么行星内部（r&lt;R）引力随 r 线性增加（<span class="math inline">\(g\propto r\)</span>）， 而外部（r&gt;R）按 <span class="math inline">\(1/r^2\)</span> 衰减。</p>
+<h5 id="与作业题的对照">与作业题的对照。</h5>
+<p>表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 覆盖了作业-4 Q1–Q4 的全部数值结果。</p>
+<div class="thebibliography">
+<p><span>9</span></p>
+<p>H. Goldstein, C. P. Poole, J. L. Safko, <em>Classical Mechanics</em>, 3rd ed., Pearson, 2002. （刚体、角动量、引力势。）</p>
+<p>I. Newton, <em>Principia Mathematica</em>, 1687. （球壳定理。）</p>
+<p>周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （刚体几何与角动量。）</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>刚体几何与角动量 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知识网络 · 理论力学</title>
+<meta name="description" content="理论力学知识网络：七章行星星座、全部交互单元与跨章关联同屏呈现，可缩放拖拽搜索，点开即读带公式的知识节点。">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="cosmos-bg" id="cosmosBg" aria-hidden="true"></div>
+<canvas id="net" role="img" aria-label="理论力学知识图谱。可用右上角“列表”按钮以文字方式浏览全部章节、单元与关联。"></canvas>
+
+<header class="bar" id="bar">
+  <a class="home" href="../index.html" title="回到首页星图">← 星图</a>
+  <div class="brand"><b>知识网络</b><span id="stats"></span></div>
+  <div class="search" role="search">
+    <input id="q" type="search" placeholder="搜索单元、小节、概念或公式（按 / 聚焦）" autocomplete="off" aria-label="搜索知识网络" aria-controls="qres">
+    <ul id="qres" role="listbox" hidden></ul>
+  </div>
+  <div class="tools">
+    <button id="btnFit" type="button" title="适配全图（F）">适配</button>
+    <button id="btnRelayout" type="button" title="重置节点布局">重排</button>
+    <button id="btnList" type="button" aria-pressed="false" title="以列表浏览（L）">列表</button>
+    <button id="btnHelp" type="button" title="总览与说明（?）" aria-label="总览与说明">?</button>
+  </div>
+</header>
+
+<nav class="chips" id="chips" aria-label="章节导航"></nav>
+
+<section class="legend" id="legend" aria-label="关联类型筛选">
+  <div class="legend-hd">
+    <h3>关联类型</h3>
+    <button id="btnAllLinks" type="button" class="mini-btn" title="切换显示全部或精选关联">全部</button>
+  </div>
+  <div id="legendItems"></div>
+  <p class="hint">点行星/单元聚焦 · 拖动画布平移 · 拖动节点固定 · 双击解除固定<br><span style="opacity:.7">星云底图：ESA/Hubble, CC BY 4.0</span></p>
+</section>
+
+<div class="zoom-ctl" id="zoomCtl" aria-label="缩放控制">
+  <button id="btnZoomIn" type="button" title="放大（+）" aria-label="放大">+</button>
+  <button id="btnZoomOut" type="button" title="缩小（-）" aria-label="缩小">−</button>
+  <button id="btnZoomFit" type="button" title="适配视图（F）" aria-label="适配视图">◎</button>
+</div>
+
+<div id="tip" role="tooltip" hidden></div>
+
+<aside id="panel" aria-hidden="true" aria-labelledby="pTitle">
+  <button class="close" id="pClose" type="button" aria-label="关闭面板">✕</button>
+  <div class="p-scroll" id="pScroll">
+    <div class="p-kicker" id="pKicker"></div>
+    <h2 id="pTitle"></h2>
+    <div id="pBody"></div>
+  </div>
+</aside>
+
+<section id="listView" hidden aria-label="知识网络列表视图">
+  <div class="lv-inner" id="lvInner"></div>
+</section>
+
+<div id="notice" role="status" aria-live="polite" hidden></div>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']],
+         macros: { boldsymbol: '\\pmb' } },
+  svg: { fontCache: 'local' },
+  startup: { typeset: false }
+};
+</script>
+<script src="../assets/tm-i18n-data.js"></script>
+<script src="../assets/tm-i18n.js"></script>
+<script src="./data.js"></script>
+<script src="./chunk.js"></script>
+<script src="./graph.js"></script>
+</body>
+</html>

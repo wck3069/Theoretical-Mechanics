@@ -1,0 +1,716 @@
+/* 理论力学 · 手稿代码版 —— 阅读版式（两栏：语义目录侧栏 + 正文栏） */
+:root{
+  --bg:#05060f;--panel:rgba(10,14,30,.72);--line:rgba(150,170,255,.16);
+  --text:#eef1ff;--text2:#b9c2e4;--muted:#8089b0;--cyan:#6fe3ff;--violet:#b79bff;
+  --amber:#ffd27a;--teal:#7ff0cf;--pink:#ff9fc4;
+  --serif:"Noto Serif CJK SC","Songti SC","Source Han Serif SC",Georgia,serif;
+  --sans:ui-sans-serif,system-ui,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --header-h:52px;--side-w:250px;--content-w:780px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:
+  radial-gradient(1000px 620px at 85% -5%,rgba(60,50,150,.30),transparent 62%),
+  radial-gradient(800px 600px at 5% 15%,rgba(20,80,130,.22),transparent 60%),
+  var(--bg);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.9}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+.ms-header{position:sticky;top:0;z-index:50;background:rgba(5,6,15,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.ms-header .in{max-width:1140px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ms-brand{font-weight:650;font-size:14px}
+.ms-nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.ms-nav a{font-size:12.5px;color:var(--text2);padding:5px 10px;border:1px solid var(--line);border-radius:999px}
+.ms-nav a:hover{color:var(--text);border-color:rgba(111,227,255,.45);text-decoration:none}
+.ms-wrap{max-width:1140px;margin:0 auto;padding:28px 24px 90px;position:relative;z-index:1}
+.ms-hero{padding:20px 0 12px;border-bottom:1px solid var(--line)}
+.ms-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cyan)}
+.ms-hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4.5vw,46px);line-height:1.2;margin:10px 0}
+.ms-lead{color:var(--text2);font-size:14px;max-width:800px}
+.ms-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0 6px}
+.ms-links b{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);margin-right:2px}
+.ms-links a{font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid rgba(111,227,255,.35);background:rgba(111,227,255,.08);color:var(--text2)}
+.ms-links a:hover{color:var(--text);background:rgba(111,227,255,.18);text-decoration:none}
+
+/* ---- two-column shell: sticky semantic TOC + reading column ---- */
+.ms-shell{display:flex;gap:40px;align-items:flex-start;margin-top:8px}
+.ms-toc{flex:0 0 var(--side-w);width:var(--side-w);position:sticky;top:calc(var(--header-h) + 16px);
+  max-height:calc(100vh - var(--header-h) - 34px);overflow-y:auto;overscroll-behavior:contain;
+  padding:12px 10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);scrollbar-width:thin}
+.ms-toc summary{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);
+  list-style:none;padding:4px 8px;user-select:none}
+.ms-toc summary::-webkit-details-marker{display:none}
+.ms-toc ul{list-style:none;margin:6px 0 0;padding:0}
+.ms-toc li{margin:0}
+.ms-toc li a{display:block;padding:4px 8px;border-radius:7px;font-size:12.5px;line-height:1.5;color:var(--text2)}
+.ms-toc li.l4 a{padding-left:20px;font-size:12px;color:var(--muted)}
+.ms-toc li.l5 a{padding-left:32px;font-size:12px;color:var(--muted)}
+.ms-toc li a:hover{color:var(--amber);text-decoration:none}
+.ms-toc li a.active{background:rgba(111,227,255,.12);color:var(--cyan)}
+.ms-toc li.l4 a.active,.ms-toc li.l5 a.active{color:var(--text)}
+.ms-toc a:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+.ms-body{flex:1 1 auto;min-width:0;max-width:var(--content-w);overflow-wrap:anywhere}
+
+/* ---- body typography ---- */
+.ms-page{padding:26px 0 12px;border-top:1px solid rgba(150,170,255,.10);scroll-margin-top:calc(var(--header-h) + 16px)}
+.ms-body h3[id],.ms-body h4[id]{scroll-margin-top:calc(var(--header-h) + 16px)}
+.ms-page:first-of-type{border-top:0;padding-top:10px}
+.ms-page > h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;margin:0 0 8px}
+.ms-page > h2 .ms-pn{font-size:11px;color:var(--muted);opacity:.55}
+.ms-body h3{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.4;margin:28px 0 10px;color:var(--text)}
+.ms-body h4{font-weight:600;font-size:17.5px;line-height:1.5;margin:20px 0 6px;color:var(--amber)}
+.ms-body h3 + h4,.ms-body h4 + p{margin-top:8px}
+.ms-body p{margin:0.9em 0}
+.ms-body ul,.ms-body ol{margin:0.9em 0 0.9em 1.5em;padding:0}
+.ms-body li{margin:6px 0}
+.ms-body .center{text-align:center;margin:16px 0}
+.ms-body figure{margin:20px auto;text-align:center}
+.ms-body figure img{max-width:min(100%,720px);height:auto;background:#fff;border-radius:8px;padding:8px}
+.ms-body figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.6}
+.ms-demo{display:inline-block;font-size:12px;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,210,122,.4);color:var(--amber);white-space:nowrap;vertical-align:middle}
+.ms-demo:hover{background:rgba(255,210,122,.12);text-decoration:none}
+.ms-note{font-size:12px;color:var(--muted);margin-top:26px;border-top:1px solid var(--line);padding-top:14px}
+
+/* ---- MathJax: display math scrolls in the column; inline math stays in the line ---- */
+mjx-container[display="true"]{display:block;overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:baseline}
+mjx-container svg{height:auto}
+.ms-unknown{color:var(--amber);border-bottom:1px dashed rgba(255,210,122,.5)}
+
+.ms-footer{max-width:1140px;margin:0 auto;padding:18px 24px 40px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* ---- <=1100px: sidebar becomes a collapsible 目录 drawer above the text ---- */
+@media(max-width:1100px){
+  .ms-shell{display:block}
+  .ms-toc{position:static;width:auto;max-height:none;overflow:visible;margin:14px 0 2px}
+  .ms-toc summary{cursor:pointer;display:flex;align-items:center;gap:8px;font-size:12px}
+  .ms-toc summary::before{content:"▸";color:var(--cyan)}
+  .ms-toc details[open] summary::before{content:"▾"}
+  .ms-toc details[open] ul{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .ms-toc li.l5 a{padding-left:28px}
+  .ms-body{max-width:var(--content-w)}
+}
+@media(max-width:700px){
+  :root{--header-h:104px}
+  .ms-toc li a{min-height:44px;display:flex;align-items:center;padding:8px 10px}
+  .ms-toc li.l4 a{padding-left:24px}
+  .ms-toc li.l5 a{padding-left:32px}
+  .ms-toc summary{min-height:44px;padding:10px 12px}
+  .ms-demo{min-height:40px;padding:6px 10px;display:inline-flex;align-items:center;vertical-align:middle}
+  .ms-nav a{min-height:40px;display:inline-flex;align-items:center}
+  .ms-wrap{padding:20px 14px 60px}
+  .ms-header .in{padding:9px 14px}
+  .ms-nav{width:100%;margin-left:0;overflow-x:auto;flex-wrap:nowrap}
+  .ms-nav a{white-space:nowrap}
+  .ms-body h3{font-size:21px}
+  .ms-body figure img{max-width:100%}
+}
+
+.ms-code{background:#0a1020;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65;color:#cfe0ff}
+.ms-code code{white-space:pre}
+.ms-box{border:1px solid rgba(255,210,122,.4);background:rgba(255,210,122,.06);border-radius:10px;padding:10px 14px;margin:12px 0}
+.ms-code,.ms-code code{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
+.ms-body p,.ms-body li{overflow-wrap:anywhere;word-break:break-word}
+mjx-container{max-width:100%!important;min-width:0!important;overflow-x:auto!important}
+mjx-assistive-mml{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}
+
+/* ---- print: no sidebar, full-width reading column ---- */
+@media print{
+  body{background:#fff;color:#14182a;font-size:11.5pt;line-height:1.6}
+  .ms-header,.ms-toc,.ms-nav{display:none}
+  .ms-shell{display:block;margin:0}
+  .ms-wrap{max-width:none;padding:0}
+  .ms-body{max-width:none}
+  a{color:#14182a}
+  .ms-demo,.ms-links{display:none}
+  .ms-page{border-top:1px solid #d8dbe8;page-break-inside:auto}
+  .ms-body h3,.ms-body h4{page-break-after:avoid;color:#14182a}
+  .ms-body h4{color:#8a5a00}
+  mjx-container{overflow:visible}
+}
+
+/* ---- LaTeX reader pages (generated by tools/build_web_reader.py) ---- */
+body.ms-generated .ms-body h2{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.45;margin:36px 0 12px;padding-top:16px;border-top:1px solid rgba(150,170,255,.12);color:var(--text)}
+body.ms-generated .ms-body h2:first-child{border-top:0;padding-top:0;margin-top:8px}
+body.ms-generated .ms-body h3{font-family:var(--serif);font-weight:600;font-size:19px;line-height:1.5;margin:24px 0 8px;color:var(--amber)}
+body.ms-generated .ms-body h4{font-size:16.5px;margin:18px 0 6px}
+.ms-toc li.l2 a{padding-left:8px}
+.ms-toc li.l3 a{padding-left:22px;font-size:12px;color:var(--muted)}
+.ms-body .math.display{display:block;overflow-x:auto;overflow-y:hidden;margin:15px 0;padding:2px 0}
+.ms-body table{display:block;width:100%;overflow-x:auto;border-collapse:collapse;margin:18px 0;font-size:14.5px;line-height:1.6}
+.ms-body th,.ms-body td{border:1px solid var(--line);padding:6px 10px;vertical-align:top}
+.ms-body thead th{background:rgba(111,227,255,.08);color:var(--text);font-weight:600}
+.ms-body .tcolorbox,.ms-body .keybox,.ms-body .physicsbox,.ms-body .mathbox,.ms-body .modernbox{
+  margin:20px 0;padding:14px 18px;border:1px solid rgba(150,170,255,.22);border-left:3px solid var(--cyan);
+  border-radius:10px;background:rgba(10,14,30,.62)}
+.ms-body .physicsbox{border-left-color:var(--teal);background:rgba(20,60,60,.18)}
+.ms-body .keybox{border-left-color:var(--cyan);background:rgba(20,50,80,.20)}
+.ms-body .mathbox{border-left-color:var(--amber);background:rgba(70,55,20,.18)}
+.ms-body .modernbox{border-left-color:var(--violet);background:rgba(50,30,80,.20)}
+.ms-body .tcolorbox > :first-child,.ms-body .keybox > :first-child,.ms-body .physicsbox > :first-child,
+.ms-body .mathbox > :first-child,.ms-body .modernbox > :first-child{margin-top:0}
+.ms-callout-title{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--cyan);margin:0 0 8px}
+.ms-body .example,.ms-body .definition,.ms-body .theorem,.ms-body .remark{
+  margin:18px 0;padding:2px 0 2px 16px;border-left:2px solid rgba(255,210,122,.42)}
+.ms-body .example > p:first-child strong{color:var(--amber)}
+@media(max-width:1100px){body.ms-generated .ms-shell{display:block}body.ms-generated .ms-toc{position:static;width:auto;max-height:none;margin:0 0 18px}}
+body.ms-generated .ms-body .math.display,body.ms-generated .ms-body mjx-container[display="true"]{max-width:100%;overflow-x:auto;overflow-y:hidden}
+body.ms-generated .ms-body mjx-container{max-width:100%}
+body.ms-generated .ms-body .math.inline{white-space:normal}
+body.ms-generated .ms-body .ms-secno{font-family:var(--mono);font-size:.62em;letter-spacing:.06em;color:var(--muted);margin-right:.7em;vertical-align:.12em}
+
+/* TM-ATELIER-START */
+/* ============================================================================
+ * TM-ATELIER — 全站统一「深空天文台 · 液态星辉玻璃」美术升级层
+ * 覆盖：7 章节页 / 33 交互模块 / 书稿与推导阅读器 / 目录页
+ * 100% 离线，零外链，尊重 prefers-reduced-motion
+ * ============================================================================ */
+
+:root {
+  --at-void: #040712;
+  --at-deep: #080f22;
+  --at-glass: rgba(11, 18, 38, 0.72);
+  --at-glass-strong: rgba(9, 15, 32, 0.86);
+  --at-line: rgba(148, 188, 255, 0.16);
+  --at-line-hi: rgba(178, 214, 255, 0.34);
+  --at-spec: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --at-shadow: 0 16px 44px rgba(2, 5, 16, 0.56);
+  --at-cyan: #7fe0ff;
+  --at-solar: #ffd27a;
+  --at-text: #eaf0ff;
+  --at-text2: #b4c3e4;
+  --at-muted: #7b8db5;
+}
+
+/* —— 1. 全局星辉滚动条与选区 —— */
+html {
+  color-scheme: dark;
+  scrollbar-color: rgba(148, 188, 255, 0.28) rgba(4, 7, 18, 0.5);
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(4, 7, 18, 0.55); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(148, 188, 255, 0.30), rgba(127, 224, 255, 0.22));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(176, 212, 255, 0.52), rgba(127, 224, 255, 0.42));
+  background-clip: content-box;
+}
+::selection {
+  background: rgba(127, 224, 255, 0.26);
+  color: #ffffff;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* —— 2. 移除违和的扁平剪纸黄月牙，改为柔和深空天体辉光 —— */
+.cosmos-moon {
+  width: 24vmin !important;
+  height: 24vmin !important;
+  top: -4vmin !important;
+  right: -2vmin !important;
+  opacity: 0.55 !important;
+}
+.cosmos-moon__disc {
+  display: none !important;
+}
+.cosmos-moon__swirl {
+  inset: 0 !important;
+  opacity: 0.7 !important;
+  background: radial-gradient(circle at 60% 40%, rgba(127, 224, 255, 0.16), rgba(255, 210, 122, 0.08) 42%, transparent 72%) !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  animation: none !important;
+}
+
+/* —— 3. 七大章节页（[data-cosmos="page"]）：保留行星门户背景图清晰可见 + 精奢磨砂玻璃卡 —— */
+body[data-cosmos="page"]::before {
+  background:
+    radial-gradient(76% 52% at 34% 32%, color-mix(in srgb, var(--cacc, #7fe0ff) 6%, transparent), transparent 66%),
+    radial-gradient(145% 115% at 50% -20%, rgba(3, 5, 12, 0.36), rgba(3, 5, 12, 0) 56%),
+    radial-gradient(125% 95% at 50% 118%, rgba(3, 5, 12, 0.56), rgba(3, 5, 12, 0) 60%) !important;
+}
+body[data-cosmos="page"] .top {
+  background: rgba(9, 15, 32, 0.74) !important;
+  backdrop-filter: blur(16px) saturate(1.25) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.25) !important;
+  border: 1px solid var(--at-line) !important;
+  border-radius: 16px !important;
+  corner-shape: round !important;
+  padding: 12px 18px !important;
+  box-shadow: var(--at-spec), 0 12px 36px rgba(2, 5, 16, 0.45) !important;
+}
+body[data-cosmos="page"] .home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px !important;
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  background: rgba(255, 210, 122, 0.10) !important;
+  border: 1px solid rgba(255, 210, 122, 0.30) !important;
+  transition: all 0.2s ease !important;
+}
+body[data-cosmos="page"] .home:hover {
+  background: rgba(255, 210, 122, 0.18) !important;
+  border-color: rgba(255, 210, 122, 0.55) !important;
+  transform: translateY(-1px);
+}
+body[data-cosmos="page"] .chapter-nav a {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  padding: 5px 11px !important;
+  background: rgba(255, 255, 255, 0.03);
+}
+body[data-cosmos="page"] .hero h1 {
+  letter-spacing: 0.04em;
+}
+body[data-cosmos="page"] .card {
+  border-radius: 18px !important;
+  corner-shape: round !important;
+  background: linear-gradient(160deg, rgba(16, 26, 54, 0.74) 0%, rgba(7, 12, 26, 0.86) 100%) !important;
+  backdrop-filter: blur(14px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.18) !important;
+  border: 1px solid rgba(154, 192, 255, 0.18) !important;
+  box-shadow: var(--at-spec), 0 14px 36px rgba(2, 5, 16, 0.48) !important;
+  transition: transform 0.26s cubic-bezier(.22,.68,.28,1), border-color 0.26s ease, box-shadow 0.26s ease !important;
+}
+body[data-cosmos="page"] .card:hover {
+  transform: translateY(-4px) !important;
+  border-color: color-mix(in srgb, var(--cacc, #7fe0ff) 48%, rgba(255, 255, 255, 0.16)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 20px 52px rgba(2, 5, 18, 0.68),
+    0 0 28px color-mix(in srgb, var(--cacc, #7fe0ff) 16%, transparent) !important;
+}
+body[data-cosmos="page"] .tags span {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  background: rgba(148, 188, 255, 0.07) !important;
+  border-color: rgba(148, 188, 255, 0.16) !important;
+  color: #a9bce0 !important;
+  padding: 2px 9px !important;
+}
+body[data-cosmos="page"] .enter {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  padding: 8px 14px !important;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent, #ffd27a) 92%, #ffffff), var(--accent, #ffd27a)) !important;
+  color: #060b18 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent, #ffd27a) 28%, transparent) !important;
+}
+body[data-cosmos="page"] .enter:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--accent, #ffd27a) 42%, transparent) !important;
+}
+body[data-cosmos="page"] .pdf {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  padding: 8px 13px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(154, 192, 255, 0.22) !important;
+  color: #d6e2ff !important;
+}
+body[data-cosmos="page"] .pdf:hover {
+  background: rgba(127, 224, 255, 0.10) !important;
+  border-color: rgba(127, 224, 255, 0.44) !important;
+  color: #ffffff !important;
+}
+
+/* —— 4. 全部 33 个交互模块：星辉滑块、磨砂控制栏与按钮统一美化 —— */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(127, 224, 255, 0.30), rgba(148, 188, 255, 0.16));
+  outline: none;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+input[type="range"]:hover {
+  background: linear-gradient(90deg, rgba(127, 224, 255, 0.45), rgba(148, 188, 255, 0.24));
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #9eeaff 45%, #49b8f5 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px rgba(127, 224, 255, 0.65), 0 2px 6px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.16);
+  box-shadow: 0 0 18px rgba(127, 224, 255, 0.90), 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #9eeaff 45%, #49b8f5 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px rgba(127, 224, 255, 0.65);
+}
+input[type="range"]::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(148, 188, 255, 0.20);
+}
+
+/* 模块控制栏、下拉框、公式框、底部星图导航（全站 33 个模块视觉完全统一） */
+body[data-tm-mx] {
+  background: radial-gradient(1200px 800px at 70% 10%, #0b142c 0%, #050812 56%, #02040b 100%) !important;
+  color: #e2eaff !important;
+}
+body[data-tm-mx] .brand h1,
+body[data-tm-mx] header.top h1 {
+  color: #ffd27a !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  text-shadow: 0 2px 18px rgba(255, 210, 122, 0.22) !important;
+}
+body[data-tm-mx] .hud b {
+  color: #ffd27a !important;
+  font-variant-numeric: tabular-nums !important;
+}
+body[data-tm-mx] aside.panel,
+body[data-tm-mx] .panel {
+  background: linear-gradient(180deg, rgba(11, 18, 38, 0.88) 0%, rgba(7, 12, 26, 0.94) 100%) !important;
+  border-color: var(--at-line) !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.06), -12px 0 36px rgba(2, 5, 16, 0.45) !important;
+}
+body[data-tm-mx] .panel button:not(.close):not(.mini-btn) {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  border: 1px solid rgba(110, 156, 255, 0.28) !important;
+  background: rgba(58, 95, 191, 0.16) !important;
+  color: #dce6ff !important;
+  transition: all 0.16s ease !important;
+}
+body[data-tm-mx] .panel button:not(.close):not(.mini-btn):hover {
+  background: rgba(94, 162, 255, 0.28) !important;
+  border-color: rgba(127, 224, 255, 0.52) !important;
+  color: #ffffff !important;
+}
+body[data-tm-mx] .panel button.primary,
+body[data-tm-mx] .panel button.active {
+  background: linear-gradient(180deg, #4380ff 0%, #2a5de0 100%) !important;
+  border-color: rgba(127, 196, 255, 0.65) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 16px rgba(45, 102, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+body[data-tm-mx] .panel button.primary:hover {
+  filter: brightness(1.1);
+}
+body[data-tm-mx] .doc {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  border: 1px solid rgba(127, 224, 255, 0.26) !important;
+  background: rgba(12, 22, 46, 0.65) !important;
+  color: #bfefff !important;
+  transition: all 0.16s ease !important;
+}
+body[data-tm-mx] .doc:hover {
+  background: rgba(127, 224, 255, 0.12) !important;
+  border-color: rgba(127, 224, 255, 0.52) !important;
+  color: #ffffff !important;
+}
+aside, .panel, .sidebar, .controls {
+  border-color: var(--at-line) !important;
+}
+select {
+  border-radius: 10px !important;
+  corner-shape: round !important;
+  background-color: rgba(7, 13, 28, 0.86) !important;
+  border: 1px solid var(--at-line-hi) !important;
+  color: var(--at-text) !important;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+select:hover, select:focus {
+  border-color: var(--at-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(127, 224, 255, 0.14);
+}
+.eq, .eqbox, .formula, .eq-box, .fbox, .math-card {
+  border-radius: 12px !important;
+  corner-shape: round !important;
+  background: linear-gradient(165deg, rgba(6, 12, 28, 0.88), rgba(4, 8, 20, 0.94)) !important;
+  border: 1px solid rgba(127, 224, 255, 0.20) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+body[data-tm-mx] input[type="range"] {
+  height: 5px !important;
+  margin: 8px 0 !important;
+}
+
+.tm-orbit-nav ~ #tm-ai-root .tmai-launcher{ display: none !important; }
+
+body[data-tm-mx] #tm-ai-root .tmai-launcher,
+body:has(.tm-orbit-nav) #tm-ai-root .tmai-launcher{ display: none !important; }
+
+/* M27/M29/M30（20/22/23）统一为全屏左侧画布 + 右侧全高贴边磨砂控制栏（与 00-19/21/31-40 完全一致） */
+@media (min-width: 821px) {
+  body[data-tm-mx]:has(> .wrap aside.panel) {
+    height: 100vh !important;
+    overflow: hidden !important;
+  }
+  body[data-tm-mx]:has(> .wrap aside.panel) > .wrap {
+    width: calc(100vw - 344px) !important;
+    max-width: none !important;
+    margin: 0 !important;
+    height: 100vh !important;
+    padding: 16px 20px 64px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  body[data-tm-mx]:has(> .wrap aside.panel) > .wrap .top {
+    margin-bottom: 10px !important;
+    flex: none !important;
+  }
+  body[data-tm-mx]:has(> .wrap aside.panel) > .wrap .app {
+    display: block !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+  body[data-tm-mx]:has(> .wrap aside.panel) > .wrap .stage {
+    height: 100% !important;
+    min-height: 0 !important;
+    border-radius: 14px !important;
+  }
+  body[data-tm-mx]:has(> .wrap aside.panel) > .wrap aside.panel {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 344px !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    border-radius: 0 !important;
+    corner-shape: round !important;
+    border: 0 !important;
+    border-left: 1px solid var(--at-line) !important;
+    padding: 20px 18px 72px !important;
+    z-index: 45 !important;
+  }
+}
+.tm-orbit-nav {
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+  bottom: 12px !important;
+  right: 356px !important;
+  z-index: 60 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: rgba(8, 14, 30, 0.84) !important;
+  backdrop-filter: blur(14px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.2) !important;
+  border: 1px solid var(--at-line) !important;
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  padding: 5px 8px !important;
+  box-shadow: var(--at-spec), 0 12px 34px rgba(2, 5, 16, 0.58) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+  font-size: 11.5px !important;
+}
+.tm-orbit-nav a, .tm-orbit-nav button {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  border: 1px solid rgba(148, 188, 255, 0.24) !important;
+  background: rgba(127, 224, 255, 0.08) !important;
+  color: #cfefff !important;
+  text-decoration: none !important;
+  padding: 5px 10px !important;
+  white-space: nowrap !important;
+  transition: all 0.16s ease !important;
+}
+.tm-orbit-nav a:hover, .tm-orbit-nav button:hover {
+  background: rgba(127, 224, 255, 0.16) !important;
+  border-color: rgba(127, 224, 255, 0.48) !important;
+  color: #ffffff !important;
+}
+.tm-orbit-nav a[data-tm-nav="exit"], .tm-orbit-nav a.tm-nav-exit {
+  color: #ffd27a !important;
+  background: rgba(255, 210, 122, 0.09) !important;
+  border-color: rgba(255, 210, 122, 0.32) !important;
+}
+body[data-tm-mx] .wrap {
+  padding-bottom: 72px !important;
+}
+@media (max-width: 820px) {
+  .tm-orbit-nav {
+    right: 12px !important;
+    left: 12px !important;
+    bottom: 10px !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+/* M31–M40 新模块顶部导航与操作按钮统一升级 */
+.modnav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.modnav .backlink {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(127, 224, 255, 0.10);
+  border: 1px solid rgba(127, 224, 255, 0.30);
+  color: #9ce8ff;
+  text-decoration: none;
+  font-size: 12.5px;
+  white-space: nowrap;
+  transition: all 0.16s ease;
+}
+.modnav .backlink:hover {
+  background: rgba(127, 224, 255, 0.20);
+  border-color: rgba(127, 224, 255, 0.60);
+  color: #ffffff;
+}
+.modnav select {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+
+/* —— 5. 书稿与推导阅读器（body.ms-reader / body.ms-hub）：深空精装阅读质感 —— */
+body.ms-reader, body.ms-hub {
+  background:
+    radial-gradient(1100px 680px at 14% 4%, rgba(28, 66, 134, 0.22), transparent 62%),
+    radial-gradient(900px 620px at 88% 18%, rgba(74, 46, 138, 0.14), transparent 58%),
+    radial-gradient(1200px 800px at 50% 108%, rgba(12, 36, 88, 0.26), transparent 60%),
+    #040712 !important;
+  background-attachment: fixed !important;
+  color: var(--at-text) !important;
+}
+body.ms-reader .ms-header, body.ms-hub .top {
+  background: rgba(9, 15, 32, 0.78) !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+  border-bottom: 1px solid var(--at-line) !important;
+  box-shadow: 0 8px 30px rgba(2, 5, 16, 0.45) !important;
+}
+body.ms-reader .ms-nav a {
+  border-radius: 999px !important;
+  corner-shape: round !important;
+  border-color: var(--at-line) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  transition: all 0.16s ease !important;
+}
+body.ms-reader .ms-nav a:hover {
+  border-color: var(--at-line-hi) !important;
+  background: rgba(127, 224, 255, 0.10) !important;
+}
+body.ms-reader .ms-hero {
+  border-radius: 20px !important;
+  corner-shape: round !important;
+  background: linear-gradient(155deg, rgba(16, 26, 54, 0.78) 0%, rgba(8, 13, 28, 0.88) 100%) !important;
+  border: 1px solid rgba(154, 192, 255, 0.20) !important;
+  box-shadow: var(--at-spec), var(--at-shadow) !important;
+  position: relative;
+  overflow: hidden;
+}
+body.ms-reader .ms-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(520px 220px at 88% 0%, rgba(127, 224, 255, 0.12), transparent 70%);
+  pointer-events: none;
+}
+body.ms-reader .ms-hero h1 {
+  background: linear-gradient(96deg, #ffffff 0%, #d4e8ff 58%, #9ce8ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+body.ms-reader .ms-toc {
+  border-radius: 16px !important;
+  corner-shape: round !important;
+  background: rgba(9, 15, 32, 0.68) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--at-line) !important;
+  box-shadow: var(--at-spec), 0 12px 32px rgba(2, 5, 16, 0.40) !important;
+}
+body.ms-reader .ms-toc a {
+  border-radius: 8px !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+body.ms-reader .ms-toc a:hover {
+  background: rgba(127, 224, 255, 0.09) !important;
+  color: #ffffff !important;
+}
+body.ms-reader .ms-body {
+  color: #e6eeff !important;
+  line-height: 1.88 !important;
+}
+body.ms-reader .mathbox,
+body.ms-reader .definition,
+body.ms-reader .example,
+body.ms-reader .modernbox {
+  border-radius: 14px !important;
+  corner-shape: round !important;
+  background: linear-gradient(160deg, rgba(14, 24, 50, 0.72), rgba(8, 13, 28, 0.82)) !important;
+  border: 1px solid rgba(148, 188, 255, 0.18) !important;
+  border-left: 3px solid var(--at-cyan) !important;
+  box-shadow: var(--at-spec), 0 10px 28px rgba(2, 5, 16, 0.36) !important;
+}
+body.ms-reader .definition { border-left-color: var(--at-solar) !important; }
+body.ms-reader .example { border-left-color: #8fe8a0 !important; }
+body.ms-reader .modernbox { border-left-color: #c88aff !important; }
+
+/* 书稿插图（覆盖 <figure><img> 与裸 <p><img>，柔和月白底板确保黑线 TikZ 图 100% 清晰且不刺眼） */
+body.ms-reader .ms-body img {
+  display: block;
+  margin: 18px auto;
+  max-width: min(100%, 680px);
+  height: auto;
+  background: linear-gradient(180deg, #f2f6fc 0%, #e7eef9 100%) !important;
+  border: 1px solid rgba(154, 192, 255, 0.38) !important;
+  border-radius: 14px !important;
+  corner-shape: round !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 12px 34px rgba(2, 5, 18, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+body.ms-reader .ms-body figure {
+  margin: 26px auto;
+  text-align: center;
+}
+body.ms-reader .ms-body figure img {
+  margin: 0 auto;
+}
+body.ms-reader .ms-body figcaption {
+  color: #a6b9df !important;
+  font-size: 13px !important;
+  margin-top: 10px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-cosmos="page"] .card,
+  body[data-cosmos="page"] .home,
+  body[data-cosmos="page"] .enter,
+  input[type="range"]::-webkit-slider-thumb {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* TM-ATELIER-END */

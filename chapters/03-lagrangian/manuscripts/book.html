@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拉格朗日力学 · 理论力学</title>
+<link rel="stylesheet" href="../../../assets/manuscript.css">
+<link rel="stylesheet" href="../../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+<!-- TM-SEO:START -->
+<meta name="description" content="拉格朗日力学 · 理论力学：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/chapters/03-lagrangian/manuscripts/book.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="拉格朗日力学 · 理论力学">
+<meta property="og:description" content="拉格朗日力学 · 理论力学：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/chapters/03-lagrangian/manuscripts/book.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="拉格朗日力学 · 理论力学">
+<meta name="twitter:description" content="拉格朗日力学 · 理论力学：手写手稿 HTML 版，MathJax 本地渲染，含 SVG 插图。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="../index.html">← 章节门户</a><a href="../../../manuscript/index.html">书稿</a><a href="../../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">书稿 · 网页阅读版</div>
+<h1>拉格朗日力学</h1>
+<p class="ms-lead">本章书稿全文，可检索、可复制。</p>
+<div class="ms-links"><b>相关</b><a href="../index.html">拉格朗日力学 章节</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#约束与广义坐标">3.1约束与广义坐标</a></li>
+<li class="l3"><a href="#约束及其分类">3.1.1约束及其分类</a></li>
+<li class="l3"><a href="#自由度与广义坐标">3.1.2自由度与广义坐标</a></li>
+<li class="l3"><a href="#位形空间">3.1.3位形空间</a></li>
+<li class="l2"><a href="#虚功原理与达朗贝尔原理">3.2虚功原理与达朗贝尔原理</a></li>
+<li class="l3"><a href="#虚位移与虚功">3.2.1虚位移与虚功</a></li>
+<li class="l3"><a href="#虚功原理">3.2.2虚功原理</a></li>
+<li class="l3"><a href="#达朗贝尔原理">3.2.3达朗贝尔原理</a></li>
+<li class="l2"><a href="#拉格朗日方程">3.3拉格朗日方程</a></li>
+<li class="l3"><a href="#从达朗贝尔原理导出">3.3.1从达朗贝尔原理导出</a></li>
+<li class="l3"><a href="#从哈密顿原理导出">3.3.2从哈密顿原理导出</a></li>
+<li class="l3"><a href="#非保守广义力与受驱动运动">3.3.3非保守广义力与受驱动运动</a></li>
+<li class="l3"><a href="#典型应用">3.3.4典型应用</a></li>
+<li class="l3"><a href="#冲量与广义冲量">3.3.5冲量与广义冲量</a></li>
+<li class="l2"><a href="#对称性与守恒律">3.4对称性与守恒律</a></li>
+<li class="l3"><a href="#循环坐标与广义动量">3.4.1循环坐标与广义动量</a></li>
+<li class="l3"><a href="#能量函数与能量收支">3.4.2能量函数与能量收支</a></li>
+<li class="l3"><a href="#诺特定理把变换和边界项一同写清楚">3.4.3诺特定理：把变换和边界项一同写清楚</a></li>
+<li class="l3"><a href="#全导数等价与它的边界">3.4.4全导数等价与它的边界</a></li>
+<li class="l2"><a href="#约束力恢复与非完整系统">3.5约束力恢复与非完整系统</a></li>
+<li class="l3"><a href="#完整约束的乘子求回被消去的反力">3.5.1完整约束的乘子：求回被消去的反力</a></li>
+<li class="l3"><a href="#仿射速度约束与达朗贝尔乘子方程">3.5.2仿射速度约束与达朗贝尔乘子方程</a></li>
+<li class="l3"><a href="#滚动圆盘完整的求解与守恒检查">3.5.3滚动圆盘：完整的求解与守恒检查</a></li>
+<li class="l3"><a href="#为什么不能直接把速度约束加进作用量">3.5.4为什么不能直接把速度约束加进作用量？</a></li>
+<li class="l2"><a href="#带电粒子正则动量与规范等价">3.6带电粒子、正则动量与规范等价</a></li>
+<li class="l3"><a href="#从势耦合逐分量导出洛伦兹力">3.6.1从势耦合逐分量导出洛伦兹力</a></li>
+<li class="l3"><a href="#规范变换为什么不改变轨道">3.6.2规范变换为什么不改变轨道？</a></li>
+<li class="l2"><a href="#通向小振动与哈密顿力学">3.7通向小振动与哈密顿力学</a></li>
+<li class="l2"><a href="#计算与模拟检查方程而非只看动画">3.8计算与模拟：检查方程，而非只看动画</a></li>
+<li class="l2"><a href="#关键概念与常见误区">关键概念与常见误区</a></li>
+<li class="l2"><a href="#本章小结">本章小结</a></li>
+<li class="l2"><a href="#分层习题">分层习题</a></li>
+<li class="l2"><a href="#解题思路与结果">解题思路与结果</a></li>
+<li class="l2"><a href="#进一步阅读与来源">进一步阅读与来源</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<div class="tcolorbox"><div class="ms-callout-title">本章导读</div>
+<p>牛顿力学从“力”出发，逐点积分得到运动；拉格朗日力学则从“约束”和“能量”出发，把整个系统的运动压缩成少数几个广义坐标的微分方程。它的核心不是换一套公式，而是换一种组织信息的方式：</p>
+<p><span class="math display">\[\text{约束}\ \longrightarrow\ \text{广义坐标}\ \longrightarrow\
+\text{虚功与达朗贝尔原理}\ \longrightarrow\ \text{拉格朗日方程}\]</span> <span class="math display">\[\longrightarrow\ \text{对称性、守恒律与规范结构}.\]</span></p>
+<p>学习本章时要反复问三个问题：系统的自由度是多少？广义坐标是否选得让约束自动满足？哪一个对称性给出了哪一个守恒量？</p>
+</div>
+<h2 id="约束与广义坐标"><span class="ms-secno">3.1</span>约束与广义坐标</h2>
+<h3 id="约束及其分类"><span class="ms-secno">3.1.1</span>约束及其分类</h3>
+<p>在第一章中，我们处理质点或质点系时，往往直接把受力逐个写出。对于由 <span class="math inline">\(n\)</span> 个质点组成的系统，原则上需要 <span class="math inline">\(3n\)</span> 个直角坐标。然而真实力学系统几乎总受到限制：刚体内部两点距离不变，轮子在地面上无滑动滚动，摆球被限制在圆周上，滑块被限制在导轨上。这些限制称为<strong>约束</strong>。</p>
+<p>设第 <span class="math inline">\(i\)</span> 个质点的位矢为 <span class="math inline">\(\mathbf{r}_i=(x_i,y_i,z_i)\)</span>，约束通常可以写成 <span class="math display">\[f_\ell(\mathbf{r}_1,\mathbf{r}_2,\dots,\mathbf{r}_n,t)=0,
+\qquad \ell=1,2,\dots,m.
+
+\tag{3.1}\]</span> 若约束方程只含坐标而不含速度，称为<strong>几何约束</strong>；若约束方程中还出现速度，则称为<strong>运动约束</strong>或<strong>微分约束</strong>。若微分约束可以积分成式 (3.1) 的形式，它本质上仍是几何约束，称为<strong>完整约束</strong>；若不能积分，则称为<strong>非完整约束</strong>。</p>
+<div class="definition">
+<p><strong>定义 1.1</strong> (完整约束与非完整约束).  <em>若约束可以写成只含坐标和时间的等式 <span class="math display">\[f(\mathbf{r}_1,\dots,\mathbf{r}_n,t)=0,\]</span> 则称为<strong>完整约束</strong>。若约束必须写成不可积分的微分形式 <span class="math display">\[\sum_{i=1}^{n}\mathbf a_i(\mathbf{r}_1,\dots,\mathbf{r}_n,t)\cdot \mathrm{d}\mathbf{r}_i
++b(\mathbf{r}_1,\dots,\mathbf{r}_n,t)\mathrm{d}t=0,\]</span> 则称为<strong>非完整约束</strong>。</em></p>
+</div>
+<p>约束对系统的作用力称为<strong>约束力</strong>，其余力称为<strong>主动力</strong>。约束力不是事先给定的力，而是由约束条件和运动状态共同决定的反力；这正是牛顿力学处理受约束系统时最不方便的地方。</p>
+<p>例如，质点被限制在半径为 <span class="math inline">\(R\)</span> 的球面上，约束为 <span class="math display">\[x^2+y^2+z^2-R^2=0,\]</span> 这是完整约束。若球面半径随时间变化，<span class="math inline">\(R=R(t)\)</span>，约束仍可写成 <span class="math display">\[x^2+y^2+z^2-R^2(t)=0,\]</span> 仍是完整约束，只是显含时间。相反，半径为 <span class="math inline">\(R\)</span> 的竖直圆盘在水平面上无滑动滚动时，接触点的速度为零，得到 <span class="math display">\[\dot x-R\dot\varphi\cos\theta=0,\qquad
+\dot y-R\dot\varphi\sin\theta=0,\]</span> 其中 <span class="math inline">\(\theta\)</span> 是圆盘平面与固定方向的夹角，<span class="math inline">\(\varphi\)</span> 是圆盘绕自身对称轴的自转角。这两个微分约束一般不能积分为只含坐标的代数方程，因此是非完整约束。</p>
+<figure id="fig:virtual-displacement">
+<img src="figs/ch03-fig1.svg" style="width:86.0%" />
+<figcaption>半径受驱动增大的圆周约束。冻结时刻的虚位移沿切向；图示实际瞬时角速度为零，真实位移随半径增大而沿径向。两种位移不能互相替代。</figcaption>
+</figure>
+<p>约束还可以按其他方式分类：</p>
+<ul>
+<li><p><strong>定常约束</strong>：约束方程不显含时间，<span class="math inline">\(f(\mathbf{r})=0\)</span>；</p></li>
+<li><p><strong>非定常约束</strong>：约束方程显含时间，<span class="math inline">\(f(\mathbf{r},t)=0\)</span>；</p></li>
+<li><p><strong>双侧约束</strong>：约束是等式，质点不能从两侧脱离；</p></li>
+<li><p><strong>单侧约束</strong>：约束是不等式，例如 <span class="math inline">\(z\ge 0\)</span>，质点可以离开约束面；</p></li>
+<li><p><strong>理想约束</strong>：约束力在任意虚位移上所作的总虚功为零。</p></li>
+</ul>
+<p>理想约束是本章最重要的结构性假设。光滑曲面、光滑铰链、刚性杆、不可伸长的轻绳都近似为理想约束。对于理想约束，约束力的总虚功为零，因此它不会进入广义坐标下的运动方程；我们只需处理主动力。滑动摩擦通常须作为主动力处理；无滑动滚动中的静摩擦在适当理想接触模型下可不做虚功，不能单凭“有摩擦”就判为非理想。绳的拉紧条件和单侧接触还须检验反力可实现性。</p>
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>“约束力不做虚功”并不意味着约束力不做功。真实运动中，约束力完全可能做功，例如外部机构驱动的光滑导轨可通过法向反力向滑块传递能量。虚功中的位移是同一时刻、只满足约束的假想位移，时间被冻结，所以法向约束力与虚位移正交，虚功才为零。</p>
+</div>
+<h3 id="自由度与广义坐标"><span class="ms-secno">3.1.2</span>自由度与广义坐标</h3>
+<p>设有 <span class="math inline">\(n\)</span> 个质点、<span class="math inline">\(m\)</span> 个完整约束。若在所考察的正则位形邻域中，这些约束对位置坐标的雅可比矩阵具有秩 <span class="math inline">\(m\)</span>，则独立坐标数为 <span class="math display">\[s=3n-m.
+
+\tag{3.2}\]</span> <span class="math inline">\(s\)</span> 称为系统的<strong>自由度</strong>。我们可以选一组 <span class="math inline">\(s\)</span> 个独立参数 <span class="math display">\[q_1,q_2,\dots,q_s,\]</span> 使得所有质点的位矢都可以表示为 <span class="math display">\[\mathbf{r}_i=\mathbf{r}_i(q_1,q_2,\dots,q_s,t),
+\qquad i=1,2,\dots,n.
+
+\tag{3.3}\]</span> 这组参数称为<strong>广义坐标</strong>。它们通常只是位形空间的局部坐标。机械系统中可以是长度或角度；扩展到机电模型时也可以用电荷，但不能把不同模型的自由变量混为一谈。重要的是它们彼此独立，并且自动满足全部完整约束。同一系统可以选多组不同的广义坐标，物理结果不依赖于坐标选择；好的选择通常能让 <span class="math inline">\(T\)</span> 和 <span class="math inline">\(V\)</span> 更简单。</p>
+<p>对时间求导，得到<strong>广义速度</strong> <span class="math display">\[\dot q_a=\frac{\mathrm{d}q_a}{\mathrm{d}t},\qquad a=1,2,\dots,s.\]</span> 质点的速度可以写成 <span class="math display">\[\mathbf{v}_i=\sum_{a=1}^{s}\frac{\partial \mathbf{r}_i}{\partial q_a}\dot q_a+\frac{\partial \mathbf{r}_i}{\partial t}.
+
+\tag{3.4}\]</span> 其中第一项是广义速度引起的部分，第二项来自参数化的显式时间依赖，可由移动约束或含时坐标选择引起。</p>
+<div class="example">
+<p><strong>例 1.1</strong> (球坐标与双摆).  <em>质量为 <span class="math inline">\(m\)</span> 的质点被约束在球面上，取球坐标 <span class="math inline">\((r,\theta,\varphi)\)</span>，约束为 <span class="math inline">\(r=R\)</span>。自由度 <span class="math inline">\(s=2\)</span>，广义坐标可取 <span class="math inline">\(q_1=\theta,q_2=\varphi\)</span>。若取 <span class="math inline">\(r\)</span> 也作为广义坐标，则约束没有自动满足，后续必须用乘子处理。</em></p>
+<p><em>平面双摆由两根长为 <span class="math inline">\(l_1,l_2\)</span> 的轻杆和两个质量 <span class="math inline">\(m_1,m_2\)</span> 组成。四个直角坐标减去两个杆长约束，自由度 <span class="math inline">\(s=2\)</span>，广义坐标可取两杆与竖直方向的夹角 <span class="math inline">\(\theta_1,\theta_2\)</span>。这两个角度自动满足杆长约束，因此拉格朗日方程中不会出现杆的张力。</em></p>
+</div>
+<h3 id="位形空间"><span class="ms-secno">3.1.3</span>位形空间</h3>
+<p>所有广义坐标取值的集合构成一个 <span class="math inline">\(s\)</span> 维空间，称为<strong>位形空间</strong>。系统的运动对应位形空间中的一条曲线 <span class="math inline">\(q_a=q_a(t)\)</span>。局部坐标不必覆盖全部位形，例如摆角按 <span class="math inline">\(2\pi\)</span> 周期识别，不能把坐标图边界当成物理边界。运动由方程和初始数据确定；作用量的固定端点表述则比较连接给定端点的路径。本章将使用上一章的变分法说明二者的关系，固定两端一般不保证解存在或唯一。</p>
+<h2 id="虚功原理与达朗贝尔原理"><span class="ms-secno">3.2</span>虚功原理与达朗贝尔原理</h2>
+<h3 id="虚位移与虚功"><span class="ms-secno">3.2.1</span>虚位移与虚功</h3>
+<p>设系统在时刻 <span class="math inline">\(t\)</span> 处于满足约束的位形。想象在时间 <span class="math inline">\(t\)</span> 冻结的条件下，系统发生一个无穷小位移 <span class="math inline">\(\delta\mathbf{r}_i\)</span>，它仍然满足约束的线性化条件。这样的位移称为<strong>虚位移</strong>。对完整约束，虚位移满足 <span class="math inline">\(\sum_i(\partial f_\ell/\partial\mathbf{r}_i)\cdot\delta\mathbf{r}_i=0\)</span>，位于冻结约束的切空间；对本章采用的理想、仿射速度非完整模型，容许虚位移由达朗贝尔规则规定为约束系数的齐次核；它一般不是比较两条都满足速度约束的路径得到的任意变分。详见本章非完整系统一节。虚位移与真实位移 <span class="math inline">\(\mathrm{d}\mathbf{r}_i\)</span> 的关键区别是： <span class="math display">\[\delta t=0,
+\qquad
+\mathrm{d}\mathbf{r}_i=\sum_a\frac{\partial \mathbf{r}_i}{\partial q_a}\mathrm{d}q_a+\frac{\partial \mathbf{r}_i}{\partial t}\mathrm{d}t,
+\qquad
+\delta\mathbf{r}_i=\sum_a\frac{\partial \mathbf{r}_i}{\partial q_a}\delta q_a.
+
+\tag{3.5}\]</span> 真实位移可能包含约束随时间变化产生的项，虚位移没有这一项。若选用无显式时间依赖的定常参数化，<span class="math inline">\(\partial\mathbf{r}_i/\partial t=0\)</span>，两者的容许切向形式相同，但真实位移由实际速度确定，虚位移则仍可独立选取；对于非定常约束，两者一般不同。</p>
+<p>作用在第 <span class="math inline">\(i\)</span> 个质点上的力为 <span class="math inline">\(\mathbf{F}_i\)</span>，在虚位移上作的功 <span class="math display">\[\delta W=\sum_{i=1}^{n}\mathbf{F}_i\cdot\delta\mathbf{r}_i\]</span> 称为<strong>虚功</strong>。把力分成主动力 <span class="math inline">\(\mathbf{F}_i^{(a)}\)</span> 和约束力 <span class="math inline">\(\mathbf{N}_i\)</span>，则 <span class="math display">\[\delta W=\sum_i\mathbf{F}_i^{(a)}\cdot\delta\mathbf{r}_i
++\sum_i\mathbf{N}_i\cdot\delta\mathbf{r}_i.\]</span></p>
+<h3 id="虚功原理"><span class="ms-secno">3.2.2</span>虚功原理 <a class="ms-demo" href="../../../modules/05-virtual-work/index.html">✦ 交互模拟：虚功原理与静力学 ↗</a></h3>
+<p>若约束是理想的，第二项为零。于是虚功原理可以表述为：</p>
+<div class="keybox"><div class="ms-callout-title">核心结论 · KEY RESULT</div>
+<p>受理想双侧约束的力学系统，在静止的定常约束上、排除奇异位形时，主动力可由理想约束反力平衡的条件是：对任意满足约束（或其线性化条件）的虚位移，主动力所作的总虚功为零， <span class="math display">\[\delta W=\sum_{i=1}^{n}\mathbf{F}_i^{(a)}\cdot\delta\mathbf{r}_i=0.
+
+\tag{3.6}\]</span></p>
+</div>
+<p>用广义坐标表示，<span class="math inline">\(\delta\mathbf{r}_i=\sum_a(\partial\mathbf{r}_i/\partial q_a)\delta q_a\)</span>，于是 <span class="math display">\[\delta W=\sum_{a=1}^{s}Q_a\,\delta q_a,
+\qquad
+Q_a=\sum_{i=1}^{n}\mathbf{F}_i^{(a)}\cdot\frac{\partial \mathbf{r}_i}{\partial q_a}.
+
+\tag{3.7}\]</span> <span class="math inline">\(Q_a\)</span> 称为与 <span class="math inline">\(q_a\)</span> 对应的<strong>广义力</strong>。广义力的量纲一般不是力的量纲，因为 <span class="math inline">\(q_a\)</span> 的量纲不一定是长度；但乘积 <span class="math inline">\(Q_a\delta q_a\)</span> 必须具有功的量纲。由于 <span class="math inline">\(\delta q_a\)</span> 彼此独立，平衡条件 <span class="math inline">\(\delta W=0\)</span> 等价于 <span class="math display">\[Q_a=0,\qquad a=1,2,\dots,s.
+
+\tag{3.8}\]</span> 这就是广义坐标下的平衡方程。</p>
+<div class="example">
+<p><strong>例 1.2</strong> (两杆平衡：同一正切值有不同稳定性).  <em>固定铰支点 <span class="math inline">\(O\)</span>，等长均匀杆 <span class="math inline">\(OA,AB\)</span> 长均为 <span class="math inline">\(l\)</span>、重量为 <span class="math inline">\(P_1,P_2\)</span>，铰链理想。取 <span class="math inline">\(x\)</span> 向右、<span class="math inline">\(y\)</span> 向上，两杆绝对角从 <span class="math inline">\(+x\)</span> 逆时针量起，记为 <span class="math inline">\(\alpha,\beta\)</span>。在 <span class="math inline">\(B\)</span> 施加恒定向左力 <span class="math inline">\(F&gt;0\)</span>，其势能为 <span class="math inline">\(Fx_B\)</span>。两杆质心高度分别为 <span class="math inline">\(l\sin\alpha/2\)</span> 与 <span class="math inline">\(l\sin\alpha+l\sin\beta/2\)</span>，所以总势为 <span class="math display">\[U=l[(P_1/2+P_2)\sin\alpha+F\cos\alpha]
++l[(P_2/2)\sin\beta+F\cos\beta].\]</span> 虚功为 <span class="math inline">\(-\delta U\)</span>，两坐标独立，平衡要求 <span class="math display">\[(P_1/2+P_2)\cos\alpha-F\sin\alpha=0,
+\qquad(P_2/2)\cos\beta-F\sin\beta=0.\]</span> 只写正切会丢失象限。令 <span class="math inline">\(A_1=P_1/2+P_2,A_2=P_2/2\)</span>，稳定下垂支应取 <span class="math display">\[\cos\alpha=-\frac{F}{\sqrt{F^2+A_1^2}},\quad
+\sin\alpha=-\frac{A_1}{\sqrt{F^2+A_1^2}},\]</span> <span class="math inline">\(\beta\)</span> 将 <span class="math inline">\(A_1\)</span> 换为 <span class="math inline">\(A_2\)</span>。两角均在第三象限（或等价的负角区间）。此时 <span class="math inline">\(U_{\alpha\alpha}=l\sqrt{F^2+A_1^2}&gt;0\)</span>、<span class="math inline">\(U_{\beta\beta}=l\sqrt{F^2+A_2^2}&gt;0\)</span>，交叉导数为零，确为势能极小。两角同时取相反方向也满足相同的正切式，却是极大分支。</em></p>
+<p><em><span class="math inline">\(F\to0\)</span> 时稳定支竖直向下；<span class="math inline">\(F\)</span> 很大时向左近乎水平。消去铰链反力简化了计算，但不会替代平衡稳定性和几何分支的检查。</em></p>
+</div>
+<figure id="fig:two-rods">
+<img src="figs/ch03-fig2.svg" style="width:86.0%" />
+<figcaption>对应稳定分支的两杆示意，取 <span class="math inline">\(P_1=P_2\)</span> 且 <span class="math inline">\(F=9P_1/8\)</span>。两杆长度相等，重力向下、端点力向左，绝对角的象限与正文稳定解一致。</figcaption>
+</figure>
+<h3 id="达朗贝尔原理"><span class="ms-secno">3.2.3</span>达朗贝尔原理</h3>
+<p>虚功原理原本只适用于静力学。达朗贝尔在 1743 年注意到：若把惯性力 <span class="math inline">\(-m_i\ddot\mathbf{r}_i\)</span> 也看作一种“力”，则动力学问题可以转化为瞬时静力学问题。定义<strong>达朗贝尔惯性力</strong> <span class="math display">\[\mathbf{F}_i^{\rm inertia}=-m_i\ddot\mathbf{r}_i,\]</span> 则对每个质点有 <span class="math display">\[\mathbf{F}_i+\mathbf{N}_i+\mathbf{F}_i^{\rm inertia}=0,\]</span> 其中 <span class="math inline">\(\mathbf{F}_i\)</span> 为主动力，<span class="math inline">\(\mathbf{N}_i\)</span> 为约束力。在理想约束下，约束力的总虚功为零，因此 <span class="math display">\[\sum_{i=1}^{n}\left(\mathbf{F}_i-m_i\ddot\mathbf{r}_i\right)\cdot\delta\mathbf{r}_i=0.
+
+\tag{3.9}\]</span> 这就是<strong>达朗贝尔原理</strong>。它不是新的物理定律，而是牛顿第二定律与理想约束假设的结合；其价值在于把约束力消去，并把动力学问题写成变分形式。</p>
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>达朗贝尔原理的“惯性力”不是参考系变换意义下的惯性力，而是一个形式上的记账项。它的作用是把 <span class="math inline">\(m\ddot\mathbf{r}\)</span> 从方程右边移到左边，使动力学方程看起来像平衡方程。真正进入虚功的是主动力与惯性力的合力。</p>
+</div>
+<h2 id="拉格朗日方程"><span class="ms-secno">3.3</span>拉格朗日方程</h2>
+<h3 id="从达朗贝尔原理导出"><span class="ms-secno">3.3.1</span>从达朗贝尔原理导出</h3>
+<p>我们已把位矢写成广义坐标的函数 <span class="math inline">\(\mathbf{r}_i=\mathbf{r}_i(q,t)\)</span>。速度 <span class="math display">\[\mathbf{v}_i=\dot\mathbf{r}_i=\sum_a\frac{\partial \mathbf{r}_i}{\partial q_a}\dot q_a+\frac{\partial \mathbf{r}_i}{\partial t}.\]</span> 由此得到两个关键恒等式： <span class="math display">\[\frac{\partial \mathbf{v}_i}{\partial \dot q_a}=\frac{\partial \mathbf{r}_i}{\partial q_a},
+\qquad
+\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial \mathbf{r}_i}{\partial q_a}\right)=\frac{\partial \mathbf{v}_i}{\partial q_a}.
+
+\tag{3.10}\]</span> 这不是对任意函数都可随意交换两个算子。这里逐项展开为 <span class="math display">\[\frac{\partial\mathbf{v}_i}{\partial q_a}
+=\sum_b\frac{\partial^2\mathbf{r}_i}{\partial q_a\partial q_b}\dot q_b
++\frac{\partial^2\mathbf{r}_i}{\partial q_a\partial t}
+=\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial\mathbf{r}_i}{\partial q_a}\right),\]</span> 偏导时保持 <span class="math inline">\(\dot q\)</span> 不变，并利用 <span class="math inline">\(\mathbf{r}_i(q,t)\)</span> 的混合偏导连续。第一式则直接来自速度对 <span class="math inline">\(\dot q_a\)</span> 的线性依赖。</p>
+<p>系统的动能 <span class="math display">\[T=\frac12\sum_i m_i\mathbf{v}_i^2.\]</span> 利用式 (3.10)， <span class="math display">\[\frac{\partial T}{\partial \dot q_a}=\sum_i m_i\mathbf{v}_i\cdot\frac{\partial \mathbf{v}_i}{\partial \dot q_a}
+=\sum_i m_i\mathbf{v}_i\cdot\frac{\partial \mathbf{r}_i}{\partial q_a},\]</span> <span class="math display">\[\frac{\partial T}{\partial q_a}=\sum_i m_i\mathbf{v}_i\cdot\frac{\partial \mathbf{v}_i}{\partial q_a}.\]</span> 于是 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial T}{\partial \dot q_a}\right)-\frac{\partial T}{\partial q_a}
+=\sum_i m_i\ddot\mathbf{r}_i\cdot\frac{\partial \mathbf{r}_i}{\partial q_a}.\]</span> 另一方面，达朗贝尔原理中的惯性力项为 <span class="math display">\[-\sum_i m_i\ddot\mathbf{r}_i\cdot\delta\mathbf{r}_i
+=-\sum_a\left[\sum_i m_i\ddot\mathbf{r}_i\cdot\frac{\partial \mathbf{r}_i}{\partial q_a}\right]\delta q_a.\]</span> 主动力的虚功为 <span class="math inline">\(\sum_a Q_a\delta q_a\)</span>。代入式 (3.9)，并利用 <span class="math inline">\(\delta q_a\)</span> 的独立性，得到 <span class="math display">\[\boxed{
+\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial T}{\partial \dot q_a}\right)-\frac{\partial T}{\partial q_a}=Q_a,
+\qquad a=1,2,\dots,s.
+}
+
+\tag{3.11}\]</span> 这就是<strong>拉格朗日方程</strong>的基本形式。它把 <span class="math inline">\(3n\)</span> 个直角坐标的牛顿方程压缩成 <span class="math inline">\(s\)</span> 个广义坐标方程，约束力自动消失。</p>
+<p>若主动力可用位置势 <span class="math inline">\(V(q,t)\)</span> 表示，且没有额外做虚功的非保守力，则 <span class="math display">\[Q_a=-\frac{\partial V}{\partial q_a}.\]</span> 定义<strong>拉格朗日函数</strong> <span class="math display">\[L(q,\dot q,t)=T(q,\dot q,t)-V(q,t),
+
+\tag{3.12}\]</span> 则式 (3.11) 化为 <span class="math display">\[\boxed{
+\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial L}{\partial \dot q_a}\right)-\frac{\partial L}{\partial q_a}=0,
+\qquad a=1,2,\dots,s.
+}
+
+\tag{3.13}\]</span> 这是分析力学中最常用的形式。</p>
+<div class="keybox"><div class="ms-callout-title">核心结论 · KEY RESULT</div>
+<p>拉格朗日方程的三个要点：</p>
+<ol>
+<li><p>只出现广义坐标、广义速度和广义力，不出现理想约束力；</p></li>
+<li><p>对完整系统，方程数目等于自由度 <span class="math inline">\(s\)</span>，而不是质点数 <span class="math inline">\(3n\)</span>；</p></li>
+<li><p>对质量恒定、完整理想约束且主动力由位置势描述的模型，写出 <span class="math inline">\(T,V\)</span> 与初始数据即可建立独立坐标方程；但接触保持、摩擦可行性或支承载荷仍可能需要求约束力。</p></li>
+</ol>
+</div>
+<h3 id="从哈密顿原理导出"><span class="ms-secno">3.3.2</span>从哈密顿原理导出</h3>
+<p>拉格朗日方程也可以从整体变分原理得到。定义<strong>作用量</strong> <span class="math display">\[S[q]=\int_{t_1}^{t_2}L(q,\dot q,t)\,\mathrm{d}t.
+
+\tag{3.14}\]</span> 在所有满足端点条件 <span class="math display">\[q_a(t_1)=q_{a1},\qquad q_a(t_2)=q_{a2}\]</span> 的曲线中，真实运动使作用量取驻值： <span class="math display">\[\delta S=0.
+
+\tag{3.15}\]</span> 这是通常的<strong>哈密顿驻作用量原理</strong>。此处使用独立广义坐标、固定时间和位置端点；<span class="math inline">\(L\)</span> 可显含时间，也可包含电磁速度耦合，不能把它仅限于不显含时间的位置保守势。任意耗散力则不能自动由这个简单作用量给出。把 <span class="math inline">\(\delta S\)</span> 展开，并注意变分与时间导数可交换：<span class="math inline">\(\delta\dot q_a=\frac{\mathrm{d}}{\mathrm{d}t}\delta q_a\)</span>， <span class="math display">\[\delta S=\int_{t_1}^{t_2}\sum_a
+\left(\frac{\partial L}{\partial q_a}\delta q_a+\frac{\partial L}{\partial \dot q_a}\delta\dot q_a\right)\mathrm{d}t.\]</span> 对第二项分部积分，并利用端点处 <span class="math inline">\(\delta q_a(t_1)=\delta q_a(t_2)=0\)</span>： <span class="math display">\[\delta S=\int_{t_1}^{t_2}\sum_a
+\left[\frac{\partial L}{\partial q_a}-\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial L}{\partial \dot q_a}\right)\right]\delta q_a\,\mathrm{d}t.\]</span> 由于 <span class="math inline">\(\delta q_a\)</span> 在内部彼此独立且任意，括号必须为零，即得到式 (3.13)。在上述完整、理想且力可由所选 <span class="math inline">\(L\)</span> 描述的条件下，两种表述给出同一组方程；前者是“逐时刻”的表述，后者是“整条路径”的表述。</p>
+<div class="remark">
+<p><strong>注 1.1</strong>.  <em>哈密顿原理中的端点固定，但端点处的速度不固定。变分只比较在相同时间间隔内、从同一起点到同一终点的路径。若端点时间也可变，则会得到更一般的能量关系；这一点在第六章讨论哈密顿-雅可比理论时还会出现。</em></p>
+</div>
+<h3 id="非保守广义力与受驱动运动"><span class="ms-secno">3.3.3</span>非保守广义力与受驱动运动</h3>
+<p>若部分力已用 <span class="math inline">\(L\)</span> 表示，另有外力、阻尼或控制力矩，其虚功为 <span class="math inline">\(\sum_a Q_a^{\rm nc}\delta q_a\)</span>，则 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}L_{\dot q_a}-L_{q_a}=Q_a^{\rm nc}.
+\tag{3.16}\]</span> 这里不是令非保守作用量驻值，而是采用拉格朗日–达朗贝尔表述 <span class="math inline">\(\delta\int L\mathrm{d}t+\int\sum_a Q_a^{\rm nc}\delta q_a\mathrm{d}t=0\)</span>。额外力不应既写进势又在右端重复加入。</p>
+<p>若黏滞阻尼的广义力可写为 <span class="math inline">\(Q_a^{\rm damp}=-\partial\mathcal D/\partial\dot q_a\)</span>，则用耗散函数 <span class="math inline">\(\mathcal D=\frac12\sum_{ab}C_{ab}\dot q_a\dot q_b\)</span> 表示。<span class="math inline">\(C\)</span> 对称半正定时，<span class="math inline">\(\sum_a Q_a^{\rm damp}\dot q_a=-2\mathcal D\le0\)</span>；<span class="math inline">\(\mathcal D\)</span> 的量纲为功率，不是势能。它描述这一类黏滞模型，不能自动包括静摩擦阈值或所有耗散。</p>
+<div class="example">
+<p><strong>例 1.3</strong> (有阻尼和关节驱动力矩的单摆).  <em>固定摆长 <span class="math inline">\(l\)</span>，角度从向下方向量起，<span class="math inline">\(L=ml^2\dot\theta^2/2+mgl\cos\theta\)</span>。若关节黏滞力矩为 <span class="math inline">\(-b\dot\theta\)</span>，驱动力矩为 <span class="math inline">\(\tau(t)\)</span>，则 <span class="math display">\[ml^2\ddot\theta+b\dot\theta+mgl\sin\theta=\tau(t).\]</span> 以最低点势能为零的机械能 <span class="math inline">\(E=ml^2\dot\theta^2/2+mgl(1-\cos\theta)\)</span> 满足 <span class="math display">\[\dot E=-b\dot\theta^2+\tau\dot\theta.\]</span> 无驱动时单调耗散；驱动可输入或取出能量。<span class="math inline">\(b=\tau=0\)</span> 恢复第一章单摆。这既训练广义力矩，也给数值计算提供可检查的能量收支。</em></p>
+</div>
+<h3 id="典型应用"><span class="ms-secno">3.3.4</span>典型应用 <a class="ms-demo" href="../../../modules/09-atwood-pulley/index.html">✦ 交互模拟：有转动惯量的 Atwood 机 ↗</a></h3>
+<p>本节依次训练三个步骤：先用坐标自动满足约束，再从惯性速度构造动能，最后以守恒量或牛顿方程独立验算。所有绳、杆均按题目理想化，工程背景只用于说明模型用途，不代表具体设备的实测参数。</p>
+<div class="example">
+<p><strong>例 1.4</strong> (阿特伍德机).  <em>质量分别为 <span class="math inline">\(m_1,m_2\)</span> 的两物体用不可伸长的轻绳跨过定滑轮，绳与滑轮间无滑动，滑轮质量和转动惯量均忽略不计。取 <span class="math inline">\(q\)</span> 为 <span class="math inline">\(m_1\)</span> 下落的距离，则 <span class="math inline">\(m_2\)</span> 上升 <span class="math inline">\(q\)</span>。动能和势能分别为 <span class="math display">\[T=\frac12(m_1+m_2)\dot q^2,
+\qquad
+V=-m_1gq+m_2gq.\]</span> 拉格朗日函数 <span class="math display">\[L=T-V=\frac12(m_1+m_2)\dot q^2+(m_1-m_2)gq.\]</span> 代入式 (3.13)： <span class="math display">\[(m_1+m_2)\ddot q=(m_1-m_2)g,\]</span> 即 <span class="math display">\[\ddot q=\frac{m_1-m_2}{m_1+m_2}g.\]</span> 绳的张力没有出现在方程中；若要它，需回到约束力或使用乘子法。</em></p>
+</div>
+<figure id="fig:atwood">
+<img src="figs/ch03-fig3.svg" style="width:86.0%" />
+<figcaption>质量与转动惯量均忽略的定滑轮模型。两段竖直绳与轮相切，一质量向下时另一质量等量向上，坐标符号与势能定义相同。</figcaption>
+</figure>
+<div class="example">
+<p><strong>例 1.5</strong> (双滑轮三质量系统).  <em>一个定滑轮 <span class="math inline">\(O\)</span> 固定，一根轻绳跨过 <span class="math inline">\(O\)</span>，左端挂质量为 <span class="math inline">\(m_1\)</span> 的物体，右端悬挂一个动滑轮 <span class="math inline">\(B\)</span>；第二根轻绳跨过 <span class="math inline">\(B\)</span>，两端分别挂质量为 <span class="math inline">\(m_2,m_3\)</span> 的物体。绳与滑轮间无滑动，绳不可伸长，滑轮质量和转动惯量均忽略。取 <span class="math inline">\(q_1\)</span> 为 <span class="math inline">\(m_1\)</span> 向下的位移，取 <span class="math inline">\(q_2\)</span> 为 <span class="math inline">\(m_2\)</span> 相对动滑轮 <span class="math inline">\(B\)</span> 向下的位移。求系统的运动方程。</em></p>
+<div class="center">
+<p><img src="figs/ch03-fig4.svg" style="width:86.0%" alt="image" /></p>
+</div>
+<p><em>由于第一根绳长不变，<span class="math inline">\(B\)</span> 的速度为 <span class="math inline">\(-\dot q_1\)</span>（取向下为正）。第二根绳长不变，因此 <span class="math display">\[v_2=-\dot q_1+\dot q_2,
+\qquad
+v_3=-\dot q_1-\dot q_2.\]</span> 系统的动能和势能分别为 <span class="math display">\[T=\frac12m_1\dot q_1^2+\frac12m_2(-\dot q_1+\dot q_2)^2
++\frac12m_3(-\dot q_1-\dot q_2)^2,\]</span> <span class="math display">\[V=-m_1gq_1-m_2g(-q_1+q_2)-m_3g(-q_1-q_2).\]</span> 拉格朗日函数 <span class="math inline">\(L=T-V\)</span>。代入拉格朗日方程，得到 <span class="math display">\[(m_1+m_2+m_3)\ddot q_1+(m_3-m_2)\ddot q_2
+=(m_1-m_2-m_3)g,\]</span> <span class="math display">\[(m_3-m_2)\ddot q_1+(m_2+m_3)\ddot q_2
+=(m_2-m_3)g.\]</span> 写成矩阵形式： <span class="math display">\[\begin{pmatrix}
+m_1+m_2+m_3 &amp; m_3-m_2\\
+m_3-m_2 &amp; m_2+m_3
+\end{pmatrix}
+\begin{pmatrix}\ddot q_1\\ \ddot q_2\end{pmatrix}
+=g\begin{pmatrix}m_1-m_2-m_3\\ m_2-m_3\end{pmatrix}.\]</span> 两个广义坐标自动满足两根绳的约束，绳中张力不必出现在方程中。</em></p>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p><em>这类“多绳—多滑轮”系统是电梯配重、塔吊起升、缆索驱动并联机器人和空间吊装系统的基本模型。工程上关心的是各段绳的张力、负载的加速度和系统的固有频率；拉格朗日方法先消去绳张力，再用矩阵方程统一求解，比逐段列牛顿方程更适合多自由度系统。</em></p>
+</div>
+</div>
+<div class="example">
+<p><strong>例 1.6</strong> (球坐标中的质点).  <em>质量为 <span class="math inline">\(m\)</span> 的质点在有心力势 <span class="math inline">\(V(r)\)</span> 中运动，取球坐标 <span class="math inline">\((r,\theta,\varphi)\)</span> 为广义坐标，并把极轴取为 <span class="math inline">\(z\)</span> 轴。速度为 <span class="math display">\[\mathbf{v}=\dot r\,\hat{\mathbf{e}}_r+r\dot\theta\,\hat{\mathbf{e}}_\theta+r\sin\theta\,\dot\varphi\,\hat{\mathbf{e}}_\varphi,\]</span> 动能为 <span class="math display">\[T=\frac12m\left(\dot r^2+r^2\dot\theta^2+r^2\sin^2\theta\,\dot\varphi^2\right).\]</span> 拉格朗日函数 <span class="math display">\[L=\frac12m\left(\dot r^2+r^2\dot\theta^2+r^2\sin^2\theta\,\dot\varphi^2\right)-V(r).\]</span> <span class="math inline">\(\varphi\)</span> 是循环坐标，因此 <span class="math display">\[p_\varphi=\frac{\partial L}{\partial \dot\varphi}=mr^2\sin^2\theta\,\dot\varphi\]</span> 守恒，这就是角动量的 <span class="math inline">\(z\)</span> 分量。对 <span class="math inline">\(\theta\)</span> 的方程为 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\left(mr^2\dot\theta\right)
+-mr^2\sin\theta\cos\theta\,\dot\varphi^2=0.\]</span> 在 <span class="math inline">\(r&gt;0\)</span> 且方程正则的区域，若初始 <span class="math inline">\(\theta=\pi/2,\dot\theta=0\)</span>，赤道平面是方程的不变子集；径向距离不必固定。对 <span class="math inline">\(r\)</span> 的方程给出 <span class="math display">\[m\ddot r-mr\dot\theta^2-mr\sin^2\theta\,\dot\varphi^2
+=-\frac{\partial V}{\partial r}.\]</span> 这正是有心力场中的径向方程。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.7</strong> (双摆：把耦合项逐项算出来).  <em>两根无质量刚杆长为 <span class="math inline">\(l_1,l_2\)</span>，端点质量为 <span class="math inline">\(m_1,m_2&gt;0\)</span>，固定支点，运动限于竖直平面。两绝对角 <span class="math inline">\(\theta_1,\theta_2\)</span> 均从向下竖直方向量起，坐标为 <span class="math display">\[\mathbf{r}_1=(l_1\sin\theta_1,-l_1\cos\theta_1),\qquad
+\mathbf{r}_2=\mathbf{r}_1+(l_2\sin\theta_2,-l_2\cos\theta_2).\]</span> 令 <span class="math inline">\(\Delta=\theta_1-\theta_2\)</span>，微分后由点积 <span class="math inline">\(\mathbf{v}_1\cdot(\mathbf{v}_2-\mathbf{v}_1)=l_1l_2\dot\theta_1\dot\theta_2\cos\Delta\)</span> 得 <span class="math display">\[\begin{aligned}
+T&amp;=\tfrac12(m_1+m_2)l_1^2\dot\theta_1^2+\tfrac12m_2l_2^2\dot\theta_2^2
++m_2l_1l_2\cos\Delta\,\dot\theta_1\dot\theta_2,\\
+V&amp;=-(m_1+m_2)gl_1\cos\theta_1-m_2gl_2\cos\theta_2.
+\end{aligned}\tag{3.17}\]</span> 取 <span class="math inline">\(D=m_2l_1l_2\)</span>，第一方程的动量和坐标导数是 <span class="math display">\[p_1=(m_1+m_2)l_1^2\dot\theta_1+D\cos\Delta\dot\theta_2,
+\quad L_{\theta_1}=-D\sin\Delta\dot\theta_1\dot\theta_2-(m_1+m_2)gl_1\sin\theta_1.\]</span> 对 <span class="math inline">\(p_1\)</span> 求时间导数时还须微分 <span class="math inline">\(\cos\Delta\)</span>。与 <span class="math inline">\(L_{\theta_1}\)</span> 相减后，两个含 <span class="math inline">\(\dot\theta_1\dot\theta_2\)</span> 的项抵消，得到 <span class="math display">\[\begin{aligned}
+(m_1+m_2)l_1^2\ddot\theta_1+D\cos\Delta\ddot\theta_2
++D\sin\Delta\dot\theta_2^2+(m_1+m_2)gl_1\sin\theta_1&amp;=0,\\
+m_2l_2^2\ddot\theta_2+D\cos\Delta\ddot\theta_1
+-D\sin\Delta\dot\theta_1^2+m_2gl_2\sin\theta_2&amp;=0.
+\end{aligned}\tag{3.18}\]</span> 第二式由相同方法得到，注意两项正负号。写成 <span class="math inline">\(M(\theta)\ddot\theta+b(\theta,\dot\theta)=0\)</span>，质量矩阵行列式为 <span class="math display">\[\det M=m_2l_1^2l_2^2[m_1+m_2\sin^2\Delta]&gt;0.\]</span> 因此物理参数为正时可解出两角加速度；不能把速度耦合项略去后仍声称是精确双摆。无驱动、无阻尼下 <span class="math inline">\(T+V\)</span> 守恒；小角展开将导向第四章耦合小振动。加入关节力矩后，右侧为各角对应的广义力矩，是平面机械臂模型的一个出发点，但本例的质点杆端质量假设不同于一般有质量机械臂。</em></p>
+</div>
+<figure id="fig:lag-double-pendulum">
+<img src="figs/ch03-fig5.svg" style="width:86.0%" />
+<figcaption>双摆使用两根杆的绝对角，而非两杆之间的夹角。图取 <span class="math inline">\(\theta_1=30^\circ,\theta_2=-30^\circ\)</span>；杆长与坐标采用同一几何关系。</figcaption>
+</figure>
+<div class="example">
+<p><strong>例 1.8</strong> (旋转圆环上的小珠：驱动约束改变平衡).  <em>半径 <span class="math inline">\(R\)</span> 的竖直光滑圆环绕竖直直径以给定 <span class="math inline">\(\Omega\)</span> 匀速旋转。小珠质量 <span class="math inline">\(m\)</span>，用从最低点量起的角 <span class="math inline">\(\theta\)</span> 描述位置： <span class="math display">\[\mathbf{r}=(R\sin\theta\cos\Omega t,R\sin\theta\sin\Omega t,-R\cos\theta).\]</span> 直接微分给出 <span class="math inline">\(v^2=R^2\dot\theta^2+R^2\Omega^2\sin^2\theta\)</span>，所以 <span class="math display">\[L=\tfrac12mR^2\dot\theta^2+\tfrac12mR^2\Omega^2\sin^2\theta+mgR\cos\theta,\]</span> <span class="math display">\[\ddot\theta=\sin\theta(\Omega^2\cos\theta-g/R).\]</span> 平衡为 <span class="math inline">\(\theta=0,\pi\)</span>，并在 <span class="math inline">\(\Omega^2&gt;g/R\)</span> 时出现两支 <span class="math inline">\(\theta=\pm\arccos[g/(\Omega^2R)]\)</span>。最低点线性方程为 <span class="math inline">\(\ddot\eta+(g/R-\Omega^2)\eta=0\)</span>，故临界转速前稳定、之后不稳定；新分支的平方频率为 <span class="math inline">\(\Omega^2\sin^2\theta_0&gt;0\)</span>。临界点线性恢复项消失，须看高阶，不能仅凭零频率判为不稳定。</em></p>
+<p><em>本例 <span class="math inline">\(E_L=mR^2\dot\theta^2/2-mR^2\Omega^2\sin^2\theta/2-mgR\cos\theta\)</span> 守恒；电机维持给定转速，珠的惯性机械能不一定守恒。第1章给出了有效势方法，本章从惯性系动能重建同一结果；第四章再系统讨论平衡附近的展开。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.9</strong> (弹簧摆).  <em>一根自然长度为 <span class="math inline">\(l\)</span>、劲度系数为 <span class="math inline">\(k\)</span> 的轻弹簧，一端固定，另一端连接质量为 <span class="math inline">\(m\)</span> 的质点。取弹簧伸长量为 <span class="math inline">\(x\)</span>、摆角为 <span class="math inline">\(\theta\)</span>，则摆长为 <span class="math inline">\(l+x\)</span>。动能和势能分别为 <span class="math display">\[T=\frac12m\left[\dot x^2+(l+x)^2\dot\theta^2\right],\]</span> <span class="math display">\[V=-mg(l+x)\cos\theta+\frac12kx^2.\]</span> 拉格朗日函数 <span class="math inline">\(L=T-V\)</span>。对 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(\theta\)</span> 分别求导，得到 <span class="math display">\[m\ddot x-m(l+x)\dot\theta^2-mg\cos\theta+kx=0,\]</span> <span class="math display">\[m(l+x)^2\ddot\theta+2m(l+x)\dot x\dot\theta
++mg(l+x)\sin\theta=0.\]</span> 这两个方程是非线性的，且彼此耦合。平衡点为 <span class="math inline">\(\theta=0,x=mg/k\)</span>；小振动需围绕这个伸长后的平衡展开，而非默认 <span class="math inline">\(x=0\)</span>。第四章将系统处理。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.10</strong> (旋转杆上的滑块与弹簧).  <em>质量为 <span class="math inline">\(m_1\)</span>、长为 <span class="math inline">\(l\)</span> 的均匀杆 <span class="math inline">\(OA\)</span> 绕水平轴 <span class="math inline">\(O\)</span> 在竖直平面内转动。质量为 <span class="math inline">\(m_2\)</span> 的滑块 <span class="math inline">\(B\)</span> 套在杆上，可在杆上无摩擦滑动；一根劲度系数为 <span class="math inline">\(k\)</span>、自然长度为 <span class="math inline">\(r_0\)</span> 的轻弹簧沿杆放置，一端固定在 <span class="math inline">\(O\)</span>，另一端连接 <span class="math inline">\(B\)</span>。取杆与竖直向下方向的夹角为 <span class="math inline">\(\theta\)</span>，<span class="math inline">\(r=OB\)</span> 为滑块到 <span class="math inline">\(O\)</span> 的距离。求系统的运动方程。</em></p>
+<div class="center">
+<p><img src="figs/ch03-fig6.svg" style="width:86.0%" alt="image" /></p>
+</div>
+<p><em>杆绕 <span class="math inline">\(O\)</span> 的转动惯量为 <span class="math display">\[I=\int_0^l s^2\frac{m_1}{l}\,\mathrm{d}s=\frac13m_1l^2.\]</span> 系统的动能为 <span class="math display">\[T=\frac12I\dot\theta^2+\frac12m_2\left(\dot r^2+r^2\dot\theta^2\right),\]</span> 势能为 <span class="math display">\[V=-m_1g\frac l2\cos\theta-m_2gr\cos\theta+\frac12k(r-r_0)^2.\]</span> 拉格朗日函数 <span class="math inline">\(L=T-V\)</span>。对 <span class="math inline">\(\theta\)</span> 的方程为 <span class="math display">\[\left(I+m_2r^2\right)\ddot\theta+2m_2r\dot r\dot\theta
++\left(\frac{m_1l}{2}+m_2r\right)g\sin\theta=0,\]</span> 对 <span class="math inline">\(r\)</span> 的方程为 <span class="math display">\[m_2\left(\ddot r-r\dot\theta^2\right)-m_2g\cos\theta
++k(r-r_0)=0.\]</span> 第一式是转动方程，第二式是滑块沿杆的径向方程；<span class="math inline">\(2m_2r\dot r\dot\theta\)</span> 是由转动惯量随 <span class="math inline">\(r\)</span> 改变产生的耦合项。两条式子均由惯性系动能导出，不能再额外加一次非惯性系的惯性力。</em></p>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p><em>这个刚性伸缩机构模型把径向运动与转动耦合写成两个广义坐标方程。滑块移动改变转动惯量，角速度又影响径向加速度，可据此练习角动量与能量的交叉检查。若研究实际柔性伸缩机构，还须增加杆的弹性自由度、驱动和阻尼；这里的刚杆模型本身不预测其变形或工程性能。</em></p>
+</div>
+</div>
+<div class="example">
+<p><strong>例 1.11</strong> (两体问题的约化).  <em>两个质量 <span class="math inline">\(m_1,m_2\)</span> 的质点只受彼此相互作用 <span class="math inline">\(V(|\mathbf{r}_1-\mathbf{r}_2|)\)</span>。引入质心 <span class="math inline">\(\mathbf{R}\)</span> 和相对位矢 <span class="math inline">\(\mathbf{r}=\mathbf{r}_1-\mathbf{r}_2\)</span>： <span class="math display">\[\mathbf{R}=\frac{m_1\mathbf{r}_1+m_2\mathbf{r}_2}{m_1+m_2},
+\qquad
+\mathbf{r}=\mathbf{r}_1-\mathbf{r}_2,
+\qquad
+\mu=\frac{m_1m_2}{m_1+m_2}.\]</span> 反解出 <span class="math display">\[\mathbf{r}_1=\mathbf{R}+\frac{m_2}{m_1+m_2}\mathbf{r},
+\qquad
+\mathbf{r}_2=\mathbf{R}-\frac{m_1}{m_1+m_2}\mathbf{r}.\]</span> 代入总动能并利用一次项相消，得到 <span class="math display">\[T=\frac12(m_1+m_2)\dot{\mathbf{R}}^2+\frac12\mu\dot{\mathbf{r}}^2.\]</span> 于是拉格朗日函数分解为 <span class="math display">\[L=\frac12(m_1+m_2)\dot{\mathbf{R}}^2
++\frac12\mu\dot{\mathbf{r}}^2-V(r).\]</span> 质心运动是自由的，相对运动等价于一个质量为 <span class="math inline">\(\mu\)</span> 的质点在中心势 <span class="math inline">\(V(r)\)</span> 中运动。这个分解在第一章已从牛顿方程得到；拉格朗日方法把它变成动能项的代数分解，更加直接。</em></p>
+</div>
+<div class="example">
+<p><strong>例 1.12</strong> (圆锥面上的圆轨道).  <em>一个顶点在下、开口向上的光滑圆锥，对称轴竖直向上，半顶角为 <span class="math inline">\(\alpha\)</span>。质量为 <span class="math inline">\(m\)</span> 的质点被约束在圆锥面上运动。取 <span class="math inline">\(r\)</span> 为质点沿母线到顶点的距离，<span class="math inline">\(\varphi\)</span> 为绕轴的方位角。求质点的运动方程，并讨论圆轨道的可能性。</em></p>
+<div class="center">
+<p><img src="figs/ch03-fig7.svg" style="width:86.0%" alt="image" /></p>
+</div>
+<p><em>由几何关系，质点到轴的距离为 <span class="math inline">\(\rho=r\sin\alpha\)</span>，相对顶点的竖直高度为 <span class="math inline">\(z=r\cos\alpha\)</span>。因此 <span class="math display">\[T=\frac12m\left(\dot r^2+r^2\sin^2\alpha\,\dot\varphi^2\right),
+\qquad
+V=mgr\cos\alpha.\]</span> 拉格朗日函数 <span class="math display">\[L=\frac12m\left(\dot r^2+r^2\sin^2\alpha\,\dot\varphi^2\right)
+-mgr\cos\alpha.\]</span> <span class="math inline">\(\varphi\)</span> 是循环坐标，故 <span class="math display">\[p_\varphi=mr^2\sin^2\alpha\,\dot\varphi=\text{常量}.\]</span> 对 <span class="math inline">\(r\)</span> 的方程为 <span class="math display">\[m\ddot r-mr\sin^2\alpha\,\dot\varphi^2+mg\cos\alpha=0.\]</span> 若质点做半径为 <span class="math inline">\(r_0\)</span> 的圆轨道，则 <span class="math inline">\(\dot r=0\)</span>，上式给出 <span class="math display">\[\dot\varphi^2=\frac{g\cos\alpha}{r_0\sin^2\alpha}.\]</span> 本例的圆轨道半径沿母线量取，要求 <span class="math inline">\(0&lt;\alpha&lt;\pi/2\)</span>、<span class="math inline">\(r_0&gt;0\)</span>；顶点处坐标退化。固定 <span class="math inline">\(p_\varphi\)</span> 的径向稳定性还可直接求出 <span class="math inline">\(\omega_r^2=3g\cos\alpha/r_0&gt;0\)</span>。也可以用有效势能 <span class="math display">\[V_{\rm eff}(r)=\frac{p_\varphi^2}{2mr^2\sin^2\alpha}+mgr\cos\alpha\]</span> 理解：圆轨道对应 <span class="math inline">\(V_{\rm eff}&#39;(r_0)=0\)</span>，稳定性由 <span class="math inline">\(V_{\rm eff}&#39;&#39;(r_0)\)</span> 判断。</em></p>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p><em>锥面上的圆轨道是锥形离心分离器、旋转料斗、颗粒筛选和锥形离心机的简化模型。本例仅说明约束面上的轨道。该单质点方程中质量约去，不能单独推出按粒径或密度分选；真实分离还需流体阻力、接触等机制。</em></p>
+</div>
+</div>
+<div class="example">
+<p><strong>例 1.13</strong> (旋转系中的两中心势：有效势不能代替全部拉格朗日量).  <em>两个主星绕共同质心以恒定角速度 <span class="math inline">\(n\)</span> 作圆周运动。取随其旋转、原点在质心的平面坐标 <span class="math inline">\((x,y)\)</span>，惯性速度的旋转基分量是 <span class="math inline">\((\dot x-ny,\dot y+nx)\)</span>。令 <span class="math inline">\(V(x,y)=-GM_1m/r_1-GM_2m/r_2\)</span>，其中 <span class="math inline">\(r_1,r_2\)</span> 为到两主星的距离。由惯性系动能直接构造 <span class="math display">\[L=\tfrac12m(\dot x^2+\dot y^2)+mn(x\dot y-y\dot x)
++\tfrac12mn^2(x^2+y^2)-V.\]</span> 对 <span class="math inline">\(x\)</span>，<span class="math inline">\(p_x=m\dot x-mny\)</span>，<span class="math inline">\(L_x=mn\dot y+mn^2x-V_x\)</span>，故 <span class="math display">\[\ddot x-2n\dot y=-\partial_x\Phi_{\rm eff},\qquad
+\ddot y+2n\dot x=-\partial_y\Phi_{\rm eff},
+\quad \Phi_{\rm eff}=V/m-\tfrac12n^2(x^2+y^2).\]</span> 速度一次项产生科里奥利项，不能把 <span class="math inline">\(L\)</span> 错写成仅有转动系相对动能减去有效势，否则会漏掉它。原来的动能已用惯性速度计算，也不能再额外加入惯性力重复计算。</em></p>
+<p><em>由于这个 <span class="math inline">\(L\)</span> 不显含时间，它的能量函数为 <span class="math display">\[E_L=\tfrac12m(\dot x^2+\dot y^2)+m\Phi_{\rm eff},\qquad
+C_J=-2E_L/m.\]</span> <span class="math inline">\(C_J\)</span> 是常用的雅可比积分，不是粒子在惯性系中的普通机械能。平衡点仍由 <span class="math inline">\(\nabla\Phi_{\rm eff}=0\)</span> 给出，位置及稳定性已在第1章讨论。本例的目的，是看出速度耦合、离心势及守恒量如何同时从一个 <span class="math inline">\(L\)</span> 得到。</em></p>
+</div>
+<h3 id="冲量与广义冲量"><span class="ms-secno">3.3.5</span>冲量与广义冲量</h3>
+<p>若系统在极短时间内受到冲力，位移可以忽略，但广义速度发生突变。对拉格朗日方程在 <span class="math inline">\([t_-,t_+]\)</span> 上积分，仅忽略有界项 <span class="math inline">\(\partial L/\partial q_a\)</span> 及有限普通力的积分，保留冲力的 <span class="math inline">\(Q_a\)</span> 积分，得到 <span class="math display">\[\left.\frac{\partial L}{\partial \dot q_a}\right|_{t_+}
+-\left.\frac{\partial L}{\partial \dot q_a}\right|_{t_-}
+=\widehat Q_a,
+
+\tag{3.19}\]</span> 其中 <span class="math inline">\(\widehat Q_a=\int_{t_-}^{t_+}Q_a\,\mathrm{d}t\)</span> 称为<strong>广义冲量</strong>。这里假设冲击期间位形及约束几何不变，约束本身不突变；若存在非理想冲量或接触模式切换，还须给出冲击约束和恢复定律，不能仅靠该式决定所有末速度。</p>
+<h2 id="对称性与守恒律"><span class="ms-secno">3.4</span>对称性与守恒律</h2>
+<h3 id="循环坐标与广义动量"><span class="ms-secno">3.4.1</span>循环坐标与广义动量</h3>
+<p>定义<strong>广义动量</strong> <span class="math display">\[p_a=\frac{\partial L}{\partial \dot q_a}.
+
+\tag{3.20}\]</span> 广义动量的量纲一般也不等于动量的量纲，因为 <span class="math inline">\(q_a\)</span> 的量纲不一定是长度；它与广义坐标共轭，满足 <span class="math inline">\(p_a\delta q_a\)</span> 具有作用量的量纲。若 <span class="math inline">\(L\)</span> 不显含某个广义坐标 <span class="math inline">\(q_a\)</span>，即 <span class="math display">\[\frac{\partial L}{\partial q_a}=0,\]</span> 则 <span class="math inline">\(q_a\)</span> 称为<strong>循环坐标</strong>或<strong>可遗坐标</strong>。拉格朗日方程给出 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\partial L}{\partial \dot q_a}\right)=0,\]</span> 于是 <span class="math display">\[p_a=\text{常量}.
+
+\tag{3.21}\]</span> 这就是<strong>循环积分</strong>。</p>
+<p>本小节的循环动量结论假设独立完整坐标且对应的额外广义力为零；非完整约束的反力将另行讨论。循环坐标不一定“看不见”。在中心力场中，极角 <span class="math inline">\(\varphi\)</span> 是循环坐标，对应的广义动量正是角动量。在均匀重力场中，水平坐标 <span class="math inline">\(x\)</span> 是循环坐标，对应水平动量守恒。在完整、理想约束下，循环坐标的本质是系统在某个连续变换下保持不变。</p>
+<div class="example">
+<p><strong>例 1.14</strong> (中心力场的角动量).  <em>质量为 <span class="math inline">\(m\)</span> 的质点在势 <span class="math inline">\(V(r)\)</span> 中运动。在极坐标下 <span class="math display">\[L=\frac12m\left(\dot r^2+r^2\dot\varphi^2\right)-V(r).\]</span> <span class="math inline">\(\varphi\)</span> 不出现，故 <span class="math display">\[p_\varphi=mr^2\dot\varphi=\text{常量}.\]</span> 这正是角动量守恒。若用直角坐标，<span class="math inline">\(L\)</span> 同时含有 <span class="math inline">\(x,y\)</span>，两个坐标都不是循环坐标，但组合 <span class="math inline">\(xp_y-yp_x\)</span> 守恒。拉格朗日方法自动把对称性对应的守恒量识别出来。</em></p>
+</div>
+<h3 id="能量函数与能量收支"><span class="ms-secno">3.4.2</span>能量函数与能量收支</h3>
+<p>定义 <span class="math display">\[E_L(q,\dot q,t)=\sum_a\dot q_ap_a-L,\qquad p_a=L_{\dot q_a}.
+\tag{3.22}\]</span> 若有未包含于 <span class="math inline">\(L\)</span> 的广义力 <span class="math inline">\(Q_a^{\rm nc}\)</span>，方程为 <span class="math inline">\(\dot p_a-L_{q_a}=Q_a^{\rm nc}\)</span>。对 <span class="math inline">\(E_L\)</span> 逐项求导，含 <span class="math inline">\(p_a\ddot q_a\)</span> 的两项抵消，留下 <span class="math display">\[\begin{aligned}
+\dot E_L
+&amp;=\sum_a[\dot q_a\dot p_a+p_a\ddot q_a]
+-\sum_a[L_{q_a}\dot q_a+L_{\dot q_a}\ddot q_a]-L_t\\
+&amp;=\sum_a Q_a^{\rm nc}\dot q_a-L_t.
+\end{aligned}\tag{3.23}\]</span> 因此无额外广义力且 <span class="math inline">\(L_t=0\)</span> 时 <span class="math display">\[E_L=\text{常量}.
+\tag{3.24}\]</span> 若参数化 <span class="math inline">\(\mathbf{r}_i(q,t)\)</span> 含时间，动能通常分为速度二次、一次、零次项 <span class="math inline">\(T=T_2+T_1+T_0\)</span>。对位置势 <span class="math inline">\(V(q,t)\)</span>，欧拉齐次函数公式给出 <span class="math display">\[\sum_a\dot q_aT_{\dot q_a}=2T_2+T_1,\qquad
+E_L=T_2-T_0+V.\]</span> 它与惯性系机械能 <span class="math inline">\(T+V\)</span> 一般不同。只有使用定常参数化、<span class="math inline">\(T=T_2\)</span> 且势不依赖速度等条件时，才有 <span class="math inline">\(E_L=T+V\)</span>。<span class="math inline">\(L_t=0\)</span> 是当前表示中 <span class="math inline">\(E_L\)</span> 守恒的充分条件，不能反过来断言任意显含时间的 <span class="math inline">\(L\)</span> 都没有任何能量守恒量；全导数或坐标变化也会改变显式时间依赖。</p>
+<div class="example">
+<p><strong>例 1.15</strong> (外部驱动旋转杆：守恒的 <span class="math inline">\(E_L\)</span> 与增长的机械能).  <em>水平光滑直杆由电机以恒定角速度 <span class="math inline">\(\Omega\)</span> 绕固定端转动。质量 <span class="math inline">\(m\)</span> 的滑块在杆上径向运动，弹簧势为 <span class="math inline">\(kr^2/2\)</span>；忽略重力对水平运动的影响，取 <span class="math inline">\(r&gt;0\)</span>，不碰端点。惯性速度由 <span class="math inline">\(\mathbf{r}=r(\cos\Omega t,\sin\Omega t)\)</span> 求导，给出 <span class="math display">\[T=\tfrac12m(\dot r^2+\Omega^2r^2),\qquad
+L=\tfrac12m\dot r^2-\tfrac12(k-m\Omega^2)r^2.\]</span> 径向方程与能量函数是 <span class="math display">\[m\ddot r+(k-m\Omega^2)r=0,\qquad
+E_L=\tfrac12m\dot r^2+\tfrac12(k-m\Omega^2)r^2=\text{常量}.\]</span> 但物理机械能为 <span class="math inline">\(E_{\rm mech}=m\dot r^2/2+(k+m\Omega^2)r^2/2\)</span>。由第一章极坐标加速度，杆的切向反力为 <span class="math inline">\(N_\theta=2m\Omega\dot r\)</span>，故 <span class="math display">\[\dot E_{\rm mech}=2m\Omega^2r\dot r
+=N_\theta(\Omega r)=\Omega\frac{\mathrm{d}}{\mathrm{d}t}(mr^2\Omega).\]</span> 电机通过移动的理想约束交换能量；零虚功不等于零真实功。<span class="math inline">\(\Omega\to0\)</span> 时两个能量一致。<span class="math inline">\(k=m\Omega^2\)</span> 是径向恢复项退化的情况，不能继续套用非零振动频率。</em></p>
+</div>
+<figure id="fig:lag-driven-rod">
+<img src="figs/ch03-fig8.svg" style="width:86.0%" />
+<figcaption>受驱动旋转杆的惯性系示意。对 <span class="math inline">\(\dot r&gt;0,\Omega&gt;0\)</span>，切向反力沿正切向；它垂直冻结时刻的径向虚位移，却与实际速度的切向部分做正功。</figcaption>
+</figure>
+<h3 id="诺特定理把变换和边界项一同写清楚"><span class="ms-secno">3.4.3</span>诺特定理：把变换和边界项一同写清楚</h3>
+<p>本节限于具有独立坐标的完整系统、无额外非保守力。采用一阶点变换 <span class="math display">\[t_\epsilon=t+\epsilon\tau(q,t),\qquad
+q_{a,\epsilon}(t_\epsilon)=q_a(t)+\epsilon\xi_a(q,t)+O(\epsilon^2).
+\tag{3.25}\]</span> 总坐标变化的系数为 <span class="math inline">\(\xi_a\)</span>，而在同一时间比较两条曲线的变化为 <span class="math display">\[\eta_a=\xi_a-\dot q_a\tau.
+\tag{3.26}\]</span> 参数变换还改变时间测度：<span class="math inline">\(\mathrm{d}t_\epsilon=(1+\epsilon\dot\tau)\mathrm{d}t\)</span>，速度的变化系数为 <span class="math inline">\(\dot\xi_a-\dot q_a\dot\tau\)</span>，点表示沿路径全导数。</p>
+<p>若对<strong>任意邻近路径</strong>而不只对运动方程的解，有恒等关系 <span class="math display">\[\sum_a\left[L_{q_a}\xi_a+p_a(\dot\xi_a-\dot q_a\dot\tau)\right]
++L_t\tau+L\dot\tau=\frac{\mathrm{d}B(q,t)}{\mathrm{d}t},
+\tag{3.27}\]</span> 则作用量只改变端点项，称为准对称性；<span class="math inline">\(B=0\)</span> 是严格不变的特例。必须比较 <span class="math inline">\(L\mathrm{d}t\)</span>，时间也变时不能只比较 <span class="math inline">\(L\)</span>。</p>
+<p>定义欧拉方程左侧 <span class="math inline">\(\mathcal E_a=\dot p_a-L_{q_a}\)</span>。利用能量函数的恒等关系 <span class="math inline">\(\dot E_L=\sum_a\dot q_a\mathcal E_a-L_t\)</span> 以及上式，直接对以下组合求导： <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\left(\sum_ap_a\xi_a-E_L\tau-B\right)
+=\sum_a\mathcal E_a(\xi_a-\dot q_a\tau).
+\tag{3.28}\]</span> 具体可写为 <span class="math display">\[\dot C=\sum_a(\dot p_a-L_{q_a})\xi_a-(\dot E_L+L_t)\tau
+=\sum_a\mathcal E_a(\xi_a-\dot q_a\tau).\]</span> 右边还没有使用运动方程；沿真实解 <span class="math inline">\(\mathcal E_a=0\)</span>，故 <span class="math display">\[\boxed{C=\sum_ap_a\xi_a-E_L\tau-B=\text{常量}.}
+\tag{3.29}\]</span> 这就是本章采用的诺特定理。固定时间的坐标对称性只需取 <span class="math inline">\(\tau=0\)</span>；一维时间平移取 <span class="math inline">\(\tau=1,\xi_a=0,B=0\)</span>，得到 <span class="math inline">\(C=-E_L\)</span>，守恒量整体差一个负号不影响其意义。</p>
+<div class="example">
+<p><strong>例 1.16</strong> (三个对称性及一个边界项).  <em><strong>平移。</strong> 若 <span class="math inline">\(q_a\)</span> 为循环坐标，取 <span class="math inline">\(\xi_a=1\)</span>、其他生成元为零、<span class="math inline">\(\tau=B=0\)</span>，则 <span class="math inline">\(C=p_a\)</span>。但完整系统中仍有 <span class="math inline">\(\dot p_a=L_{q_a}+Q_a^{\rm nc}\)</span>，存在额外广义力时须另检验。</em></p>
+<p><em><strong>转动。</strong> 对 <span class="math inline">\(L=m(\dot r^2+r^2\dot\varphi^2)/2-V(r)\)</span>，取 <span class="math inline">\(\xi_\varphi=1\)</span>，得到 <span class="math inline">\(C=mr^2\dot\varphi\)</span>。这与第一章零力矩证明是同一事实的两种表述，不能否定其中任何一种。</em></p>
+<p><em><strong>时间平移。</strong> 自治系统给出 <span class="math inline">\(E_L\)</span> 守恒；在定常自然系统中才进一步识别为机械能。</em></p>
+<p><em><strong>伽利略匀速变换。</strong> 一维自由粒子 <span class="math inline">\(L=m\dot x^2/2\)</span>，取 <span class="math inline">\(\xi=t,\tau=0\)</span>，则 <span class="math inline">\(\delta L/\epsilon=m\dot x=\mathrm{d}(mx)/\mathrm{d}t\)</span>，所以 <span class="math inline">\(B=mx\)</span>，守恒量为 <span class="math inline">\(pt-mx\)</span>。直接用 <span class="math inline">\(p=\text{常量}\)</span>、<span class="math inline">\(x=x_0+pt/m\)</span> 得 <span class="math inline">\(pt-mx=-mx_0\)</span>。若漏掉边界项，会误将 <span class="math inline">\(pt\)</span> 当作守恒量。</em></p>
+</div>
+<div class="physicsbox"><div class="ms-callout-title">物理图像与理解 · PHYSICAL INSIGHT</div>
+<p>诺特定理中的对称变换不是固定端点变分原理中的任意试探变分：对称变换可以移动端点。守恒律来自“作用量的变化是边界项”与运动方程的结合。先猜出一个量沿解为常数，也不等于已经证明对应变换在任意路径上是作用量对称性。</p>
+</div>
+<h3 id="全导数等价与它的边界"><span class="ms-secno">3.4.4</span>全导数等价与它的边界</h3>
+<p>设 <span class="math inline">\(G(q,t)\)</span> 足够光滑，<span class="math inline">\(L&#39;=L+\mathrm{d}G/\mathrm{d}t\)</span>。固定时间和位置端点时，<span class="math inline">\(S&#39;-S=[G]_{t_1}^{t_2}\)</span> 为固定数，不改变驻值方程。其动量和能量函数变为 <span class="math display">\[p_a&#39;=p_a+G_{q_a},\qquad E_L&#39;=E_L-G_t.\]</span> 因此它们的坐标表达未必不变。若边界位置自由，<span class="math inline">\([G]\)</span> 会改变自然边界条件；若取依赖 <span class="math inline">\(\dot q\)</span> 的 <span class="math inline">\(G\)</span>，固定位置并不固定该端点项，且 <span class="math inline">\(\mathrm{d}G/\mathrm{d}t\)</span> 引入高阶导数，不能直接冒充这里的同类一阶变分问题。</p>
+<h2 id="约束力恢复与非完整系统"><span class="ms-secno">3.5</span>约束力恢复与非完整系统</h2>
+<h3 id="完整约束的乘子求回被消去的反力"><span class="ms-secno">3.5.1</span>完整约束的乘子：求回被消去的反力</h3>
+<p>若希望保留冗余坐标 <span class="math inline">\(q\)</span> 并求反力，设独立完整约束为 <span class="math inline">\(f_\ell(q,t)=0\)</span>。对 <span class="math display">\[S_{\rm aug}=\int\left[L(q,\dot q,t)+\sum_\ell\lambda_\ell(t)f_\ell(q,t)\right]\mathrm{d}t\]</span> 分别变分 <span class="math inline">\(q\)</span> 与乘子，得到 <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}L_{\dot q_a}-L_{q_a}
+=\sum_\ell\lambda_\ell f_{\ell,q_a}+Q_a^{\rm nc},\qquad f_\ell=0.
+\tag{3.30}\]</span> 反力的广义分量为 <span class="math inline">\(R_a=\sum\lambda_\ell f_{\ell,q_a}\)</span>。乘子的单位取决于 <span class="math inline">\(f\)</span> 的归一化：把约束乘2会把同一反力对应的乘子除2，故不能不作换算就将乘子本身称为张力。</p>
+<div class="example">
+<p><strong>例 1.17</strong> (用直角坐标恢复单摆张力).  <em>取 <span class="math inline">\(y\)</span> 向上，<span class="math inline">\(L=m(\dot x^2+\dot y^2)/2-mgy\)</span>，约束 <span class="math inline">\(f=(x^2+y^2-l^2)/2=0\)</span>。上式给出 <span class="math display">\[m\ddot x=\lambda x,\qquad m\ddot y+mg=\lambda y.\]</span> 对约束二次求导，<span class="math inline">\(x\ddot x+y\ddot y=-(\dot x^2+\dot y^2)=-v^2\)</span>，故 <span class="math display">\[\lambda=\frac{-mv^2+mgy}{l^2},\qquad
+\mathcal T=-\lambda l=m\left(\frac{v^2}{l}-\frac{gy}{l}\right).\]</span> 用 <span class="math inline">\(y=-l\cos\theta\)</span> 得 <span class="math inline">\(\mathcal T=m(l\dot\theta^2+g\cos\theta)\)</span>，与第一章法向方程一致。轻绳只能拉，需 <span class="math inline">\(\mathcal T\ge0\)</span>；若算出负值，圆周约束解对绳失效，但刚杆可承受轴向推力。</em></p>
+</div>
+<p>对显含时间的理想完整约束，真实速度满足 <span class="math inline">\(\sum_a f_{\ell,q_a}\dot q_a=-f_{\ell,t}\)</span>，约束力功率为 <span class="math inline">\(\sum_aR_a\dot q_a=-\sum_\ell\lambda_\ell f_{\ell,t}\)</span>。这再次说明零虚功不等于零真实功。</p>
+<h3 id="仿射速度约束与达朗贝尔乘子方程"><span class="ms-secno">3.5.2</span>仿射速度约束与达朗贝尔乘子方程</h3>
+<p>完整约束已由坐标消去后，若还存在满秩的仿射速度约束 <span class="math display">\[\sum_a A_{\ell a}(q,t)\dot q_a+B_\ell(q,t)=0,
+\qquad\ell=1,\ldots,k,
+\tag{3.31}\]</span> 本章采用理想达朗贝尔模型，其<em>容许虚位移规则</em>是 <span class="math display">\[\sum_a A_{\ell a}\delta q_a=0.
+\tag{3.32}\]</span> 这是对约束反力方向的物理建模，不能不加论证地推广到任意非线性速度约束。对上式核空间中任意向量，达朗贝尔方程左端与之正交，因此其残量位于 <span class="math inline">\(A\)</span> 的行空间： <span class="math display">\[\boxed{\frac{\mathrm{d}}{\mathrm{d}t}L_{\dot q_a}-L_{q_a}
+=Q_a^{\rm nc}+\sum_\ell\lambda_\ell A_{\ell a}.}
+\tag{3.33}\]</span> 连同速度约束、相容初始条件求解。<span class="math inline">\(s\)</span> 仍是位形维数，<span class="math inline">\(s-k\)</span> 是当前容许速度方向的维数，不代表总能消去成 <span class="math inline">\(s-k\)</span> 个独立位置坐标。</p>
+<p>齐次约束 <span class="math inline">\(B_\ell=0\)</span> 时反力功率为零；仿射约束则为 <span class="math inline">\(-\sum\lambda_\ell B_\ell\)</span>。即使 <span class="math inline">\(L\)</span> 自治，后者也可改变 <span class="math inline">\(E_L\)</span>。循环坐标的动量满足 <span class="math inline">\(\dot p_a=Q_a^{\rm nc}+\sum\lambda_\ell A_{\ell a}\)</span>，一般不守恒；若对称生成元还满足 <span class="math inline">\(A\xi=0\)</span>，相应约束反力投影才消失。</p>
+<h3 id="滚动圆盘完整的求解与守恒检查"><span class="ms-secno">3.5.3</span>滚动圆盘：完整的求解与守恒检查</h3>
+<div class="example">
+<p><strong>例 1.18</strong> (保持竖直的理想滚动盘).  <em>盘质量 <span class="math inline">\(m\)</span>、半径 <span class="math inline">\(R\)</span>，模型额外限制盘始终竖直、中心高度为 <span class="math inline">\(R\)</span>，只允许平面位移 <span class="math inline">\((x,y)\)</span>、朝向角 <span class="math inline">\(\theta\)</span> 与自转角 <span class="math inline">\(\varphi\)</span>。可将保持竖直的支承视为理想约束；这不是允许自由倾斜的真实圆盘的一般运动。取转动惯量 <span class="math inline">\(I,J&gt;0\)</span> 分别对应自转与朝向转动， <span class="math display">\[L=T=\tfrac12m(\dot x^2+\dot y^2)+\tfrac12I\dot\varphi^2+\tfrac12J\dot\theta^2,\]</span> <span class="math display">\[\dot x=R\dot\varphi\cos\theta,\qquad
+\dot y=R\dot\varphi\sin\theta.\]</span> 乘子方程逐项为 <span class="math display">\[\begin{aligned}
+m\ddot x&amp;=\lambda_1,&amp; m\ddot y&amp;=\lambda_2,\\
+I\ddot\varphi&amp;=-R(\lambda_1\cos\theta+\lambda_2\sin\theta),&amp;
+J\ddot\theta&amp;=0.
+\end{aligned}\tag{3.34}\]</span> 对速度约束求导后，沿朝向投影得 <span class="math inline">\(\lambda_1\cos\theta+\lambda_2\sin\theta=mR\ddot\varphi\)</span>，于是 <span class="math display">\[(I+mR^2)\ddot\varphi=0,\qquad \ddot\theta=0.\]</span> 令 <span class="math inline">\(\dot\varphi=\omega,\dot\theta=\Omega\)</span> 为常数，则 <span class="math display">\[(\lambda_1,\lambda_2)=mR\omega\Omega(-\sin\theta,\cos\theta).\]</span> <span class="math inline">\(\Omega=0\)</span> 时中心走直线，<span class="math inline">\(\Omega\ne0\)</span> 时走半径 <span class="math inline">\(|R\omega/\Omega|\)</span> 的圆。这说明虽然 <span class="math inline">\(L\)</span> 不含 <span class="math inline">\(x,y\)</span>，<span class="math inline">\(m\dot x,m\dot y\)</span> 仍可改变；不是所有循环坐标都给独立守恒动量。</em></p>
+<p><em>反力功率为 <span class="math inline">\(\lambda_1\dot x+\lambda_2\dot y-R(\lambda_1\cos\theta+\lambda_2\sin\theta)\dot\varphi=0\)</span>，故总动能守恒。还必须确认静摩擦等真实支承能提供所需反力；本题未给摩擦系数，不能无条件断言任意 <span class="math inline">\(\omega,\Omega\)</span> 均可实现。</em></p>
+</div>
+<figure id="fig:rolling-disk">
+<img src="figs/ch03-fig9.svg" style="width:86.0%" />
+<figcaption>竖直滚动盘的俯视运动学：粗线为盘平面与地面的交线方向，<span class="math inline">\(\mathbf{e}=(\cos\theta,\sin\theta)\)</span> 为朝向单位矢量；当 <span class="math inline">\(\omega\Omega&gt;0\)</span> 时，合水平反力垂直朝向向左。此图不把俯视平面误画成圆盘的侧面。</figcaption>
+</figure>
+<h3 id="为什么不能直接把速度约束加进作用量"><span class="ms-secno">3.5.4</span>为什么不能直接把速度约束加进作用量？</h3>
+<p>若把上述约束作为 <span class="math inline">\(L_{\rm aug}=L+\mu_1(\dot x-R\dot\varphi\cos\theta)+\mu_2(\dot y-R\dot\varphi\sin\theta)\)</span>，再对所有路径作普通固定端点变分，<span class="math inline">\(\theta\)</span> 方程变为 <span class="math display">\[J\ddot\theta=R\dot\varphi(\mu_1\sin\theta-\mu_2\cos\theta),\]</span> 一般不同于达朗贝尔模型的 <span class="math inline">\(J\ddot\theta=0\)</span>。这种对受限路径作用量求驻值的方法称为变分约束方法（vakonomic）；它可对应某些最优控制问题，但不能自动代替真实理想滚动的动力学。</p>
+<p>差别来自允许的变分：若一族路径都满足 <span class="math inline">\(A(q,t)\dot q+B(q,t)=0\)</span>，其线性化包含 <span class="math inline">\(A\dot\eta\)</span>、<span class="math inline">\(A_{,q}\eta\dot q\)</span> 和 <span class="math inline">\(B_{,q}\eta\)</span>，并不等价于每个时刻仅要求 <span class="math inline">\(A\eta=0\)</span>。而达朗贝尔虚位移正是后一类力学投影。该区分是处理非完整系统的核心，不是乘子符号的选择问题。</p>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p>滚动盘的容许速度由 <span class="math inline">\(X_1=\partial_\theta\)</span> 与 <span class="math inline">\(X_2=R\cos\theta\partial_x+R\sin\theta\partial_y+\partial_\varphi\)</span> 张成。先改变朝向再滚动与反序操作并不等效；其交换子为 <span class="math inline">\([X_1,X_2]=-R\sin\theta\partial_x+R\cos\theta\partial_y\)</span>，不在两者张成空间内，因此不能把这两个速度方向全局视作两维位置曲面的切平面。这个几何判断需向量场与弗罗贝尼乌斯定理，可留作拓展。</p>
+<p>阿佩尔和凯恩方法也从独立速度方向投影动力学。对完整独立坐标，<span class="math inline">\(\mathcal S=\sum_i m_i|\mathbf{a}_i|^2/2\)</span> 满足 <span class="math inline">\(\partial\mathcal S/\partial\ddot q_a=\sum_i m_i\mathbf{a}_i\cdot\partial\mathbf{r}_i/\partial q_a=Q_a\)</span>，但这不是在非完整情况下对全部冗余 <span class="math inline">\(q_a\)</span> 无条件成立的公式；需先选相容独立速度并变换加速度，再作投影。详细理论参见章末受约束系统原始研究，本章不展开工程算法。</p>
+</div>
+<h2 id="带电粒子正则动量与规范等价"><span class="ms-secno">3.6</span>带电粒子、正则动量与规范等价</h2>
+<h3 id="从势耦合逐分量导出洛伦兹力"><span class="ms-secno">3.6.1</span>从势耦合逐分量导出洛伦兹力</h3>
+<p>设非相对论粒子质量 <span class="math inline">\(m\)</span> 恒定、电荷为 <span class="math inline">\(e\)</span>（可正可负），外场给定，不计辐射反作用。定义 <span class="math display">\[\mathbf{E}=-\nabla\phi-\partial_t\mathbf{A},\qquad \mathbf{B}=\nabla\times\mathbf{A},\]</span> <span class="math display">\[L=\tfrac12m\mathbf{v}^2-e\phi+e\mathbf{A}\cdot\mathbf{v}.
+\tag{3.35}\]</span> 正则动量与机械动量不同： <span class="math display">\[\mathbf{p}=\frac{\partial L}{\partial\mathbf{v}}=m\mathbf{v}+e\mathbf{A}.
+\tag{3.36}\]</span> 对第 <span class="math inline">\(i\)</span> 个分量，取坐标偏导时保持速度独立， <span class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}(mv_i+eA_i)=-e\partial_i\phi+e\sum_j v_j\partial_i A_j.\]</span> 用全导数 <span class="math inline">\(\mathrm{d}A_i/\mathrm{d}t=\partial_t A_i+\sum_jv_j\partial_jA_i\)</span> 展开，得 <span class="math display">\[m\dot v_i=e(-\partial_i\phi-\partial_tA_i)
++e\sum_jv_j(\partial_iA_j-\partial_jA_i).\]</span> 最后一项正是 <span class="math inline">\(e(\mathbf{v}\times\mathbf{B})_i\)</span>，于是 <span class="math display">\[m\dot\mathbf{v}=e(\mathbf{E}+\mathbf{v}\times\mathbf{B}).
+\tag{3.37}\]</span> 对速度点乘，磁力不做功，<span class="math inline">\(\dot T=e\mathbf{E}\cdot\mathbf{v}\)</span>。能量函数为 <span class="math inline">\(E_L=T+e\phi\)</span>；若所选势不显含时间，它守恒。外场若随时间变化则可能向粒子传能，完整“粒子加场及场源”的能量平衡不应只对测试粒子闭合计算。</p>
+<h3 id="规范变换为什么不改变轨道"><span class="ms-secno">3.6.2</span>规范变换为什么不改变轨道？</h3>
+<p>取单值光滑函数 <span class="math inline">\(\chi(\mathbf{r},t)\)</span>，势变为 <span class="math display">\[\mathbf{A}&#39;=\mathbf{A}+\nabla\chi,\qquad \phi&#39;=\phi-\partial_t\chi.
+\tag{3.38}\]</span> 梯度的旋度为零、混合偏导相消，故场强不变，而 <span class="math display">\[L&#39;=L+e\frac{\mathrm{d}\chi}{\mathrm{d}t},\qquad
+\mathbf{p}&#39;=\mathbf{p}+e\nabla\chi,\qquad E_L&#39;=E_L-e\partial_t\chi.\]</span> 这正是 <span class="math inline">\(G=e\chi\)</span> 的全导数等价。固定时空端点时轨道不变，动量和能量函数的表示可以改变。不可把“改变规范”说成一种产生新轨道或新力的物理操作；它是同一外场的描述冗余。</p>
+<div class="example">
+<p><strong>例 1.19</strong> (均匀磁场的同一平移守恒量，两种规范).  <em>取 <span class="math inline">\(\mathbf{B}=B\hat{\mathbf{k}}\)</span>、<span class="math inline">\(\phi=0\)</span>。在 <span class="math inline">\(\mathbf{A}=(-By,0,0)\)</span> 下， <span class="math display">\[L=\tfrac12m(\dot x^2+\dot y^2+\dot z^2)-eBy\dot x,\]</span> <span class="math inline">\(x\)</span> 为循环坐标，所以 <span class="math inline">\(C=m\dot x-eBy\)</span> 守恒。作 <span class="math inline">\(\chi=Bxy\)</span>，新势为 <span class="math inline">\(\mathbf{A}&#39;=(0,Bx,0)\)</span>，新 <span class="math inline">\(L&#39;\)</span> 显含 <span class="math inline">\(x\)</span>，但 <span class="math inline">\(x\to x+\epsilon\)</span> 给出 <span class="math display">\[\delta L&#39;/\epsilon=eB\dot y=\frac{\mathrm{d}(eBy)}{\mathrm{d}t}.\]</span> 因此诺特边界项为 <span class="math inline">\(B_{\rm N}=eBy\)</span>，守恒量为 <span class="math inline">\(p&#39;_x-B_{\rm N}=m\dot x-eBy\)</span>，与先前相同。机械动量 <span class="math inline">\(m\dot x\)</span> 一般不守恒；正则动量是否直接显为守恒，依赖所用规范和边界项。洛伦兹方程也直接给出 <span class="math inline">\(m\ddot x-eB\dot y=0\)</span>，形成独立核验。</em></p>
+</div>
+<div class="modernbox"><div class="ms-callout-title">进一步探索 · FURTHER</div>
+<p>场是在时空各点定义的量。电磁势具有规范冗余，场强由其导数给出；温度场等一般标量场不能因此称为规范联络。局域规范冗余与普通机械坐标的整体诺特对称性不同。进一步讨论需电磁场本身的作用量与边界条件，超出本章。</p>
+</div>
+<h2 id="通向小振动与哈密顿力学"><span class="ms-secno">3.7</span>通向小振动与哈密顿力学</h2>
+<p>对定常自然系统，<span class="math inline">\(L=\dot q^{\mathsf T}M(q)\dot q/2-V(q)\)</span>。在平衡 <span class="math inline">\(q_0\)</span> 附近令 <span class="math inline">\(q=q_0+\eta\)</span>，<span class="math inline">\(\nabla V(q_0)=0\)</span>，保留二阶拉格朗日量为 <span class="math display">\[L^{(2)}=\tfrac12\dot\eta^{\mathsf T}M(q_0)\dot\eta
+-\tfrac12\eta^{\mathsf T}K(q_0)\eta,
+\qquad K_{ab}=\left.\frac{\partial^2V}{\partial q_a\partial q_b}\right|_{q_0}.\]</span> 它直接给出 <span class="math inline">\(M\ddot\eta+K\eta=0\)</span>。第四章将研究稳定性、正常模和质量加权正交性，而非只把复杂摆都当作单个简谐振子。</p>
+<p>几何上，广义坐标是位形空间的局部参数，<span class="math inline">\((q,\dot q)\)</span> 包含位置与速度信息。第六章在速度Hessian可逆等条件下用勒让德变换把速度换成 <span class="math inline">\(p=L_{\dot q}\)</span>；这里的 <span class="math inline">\(E_L\)</span> 才转成相空间上的哈密顿函数。不要提前把所有约束模型、奇异速度势或非完整投影都直接当作普通可逆的哈密顿系统。</p>
+<h2 id="计算与模拟检查方程而非只看动画"><span class="ms-secno">3.8</span>计算与模拟：检查方程，而非只看动画</h2>
+<p>对无驱动双摆，先从式 (3.18) 求解 <span class="math inline">\(2\times2\)</span> 线性系统得到 <span class="math inline">\(\ddot\theta\)</span>，再将状态写成 <span class="math inline">\((\theta_1,\theta_2,\dot\theta_1,\dot\theta_2)\)</span> 积分。用同一组初值和物理参数，比较步长 <span class="math inline">\(h\)</span> 与 <span class="math inline">\(h/2\)</span>；记录能量 <span class="math inline">\(E=T+V\)</span> 的误差，并确认质量矩阵在沿途可逆。四阶Runge–Kutta方法的短时收敛可作检验，但它不是严格能量保持算法，不能由一段看似合理的动画推断长期保真。</p>
+<p>对阻尼摆应检查 <span class="math inline">\(E(t)-E(0)=\int_0^t[-b\dot\theta^2+\tau\dot\theta]\mathrm{d}t\)</span>，不能仍要求 <span class="math inline">\(E\)</span> 恒定；对受驱动旋转杆则分别记录 <span class="math inline">\(E_L\)</span> 与 <span class="math inline">\(E_{\rm mech}\)</span>。随附数值脚本为</p>
+<div class="center">
+<p><code>review/verify_ch03.py</code></p>
+</div>
+<p>它对本章解析模型作独立检查，输出误差和收敛记录。所有模拟参数为教学设定，不代表实际机器人或航天器。</p>
+<h2 class="unnumbered" id="关键概念与常见误区">关键概念与常见误区</h2>
+<ul>
+<li><p>广义坐标是位形的独立局部参数，不是把任意几个变量改个名字；使用约束数减法前须检查秩。</p></li>
+<li><p>虚位移冻结时间，真实位移包含实际速度和显式时间依赖。理想约束指零总虚功，未必零真实功。</p></li>
+<li><p>构造动能时若已使用惯性速度，不应再在同一方程重复加入科里奥利或离心力。</p></li>
+<li><p><span class="math inline">\(L=T-V\)</span> 是重要模型，但电磁作用含速度一次项；正则动量未必是机械动量。</p></li>
+<li><p><span class="math inline">\(E_L\)</span> 的守恒、机械能的守恒和外部机构的功率是不同问题，应写出各自条件。</p></li>
+<li><p>诺特定理要求作用量在指定变换下恒等地不变或只差边界项；不能遗漏时间测度和全导数。</p></li>
+<li><p>非完整系统中速度方向不独立，普通循环坐标结论可能被约束反力改变；受限路径驻值与达朗贝尔投影通常不同。</p></li>
+</ul>
+<h2 class="unnumbered" id="本章小结">本章小结</h2>
+<p>本章从约束几何选坐标，以达朗贝尔原理投影牛顿方程，得到包含非保守广义力的拉格朗日方程；在合适的完整系统中，第二章的固定端点变分给出等价的作用量表述。乘子法用于恢复反力，不能把它与独立坐标消元混淆。对称性及其边界项组织守恒律，能量收支则检验受驱动和受阻尼模型。第四章将在这一框架内系统展开稳定平衡附近的小振动。</p>
+<h2 class="unnumbered" id="分层习题">分层习题</h2>
+<ol>
+<li><p><strong>约束与秩。</strong> 三维双摆的两个杆长约束在杆长非零时有多少独立约束和位形自由度？若另限制两球在同一固定竖直平面中，如何恢复平面双摆的两个自由度？</p></li>
+<li><p><strong>虚位移。</strong> 质点在 <span class="math inline">\(x^2+y^2=R(t)^2\)</span> 的受驱动圆周上运动。写出虚位移和真实速度必须满足的两个关系，并说明为何径向反力可零虚功而非零功率。</p></li>
+<li><p><strong>推导训练。</strong> 对 <span class="math inline">\(\mathbf{r}_i(q,t)\)</span> 逐项验证式 (3.10)，再从动能导出拉格朗日惯性项，不把“偏导和全导总可交换”作为理由。</p></li>
+<li><p><strong>平衡分支。</strong> 两杆例题中取 <span class="math inline">\(P_1=P_2=P,F=9P/8\)</span>。写出稳定支的两组正弦余弦，并分析只把一根杆反向会得到极小、极大还是鞍点。</p></li>
+<li><p><strong>阿特伍德机。</strong> 在正文忽略滑轮惯量的假设下求绳张力；再令滑轮有给定转动惯量 <span class="math inline">\(I\)</span>、半径 <span class="math inline">\(a\)</span>，且无滑动，求加速度并说明两侧张力是否仍相等。</p></li>
+<li><p><strong>双摆。</strong> 独立导出双摆第二方程，核对 <span class="math inline">\(-D\sin\Delta\dot\theta_1^2\)</span> 的符号；在最低平衡附近写出 <span class="math inline">\(M_0,K_0\)</span>，而不直接把两角看成独立单摆。</p></li>
+<li><p><strong>弹簧摆。</strong> 在 <span class="math inline">\(x_0=mg/k,\theta_0=0\)</span> 附近线性化，求径向和角向频率，说明为什么应使用伸长后的摆长。</p></li>
+<li><p><strong>转动杆滑块。</strong> 对正文带有质量杆和弹簧的两坐标系统，用角动量定理核验 <span class="math inline">\(2m_2r\dot r\dot\theta\)</span> 项；说明令 <span class="math inline">\(\theta=\Omega t\)</span> 给定时为什么必须另有外部驱动力矩。</p></li>
+<li><p><strong>耗散。</strong> 对无驱动阻尼摆，证明 <span class="math inline">\(E\)</span> 单调不增；若希望保持非零匀速 <span class="math inline">\(\dot\theta=\omega_c\)</span>，写出所需力矩随角度的函数，不可只令平均驱动补偿阻尼。</p></li>
+<li><p><strong>驱动能量。</strong> 对恒速旋转水平杆上的弹簧滑块，验证 <span class="math inline">\(\dot E_L=0\)</span>、<span class="math inline">\(\dot E_{\rm mech}=\Omega\dot J_z\)</span>；讨论 <span class="math inline">\(k-m\Omega^2\)</span> 为正、零、负时的径向行为及有限杆端点的限制。</p></li>
+<li><p><strong>乘子归一化。</strong> 用 <span class="math inline">\(f=x^2+y^2-l^2\)</span> 而非 <span class="math inline">\(f/2\)</span> 重算单摆反力，比较乘子数值和物理张力；判断什么时候轻绳约束会失效。</p></li>
+<li><p><strong>诺特边界项。</strong> 对自由粒子匀速变换 <span class="math inline">\(\xi=t\)</span>，证明守恒的是 <span class="math inline">\(pt-mx\)</span>，并解释为何 <span class="math inline">\(pt\)</span> 本身不守恒。再取时间平移 <span class="math inline">\(\tau=1,\xi=0\)</span> 核对诺特荷的符号。</p></li>
+<li><p><strong>全导数。</strong> 取 <span class="math inline">\(L&#39;=L+\mathrm{d}G(q,t)/\mathrm{d}t\)</span>，独立算出 <span class="math inline">\(p&#39;\)</span>、<span class="math inline">\(E_L&#39;\)</span>。若 <span class="math inline">\(G=atq\)</span>（<span class="math inline">\(a\)</span> 为常数且单位使 <span class="math inline">\(G\)</span> 为作用量），显式时间依赖是否必然意味着原物理系统没有能量守恒量？</p></li>
+<li><p><strong>非完整滚动。</strong> 用正文约束与乘子方程推出 <span class="math inline">\(\ddot\varphi=\ddot\theta=0\)</span>，给出 <span class="math inline">\(\Omega\ne0\)</span> 时圆心轨迹，并核验反力功率；说明圆盘 <span class="math inline">\(x\)</span> 坐标循环却动量不守恒的原因。</p></li>
+<li><p><strong>两种受限变分。</strong> 对正文直接加速度约束的增广作用量计算 <span class="math inline">\(\theta\)</span> 方程，与达朗贝尔模型比较。仅仅给乘子改名能消掉差异吗？</p></li>
+<li><p><strong>规范与守恒量。</strong> 在均匀磁场两种规范下，分别由诺特边界项和洛伦兹方程验证同一个 <span class="math inline">\(m\dot x-eBy\)</span> 守恒；机械动量和正则动量各有什么不同？</p></li>
+<li><p><strong>小振动与旋转系。</strong> (a) 对旋转圆环的小珠推导非竖直平衡支的小振动频率。(b) 对两中心旋转系求 <span class="math inline">\(E_L\)</span>，说明为何仅用有效势构造 <span class="math inline">\(L\)</span> 会漏掉科里奥利项。</p></li>
+<li><p><strong>计算检查。</strong> 运行双摆两步长模拟，比较相同短时区间的能量误差；对受驱动杆同时输出两种能量。说明本章各模型应检验的量为何不同，不把不守恒的物理量误当成算法误差。</p></li>
+</ol>
+<h2 class="unnumbered" id="解题思路与结果">解题思路与结果</h2>
+<ol>
+<li><p>六个位置坐标、两个独立杆长约束，位形维数为4。再各加一个离开指定平面的坐标约束，剩2；若约束奇异或重复，不能简单照数相减。</p></li>
+<li><p>冻结时间给 <span class="math inline">\(\mathbf{r}\cdot\delta\mathbf{r}=0\)</span>，真实速度给 <span class="math inline">\(\mathbf{r}\cdot\mathbf{v}=R\dot R\)</span>。若反力为 <span class="math inline">\(N\mathbf{r}/R\)</span>，功率为 <span class="math inline">\(N\dot R\)</span>，虚功为零。</p></li>
+<li><p>先写 <span class="math inline">\(\mathbf{v}_i=\mathbf{r}_{i,q_b}\dot q_b+\mathbf{r}_{i,t}\)</span>，再求各偏导并使用混合偏导连续性。惯性投影为 <span class="math inline">\(\sum_i m_i\mathbf{a}_i\cdot\mathbf{r}_{i,q_a}\)</span>，与正文两项之差一致。</p></li>
+<li><p>第一杆 <span class="math inline">\(\cos\alpha=-3/5,\sin\alpha=-4/5\)</span>；第二杆 <span class="math inline">\(\cos\beta=-9/\sqrt{97},\sin\beta=-4/\sqrt{97}\)</span>。只反向一根杆使势能Hessian一正一负，是鞍点。</p></li>
+<li><p>无惯量时 <span class="math inline">\(\mathcal T=2m_1m_2g/(m_1+m_2)\)</span>。有惯量时有效质量增为 <span class="math inline">\(m_1+m_2+I/a^2\)</span>，加速度为 <span class="math inline">\((m_1-m_2)g/(m_1+m_2+I/a^2)\)</span>；两侧张力差提供转矩，<span class="math inline">\(\mathcal T_1-\mathcal T_2=I\ddot q/a^2\)</span>。</p></li>
+<li><p>对 <span class="math inline">\(\cos\Delta\dot\theta_1\)</span> 求导后与坐标偏导相减，混合速度项抵消。最低点处 <span class="math display">\[M_0=\begin{pmatrix}(m_1+m_2)l_1^2&amp;m_2l_1l_2\\m_2l_1l_2&amp;m_2l_2^2\end{pmatrix},\quad
+K_0=\begin{pmatrix}(m_1+m_2)gl_1&amp;0\\0&amp;m_2gl_2\end{pmatrix}.\]</span></p></li>
+<li><p>径向频率 <span class="math inline">\(\omega_r=\sqrt{k/m}\)</span>，角向频率 <span class="math inline">\(\omega_\theta=\sqrt{g/(l+mg/k)}\)</span>。径向和角向在这一平衡的线性阶解耦，有限振幅仍耦合。</p></li>
+<li><p>关于固定点的角动量为 <span class="math inline">\((I+m_2r^2)\dot\theta\)</span>，求导产生该耦合项；重力矩为 <span class="math display">\[-(m_1l/2+m_2r)g\sin\theta.\]</span> 给定 <span class="math inline">\(\dot\theta=\Omega\)</span> 时，驱动力矩应补足耦合项与重力矩，不是把自由转动方程直接置零。</p></li>
+<li><p><span class="math inline">\(\dot E=-b\dot\theta^2\le0\)</span>。精确匀速要求 <span class="math inline">\(\tau(\theta)=b\omega_c+mgl\sin\theta\)</span>，不仅是常量 <span class="math inline">\(b\omega_c\)</span>。</p></li>
+<li><p>用径向方程代入能量导数；<span class="math inline">\(J_z=mr^2\Omega\)</span>。有效刚度为正时数学解振荡，为零时径向匀速，为负时有指数模。仅在不穿过原点、不碰杆端、驱动可提供所需力矩的区段使用这些解。</p></li>
+<li><p>新乘子是正文乘子的一半，反力仍为原来的 <span class="math inline">\(\lambda\mathbf{r}\)</span>，张力不变。轻绳要求张力非负；它失去拉紧时必须更换运动模型。</p></li>
+<li><p><span class="math inline">\(B=mx\)</span>，<span class="math inline">\(C=pt-mx=-mx_0\)</span>；直接求导 <span class="math inline">\(\mathrm{d}(pt)/\mathrm{d}t=p\)</span> 一般不为零。时间平移荷为 <span class="math inline">\(-E_L\)</span>，其相反数同样守恒。</p></li>
+<li><p><span class="math inline">\(p&#39;=p+G_q,E_L&#39;=E_L-G_t\)</span>。<span class="math inline">\(G=atq\)</span> 时 <span class="math inline">\(E_L&#39;=E_L-aq\)</span>，所以原守恒量在新表示为 <span class="math inline">\(E_L&#39;+aq\)</span>；不能只看 <span class="math inline">\(L&#39;\)</span> 是否显含时间作物理判断。</p></li>
+<li><p>令 <span class="math inline">\(\theta=\theta_0+\Omega t\)</span>、<span class="math inline">\(\dot\varphi=\omega\)</span>，则 <span class="math display">\[x=x_0+\frac{R\omega}{\Omega}(\sin\theta-\sin\theta_0),\quad
+y=y_0-\frac{R\omega}{\Omega}(\cos\theta-\cos\theta_0).\]</span> 反力与容许速度配对总功率为零，但 <span class="math inline">\(x,y\)</span> 方向单独不在约束核内，故相应动量可变。</p></li>
+<li><p>变分约束给 <span class="math inline">\(J\ddot\theta=R\dot\varphi(\mu_1\sin\theta-\mu_2\cos\theta)\)</span>，物理投影给零右端。差异来自变分集合，不是乘子记号。</p></li>
+<li><p>旧规范直接循环，新规范 <span class="math inline">\(x\)</span> 平移只差 <span class="math inline">\(\mathrm{d}(eBy)/\mathrm{d}t\)</span>，均给同一个荷；洛伦兹式 <span class="math inline">\(m\ddot x=eB\dot y\)</span> 直接核验。<span class="math inline">\(m\mathbf{v}\)</span> 规范不变，<span class="math inline">\(\mathbf{p}=m\mathbf{v}+e\mathbf{A}\)</span> 随规范变化。</p></li>
+<li><p>(a) 对右端 <span class="math inline">\(\sin\theta(\Omega^2\cos\theta-g/R)\)</span> 求导，在新平衡点得 <span class="math inline">\(-\Omega^2\sin^2\theta_0\)</span>，所以 <span class="math inline">\(\omega_{\rm small}=|\Omega\sin\theta_0|\)</span>。(b) <span class="math inline">\(E_L=m(\dot x^2+\dot y^2)/2+m\Phi_{\rm eff}\)</span>，速度一次项不出现在该积分中，但其变分产生科里奥利项，不能从 <span class="math inline">\(L\)</span> 中删去。</p></li>
+<li><p>结果见随附JSON检查记录；双摆用无驱动总能量、阻尼摆用耗散收支、恒速杆用 <span class="math inline">\(E_L\)</span> 及电机功率。数值小误差不能保证任意长时间相位或混沌细节准确。</p></li>
+</ol>
+<h2 class="unnumbered" id="进一步阅读与来源">进一步阅读与来源</h2>
+<p>查阅日期：2026-11-05。算例按本书坐标与符号重建；无具体任务数据的模型不视为真实装置预测。</p>
+<ol>
+<li><p>David Tong，<em>The Lagrangian Formalism</em>：<a href="https://www.damtp.cam.ac.uk/user/tong/dynamics/dynhtml/S2.html">剑桥公开讲义</a>，进一步学习广义坐标、对称性、双摆和电磁耦合。</p></li>
+<li><p>MIT 8.09，<a href="https://ocw.mit.edu/courses/8-09-classical-mechanics-iii-fall-2014/pages/syllabus/">Classical Mechanics III官方大纲</a>：完整与非完整约束、达朗贝尔与哈密顿原理、守恒律是相关本科进阶教学主题。本书以本章明确的模型假设为准，不从课程简介推断定理细节。</p></li>
+<li><p>A. D. Lewis、R. M. Murray，<em>Variational Principles for Constrained Systems: Theory and Experiment</em>：<a href="https://authors.library.caltech.edu/records/2pdbe-k1104">Caltech原始研究记录及全文入口</a>，用于继续区分非完整力学与变分约束理论。所需基础是本章约束投影、变分法及常微分方程。</p></li>
+</ol>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>拉格朗日力学 · 书稿网页版</span><span><a href="../index.html">返回章节</a></span></footer>
+<script src="../../../assets/manuscript-nav.js"></script>
+<script src="../../../assets/tm-i18n-data.js"></script>
+<script src="../../../assets/tm-i18n.js"></script>
+<script src="../../../assets/mathjax/tex-svg.js"></script>
+<script src="../../../assets/ui-motion.js" defer></script>
+</body>
+</html>

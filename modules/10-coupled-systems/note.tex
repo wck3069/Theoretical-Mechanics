@@ -1,0 +1,234 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M10《耦合系统与小振动》note.tex
+% 覆盖作业-8 第 3、4 题与第 5 题（小车+单摆）
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{耦合系统与小振动}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义合并作业-8 中三个同类型问题：斜面上的滑块（Q3）、弹簧摆（Q4）、
+小车与单摆（Q5）。它们的共同结构是两个广义坐标、一个循环坐标或一组线性化后的
+耦合振动。我们分别写出拉格朗日量、运动方程与守恒量，给出小振动频率，
+并用交互页的数值积分核对解析结果。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{作业映射}
+
+\begin{center}
+\small
+\begin{tabular}{cp{5.9cm}p{3.2cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-8 Q3 & 斜面在光滑地面自由平移，物块沿斜面下滑 &
+  循环坐标、动能分配、约束力做功 & \ref{sec:wedge} \\
+作业-8 Q4 & 弹簧摆：弹簧长度 $r$ 与摆角 $\theta$ &
+  耦合方程、平衡位置、两种小振动 & \ref{sec:spring} \\
+作业-8 Q5 & 小车质量 $M$ 上挂单摆 $m,l$ &
+  水平动量守恒、小振动、$M\to\infty$ & \ref{sec:cart} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{斜面上的滑块（Q3）}\label{sec:wedge}
+
+\subsection{坐标与拉格朗日量}
+
+斜面质量 $M$、倾角 $\alpha$，可在地面自由平移；物块质量 $m$ 沿斜面下滑。
+取斜面向右位移 $X$、物块相对斜面的下滑距离 $s$ 为广义坐标。
+物块在地面系中的位置与速度为
+\begin{equation}
+  x_b=X+s\cos\alpha,\qquad y_b=-s\sin\alpha,
+  \label{eq:w-pos}
+\end{equation}
+\begin{equation}
+  \dot x_b=\dot X+\dot s\cos\alpha,\qquad \dot y_b=-\dot s\sin\alpha.
+  \label{eq:w-vel}
+\end{equation}
+动能为
+\begin{equation}
+  T=\frac12M\dot X^2+\frac12m\left[(\dot X+\dot s\cos\alpha)^2+\dot s^2\sin^2\alpha\right]
+   =\frac12(M+m)\dot X^2+m\dot X\dot s\cos\alpha+\frac12m\dot s^2 .
+  \label{eq:w-T}
+\end{equation}
+取地面为势能零点，$V=-mgs\sin\alpha$，故
+\begin{equation}
+  L=\frac12(M+m)\dot X^2+m\dot X\dot s\cos\alpha+\frac12m\dot s^2+mgs\sin\alpha .
+  \label{eq:w-L}
+\end{equation}
+
+\subsection{循环坐标与运动方程}
+
+$L$ 不显含 $X$，故 $X$ 是循环坐标，共轭动量守恒：
+\begin{equation}
+  p_X=\frac{\partial L}{\partial\dot X}=(M+m)\dot X+m\dot s\cos\alpha=\text{常量}.
+  \label{eq:w-pX}
+\end{equation}
+系统由静止释放，故 $p_X=0$，即
+\begin{equation}
+  \dot X=-\frac{m\cos\alpha}{M+m}\dot s .
+  \label{eq:w-Xdot}
+\end{equation}
+拉格朗日方程给出
+\begin{align}
+  (M+m)\ddot X+m\ddot s\cos\alpha&=0, \label{eq:w-eqX}\\
+  \ddot s+\ddot X\cos\alpha&=g\sin\alpha. \label{eq:w-eqs}
+\end{align}
+联立解得
+\begin{equation}
+  \boxed{\ a_{\rm rel}=\ddot s=\frac{(M+m)g\sin\alpha}{M+m\sin^2\alpha}\ },\qquad
+  \boxed{\ a_X=\ddot X=-\frac{mg\sin\alpha\cos\alpha}{M+m\sin^2\alpha}\ }.
+  \label{eq:w-acc}
+\end{equation}
+斜面后退、物块沿斜面下滑：$a_X<0$，$a_{\rm rel}>0$。
+
+\subsection{动能分配与约束力做功}
+
+下降高度 $h$ 时 $s=h/\sin\alpha$，机械能守恒给出总动能 $K=mgh$。
+把 \eqref{eq:w-Xdot} 代入动能，可得分给斜面的比例
+\begin{equation}
+  \eta\equiv\frac{K_{\rm wedge}}{mgh}
+  =\frac{Mk^2}{Mk^2+m\left(1-2k\cos\alpha+k^2\right)},
+  \qquad k\equiv\frac{m\cos\alpha}{M+m}.
+  \label{eq:w-eta}
+\end{equation}
+当 $M=2m,\ \alpha=30^\circ$ 时 $k=\cos\alpha/3=\sqrt3/6$，代入得
+\begin{equation}
+  \eta=\frac{2}{9}\approx0.2222 .
+  \label{eq:w-eta-29}
+\end{equation}
+支持力对物块做负功（物块位移有逆法向分量），其反作用力对斜面做正功；
+两者是内力，总功为零，所以系统机械能仍守恒，只是能量在斜面与物块之间转移。
+
+\section{弹簧摆（Q4）}\label{sec:spring}
+
+\subsection{拉格朗日量与运动方程}
+
+弹簧原长 $l_0$、劲度 $k$，小球质量 $m$；取弹簧长度 $r$ 与弹簧相对竖直向下方向的
+夹角 $\theta$ 为广义坐标。速度为 $\dot r\,\hat e_r+r\dot\theta\,\hat e_\theta$，于是
+\begin{equation}
+  L=\frac12m\left(\dot r^2+r^2\dot\theta^2\right)-\frac12k(r-l_0)^2+mgr\cos\theta .
+  \label{eq:s-L}
+\end{equation}
+拉格朗日方程给出耦合方程
+\begin{align}
+  \ddot r&=r\dot\theta^2-\frac{k}{m}(r-l_0)+g\cos\theta, \label{eq:s-r}\\
+  r\ddot\theta+2\dot r\dot\theta&=-g\sin\theta. \label{eq:s-th}
+\end{align}
+
+\subsection{平衡位置与两种小振动}
+
+静平衡取 $\theta=0,\ \dot r=\dot\theta=0$，由 \eqref{eq:s-r} 得
+\begin{equation}
+  k(r_0-l_0)=mg
+  \quad\Longrightarrow\quad
+  \boxed{\ r_0=l_0+\frac{mg}{k}\ }.
+  \label{eq:s-r0}
+\end{equation}
+在 $r=r_0+\delta,\ \theta\ll1$ 处线性化：$\delta\ddot=-(k/m)\delta$，
+$r_0\ddot\theta=-g\theta$，两种模式解耦，频率为
+\begin{equation}
+  \boxed{\ \omega_r=\sqrt{\frac{k}{m}}\ },\qquad
+  \boxed{\ \omega_\theta=\sqrt{\frac{g}{r_0}}=\sqrt{\frac{g}{l_0+mg/k}}\ }.
+  \label{eq:s-freq}
+\end{equation}
+线性阶两种振动独立；非线性项（$\dot\theta^2$ 与 $2\dot r\dot\theta$）会让它们耦合，
+当 $\omega_r\approx2\omega_\theta$ 时出现内共振，交互页可直接看到拍频与能量交换。
+
+\section{小车与单摆（Q5）}\label{sec:cart}
+
+\subsection{拉格朗日量与水平动量}
+
+小车质量 $M$、单摆质量 $m$、摆长 $l$；取小车位置 $X$ 与摆角 $\theta$ 为坐标。
+摆球位置为 $x=X+l\sin\theta,\ y=-l\cos\theta$，故
+\begin{equation}
+  L=\frac12(M+m)\dot X^2+ml\cos\theta\,\dot X\dot\theta+\frac12ml^2\dot\theta^2+mgl\cos\theta .
+  \label{eq:c-L}
+\end{equation}
+$X$ 是循环坐标，水平总动量守恒：
+\begin{equation}
+  p_X=(M+m)\dot X+ml\cos\theta\,\dot\theta=\text{常量}.
+  \label{eq:c-pX}
+\end{equation}
+总水平动量为零时
+\begin{equation}
+  \dot X=-\frac{ml\cos\theta}{M+m}\dot\theta .
+  \label{eq:c-Xdot}
+\end{equation}
+$\theta$ 的方程为
+\begin{equation}
+  \ddot\theta=-\frac{(M+m)g\sin\theta+ml\sin\theta\cos\theta\,\dot\theta^2}
+  {l\left(M+m\sin^2\theta\right)}.
+  \label{eq:c-th}
+\end{equation}
+
+\subsection{小振动频率}
+
+线性化 $\sin\theta\approx\theta,\ \cos\theta\approx1,\ \dot\theta^2\approx0$，得
+\begin{equation}
+  \ddot\theta=-\frac{g(M+m)}{Ml}\theta
+  \quad\Longrightarrow\quad
+  \boxed{\ \omega=\sqrt{\frac{g(M+m)}{Ml}}\ }.
+  \label{eq:c-omega}
+\end{equation}
+$M\to\infty$ 时 $\omega\to\sqrt{g/l}$，回到固定悬点的单摆。
+
+\section{数值验证}\label{sec:numeric}
+
+交互页对 Q3 用解析加速度驱动动画，对 Q4、Q5 用四阶 Runge--Kutta（步长
+$2\times10^{-3}\,\mathrm{s}$ 与 $4\times10^{-3}\,\mathrm{s}$）积分非线性方程。
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\toprule
+量 & 参数 & 解析值 & 数值/检查值 \\
+\midrule
+Q3 $a_{\rm rel}$ & $M=2m,\alpha=30^\circ$ & $6.5400\ \mathrm{m/s^2}$ & $6.5400$ \\
+Q3 $a_X$ & $M=2m,\alpha=30^\circ$ & $-1.8879\ \mathrm{m/s^2}$ & $-1.8879$ \\
+Q3 $\eta$ & $M=2m,\alpha=30^\circ$ & $2/9=0.222222$ & $0.222222$ \\
+Q3 动量残差 & 同上 & 0 & $0$ \\
+Q4 $r_0$ & $k=80,l_0=0.5,m=1$ & $0.622625\ \mathrm{m}$ & $0.622625$ \\
+Q4 $\omega_r$ & 同上 & $8.9443\ \mathrm{rad/s}$ & $8.9443$ \\
+Q4 $\omega_\theta$ & 同上 & $3.9694\ \mathrm{rad/s}$ & $3.9694$ \\
+Q5 $\omega$ & $M/m=3,l=1$ & $3.6166\ \mathrm{rad/s}$ & $3.6166$ \\
+Q5 $M\to\infty$ & $l=1$ & $3.1321\ \mathrm{rad/s}$ & $3.1321$ \\
+Q5 $p_X$ & 任意 $\theta,\dot\theta$ & 0 & $<10^{-12}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{讨论}
+
+\begin{enumerate}
+  \item \textbf{循环坐标的共同作用.} Q3 与 Q5 都因平移对称性得到守恒的水平动量；
+        它把两自由度问题降为一自由度，再线性化得到小振动频率。
+  \item \textbf{约束力做功.} Q3 的支持力是内力，对物块做负功、对斜面做正功；
+        总机械能守恒，能量在两者之间转移。
+  \item \textbf{弹簧摆的耦合.} 线性阶 $\omega_r$ 与 $\omega_\theta$ 独立；
+        非线性耦合在 $\omega_r\approx2\omega_\theta$ 附近最强。
+  \item \textbf{大质量极限.} Q5 的 $M\to\infty$ 给出固定悬点单摆，是检验公式的简单极限。
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{landau} L. D. Landau, E. M. Lifshitz, \emph{Mechanics}, 3rd ed., Pergamon, 1976.
+\bibitem{goldstein} H. Goldstein, C. Poole, J. Safko, \emph{Classical Mechanics}, 3rd ed., Addison-Wesley, 2002.
+\bibitem{taylor} J. R. Taylor, \emph{Classical Mechanics}, University Science Books, 2005.
+\end{thebibliography}
+
+\end{document}

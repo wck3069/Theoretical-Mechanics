@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>受迫振动与共振 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/cosmos/tm-cosmos.css">
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#05070f; --panel:#0b1024; --line:rgba(146,182,255,.16);
+    --text:#eaf0ff; --muted:#92b6ff; --accent:#ff9e64; --ice:#7fe0ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:ui-sans-serif,system-ui,"Segoe UI",sans-serif;color:var(--text)}
+  .wrap{width:min(1280px, calc(100% - 32px));margin:0 auto;padding:26px 0 36px}
+  .top{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end;margin-bottom:18px}
+  h1{margin:0;font-size:clamp(24px,3.5vw,34px);font-weight:650;letter-spacing:-.02em}
+  h1 span{display:block;font-size:13px;color:var(--muted);font-weight:500;letter-spacing:0;margin-top:5px}
+  .meta{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px}
+  .app{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+  .stage{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:linear-gradient(180deg, rgba(12,18,40,.92), rgba(7,11,25,.96));min-height:600px}
+  canvas{display:block;width:100%;height:100%}
+  .hud{position:absolute;left:14px;top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;pointer-events:none;width:min(560px,calc(100% - 28px))}
+  .stat{padding:8px 10px;border-radius:10px;background:rgba(5,8,18,.58);border:1px solid rgba(146,182,255,.13);backdrop-filter:blur(6px)}
+  .stat b{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px}
+  .stat span{font-size:15px;font-variant-numeric:tabular-nums}
+  .legend{position:absolute;right:14px;bottom:12px;display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);pointer-events:none;background:rgba(5,8,18,.55);border:1px solid var(--line);padding:7px 10px;border-radius:9px}
+  .legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(480px,calc(100% - 28px));max-height:55%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.88);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+  .panel{border:1px solid var(--line);border-radius:14px;background:rgba(11,16,36,.88);backdrop-filter:blur(8px);padding:14px}
+  .eqbox{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(5,8,18,.5);border:1px solid var(--line);color:#dbe6ff;font-size:13.5px;line-height:1.9}
+  .eqbox .num{display:inline-block;min-width:88px;color:var(--muted);font-size:12px}
+  .eqrow{margin:2px 0}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  select,button{border:1px solid rgba(146,182,255,.28);border-radius:10px;background:rgba(255,255,255,.04);color:var(--text);padding:8px 10px;cursor:pointer;font:inherit}
+  select{flex:1;min-width:180px}
+  button:hover{border-color:var(--accent);background:rgba(255,158,100,.14)}
+  button.on{border-color:var(--accent);background:rgba(255,158,100,.22)}
+  .scene{margin-bottom:10px}
+  .slider{display:block;margin:10px 0}
+  .slider .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--muted);margin-bottom:4px}
+  .slider .lab output{color:var(--accent);font-variant-numeric:tabular-nums;font-size:13px}
+  input[type=range]{width:100%;accent-color:var(--accent);height:22px}
+  details{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);padding:9px 12px;margin-top:10px}
+  summary{cursor:pointer;color:#dbe6ff;font-size:13px;font-weight:550}
+  details p{font-size:12.5px;color:var(--muted);line-height:1.75;margin:8px 0 0}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;color:var(--muted)}
+  th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
+  .foot{margin-top:14px;color:var(--muted);font-size:12px;opacity:.8}
+  .doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+  .doc:hover{border-color:#7fe0ff}
+  @media (max-width: 1020px){
+    .app{grid-template-columns:1fr}
+    .stage{min-height:520px}
+  }
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="受迫振动与共振 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/20-forced-resonance/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="受迫振动与共振 · 理论力学">
+<meta property="og:description" content="受迫振动与共振 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/20-forced-resonance/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="受迫振动与共振 · 理论力学">
+<meta name="twitter:description" content="受迫振动与共振 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+</head>
+<body data-cosmos="page" data-cosmos-accent="#ff9e64">
+<div class="wrap">
+  <header class="top">
+    <h1>受迫振动与共振</h1>
+    <div class="meta"><span>ch04 · 小振动</span></div>
+  </header>
+  <main class="app">
+    <section class="stage">
+      <canvas id="cv"></canvas>
+      <div class="hud">
+        <div class="stat"><b id="l1">—</b><span id="h1">—</span></div>
+        <div class="stat"><b id="l2">—</b><span id="h2">—</span></div>
+        <div class="stat"><b id="l3">—</b><span id="h3">—</span></div>
+        <div class="stat"><b id="l4">—</b><span id="h4">—</span></div>
+        <div class="stat"><b id="l5">—</b><span id="h5">—</span></div>
+        <div class="stat"><b id="l6">—</b><span id="h6">—</span></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:#ff9e64"></i>数值解 x(t)</span>
+        <span><i style="background:#7fe0ff"></i>解析稳态 / 分量</span>
+        <span><i style="background:#ffd27a"></i>驱动 / 标记</span>
+      </div>
+      <div id="selftestPanel" class="selftest" hidden></div>
+    </section>
+    <aside class="panel">
+      <div class="eqbox" id="eqBox"></div>
+      <div class="row">
+        <select id="sceneSelect" aria-label="场景选择">
+          <option value="forced">场景1 受迫振动：瞬态与稳态</option>
+          <option value="resonance">场景2 共振曲线：A(ω) 与 P(ω)</option>
+          <option value="beats">场景3 拍：相近频率叠加</option>
+        </select>
+      </div>
+      <div class="row">
+        <button id="btn-pause">暂停</button>
+        <button id="btn-reset">重置</button>
+      </div>
+      <div class="row presets">
+        <button data-preset="resonant">共振点</button>
+        <button data-preset="highq">高Q窄峰</button>
+        <button data-preset="lowfreq">低频同相</button>
+        <button data-preset="highfreq">高频反相</button>
+        <button data-preset="beats">拍频</button>
+      </div>
+      <div id="grp-forced" class="scene">
+        <label class="slider"><span class="lab"><span>驱动频率 ω</span><output id="o-omega"></output></span><input type="range" id="p-omega"></label>
+        <label class="slider"><span class="lab"><span>固有频率 ω₀</span><output id="o-omega0"></output></span><input type="range" id="p-omega0"></label>
+        <label class="slider"><span class="lab"><span>阻尼系数 γ</span><output id="o-gamma"></output></span><input type="range" id="p-gamma"></label>
+        <label class="slider"><span class="lab"><span>驱动力幅值 F₀</span><output id="o-f0"></output></span><input type="range" id="p-f0"></label>
+      </div>
+      <div id="grp-resonance" class="scene" hidden>
+        <label class="slider"><span class="lab"><span>阻尼系数 γ（峰宽 2γ）</span><output id="o-gamma2"></output></span><input type="range" id="p-gamma2"></label>
+        <label class="slider"><span class="lab"><span>当前驱动频率 ω（标记）</span><output id="o-omega2"></output></span><input type="range" id="p-omega2"></label>
+      </div>
+      <div id="grp-beats" class="scene" hidden>
+        <label class="slider"><span class="lab"><span>频率 ω₁</span><output id="o-omega1"></output></span><input type="range" id="p-omega1"></label>
+        <label class="slider"><span class="lab"><span>频率 ω₂</span><output id="o-omega2b"></output></span><input type="range" id="p-omega2b"></label>
+      </div>
+      <div class="row" id="grp-speed">
+        <label class="slider"><span class="lab"><span>时间流速（动画）</span><output id="o-speed"></output></span><input type="range" id="p-speed"></label>
+      </div>
+      <details open>
+        <summary>书稿映射（ch04 小振动）</summary>
+        <table>
+          <tr><th>章节小节</th><th>对应可视化</th></tr>
+          <tr><td>单自由度：自由衰减与受迫响应</td><td>场景1 RK4 数值积分 + 解析稳态对照</td></tr>
+          <tr><td>阻尼与功率</td><td>场景2 P(ω) 曲线、半功率带 Δω=2γ、P̄<sub>max</sub>=F₀²/4γ</td></tr>
+          <tr><td>双振子、耦合摆与拍</td><td>场景3 叠加与包络、T_b = 2π/|Δω|</td></tr>
+          <tr><td>模态受迫响应与阻尼的限制</td><td>场景2 峰值频率 ω_R = √(ω₀²−2γ²)、Q = ω₀/2γ</td></tr>
+        </table>
+        <p>方程与公式取自《理论力学》第4章（小振动）手稿：稳态幅值 A(ω)、相位滞后 tanδ = 2γω/(ω₀²−ω²)、平均功率 P̄、共振幅值频率与功率频率分离、半功率带宽与品质因数、拍的包络。单位制：m = 1。</p>
+      </details>
+      <a class="doc" href="./note.html">📄 阅读推导与出处 →</a>
+      <p class="foot">数值方法：四阶 Runge-Kutta（RK4）。当前参数会自动保存在浏览器地址栏中，复制链接即可分享当前实验状态。</p>
+    </aside>
+  </main>
+</div>
+<script>
+(function () {
+  'use strict';
+  var TAU = Math.PI * 2;
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+
+  var PDEF = {
+    omega:  { min: 0.05, max: 3,   step: 0.01,  def: 0.8,  dec: 2 },
+    omega0: { min: 0.2,  max: 3,   step: 0.01,  def: 1,    dec: 2 },
+    gamma:  { min: 0.01, max: 1,   step: 0.005, def: 0.08, dec: 3 },
+    f0:     { min: 0.05, max: 2,   step: 0.01,  def: 1,    dec: 2 },
+    omega1: { min: 0.2,  max: 3,   step: 0.01,  def: 1,    dec: 2 },
+    omega2: { min: 0.2,  max: 3,   step: 0.01,  def: 1.15, dec: 2 },
+    speed:  { min: 0.1,  max: 3,   step: 0.05,  def: 1,    dec: 2 }
+  };
+  var PKEYS = Object.keys(PDEF);
+  var P = {};
+  PKEYS.forEach(function (k) { P[k] = PDEF[k].def; });
+  var SCENES = ['forced', 'resonance', 'beats'];
+  var scene = 'forced';
+  var paused = false;
+
+  function accel(x, v, t, p) {
+    return -2 * p.gamma * v - p.omega0 * p.omega0 * x + p.f0 * Math.cos(p.omega * t);
+  }
+  function rk4(x, v, t, h, p) {
+    var k1x = v, k1v = accel(x, v, t, p);
+    var k2x = v + k1v * h / 2, k2v = accel(x + k1x * h / 2, v + k1v * h / 2, t + h / 2, p);
+    var k3x = v + k2v * h / 2, k3v = accel(x + k2x * h / 2, v + k2v * h / 2, t + h / 2, p);
+    var k4x = v + k3v * h, k4v = accel(x + k3x * h, v + k3v * h, t + h, p);
+    return {
+      x: x + (k1x + 2 * k2x + 2 * k3x + k4x) * h / 6,
+      v: v + (k1v + 2 * k2v + 2 * k3v + k4v) * h / 6
+    };
+  }
+  function ampA(p, w) {
+    var re = p.omega0 * p.omega0 - w * w, im = 2 * p.gamma * w;
+    return p.f0 / Math.sqrt(re * re + im * im);
+  }
+  function phaseD(p, w) {
+    return Math.atan2(2 * p.gamma * w, p.omega0 * p.omega0 - w * w);
+  }
+  function powP(p, w) {
+    var re = p.omega0 * p.omega0 - w * w;
+    return p.gamma * w * w * p.f0 * p.f0 / (re * re + 4 * p.gamma * p.gamma * w * w);
+  }
+  function omegaR(p) {
+    var s = p.omega0 * p.omega0 - 2 * p.gamma * p.gamma;
+    return s > 0 ? Math.sqrt(s) : 0;
+  }
+  function halfPower(p) {
+    var s = Math.sqrt(p.omega0 * p.omega0 + p.gamma * p.gamma);
+    return { lo: s - p.gamma, hi: s + p.gamma };
+  }
+  function fmt(v, d) { return isFinite(v) ? v.toFixed(d === undefined ? 3 : d) : '—'; }
+
+  var HSTEP = 0.002;
+  var sim = { t: 0, x: 0, v: 0, a: { x: 1, v: 0 }, b: { x: 1, v: 0 }, buf: [], nextPush: 0 };
+  var acc = 0;
+  function resetSim() {
+    sim.t = 0; sim.x = 0; sim.v = 0;
+    sim.a.x = 1; sim.a.v = 0; sim.b.x = 1; sim.b.v = 0;
+    sim.buf = []; sim.nextPush = 0; acc = 0;
+  }
+  function freeParams(w) { return { omega: 0, omega0: w, gamma: 0, f0: 0 }; }
+  function winLen() {
+    if (scene === 'beats') {
+      var d = Math.abs(P.omega2 - P.omega1);
+      var Tb = d > 1e-6 ? TAU / d : 40;
+      return Math.min(180, Math.max(24, 1.5 * Tb));
+    }
+    var w = Math.max(Math.min(P.omega, P.omega0), 0.2);
+    return Math.min(60, Math.max(10, 4 * TAU / w));
+  }
+  function sampleDt() { return scene === 'beats' ? 0.02 : 0.01; }
+
+  function advance(dt) {
+    var sdt = sampleDt(), cut;
+    acc += dt;
+    while (acc >= HSTEP) {
+      if (scene === 'forced') {
+        var r = rk4(sim.x, sim.v, sim.t, HSTEP, P);
+        sim.x = r.x; sim.v = r.v;
+      } else {
+        var ra = rk4(sim.a.x, sim.a.v, sim.t, HSTEP, freeParams(P.omega1));
+        var rb = rk4(sim.b.x, sim.b.v, sim.t, HSTEP, freeParams(P.omega2));
+        sim.a.x = ra.x; sim.a.v = ra.v; sim.b.x = rb.x; sim.b.v = rb.v;
+      }
+      sim.t += HSTEP; acc -= HSTEP;
+      if (sim.t >= sim.nextPush) {
+        sim.buf.push({
+          t: sim.t,
+          y: scene === 'forced' ? sim.x : sim.a.x + sim.b.x,
+          a: scene === 'forced' ? 0 : sim.a.x,
+          b: scene === 'forced' ? 0 : sim.b.x
+        });
+        sim.nextPush = sim.t + sdt;
+        cut = sim.t - winLen();
+        while (sim.buf.length > 2 && sim.buf[0].t < cut) sim.buf.shift();
+      }
+    }
+  }
+
+  function fit() {
+    DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    var r = cv.parentNode.getBoundingClientRect();
+    W = Math.max(320, Math.floor(r.width));
+    H = Math.max(320, Math.floor(r.height));
+    cv.width = Math.floor(W * DPR);
+    cv.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  function txt(s, x, y, size, color, align, weight) {
+    ctx.font = (weight || 400) + ' ' + size + 'px ui-sans-serif,system-ui,sans-serif';
+    ctx.fillStyle = color;
+    ctx.textAlign = align || 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(String(s), x, y);
+  }
+  function seg(x1, y1, x2, y2, color, w, dash) {
+    ctx.save();
+    if (dash) { ctx.setLineDash(dash); }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function arrow(x1, y1, x2, y2, color, w) {
+    var dx = x2 - x1, dy = y2 - y1, L = Math.sqrt(dx * dx + dy * dy);
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    if (L > 4) {
+      var ux = dx / L, uy = dy / L, hl = Math.min(9, L * 0.45);
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - ux * hl - uy * hl * 0.5, y2 - uy * hl + ux * hl * 0.5);
+      ctx.lineTo(x2 - ux * hl + uy * hl * 0.5, y2 - uy * hl - ux * hl * 0.5);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+  function frame(x, y, w, h, title) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(8,12,26,.55)';
+    ctx.strokeStyle = 'rgba(146,182,255,.22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    if (title) { txt(title, x + 8, y - 6, 12, 'rgba(146,182,255,.85)', 'left', 500); }
+  }
+  function spring(xa, xb, yy, coils) {
+    var n = coils * 2, span = xb - xa - 14;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(159,199,255,.85)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(xa, yy);
+    ctx.lineTo(xa + 7, yy);
+    for (var i = 0; i < n; i++) {
+      ctx.lineTo(xa + 7 + span * (i + 0.5) / n, yy + (i % 2 ? 7 : -7));
+    }
+    ctx.lineTo(xb - 7, yy);
+    ctx.lineTo(xb, yy);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawForced() {
+    var A = ampA(P, P.omega), dl = phaseD(P, P.omega);
+    var pad = 16;
+    var oscH = Math.max(120, Math.min(170, H * 0.26));
+    var wallX = 66, midY = 14 + oscH * 0.5;
+    var restX = wallX + (W - pad - 12 - wallX) * 0.52;
+    var vis = Math.max(0.55, Math.min(A, 8));
+    var pxU = (W - pad - 12 - restX) * 0.42 / vis;
+    var mX = restX + Math.max(-160, Math.min(160, sim.x * pxU));
+    txt('m = 1', wallX - 40, midY + 4, 12, 'rgba(146,182,255,.75)', 'right');
+    seg(wallX, midY - 30, wallX, midY + 30, 'rgba(159,199,255,.9)', 2);
+    for (var hx = wallX - 7; hx > 14; hx -= 9) {
+      seg(hx, midY + 30, hx - 8, midY + 39, 'rgba(146,182,255,.35)', 1);
+    }
+    seg(wallX - 4, midY, W - pad - 6, midY, 'rgba(146,182,255,.14)', 1, [4, 5]);
+    seg(restX, midY - 34, restX, midY + 34, 'rgba(255,210,122,.45)', 1, [3, 4]);
+    spring(wallX, mX - 14, midY, 9);
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,158,100,.95)';
+    ctx.strokeStyle = 'rgba(255,222,196,.8)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.rect(mX - 14, midY - 14, 28, 28);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    var F = P.f0 * Math.cos(P.omega * sim.t);
+    var fLen = F * 46;
+    if (Math.abs(fLen) > 3) {
+      arrow(mX + (fLen > 0 ? 18 : -18), midY, mX + (fLen > 0 ? 18 : -18) + fLen, midY, 'rgba(255,210,122,.9)', 2);
+    }
+    txt('F(t) = F\u2080 cos \u03c9t', wallX + 4, midY - 40, 12, 'rgba(255,210,122,.9)');
+    txt('x = 0', restX, midY + 54, 11, 'rgba(255,210,122,.6)', 'center');
+
+    var cx0 = 56, cy0 = oscH + 44, cx1 = W - pad - 6, cy1 = H - 40;
+    frame(cx0, cy0, cx1 - cx0, cy1 - cy0, '\u6570\u503c\u89e3 x(t) \u4e0e\u89e3\u6790\u7a33\u6001\u5bf9\u7167');
+    var win = winLen();
+    var t1 = Math.max(sim.t, win), t0 = t1 - win;
+    var ymax = Math.max(0.3, A * 1.2);
+    var i;
+    for (i = 0; i < sim.buf.length; i++) {
+      if (Math.abs(sim.buf[i].y) > ymax) { ymax = Math.abs(sim.buf[i].y); }
+    }
+    ymax *= 1.05;
+    var mid = (cy0 + cy1) / 2, half = (cy1 - cy0) / 2;
+    function mx(t) { return cx0 + (t - t0) / win * (cx1 - cx0); }
+    function my(y) { return mid - y / ymax * half; }
+    for (var g = 0; g <= 4; g++) {
+      var tt = t0 + win * g / 4;
+      seg(mx(tt), cy0, mx(tt), cy1, 'rgba(146,182,255,.10)', 1);
+      txt('t=' + tt.toFixed(0), mx(tt), cy1 + 16, 11, 'rgba(146,182,255,.7)', 'center');
+    }
+    seg(cx0, mid, cx1, mid, 'rgba(146,182,255,.28)', 1);
+    var envA = A * Math.exp(-P.gamma * (t1 - t0));
+    txt('+' + fmt(ymax, 2), cx0 - 8, cy0 + 10, 11, 'rgba(146,182,255,.6)', 'right');
+    txt('\u2212' + fmt(ymax, 2), cx0 - 8, cy1, 11, 'rgba(146,182,255,.6)', 'right');
+    txt('\u5305\u7eb9 e^(\u2212\u03b3t) \u00b7 C, \u03b3=' + fmt(P.gamma, 3), cx1 - 4, cy0 + 16, 11, 'rgba(146,182,255,.8)', 'right');
+    var N = 260, dA = [];
+    ctx.save();
+    ctx.strokeStyle = 'rgba(127,224,255,.85)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    for (i = 0; i <= N; i++) {
+      var tau = t0 + win * i / N;
+      var ys = A * Math.cos(P.omega * tau - dl);
+      if (i === 0) { ctx.moveTo(mx(tau), my(ys)); } else { ctx.lineTo(mx(tau), my(ys)); }
+    }
+    ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,210,122,.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    for (i = 0; i <= N; i++) {
+      var tau2 = t0 + win * i / N;
+      var yd = A * Math.cos(P.omega * tau2);
+      if (i === 0) { ctx.moveTo(mx(tau2), my(yd)); } else { ctx.lineTo(mx(tau2), my(yd)); }
+    }
+    ctx.stroke();
+    ctx.restore();
+    if (sim.buf.length > 1) {
+      ctx.save();
+      ctx.strokeStyle = '#ff9e64';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (i = 0; i < sim.buf.length; i++) {
+        var s = sim.buf[i];
+        if (s.t < t0) { continue; }
+        if (i === 0) { ctx.moveTo(mx(s.t), my(s.y)); } else { ctx.lineTo(mx(s.t), my(s.y)); }
+      }
+      ctx.stroke();
+      ctx.restore();
+      var lastY = sim.buf[sim.buf.length - 1].y;
+      ctx.fillStyle = '#ff9e64';
+      ctx.beginPath();
+      ctx.arc(mx(sim.t), my(lastY), 3.5, 0, TAU);
+      ctx.fill();
+    }
+    var dev = 0, m = sim.buf.length, from = Math.max(0, m - 60);
+    for (i = from; i < m; i++) {
+      var bs = sim.buf[i];
+      var ex = A * Math.cos(P.omega * bs.t - dl);
+      if (Math.abs(bs.y - ex) > dev) { dev = Math.abs(bs.y - ex); }
+    }
+    var Pavg = powP(P, P.omega), Q = P.omega0 / (2 * P.gamma);
+    setHud([
+      ['\u89e3\u6790\u5e45\u503c A(\u03c9)', fmt(A, 4)],
+      ['\u76f8\u4f4d\u6ede\u540e \u03b4', fmt(dl * 180 / Math.PI, 1) + ' \u00b0'],
+      ['\u5e73\u5747\u529f\u7387 P\u0304', fmt(Pavg, 4)],
+      ['Q = \u03c9\u2080/2\u03b3', fmt(Q, 2)],
+      ['\u504f\u79bb\u7a33\u6001 (|x\u2212x\u2081|)', fmt(dev, 4)],
+      ['\u5df2\u7ecf\u5386\u65f6\u95f4 t', fmt(sim.t, 2) + ' s']
+    ]);
+  }
+
+  function drawResonance() {
+    var g = { omega0: P.omega0, gamma: P.gamma, f0: P.f0, omega: P.omega };
+    var wMax = Math.max(3, P.omega0 * 1.35);
+    var padL = 58, padR = 18, top = 40, bot = 42;
+    var w = W - padL - padR;
+    var avail = H - top - bot - 46;
+    var hA = Math.max(70, avail * 0.54), hP = Math.max(70, avail - hA);
+    var bA = { x: padL, y: top, w: w, h: hA };
+    var bP = { x: padL, y: top + hA + 46, w: w, h: hP };
+
+    var N = 400, i, ws, As = [], Ps = [];
+    var amax = 0, pmax = 0;
+    for (i = 0; i <= N; i++) {
+      ws = wMax * i / N;
+      As.push(ampA(g, ws));
+      Ps.push(powP(g, ws));
+      if (As[i] > amax) { amax = As[i]; }
+      if (Ps[i] > pmax) { pmax = Ps[i]; }
+      pmax = Math.max(pmax, 0);
+    }
+    var wR = omegaR(g), hp = halfPower(g);
+    var pmaxExact = powP(g, g.omega0);
+    var logA = amax > 12;
+    function ymap(v, box, vmax, useLog) {
+      if (useLog) {
+        var lo = -2, hi = Math.log10(Math.max(vmax, 0.01));
+        var lv = Math.log10(Math.max(v, 1e-2));
+        return box.y + box.h - (lv - lo) / (hi - lo) * box.h;
+      }
+      return box.y + box.h - (v / Math.max(vmax, 1e-9)) * box.h * 0.94;
+    }
+    function xmap(wv) { return boxX(wv, bA); }
+    function boxX(wv, box) { return box.x + wv / wMax * box.w; }
+
+    frame(bA.x, bA.y, bA.w, bA.h, 'A(\u03c9) = F\u2080 / \u221a[(\u03c9\u2080\u00b2\u2212\u03c9\u00b2)\u00b2 + (2\u03b3\u03c9)\u00b2]');
+    frame(bP.x, bP.y, bP.w, bP.h, 'P\u0304(\u03c9) = \u03b3\u03c9\u00b2F\u2080\u00b2 / [(\u03c9\u2080\u00b2\u2212\u03c9\u00b2)\u00b2 + 4\u03b3\u00b2\u03c9\u00b2]');
+
+    function grid(box, vmax, useLog) {
+      var st = wMax > 3 ? 1 : 0.5, wv;
+      for (wv = 0; wv <= wMax + 1e-9; wv += st) {
+        var gx = boxX(wv, box);
+        seg(gx, box.y, gx, box.y + box.h, 'rgba(146,182,255,.10)', 1);
+        if (box === bP) { txt(fmt(wv, 1), gx, box.y + box.h + 16, 11, 'rgba(146,182,255,.7)', 'center'); }
+      }
+      txt('\u03c9', box.x + box.w + 6, box.y + box.h + 4, 12, 'rgba(146,182,255,.8)');
+      var ticks = [], k;
+      if (useLog) {
+        var lg = Math.floor(Math.log10(Math.max(vmax, 0.01)));
+        for (k = -2; k <= lg; k++) { ticks.push(Math.pow(10, k)); }
+      } else {
+        for (k = 0; k <= 4; k++) { ticks.push(vmax * k / 4); }
+      }
+      for (k = 0; k < ticks.length; k++) {
+        var vy = ymap(ticks[k], box, vmax, useLog);
+        if (vy < box.y - 1 || vy > box.y + box.h + 1) { continue; }
+        seg(box.x, vy, box.x + box.w, vy, 'rgba(146,182,255,.08)', 1);
+        txt(logA ? String(ticks[k]) : fmt(ticks[k], 3), box.x - 8, vy + 4, 10.5, 'rgba(146,182,255,.65)', 'right');
+      }
+    }
+    grid(bA, amax * 1.06, logA);
+    grid(bP, pmaxExact * 1.12, false);
+
+    function curve(box, vals, color, lw, dash) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw;
+      if (dash) { ctx.setLineDash(dash); }
+      ctx.beginPath();
+      for (var j = 0; j <= N; j++) {
+        var px = boxX(wMax * j / N, box), py = ymap(vals[j], box, box === bA ? amax * 1.06 : pmaxExact * 1.12, box === bA && logA);
+        if (py > box.y + box.h) { py = box.y + box.h; }
+        if (j === 0) { ctx.moveTo(px, py); } else { ctx.lineTo(px, py); }
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+    var ha = hp.hi, hl = Math.max(hp.lo, 0);
+    if (ha <= wMax) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,158,100,.12)';
+      ctx.fillRect(boxX(hl, bP), bP.y, boxX(ha, bP) - boxX(hl, bP), bP.h);
+      ctx.restore();
+      seg(boxX(hl, bP), bP.y, boxX(hl, bP), bP.y + bP.h, 'rgba(255,158,100,.7)', 1, [3, 3]);
+      seg(boxX(ha, bP), bP.y, boxX(ha, bP), bP.y + bP.h, 'rgba(255,158,100,.7)', 1, [3, 3]);
+      var halfY = ymap(pmaxExact / 2, bP, pmaxExact * 1.12, false);
+      seg(bP.x, halfY, bP.x + bP.w, halfY, 'rgba(255,210,122,.6)', 1, [5, 4]);
+      txt('\u534a\u529f\u7387\u5e26 \u0394\u03c9 = 2\u03b3 = ' + fmt(2 * P.gamma, 3), (boxX(hl, bP) + boxX(ha, bP)) / 2, bP.y - 8, 11.5, 'rgba(255,210,122,.95)', 'center', 500);
+    }
+    seg(boxX(P.omega0, bA), bA.y, boxX(P.omega0, bA), bA.y + bA.h, 'rgba(127,224,255,.55)', 1, [6, 4]);
+    txt('\u03c9\u2080=' + fmt(P.omega0, 2), boxX(P.omega0, bA) + 5, bA.y + 14, 11, 'rgba(127,224,255,.9)');
+    curve(bA, As, '#ff9e64', 2.2);
+    curve(bP, Ps, '#7fe0ff', 2.2);
+    if (wR > 0) {
+      seg(boxX(wR, bA), bA.y, boxX(wR, bA), bA.y + bA.h, 'rgba(255,158,100,.6)', 1, [3, 3]);
+      var yR = ymap(ampA(g, wR), bA, amax * 1.06, logA);
+      ctx.fillStyle = '#ff9e64';
+      ctx.beginPath();
+      ctx.arc(boxX(wR, bA), yR, 4, 0, TAU);
+      ctx.fill();
+      txt('\u03c9_R=' + fmt(wR, 3), boxX(wR, bA) + 8, Math.max(bA.y + 12, yR - 8), 11.5, 'rgba(255,158,100,.95)');
+    }
+    var yPk = ymap(pmaxExact, bP, pmaxExact * 1.12, false);
+    ctx.fillStyle = '#7fe0ff';
+    ctx.beginPath();
+    ctx.arc(boxX(P.omega0, bP), yPk, 4, 0, TAU);
+    ctx.fill();
+    txt('P\u0304_max = F\u2080\u00b2/4\u03b3 = ' + fmt(pmax, 4), boxX(P.omega0, bP) + 10, yPk - 8, 11.5, 'rgba(127,224,255,.95)');
+    var cw = P.omega;
+    if (cw <= wMax) {
+      seg(boxX(cw, bA), bA.y, boxX(cw, bA), bA.y + bA.h, 'rgba(255,210,122,.9)', 1.6);
+      seg(boxX(cw, bP), bP.y, boxX(cw, bP), bP.y + bP.h, 'rgba(255,210,122,.9)', 1.6);
+      ctx.fillStyle = 'rgba(255,210,122,1)';
+      ctx.beginPath();
+      ctx.arc(boxX(cw, bA), ymap(ampA(g, cw), bA, amax * 1.06, logA), 3.6, 0, TAU);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(boxX(cw, bP), ymap(powP(g, cw), bP, pmaxExact * 1.12, false), 3.6, 0, TAU);
+      ctx.fill();
+      txt('\u5f53\u524d \u03c9=' + fmt(cw, 2), boxX(cw, bA), bA.y - 8, 11.5, 'rgba(255,210,122,.95)', 'center', 500);
+    }
+    setHud([
+      ['\u5cf0\u503c\u9891\u7387 \u03c9_R', wR > 0 ? fmt(wR, 4) : '\u65e0\u5cf0 (\u03b3\u2265\u03c9\u2080/\u221a2)'],
+      ['\u56fa\u6709\u9891\u7387 \u03c9\u2080', fmt(P.omega0, 3)],
+      ['\u534a\u529f\u7387\u5e26\u5bbd \u0394\u03c9 = 2\u03b3', fmt(2 * P.gamma, 4)],
+      ['\u54c1\u8d28\u56e0\u6570 Q = \u03c9\u2080/2\u03b3', fmt(P.omega0 / (2 * P.gamma), 2)],
+      ['A_max', fmt(amax, 4)],
+      ['P\u0304_max = F\u2080\u00b2/4\u03b3', fmt(pmaxExact, 4)]
+    ]);
+  }
+
+  function drawBeats() {
+    var padL = 52, padR = 16, top = 34, bot = 36;
+    var cx0 = padL, cx1 = W - padR, cy0 = top + 18, cy1 = H - bot - 8;
+    var d = P.omega2 - P.omega1, ad = Math.abs(d);
+    var Tb = ad > 1e-6 ? TAU / ad : Infinity;
+    var win = winLen();
+    var t1 = Math.max(sim.t, win), t0 = t1 - win;
+    var ymax = 2.35;
+    frame(cx0, cy0, cx1 - cx0, cy1 - cy0, 'x(t) = cos(\u03c9\u2081t) + cos(\u03c9\u2082t) = 2cos(\u0394\u03c9t/2)\u00b7cos(\u03c9\u0304t)');
+    function mx(t) { return cx0 + (t - t0) / win * (cx1 - cx0); }
+    function my(y) { return (cy0 + cy1) / 2 - y / ymax * (cy1 - cy0) / 2; }
+    var gstep = Tb === Infinity ? 10 : Math.max(1, Tb / 4);
+    for (var tg = Math.ceil(t0 / gstep) * gstep; tg <= t1; tg += gstep) {
+      seg(mx(tg), cy0, mx(tg), cy1, 'rgba(146,182,255,.10)', 1);
+      txt(fmt(tg, 0), mx(tg), cy1 + 16, 11, 'rgba(146,182,255,.7)', 'center');
+    }
+    seg(cx0, my(0), cx1, my(0), 'rgba(146,182,255,.3)', 1);
+    txt('+2', cx0 - 8, my(2) + 4, 11, 'rgba(146,182,255,.65)', 'right');
+    txt('\u22122', cx0 - 8, my(-2) + 4, 11, 'rgba(146,182,255,.65)', 'right');
+    var N = 420, i;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,210,122,.8)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 5]);
+    for (i = 0; i < 2; i++) {
+      ctx.beginPath();
+      for (var j = 0; j <= N; j++) {
+        var tau = t0 + win * j / N;
+        var ye2 = (i === 0 ? 2 : -2) * Math.cos(d * tau / 2);
+        if (j === 0) { ctx.moveTo(mx(tau), my(ye2)); } else { ctx.lineTo(mx(tau), my(ye2)); }
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+    function bufCurve(key, color, lw, dash) {
+      if (sim.buf.length < 2) { return; }
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw;
+      if (dash) { ctx.setLineDash(dash); }
+      ctx.beginPath();
+      var started = false;
+      for (var k = 0; k < sim.buf.length; k++) {
+        var s = sim.buf[k];
+        if (s.t < t0) { continue; }
+        if (!started) { ctx.moveTo(mx(s.t), my(s[key])); started = true; }
+        else { ctx.lineTo(mx(s.t), my(s[key])); }
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+    bufCurve('a', 'rgba(127,224,255,.75)', 1.3, [4, 4]);
+    bufCurve('b', 'rgba(146,182,255,.75)', 1.3, [4, 4]);
+    bufCurve('y', '#ff9e64', 2.4);
+    if (Tb !== Infinity && Tb < win * 0.9) {
+      var k0 = Math.ceil(t0 / Tb) * Tb;
+      if (k0 + Tb <= t1) {
+        var by = cy0 + 14;
+        arrow(mx(k0), by, mx(k0 + Tb), by, 'rgba(255,210,122,.95)', 1.6);
+        arrow(mx(k0 + Tb), by, mx(k0), by, 'rgba(255,210,122,.95)', 1.6);
+        txt('T_b = ' + fmt(Tb, 3), (mx(k0) + mx(k0 + Tb)) / 2, by - 6, 11.5, 'rgba(255,210,122,.95)', 'center', 500);
+      }
+    }
+    txt('\u03c9\u2081 = ' + fmt(P.omega1, 3), cx0 + 10, cy0 + 16, 12, 'rgba(127,224,255,.95)');
+    txt('\u03c9\u2082 = ' + fmt(P.omega2, 3), cx0 + 10, cy0 + 32, 12, 'rgba(146,182,255,.95)');
+    setHud([
+      ['\u03c9\u2081', fmt(P.omega1, 3)],
+      ['\u03c9\u2082', fmt(P.omega2, 3)],
+      ['\u0394\u03c9 = \u03c9\u2082\u2212\u03c9\u2081', fmt(d, 3)],
+      ['\u62cd\u5468\u671f T_b = 2\u03c0/|\u0394\u03c9|', fmt(Tb, 4)],
+      ['\u5305\u7eb9\u5e45\u503c', '2.000'],
+      ['\u5305\u7eb9\u9891\u7387 \u0394\u03c9/2', fmt(ad / 2, 4)]
+    ]);
+  }
+
+  function setHud(pairs) {
+    for (var i = 0; i < 6; i++) {
+      document.getElementById('l' + (i + 1)).textContent = pairs[i][0];
+      document.getElementById('h' + (i + 1)).textContent = pairs[i][1];
+    }
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (scene === 'forced') { drawForced(); }
+    else if (scene === 'resonance') { drawResonance(); }
+    else { drawBeats(); }
+  }
+
+  var SLIDERS = [
+    { id: 'p-omega', key: 'omega', out: 'o-omega' },
+    { id: 'p-omega0', key: 'omega0', out: 'o-omega0' },
+    { id: 'p-gamma', key: 'gamma', out: 'o-gamma' },
+    { id: 'p-f0', key: 'f0', out: 'o-f0' },
+    { id: 'p-gamma2', key: 'gamma', out: 'o-gamma2' },
+    { id: 'p-omega2', key: 'omega', out: 'o-omega2' },
+    { id: 'p-omega1', key: 'omega1', out: 'o-omega1' },
+    { id: 'p-omega2b', key: 'omega2', out: 'o-omega2b' },
+    { id: 'p-speed', key: 'speed', out: 'o-speed' }
+  ];
+  function syncSliders() {
+    for (var i = 0; i < SLIDERS.length; i++) {
+      var s = SLIDERS[i];
+      var el = document.getElementById(s.id);
+      el.min = PDEF[s.key].min;
+      el.max = PDEF[s.key].max;
+      el.step = PDEF[s.key].step;
+      el.value = P[s.key];
+      document.getElementById(s.out).textContent = fmt(P[s.key], PDEF[s.key].dec);
+    }
+  }
+  function updateUrl() {
+    var q = new URLSearchParams();
+    q.set('scene', scene);
+    for (var i = 0; i < PKEYS.length; i++) {
+      q.set(PKEYS[i], String(P[PKEYS[i]]));
+    }
+    if (/[?&]selftest=1/.test(location.search)) { q.set('selftest', '1'); }
+    try {
+      history.replaceState(null, '', location.pathname + '?' + q.toString());
+    } catch (err) { /* file:// 下部分浏览器禁止改写 URL */ }
+  }
+  function setScene(s) {
+    scene = s;
+    document.getElementById('grp-forced').hidden = (s !== 'forced');
+    document.getElementById('grp-resonance').hidden = (s !== 'resonance');
+    document.getElementById('grp-beats').hidden = (s !== 'beats');
+    document.getElementById('sceneSelect').value = s;
+    renderEq();
+    resetSim();
+    updateUrl();
+  }
+  function renderEq() {
+    var box = document.getElementById('eqBox'), h = '';
+    if (scene === 'forced') {
+      h = '<div class="eqrow"><span class="num">运动方程</span>' +
+        'ẍ + 2γẋ + ω₀²x = F₀ cos ωt\u3000(m = 1)</div>' +
+        '<div class="eqrow"><span class="num">稳态解</span>x(t) → A cos(ωt − δ)，' +
+        'A = F₀ / √[(ω₀² − ω²)² + (2γω)²]</div>' +
+        '<div class="eqrow"><span class="num">相位滞后</span>tan δ = 2γω / (ω₀² − ω²)，δ ∈ (0, π)</div>' +
+        '<div class="eqrow"><span class="num">瞬态</span>暂态按 e^(−γt) 衰减，' +
+        '衰减时间 τ = 1/γ = ' + fmt(1 / P.gamma, 2) + ' s</div>';
+    } else if (scene === 'resonance') {
+      h = '<div class="eqrow"><span class="num">幅值共振</span>ω_R = √(ω₀² − 2γ²)' +
+        '（γ &lt; ω₀/√2 才有峰）</div>' +
+        '<div class="eqrow"><span class="num">功率共振</span>P̄ 峰总在 ω = ω₀，' +
+        'P̄_max = F₀²/4γ = ' + fmt(P.f0 * P.f0 / (4 * P.gamma), 4) + '</div>' +
+        '<div class="eqrow"><span class="num">半功率带宽</span>ω± = √(ω₀² + γ²) ± γ，' +
+        'Δω = 2γ = ' + fmt(2 * P.gamma, 3) + '</div>' +
+        '<div class="eqrow"><span class="num">品质因数</span>Q = ω₀/2γ = ' +
+        fmt(P.omega0 / (2 * P.gamma), 2) + '，Q 越大峰越尖锐</div>';
+    } else {
+      h = '<div class="eqrow"><span class="num">叠加</span>x = cos ω₁t + cos ω₂t =' +
+        ' 2 cos(Δωt/2) · cos(ω̄t)</div>' +
+        '<div class="eqrow"><span class="num">拍周期</span>T_b = 2π/|Δω| = ' +
+        fmt(Math.abs(P.omega2 - P.omega1) > 1e-6 ? TAU / Math.abs(P.omega2 - P.omega1) : Infinity, 3) +
+        '</div>' +
+        '<div class="eqrow"><span class="num">包络</span>缓慢因子 2cos(Δωt/2) 调幅；' +
+        'Δω = ω₂ − ω₁ = ' + fmt(P.omega2 - P.omega1, 3) + '</div>';
+    }
+    box.innerHTML = h;
+  }
+  function readUrl() {
+    var q = new URLSearchParams(location.search);
+    for (var i = 0; i < PKEYS.length; i++) {
+      var k = PKEYS[i];
+      if (q.has(k)) {
+        var v = parseFloat(q.get(k));
+        if (isFinite(v)) {
+          P[k] = Math.max(PDEF[k].min, Math.min(PDEF[k].max, v));
+        }
+      }
+    }
+    var s = q.get('scene');
+    if (s && SCENES.indexOf(s) >= 0) { scene = s; }
+  }
+  var PRESETS = {
+    resonant: { scene: 'forced', omega: 1.0, omega0: 1.0, gamma: 0.05, f0: 1 },
+    highq: { scene: 'resonance', omega: 1.0, omega0: 1.0, gamma: 0.02 },
+    lowfreq: { scene: 'forced', omega: 0.3, omega0: 1.0, gamma: 0.1, f0: 1 },
+    highfreq: { scene: 'forced', omega: 2.6, omega0: 1.0, gamma: 0.1, f0: 1 },
+    beats: { scene: 'beats', omega1: 1.0, omega2: 1.12 }
+  };
+  function applyPreset(name) {
+    var pr = PRESETS[name];
+    if (!pr) { return; }
+    PKEYS.forEach(function (k) {
+      if (pr.hasOwnProperty(k)) { P[k] = pr[k]; }
+    });
+    syncSliders();
+    setScene(pr.scene);
+  }
+  function wireControls() {
+    document.getElementById('sceneSelect').addEventListener('change', function (e) {
+      setScene(e.target.value);
+    });
+    SLIDERS.forEach(function (s) {
+      document.getElementById(s.id).addEventListener('input', function (e) {
+        P[s.key] = parseFloat(e.target.value);
+        syncSliders();
+        renderEq();
+        updateUrl();
+      });
+    });
+    document.getElementById('btn-pause').addEventListener('click', function () {
+      paused = !paused;
+      this.textContent = paused ? '继续' : '暂停';
+      this.classList.toggle('on', paused);
+    });
+    document.getElementById('btn-reset').addEventListener('click', function () {
+      resetSim();
+    });
+    var ps = document.querySelectorAll('.presets button');
+    for (var i = 0; i < ps.length; i++) {
+      ps[i].addEventListener('click', function () {
+        applyPreset(this.getAttribute('data-preset'));
+      });
+    }
+  }
+
+  function measureSteady(pp, w, h) {
+    var warm = Math.max(10 / pp.gamma, 20);
+    var t = 0, x = 0, v = 0, r;
+    while (t < warm - 1e-9) { r = rk4(x, v, t, h, pp); x = r.x; v = r.v; t += h; }
+    var T = 8 * (TAU / w);
+    var n = Math.round(T / h);
+    h = T / n;
+    var s2 = 0, sc = 0, ss = 0, rr;
+    for (var i = 0; i < n; i++) {
+      rr = rk4(x, v, t, h, pp); x = rr.x; v = rr.v; t += h;
+      s2 += x * x; sc += x * Math.cos(w * t); ss += x * Math.sin(w * t);
+    }
+    return { A: Math.sqrt(2 * s2 / n), delta: Math.atan2(2 * ss / n, 2 * sc / n) };
+  }
+  function runSelfTest() {
+    var lines = [], pass = 0, fail = 0;
+    function relCheck(name, exp, act, tol) {
+      var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+      var ok = rel <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+        ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+      if (ok) { pass++; } else { fail++; }
+    }
+    function absCheck(name, exp, act, tol) {
+      var err = Math.abs(act - exp);
+      var ok = err <= tol;
+      lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toFixed(5) +
+        ' actual=' + act.toFixed(5) + ' abserr(deg)=' + err.toExponential(2) + ' tol=' + tol);
+      if (ok) { pass++; } else { fail++; }
+    }
+    var pp = { omega: 1, omega0: 1, gamma: 0.1, f0: 1 };
+    var freqs = [0.5, 1.0, 2.0], i;
+    for (i = 0; i < freqs.length; i++) {
+      var w = freqs[i];
+      pp.omega = w;
+      var ms = measureSteady(pp, w, 0.004);
+      relCheck('ST1 稳态幅值 ω=' + w, ampA(pp, w), ms.A, 1e-3);
+      absCheck('ST2 相位滞后 ω=' + w, phaseD(pp, w) * 180 / Math.PI, ms.delta * 180 / Math.PI, 0.1);
+    }
+    var p3 = { omega: 1, omega0: 1, gamma: 0.1, f0: 1 };
+    var wv = 0.02, wA = 0, vA = -1, wP = 0, vP = -1;
+    while (wv <= 2.0 + 1e-9) {
+      var av = ampA(p3, wv), pv = powP(p3, wv);
+      if (av > vA) { vA = av; wA = wv; }
+      if (pv > vP) { vP = pv; wP = wv; }
+      wv += 0.0002;
+    }
+    relCheck('ST3 功率峰频率 ω=ω₀', 1, wP, 0.01);
+    relCheck('ST3 幅值峰频率 ω_R', Math.sqrt(p3.omega0 * p3.omega0 - 2 * p3.gamma * p3.gamma), wA, 0.01);
+    var pq = { omega0: 1, gamma: 0.05, f0: 1 };
+    var Ppk = powP(pq, 1.0);
+    function bis(a, b, increasing) {
+      for (var k = 0; k < 70; k++) {
+        var m = (a + b) / 2;
+        if ((powP(pq, m) > Ppk / 2) === increasing) { b = m; } else { a = m; }
+      }
+      return (a + b) / 2;
+    }
+    var lo = bis(0.02, 1.0, true), hi = bis(1.0, 4.0, false);
+    relCheck('ST4 半功率带宽 Δω=2γ', 2 * pq.gamma, hi - lo, 0.02);
+    var pf = { omega: 0, omega0: 1, gamma: 0.15, f0: 0 };
+    var t5 = 0, x5 = 1, v5 = 0, h5 = 0.002, r5, pv5 = 0, pt5 = 0, px5 = 1;
+    var ts = [], ys = [];
+    while (t5 < 45) {
+      r5 = rk4(x5, v5, t5, h5, pf); x5 = r5.x; v5 = r5.v; t5 += h5;
+      if (pv5 !== 0 && (pv5 > 0) !== (v5 > 0)) {
+        if (t5 > 1 && Math.abs(px5) > 1e-4) { ts.push(pt5); ys.push(Math.log(Math.abs(px5))); }
+      }
+      pv5 = v5; pt5 = t5; px5 = x5;
+    }
+    var m5 = ts.length, tb = 0, yb = 0, i5;
+    for (i5 = 0; i5 < m5; i5++) { tb += ts[i5]; yb += ys[i5]; }
+    tb /= m5; yb /= m5;
+    var num = 0, den = 0;
+    for (i5 = 0; i5 < m5; i5++) {
+      num += (ts[i5] - tb) * (ys[i5] - yb);
+      den += (ts[i5] - tb) * (ts[i5] - tb);
+    }
+    relCheck('ST5 瞬态衰减率 = γ', pf.gamma, -num / den, 0.02);
+    var w1 = 1.0, w2 = 1.1, dw = Math.abs(w2 - w1);
+    var h6 = 0.002, L = 36, N6 = Math.floor(220 / h6), half = Math.floor(L / 2 / h6), k6;
+    var xs = new Float64Array(N6);
+    for (k6 = 0; k6 < N6; k6++) {
+      var tt = k6 * h6;
+      xs[k6] = Math.cos(w1 * tt) + Math.cos(w2 * tt);
+    }
+    var run = 0;
+    for (k6 = 0; k6 < half; k6++) { run += xs[k6] * xs[k6]; }
+    var cross = [], pw = null;
+    for (k6 = half; k6 < N6 - half; k6++) {
+      run += xs[k6 + half] * xs[k6 + half] - xs[k6 - half] * xs[k6 - half];
+      var wm = run / (2 * half) - 1;
+      if (pw !== null && pw < 0 && wm >= 0) {
+        var f6 = -pw / (wm - pw);
+        var tc = (k6 - 1 + f6) * h6;
+        if (tc > 20) { cross.push(tc); }
+      }
+      pw = wm;
+    }
+    var TbE = TAU / dw;
+    if (cross.length >= 2) {
+      relCheck('ST6 拍周期 T_b=2π/|Δω|', TbE, (cross[cross.length - 1] - cross[0]) / (cross.length - 1), 0.01);
+    } else {
+      lines.push('[FAIL] ST6 拍周期：过零点不足 ' + cross.length);
+      fail++;
+    }
+    var mx6 = 0;
+    for (k6 = half; k6 < N6; k6++) {
+      if (Math.abs(xs[k6]) > mx6) { mx6 = Math.abs(xs[k6]); }
+    }
+    relCheck('ST6 包络幅值 2F₀', 2, mx6, 0.02);
+    lines.push('SELFTEST ' + pass + '/' + (pass + fail) + ' PASS');
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n');
+    window.__selftest = { passed: pass, failed: fail, details: lines.join('\n') };
+  }
+  function boot() {
+    readUrl();
+    syncSliders();
+    renderEq();
+    document.getElementById('sceneSelect').value = scene;
+    document.getElementById('grp-forced').hidden = (scene !== 'forced');
+    document.getElementById('grp-resonance').hidden = (scene !== 'resonance');
+    document.getElementById('grp-beats').hidden = (scene !== 'beats');
+    if (/[?&]selftest=1(?:&|$)/.test(location.search)) {
+      runSelfTest();
+      return;
+    }
+    wireControls();
+    fit();
+    window.addEventListener('resize', fit);
+    var last = 0;
+    function loop(ts) {
+      if (!last) { last = ts; }
+      var dt = Math.min(0.05, (ts - last) / 1000);
+      last = ts;
+      if (!paused && scene !== 'resonance') { advance(dt * P.speed); }
+      draw();
+      requestAnimationFrame(loop);
+    }
+    resetSim();
+    requestAnimationFrame(loop);
+  }
+  boot();
+})();
+</script>
+<script defer src="../../assets/cosmos/tm-cosmos.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+<script defer src="../../assets/tm-seq.js"></script>
+</body>
+</html>

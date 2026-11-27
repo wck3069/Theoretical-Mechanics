@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>双曲运动与恒固有加速度 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/cosmos/tm-cosmos.css">
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#05070f; --panel:#0b1024; --line:rgba(146,182,255,.16);
+    --text:#eaf0ff; --muted:#92b6ff; --accent:#9fe6e6; --ice:#7fe0ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:ui-sans-serif,system-ui,"Segoe UI",sans-serif;color:var(--text)}
+  .wrap{width:min(1280px, calc(100% - 32px));margin:0 auto;padding:26px 0 36px}
+  .top{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end;margin-bottom:18px}
+  h1{margin:0;font-size:clamp(24px,3.5vw,34px);font-weight:650;letter-spacing:-.02em}
+  h1 span{display:block;font-size:13px;color:var(--muted);font-weight:500;letter-spacing:0;margin-top:5px}
+  .meta{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px}
+  .app{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+  .stage{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:linear-gradient(180deg, rgba(12,18,40,.92), rgba(7,11,25,.96));min-height:600px}
+  canvas{display:block;width:100%;height:100%}
+  .hud{position:absolute;left:14px;top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;pointer-events:none;width:min(560px,calc(100% - 28px))}
+  .stat{padding:8px 10px;border-radius:10px;background:rgba(5,8,18,.58);border:1px solid rgba(146,182,255,.13);backdrop-filter:blur(6px)}
+  .stat b{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px}
+  .stat span{font-size:15px;font-variant-numeric:tabular-nums}
+  .legend{position:absolute;right:14px;bottom:12px;display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);pointer-events:none;background:rgba(5,8,18,.55);border:1px solid var(--line);padding:7px 10px;border-radius:9px}
+  .legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+  .selftest{position:absolute;left:14px;bottom:12px;width:min(560px,calc(100% - 28px));max-height:64%;overflow:auto;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(5,8,18,.88);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}
+  .panel{border:1px solid var(--line);border-radius:14px;background:rgba(11,16,36,.88);backdrop-filter:blur(8px);padding:14px}
+  .eqbox{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:rgba(5,8,18,.5);border:1px solid var(--line);color:#dbe6ff;font-size:13.5px;line-height:1.9}
+  .eqbox .num{display:inline-block;min-width:88px;color:var(--muted);font-size:12px}
+  .eqrow{margin:2px 0}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  select,button{border:1px solid rgba(146,182,255,.28);border-radius:10px;background:rgba(255,255,255,.04);color:var(--text);padding:8px 10px;cursor:pointer;font:inherit}
+  select{flex:1;min-width:180px}
+  button:hover{border-color:var(--accent);background:rgba(159,230,230,.14)}
+  button.on{border-color:var(--accent);background:rgba(159,230,230,.22)}
+  .check{display:flex;gap:8px;align-items:center;font-size:13px;color:#dbe6ff;margin:10px 0;cursor:pointer}
+  .check input{width:16px;height:16px;accent-color:var(--ice)}
+  .scene{margin-bottom:10px}
+  .slider{display:block;margin:10px 0}
+  .slider .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--muted);margin-bottom:4px}
+  .slider .lab output{color:var(--accent);font-variant-numeric:tabular-nums;font-size:13px}
+  input[type=range]{width:100%;accent-color:var(--accent);height:22px}
+  details{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);padding:9px 12px;margin-top:10px}
+  summary{cursor:pointer;color:#dbe6ff;font-size:13px;font-weight:550}
+  details p{font-size:12.5px;color:var(--muted);line-height:1.75;margin:8px 0 0}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;color:var(--muted)}
+  th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
+  .foot{margin-top:14px;color:var(--muted);font-size:12px;opacity:.8}
+  .doc{display:block;margin:14px 0 8px;padding:10px 12px;border-radius:9px;border:1px solid rgba(120,165,255,.22);background:rgba(10,16,32,.55);color:#bfefff;text-decoration:none;font-size:12.5px}
+  .doc:hover{border-color:#7fe0ff}
+  @media (max-width: 1020px){
+    .app{grid-template-columns:1fr}
+    .stage{min-height:520px}
+  }
+</style>
+<!-- TM-SEO:START -->
+<meta name="description" content="双曲运动与恒固有加速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="author" content="wck3069">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://wck3069.github.io/Theoretical-Mechanics/modules/23-hyperbolic-motion/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="理论力学：从质点到哈密顿">
+<meta property="og:title" content="双曲运动与恒固有加速度 · 理论力学">
+<meta property="og:description" content="双曲运动与恒固有加速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta property="og:url" content="https://wck3069.github.io/Theoretical-Mechanics/modules/23-hyperbolic-motion/index.html">
+<meta property="og:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="理论力学：从质点到哈密顿">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="双曲运动与恒固有加速度 · 理论力学">
+<meta name="twitter:description" content="双曲运动与恒固有加速度 · 理论力学：可拖拽交互演示、公式推导与数值自测。">
+<meta name="twitter:image" content="https://wck3069.github.io/Theoretical-Mechanics/assets/og-cover.png">
+<!-- TM-SEO:END -->
+</head>
+<body data-cosmos="page" data-cosmos-accent="#9fe6e6">
+<div class="wrap">
+  <header class="top">
+    <h1>双曲运动与恒固有加速度</h1>
+    <div class="meta"><span>ch07 · 狭义相对论</span></div>
+  </header>
+  <main class="app">
+    <section class="stage">
+      <canvas id="cv"></canvas>
+      <div class="hud">
+        <div class="stat"><b id="l1">—</b><span id="h1">—</span></div>
+        <div class="stat"><b id="l2">—</b><span id="h2">—</span></div>
+        <div class="stat"><b id="l3">—</b><span id="h3">—</span></div>
+        <div class="stat"><b id="l4">—</b><span id="h4">—</span></div>
+        <div class="stat"><b id="l5">—</b><span id="h5">—</span></div>
+        <div class="stat"><b id="l6">—</b><span id="h6">—</span></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:#9fe6e6"></i>加速观察者（数值）</span>
+        <span><i style="background:#ffd27a"></i>光锥 / 光子 / 视界</span>
+        <span><i style="background:#7fe0ff"></i>惯性对照</span>
+        <span><i style="background:#ff8a7a"></i>牛顿线 / 警告</span>
+      </div>
+      <div id="selftestPanel" class="selftest" hidden></div>
+    </section>
+    <aside class="panel">
+      <div class="eqbox" id="eqBox"></div>
+      <div class="row">
+        <select id="sceneSelect" aria-label="场景选择">
+          <option value="worldline">场景1 闵氏图：双曲世界线与光子追逐</option>
+          <option value="velocity">场景2 速度曲线：v(t)、快度与光速上界</option>
+          <option value="clock">场景3 双生子钟：固有时累积 vs 坐标时</option>
+        </select>
+      </div>
+      <div class="row">
+        <button id="btn-pause">暂停</button>
+        <button id="btn-reset">重置</button>
+      </div>
+      <div class="row presets">
+        <button data-preset="std">标准双曲</button>
+        <button data-preset="higha">高加速度</button>
+        <button data-preset="chase">光子追逐</button>
+        <button data-preset="newton">牛顿对照</button>
+        <button data-preset="twins">双生子</button>
+      </div>
+      <div id="grp-worldline" class="scene">
+        <label class="slider"><span class="lab"><span>固有加速度 a</span><output id="o-a1"></output></span><input type="range" id="p-a1" aria-label="固有加速度 a"></label>
+        <label class="slider"><span class="lab"><span>惯性对照速度 v（从原点出发）</span><output id="o-vi"></output></span><input type="range" id="p-vi" aria-label="惯性对照世界线速度"></label>
+        <label class="check"><input type="checkbox" id="p-photon" aria-label="从原点发射追逐光子"><span>从原点（t=0）发射追逐光子 x = t</span></label>
+      </div>
+      <div id="grp-velocity" class="scene" hidden>
+        <label class="slider"><span class="lab"><span>固有加速度 a（牛顿线 v=at 在 t=1/a 越界）</span><output id="o-a2"></output></span><input type="range" id="p-a2" aria-label="固有加速度 a"></label>
+      </div>
+      <div id="grp-clock" class="scene" hidden>
+        <label class="slider"><span class="lab"><span>固有加速度 a</span><output id="o-a3"></output></span><input type="range" id="p-a3" aria-label="固有加速度 a"></label>
+        <label class="slider"><span class="lab"><span>旅程总坐标时 t_end</span><output id="o-tend"></output></span><input type="range" id="p-tend" aria-label="旅程总坐标时"></label>
+      </div>
+      <div class="row" id="grp-speed">
+        <label class="slider"><span class="lab"><span>动画时间流速</span><output id="o-speed"></output></span><input type="range" id="p-speed" aria-label="动画时间流速"></label>
+      </div>
+      <details open>
+        <summary>书稿映射（ch07 狭义相对论）</summary>
+        <table>
+          <tr><th>章节小节</th><th>对应可视化</th></tr>
+          <tr><td>闵可夫斯基时空与固有时 · 不变间隔与因果分类</td><td>场景1 光锥 45°、(x,ct) 等尺度、类时世界线在光锥内</td></tr>
+          <tr><td>闵可夫斯基时空与固有时 · 变速世界线与双生子</td><td>场景1 数值世界线 vs 解析双曲线；场景3 τ=∫√(1−v²)dt 逐段累积</td></tr>
+          <tr><td>恒力运动与固有加速度</td><td>场景2 dv/dt=a/γ³、v→c 渐进、η=artanh v、坐标加速度衰减、恒力例 α=F/m</td></tr>
+          <tr><td>数学注记：直线世界线固有时最大 · 计算与模拟</td><td>场景3 惯性直线 τ=t 最长，双曲曲线 τ=asinh(at)/a 更短</td></tr>
+          <tr><td>modernbox：快度把同向速度合成变成加法</td><td>场景2 快度线性图 η=aτ；自测 ST4 验证 tanh(η₁+η₂)</td></tr>
+        </table>
+        <p>公式取自《理论力学》第7章手稿：恒固有加速度运动 t=sinh(aτ)/a、x=cosh(aτ)/a（起点 x₀=1/a）、x²−t²=1/a²、固有时积分 τ=∫√(1−v²)dt、恒力例 α=F/m、坐标加速度 (F/m)[1+(Ft/mc)²]^(−3/2)。本页取单位制 <b>c=1</b>：x、t、1/a 用同一单位。</p>
+      </details>
+      <a class="doc" href="./note.html">📄 阅读推导与出处 →</a>
+      <p class="foot">数值方法：四阶 Runge-Kutta（RK4，h=0.001，联立积分 dv/dt=a(1−v²)^(3/2)、dx/dt=v、dτ/dt=√(1−v²)）。单位制：c=1。已知限制：v 截断于 1−1e-12（HUD 会提示截断）。当前参数会自动保存在浏览器地址栏中，复制链接即可分享当前实验状态。</p>
+    </aside>
+  </main>
+</div>
+<script>
+(function () {
+  'use strict';
+  var TAU = Math.PI * 2;
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+
+  var TEAL = '#9fe6e6', GOLD = '#ffd27a', ICE = '#7fe0ff', CORAL = '#ff8a7a';
+  var GRIDC = 'rgba(146,182,255,.12)', AXIS = 'rgba(146,182,255,.45)', MUT = 'rgba(146,182,255,.7)';
+  var VMAX = 1 - 1e-12;
+
+  var PDEF = {
+    a:     { min: 0.2,  max: 3,   step: 0.01, def: 1,   dec: 2 },
+    vi:    { min: 0.05, max: 0.95, step: 0.01, def: 0.6, dec: 2 },
+    tend:  { min: 2,   max: 30,   step: 0.5,  def: 10,  dec: 1 },
+    speed: { min: 0.05, max: 3,   step: 0.05, def: 0.5, dec: 2 }
+  };
+  var PKEYS = ['a', 'vi', 'tend', 'speed'];
+  var P = {};
+  PKEYS.forEach(function (k) { P[k] = PDEF[k].def; });
+  var photon = true;
+  var SCENES = ['worldline', 'velocity', 'clock'];
+  var scene = 'worldline';
+  var paused = false;
+  var clamped = false;
+
+  function asinh(x) { return Math.log(x + Math.sqrt(x * x + 1)); }
+  function fmt(v, d) { return isFinite(v) ? v.toFixed(d === undefined ? 3 : d) : '—'; }
+
+  function vAn(t, a) { return t / Math.sqrt(t * t + 1 / (a * a)); }
+  function xAn(t, a) { return Math.sqrt(t * t + 1 / (a * a)); }
+  function tauAn(t, a) { return asinh(a * t) / a; }
+  function gamAn(t, a) { return Math.sqrt(1 + a * a * t * t); }
+
+  function derivs(s, a) {
+    var v = s.v > VMAX ? VMAX : (s.v < 0 ? 0 : s.v);
+    var om = 1 - v * v;
+    var sq = Math.sqrt(om);
+    return { v: a * om * sq, x: v, tau: sq };
+  }
+  function stepRK4(s, a, h) {
+    var d1 = derivs(s, a);
+    var s2 = { v: s.v + d1.v * h / 2, x: s.x + d1.x * h / 2, tau: s.tau + d1.tau * h / 2 };
+    var d2 = derivs(s2, a);
+    var s3 = { v: s.v + d2.v * h / 2, x: s.x + d2.x * h / 2, tau: s.tau + d2.tau * h / 2 };
+    var d3 = derivs(s3, a);
+    var s4 = { v: s.v + d3.v * h, x: s.x + d3.x * h, tau: s.tau + d3.tau * h };
+    var d4 = derivs(s4, a);
+    var r = {
+      t: s.t + h,
+      v: s.v + (d1.v + 2 * d2.v + 2 * d3.v + d4.v) * h / 6,
+      x: s.x + (d1.x + 2 * d2.x + 2 * d3.x + d4.x) * h / 6,
+      tau: s.tau + (d1.tau + 2 * d2.tau + 2 * d3.tau + d4.tau) * h / 6
+    };
+    if (r.v >= VMAX) { r.v = VMAX; clamped = true; }
+    return r;
+  }
+  function integrate(a, tEnd, h) {
+    var s = { t: 0, v: 0, x: 1 / a, tau: 0 };
+    var n = Math.round(tEnd / h), hh = tEnd / n, i;
+    for (i = 0; i < n; i++) { s = stepRK4(s, a, hh); }
+    return s;
+  }
+
+  var HSTEP = 0.001;
+  var sim = { t: 0, v: 0, x: 1, tau: 0, buf: [], nextPush: 0 };
+  var acc = 0;
+  function resetSim() {
+    clamped = false;
+    sim.t = 0; sim.v = 0; sim.x = 1 / P.a; sim.tau = 0;
+    sim.buf = []; sim.nextPush = 0; acc = 0;
+  }
+  function advance(dt) {
+    if (scene === 'clock' && sim.t >= P.tend) { return; }
+    acc += dt;
+    while (acc >= HSTEP) {
+      var r = stepRK4(sim, P.a, HSTEP);
+      sim.t = r.t; sim.v = r.v; sim.x = r.x; sim.tau = r.tau;
+      acc -= HSTEP;
+      if (sim.t >= sim.nextPush) {
+        sim.buf.push({ t: sim.t, v: sim.v, x: sim.x, tau: sim.tau });
+        sim.nextPush = sim.t + 0.02;
+        if (sim.buf.length > 8000) { sim.buf.shift(); }
+      }
+    }
+  }
+
+  function fit() {
+    DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    var r = cv.parentNode.getBoundingClientRect();
+    W = Math.max(320, Math.floor(r.width));
+    H = Math.max(320, Math.floor(r.height));
+    cv.width = Math.floor(W * DPR);
+    cv.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  function txt(s, x, y, size, color, align, weight) {
+    ctx.font = (weight || 400) + ' ' + size + 'px ui-sans-serif,system-ui,sans-serif';
+    ctx.fillStyle = color;
+    ctx.textAlign = align || 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(String(s), x, y);
+  }
+  function seg(x1, y1, x2, y2, color, w, dash) {
+    ctx.save();
+    if (dash) { ctx.setLineDash(dash); }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function dotS(x, y, r, color) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+  function crossS(x, y, r, color) {
+    seg(x - r, y - r, x + r, y + r, color, 2);
+    seg(x - r, y + r, x + r, y - r, color, 2);
+  }
+  function frame(x, y, w, h, title) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(8,12,26,.55)';
+    ctx.strokeStyle = 'rgba(146,182,255,.22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    if (title) { txt(title, x + 8, y - 6, 12, 'rgba(146,182,255,.85)', 'left', 500); }
+  }
+  function gridStep(span) {
+    var raw = span / 8, p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), m = raw / p;
+    var u = m >= 5 ? 10 * p : (m >= 2 ? 5 * p : (m >= 1 ? 2 * p : p));
+    if (span / u < 3.5) { u = p; }
+    return u;
+  }
+
+  var VW = { x0: -6, x1: 12, t0: 0, t1: 10, X0: 52, Y0: 34, X1: 16, Y1: 44 };
+  function viewWorldline() {
+    var padL = 50, padR = 16, padT = 30, padB = 44;
+    var availW = W - padL - padR, availH = H - padT - padB;
+    var tTop = Math.max(8, sim.t * 1.06);
+    var spanY = tTop, spanX = 1.55 * tTop;
+    var s = Math.min(availW / spanX, availH / spanY);
+    var drawW = spanX * s, drawH = spanY * s;
+    VW.X0 = padL + (availW - drawW) / 2;
+    VW.Y0 = padT + (availH - drawH) / 2;
+    VW.X1 = padR + (availW - drawW) / 2;
+    VW.Y1 = padB + (availH - drawH) / 2;
+    VW.x0 = -0.55 * tTop; VW.x1 = 1.0 * tTop;
+    VW.t0 = 0; VW.t1 = tTop;
+    VW.s = s;
+  }
+  function px(x) { return VW.X0 + (x - VW.x0) * VW.s; }
+  function py(t) { return H - VW.Y1 - (t - VW.t0) * VW.s; }
+
+  function drawWorldline() {
+    viewWorldline();
+    var a = P.a, tEnd = sim.t;
+    var xm0 = VW.X0, xM1 = W - VW.X1, ym0 = VW.Y0, yM1 = H - VW.Y1;
+    frame(xm0, ym0, xM1 - xm0, yM1 - ym0, '闵可夫斯基图（c=1，两轴等尺度）：世界线 x²−t²=1/a² 与光子追逐');
+    var tTop = VW.t1;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(0));
+    ctx.lineTo(px(tTop), py(tTop));
+    ctx.lineTo(xM1, ym0);
+    ctx.lineTo(xm0, ym0);
+    ctx.lineTo(xm0, py(0));
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(159,230,230,.05)';
+    ctx.fill();
+    ctx.restore();
+    txt('视界之外 x < t：任何信号都追不上加速者', xm0 + 10, ym0 + 34, 11.5, 'rgba(159,230,230,.55)', 'left', 500);
+
+    var step = gridStep(tTop), v;
+    for (v = step; v <= tTop + 1e-9; v += step) {
+      if (px(v) <= xM1) { seg(px(v), ym0, px(v), yM1, GRIDC, 1); }
+      txt(fmt(v, step >= 1 ? 0 : 1), px(v), yM1 + 16, 10.5, MUT, 'center');
+    }
+    for (v = step; v <= tTop + 1e-9; v += step) {
+      if (py(v) >= ym0) { seg(xm0, py(v), xM1, py(v), GRIDC, 1); }
+      txt(fmt(v, step >= 1 ? 0 : 1), xm0 - 8, py(v) + 4, 10.5, MUT, 'right');
+    }
+    if (py(0) <= yM1 + 1) { seg(xm0, py(0), xM1, py(0), AXIS, 1.2); }
+    seg(px(0), yM1, px(0), ym0, AXIS, 1.2);
+    txt('x', xM1 + 4, py(0) - 6, 12.5, 'rgba(146,182,255,.85)');
+    txt('ct = t', px(0) + 8, ym0 + 12, 12.5, 'rgba(146,182,255,.85)');
+
+    var cFut = Math.min(tTop, VW.x1, -VW.x0);
+    seg(px(0), py(0), px(-cFut), py(cFut), 'rgba(255,210,122,.34)', 1.2, [5, 4]);
+    seg(px(0), py(0), px(cFut), py(cFut), 'rgba(255,210,122,.34)', 1.2, [5, 4]);
+    seg(px(0), py(0), px(-cFut), py(-cFut), 'rgba(255,210,122,.22)', 1, [5, 4]);
+    seg(px(0), py(0), px(cFut), py(-cFut), 'rgba(255,210,122,.22)', 1, [5, 4]);
+    txt('光锥 x = ±t（45°）', px(cFut) - 6, py(cFut) - 8, 11.5, 'rgba(255,210,122,.8)', 'right');
+
+    seg(px(0), py(0), px(tTop), py(tTop), 'rgba(255,210,122,.75)', 1.4, [9, 5]);
+    txt('Rindler 视界（双曲线渐近线 x = t）', px(tTop * 0.42) - 8, py(tTop * 0.42) + 22, 12, 'rgba(255,210,122,.95)', 'right', 500);
+
+    var N = 160, i, tt;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(159,230,230,.32)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for (i = 0; i <= N; i++) {
+      tt = tTop * i / N;
+      if (i === 0) { ctx.moveTo(px(xAn(tt, a)), py(tt)); } else { ctx.lineTo(px(xAn(tt, a)), py(tt)); }
+    }
+    ctx.stroke();
+    ctx.restore();
+    txt('解析双曲线 x = √(t²+1/a²)', px(xAn(tTop, a)) + 6, py(tTop) + 4, 11, 'rgba(159,230,230,.7)');
+
+    if (sim.buf.length > 1) {
+      ctx.save();
+      ctx.strokeStyle = TEAL;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      var started = false;
+      for (i = 0; i < sim.buf.length; i++) {
+        var b = sim.buf[i];
+        if (b.x > VW.x1 + 0.2) { break; }
+        if (!started) { ctx.moveTo(px(b.x), py(b.t)); started = true; }
+        else { ctx.lineTo(px(b.x), py(b.t)); }
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    var vi = P.vi;
+    seg(px(0), py(0), px(vi * tTop), py(tTop), 'rgba(127,224,255,.8)', 1.8);
+    if (vi * tEnd <= VW.x1) { dotS(px(vi * tEnd), py(tEnd), 4, ICE); }
+    txt('惯性对照 x = ' + fmt(vi, 2) + '·t', px(vi * tTop * 0.72) + 8, py(tTop * 0.72) - 10, 11.5, 'rgba(127,224,255,.9)');
+
+    var xT = sim.x > VW.x1 ? VW.x1 : sim.x;
+    dotS(px(1 / a), py(0), 3.5, TEAL);
+    txt('x₀ = 1/a = ' + fmt(1 / a, 3), px(1 / a) + 6, py(0) - 8, 11, 'rgba(159,230,230,.85)');
+
+    if (photon) {
+      var tp = Math.min(tEnd, tTop);
+      seg(px(0), py(0), px(tp), py(tp), GOLD, 2.4);
+      dotS(px(tp), py(tp), 4.5, GOLD);
+      txt('光子 x = t（光子永不追上：此线正是视界）', 14, py(Math.min(tTop, 3.2)) - 6, 11.5, 'rgba(255,210,122,.95)');
+      var gap = xT - tp;
+      if (tp > 0.05 && xT <= VW.x1) {
+        seg(px(tp), py(tp), px(xT), py(tp), CORAL, 2);
+        dotS(px(xT), py(tp), 6, TEAL);
+        var gmid = (px(tp) + px(xT)) / 2;
+        if (px(xT) - px(tp) > 26) {
+          txt('间距 ' + fmt(gap, 4), gmid, py(tp) - 8, 11.5, CORAL, 'center', 500);
+        } else {
+          txt('间距 ' + fmt(gap, 4), px(xT) + 10, py(tp) - 6, 11.5, CORAL, 'left', 500);
+        }
+      } else if (xT > VW.x1) {
+        dotS(xM1 - 2, py(Math.min(tEnd, tTop)), 6, TEAL);
+      }
+    } else {
+      dotS(px(xT), py(Math.min(tEnd, tTop)), 6, TEAL);
+    }
+
+    var gnow = xAn(tEnd, a) - tEnd;
+    setHud([
+      ['固有加速度 a', fmt(a, 2)],
+      ['v/c（数值）', fmt(sim.v, 5)],
+      ['γ = cosh(aτ)', fmt(gamAn(tEnd, a), 3)],
+      ['固有时 τ', fmt(sim.tau, 3)],
+      ['坐标时 t', fmt(tEnd, 3)],
+      [clamped ? 'v 截断于 1−1e-12' : '与光子间距（解析）', clamped ? '已触发' : fmt(gnow, 5)]
+    ]);
+  }
+
+  function drawVelocity() {
+    var a = P.a, tEnd = sim.t;
+    var padL = 56, padR = 18, top = 40, bot = 44;
+    var bx0 = padL, bx1 = W - padR, by0 = top, by1 = H - bot;
+    var tTop = Math.max(6, tEnd + 1);
+    var vTop = 1.3;
+    function mx(t) { return bx0 + (t / tTop) * (bx1 - bx0); }
+    function my(v) { return by1 - (v / vTop) * (by1 - by0); }
+    frame(bx0, by0, bx1 - bx0, by1 - by0, 'v(t)：dv/dt = a(1−v²)^(3/2) = a/γ³，数值(RK4) vs 牛顿线 v = a·t');
+
+    var ts = gridStep(tTop), vv;
+    for (vv = ts; vv <= tTop + 1e-9; vv += ts) {
+      seg(mx(vv), by0, mx(vv), by1, GRIDC, 1);
+      txt(fmt(vv, ts >= 1 ? 0 : 1), mx(vv), by1 + 16, 10.5, MUT, 'center');
+    }
+    for (vv = 0.25; vv <= 1.26; vv += 0.25) {
+      seg(bx0, my(vv), bx1, my(vv), vv === 1 ? 'rgba(255,210,122,.25)' : GRIDC, 1);
+      txt(fmt(vv, 2), bx0 - 8, my(vv) + 4, 10.5, MUT, 'right');
+    }
+    seg(bx0, my(0), bx1, my(0), AXIS, 1.2);
+    seg(bx0, my(1), bx1, my(1), 'rgba(255,210,122,.9)', 1.6, [8, 5]);
+    txt('v = c：光速上界（永远达不到）', bx1 - 8, my(1) - 8, 12, 'rgba(255,210,122,.95)', 'right', 500);
+    txt('t', bx1 + 6, my(0) + 4, 12.5, 'rgba(146,182,255,.85)');
+    txt('v', bx0 - 26, by0 + 6, 12.5, 'rgba(146,182,255,.85)');
+
+    var tn = 1 / a;
+    var tNLine = Math.min(tTop, 1.25 / a);
+    seg(mx(0), my(0), mx(tNLine), my(a * tNLine), 'rgba(255,138,122,.75)', 1.6, [6, 4]);
+    if (tn <= tTop) {
+      crossS(mx(tn), my(1), 7, CORAL);
+      txt('牛顿失效：v=at 于 t=1/a=' + fmt(tn, 3) + ' 处越出光速上界', mx(tn) + 12, my(1) + 26, 12, CORAL, 'left', 500);
+    }
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(159,230,230,.3)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    var N = 300, i, tt;
+    for (i = 0; i <= N; i++) {
+      tt = tTop * i / N;
+      if (i === 0) { ctx.moveTo(mx(tt), my(vAn(tt, a))); } else { ctx.lineTo(mx(tt), my(vAn(tt, a))); }
+    }
+    ctx.stroke();
+    ctx.restore();
+    txt('解析 v = t/√(t²+1/a²)', mx(tTop * 0.8), my(vAn(tTop * 0.8, a)) + 22, 11, 'rgba(159,230,230,.7)', 'center');
+
+    if (sim.buf.length > 1) {
+      ctx.save();
+      ctx.strokeStyle = TEAL;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      for (i = 0; i < sim.buf.length; i++) {
+        var b = sim.buf[i];
+        if (b.t > tTop) { break; }
+        if (i === 0) { ctx.moveTo(mx(b.t), my(b.v)); } else { ctx.lineTo(mx(b.t), my(b.v)); }
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+    var tc = Math.min(tEnd, tTop);
+    dotS(mx(tc), my(Math.min(sim.v, 1)), 5, TEAL);
+    seg(mx(tc), my(0), mx(tc), my(Math.min(sim.v, 1)), 'rgba(159,230,230,.25)', 1, [3, 3]);
+
+    var iw = Math.min(300, (bx1 - bx0) * 0.42), ih = Math.min(170, (by1 - by0) * 0.44);
+    var ix1 = bx1 - 12, iy1 = by0 + 12, ix0 = ix1 - iw, iy0 = iy1 + ih;
+    frame(ix0, iy0, iw, ih, '快度 η = aτ：随固有时严格线性');
+    var tauTop = Math.max(tauAn(tTop, a) * 1.05, 0.5);
+    var etaTop = a * tauTop;
+    function ix(tau) { return ix0 + (tau / tauTop) * iw; }
+    function iy(eta) { return iy0 + ih - (eta / etaTop) * ih * 0.92; }
+    seg(ix(0), iy(0), ix(tauTop), iy(etaTop), TEAL, 2);
+    seg(ix(0), iy(0), ix(0), iy0 + ih, AXIS, 1);
+    seg(ix(0), iy(0), ix0 + iw, iy(0), AXIS, 1);
+    var tm = Math.min(sim.tau, tauTop);
+    dotS(ix(tm), iy(a * tm), 4, TEAL);
+    txt('η = ' + fmt(a * sim.tau, 3), ix0 + iw - 6, iy0 + 14, 11, TEAL, 'right', 500);
+    txt('τ', ix0 + iw + 4, iy0 + ih + 4, 11.5, MUT);
+    txt('τ_max ' + fmt(tauTop, 2), ix0 + iw - 4, iy0 + ih - 6, 10, MUT, 'right');
+
+    var gm = gamAn(tEnd, a);
+    setHud([
+      ['v/c（数值）', fmt(Math.min(sim.v, 1), 5)],
+      ['快度 η = aτ = artanh v', fmt(a * sim.tau, 3)],
+      ['γ = cosh η', fmt(gm, 3)],
+      ['坐标加速度 dv/dt = a/γ³', fmt(a / (gm * gm * gm), 5)],
+      ['固有时 τ', fmt(sim.tau, 3)],
+      clamped ? ['v 截断于 1−1e-12', '已触发'] : ['牛顿线 v=at', fmt(a * tEnd, 3)]
+    ]);
+  }
+
+  function drawClock() {
+    var a = P.a;
+    var tend = P.tend, tEnd = sim.t > tend ? tend : sim.t;
+    var padL = 56, padR = 18, top = 40, bot = 96;
+    var bx0 = padL, bx1 = W - padR, by0 = top, by1 = H - bot;
+    var zTop = tend * 1.04;
+    function mx(t) { return bx0 + (t / zTop) * (bx1 - bx0); }
+    function my(v) { return by1 - (v / zTop) * (by1 - by0); }
+    frame(bx0, by0, bx1 - bx0, by1 - by0, '沿世界线积累固有时 τ = ∫√(1−v²) dt = asinh(at)/a（手稿 §计算与模拟）');
+
+    var st = gridStep(tend), vv;
+    for (vv = st; vv <= tend + 1e-9; vv += st) {
+      seg(mx(vv), by0, mx(vv), by1, GRIDC, 1);
+      txt(fmt(vv, st >= 1 ? 0 : 1), mx(vv), by1 + 16, 10.5, MUT, 'center');
+      seg(bx0, my(vv), bx1, my(vv), GRIDC, 1);
+      txt(fmt(vv, st >= 1 ? 0 : 1), bx0 - 8, my(vv) + 4, 10.5, MUT, 'right');
+    }
+    seg(bx0, my(0), bx1, my(0), AXIS, 1.2);
+    seg(bx0, my(0), bx0, by1, AXIS, 1.2);
+    txt('坐标时 t', bx1 - 8, by1 - 8, 12, MUT, 'right');
+    txt('钟读数', bx0 + 8, by0 + 14, 12, MUT);
+
+    seg(mx(0), my(0), mx(tend), my(tend), 'rgba(127,224,255,.8)', 1.8);
+    txt('惯性留守者：τ = t（直线世界线固有时最大）', mx(tend * 0.36), my(tend * 0.36) - 12, 11.5, 'rgba(127,224,255,.9)');
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(159,230,230,.3)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    var N = 240, i, tt;
+    for (i = 0; i <= N; i++) {
+      tt = tend * i / N;
+      if (i === 0) { ctx.moveTo(mx(tt), my(tauAn(tt, a))); } else { ctx.lineTo(mx(tt), my(tauAn(tt, a))); }
+    }
+    ctx.stroke();
+    ctx.restore();
+    if (sim.buf.length > 1) {
+      ctx.save();
+      ctx.strokeStyle = TEAL;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      for (i = 0; i < sim.buf.length; i++) {
+        var b = sim.buf[i];
+        if (b.t > tend) { break; }
+        if (i === 0) { ctx.moveTo(mx(b.t), my(b.tau)); } else { ctx.lineTo(mx(b.t), my(b.tau)); }
+      }
+      ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.strokeStyle = 'rgba(127,224,255,.5)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3, 4]);
+      ctx.beginPath();
+      for (i = 0; i < sim.buf.length; i++) {
+        b = sim.buf[i];
+        if (b.t > tend) { break; }
+        if (i === 0) { ctx.moveTo(mx(b.t), my(b.t)); } else { ctx.lineTo(mx(b.t), my(b.t)); }
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+    var tc = Math.min(tEnd, tend);
+    var tauC = sim.tau > tauAn(tend, a) ? tauAn(tend, a) : sim.tau;
+    seg(mx(tc), my(0), mx(tc), my(tc), 'rgba(127,224,255,.4)', 1.4);
+    dotS(mx(tc), my(tauC), 5, TEAL);
+    dotS(mx(tc), my(tc), 4, ICE);
+
+    var barY = H - 58, barH = 16, barW0 = padL, barW = (bx1 - bx0) * 0.92;
+    txt('旅程 t = ' + fmt(tc, 2) + ' / ' + fmt(tend, 1) + (tc >= tend ? '（完成）' : ''), bx0, barY - 22, 12, MUT, 'left', 500);
+    frame(barW0, barY, barW, barH, null);
+    ctx.save();
+    ctx.fillStyle = 'rgba(159,230,230,.75)';
+    ctx.fillRect(barW0, barY, barW * (tauC / zTop), barH);
+    ctx.fillStyle = 'rgba(127,224,255,.55)';
+    ctx.fillRect(barW0, barY + barH + 6, barW * Math.min(tc / zTop, 1), barH);
+    ctx.restore();
+    txt('加速者钟 τ = ' + fmt(tauC, 3), barW0 + 8, barY + 12, 11.5, TEAL);
+    txt('留守钟 τ = t = ' + fmt(Math.min(tc, tend), 3), barW0 + 8, barY + barH + 18, 11.5, ICE);
+
+    var tauFin = tauAn(tend, a);
+    setHud([
+      ['固有加速度 a', fmt(a, 2)],
+      ['坐标时 t（留守钟）', fmt(Math.min(tc, tend), 3)],
+      ['固有时 τ（加速钟）', fmt(tauC, 3)],
+      ['比值 τ/t（t=t_end 时）', fmt(tauFin / tend, 4)],
+      ['年龄差 t − τ（终点）', fmt(tend - tauFin, 3)],
+      ['快度 η = aτ', fmt(a * tauC, 3)]
+    ]);
+  }
+
+  function setHud(pairs) {
+    for (var i = 0; i < 6; i++) {
+      document.getElementById('l' + (i + 1)).textContent = pairs[i][0];
+      document.getElementById('h' + (i + 1)).textContent = pairs[i][1];
+    }
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (scene === 'worldline') { drawWorldline(); }
+    else if (scene === 'velocity') { drawVelocity(); }
+    else { drawClock(); }
+  }
+
+  var SLIDERS = [
+    { id: 'p-a1', key: 'a', out: 'o-a1' },
+    { id: 'p-vi', key: 'vi', out: 'o-vi' },
+    { id: 'p-a2', key: 'a', out: 'o-a2' },
+    { id: 'p-a3', key: 'a', out: 'o-a3' },
+    { id: 'p-tend', key: 'tend', out: 'o-tend' },
+    { id: 'p-speed', key: 'speed', out: 'o-speed' }
+  ];
+  function syncSliders() {
+    for (var i = 0; i < SLIDERS.length; i++) {
+      var s = SLIDERS[i];
+      var el = document.getElementById(s.id);
+      el.min = PDEF[s.key].min;
+      el.max = PDEF[s.key].max;
+      el.step = PDEF[s.key].step;
+      el.value = P[s.key];
+      var lab = fmt(P[s.key], PDEF[s.key].dec);
+      document.getElementById(s.out).textContent = lab;
+      el.setAttribute('aria-valuetext', lab);
+    }
+    document.getElementById('p-photon').checked = photon;
+  }
+  function updateUrl() {
+    var q = new URLSearchParams();
+    q.set('scene', scene);
+    for (var i = 0; i < PKEYS.length; i++) {
+      q.set(PKEYS[i], String(P[PKEYS[i]]));
+    }
+    q.set('photon', photon ? '1' : '0');
+    if (/[?&]selftest=1/.test(location.search)) { q.set('selftest', '1'); }
+    try {
+      history.replaceState(null, '', location.pathname + '?' + q.toString());
+    } catch (err) { /* file:// 下部分浏览器禁止改写 URL */ }
+  }
+  function setScene(s) {
+    scene = s;
+    document.getElementById('grp-worldline').hidden = (s !== 'worldline');
+    document.getElementById('grp-velocity').hidden = (s !== 'velocity');
+    document.getElementById('grp-clock').hidden = (s !== 'clock');
+    document.getElementById('sceneSelect').value = s;
+    renderEq();
+    resetSim();
+    updateUrl();
+  }
+  function renderEq() {
+    var box = document.getElementById('eqBox'), h = '';
+    if (scene === 'worldline') {
+      h = '<div class="eqrow"><span class="num">世界线</span>x² − t² = 1/a²，起点 (0, 1/a)；t=sinh(aτ)/a，x=cosh(aτ)/a</div>' +
+        '<div class="eqrow"><span class="num">光追逐</span>光子 x=t 与观察者间距 √(t²+1/a²) − t = e^(−aτ)/a → 0，永不等于 0</div>' +
+        '<div class="eqrow"><span class="num">视界</span>x=t 是双曲线渐近线（Rindler 视界）：x&lt;t 区的事件无法影响加速者</div>' +
+        '<div class="eqrow"><span class="num">当前</span>a=' + fmt(P.a, 2) + '，1/a=' + fmt(1 / P.a, 3) + '，惯性对照 v=' + fmt(P.vi, 2) + '</div>';
+    } else if (scene === 'velocity') {
+      h = '<div class="eqrow"><span class="num">方程</span>dv/dt = a(1−v²)^(3/2) = a/γ³（手稿：(F/m)[1+(Ft/mc)²]^(−3/2)）</div>' +
+        '<div class="eqrow"><span class="num">解</span>v(t) = t/√(t²+1/a²) &lt; 1；γ = √(1+a²t²) = cosh η</div>' +
+        '<div class="eqrow"><span class="num">快度</span>η = artanh v = aτ（随固有时线性）；tanh(η₁+η₂)=(v₁+v₂)/(1+v₁v₂)</div>' +
+        '<div class="eqrow"><span class="num">牛顿对照</span>v=at 在 t=1/a=' + fmt(1 / P.a, 3) + ' 越出光速上界——恒力下 p=Ft 线性、v 有界</div>';
+    } else {
+      h = '<div class="eqrow"><span class="num">固有时</span>τ(t) = ∫₀ᵗ √(1−v²) dt = asinh(at)/a（手稿 §变速世界线、§计算与模拟）</div>' +
+        '<div class="eqrow"><span class="num">对照</span>惯性留守者走直线世界线，τ=t；固定端点间直线固有时最大</div>' +
+        '<div class="eqrow"><span class="num">渐近</span>t≫1/a 时 τ ≈ ln(2at)/a：坐标时无限、钟却对数增长</div>' +
+        '<div class="eqrow"><span class="num">当前</span>a=' + fmt(P.a, 2) + '，t_end=' + fmt(P.tend, 1) + '，τ(t_end)=' + fmt(tauAn(P.tend, P.a), 3) + '，τ/t=' + fmt(tauAn(P.tend, P.a) / P.tend, 4) + '</div>';
+    }
+    box.innerHTML = h;
+  }
+  function readUrl() {
+    var q = new URLSearchParams(location.search);
+    for (var i = 0; i < PKEYS.length; i++) {
+      var k = PKEYS[i];
+      if (q.has(k)) {
+        var v = parseFloat(q.get(k));
+        if (isFinite(v)) {
+          P[k] = Math.max(PDEF[k].min, Math.min(PDEF[k].max, v));
+        }
+      }
+    }
+    var s = q.get('scene');
+    if (s && SCENES.indexOf(s) >= 0) { scene = s; }
+    var ph = q.get('photon');
+    if (ph === '0' || ph === 'false') { photon = false; }
+    if (ph === '1' || ph === 'true') { photon = true; }
+  }
+  var PRESETS = {
+    std: { scene: 'worldline', a: 1, vi: 0.6, photon: true, speed: 0.5 },
+    higha: { scene: 'worldline', a: 2.5, vi: 0.6, photon: true, speed: 0.5 },
+    chase: { scene: 'worldline', a: 0.5, vi: 0.55, photon: true, speed: 0.35 },
+    newton: { scene: 'velocity', a: 1, speed: 0.35 },
+    twins: { scene: 'clock', a: 1, tend: 10, speed: 0.6 }
+  };
+  function applyPreset(name) {
+    var pr = PRESETS[name];
+    if (!pr) { return; }
+    PKEYS.forEach(function (k) {
+      if (pr.hasOwnProperty(k)) { P[k] = pr[k]; }
+    });
+    if (pr.hasOwnProperty('photon')) { photon = pr.photon; }
+    syncSliders();
+    setScene(pr.scene);
+  }
+  function wireControls() {
+    document.getElementById('sceneSelect').addEventListener('change', function (e) {
+      setScene(e.target.value);
+    });
+    SLIDERS.forEach(function (s) {
+      document.getElementById(s.id).addEventListener('input', function (e) {
+        P[s.key] = parseFloat(e.target.value);
+        syncSliders();
+        renderEq();
+        updateUrl();
+      });
+    });
+    document.getElementById('p-photon').addEventListener('change', function (e) {
+      photon = e.target.checked;
+      updateUrl();
+    });
+    document.getElementById('btn-pause').addEventListener('click', function () {
+      paused = !paused;
+      this.textContent = paused ? '继续' : '暂停';
+      this.classList.toggle('on', paused);
+    });
+    document.getElementById('btn-reset').addEventListener('click', function () {
+      resetSim();
+    });
+    var ps = document.querySelectorAll('.presets button');
+    for (var i = 0; i < ps.length; i++) {
+      ps[i].addEventListener('click', function () {
+        applyPreset(this.getAttribute('data-preset'));
+      });
+    }
+  }
+
+  function relCheck(lines, name, exp, act, tol) {
+    var rel = Math.abs(act - exp) / Math.max(Math.abs(exp), 1e-12);
+    var ok = rel <= tol;
+    lines.push((ok ? '[PASS] ' : '[FAIL] ') + name + ' : expected=' + exp.toExponential(6) +
+      ' actual=' + act.toExponential(6) + ' relerr=' + rel.toExponential(2) + ' tol=' + tol);
+    return ok;
+  }
+
+  function runSelfTest() {
+    var lines = [], pass = 0, fail = 0, ok;
+    function rec(b) { if (b) { pass++; } else { fail++; } }
+    var a, s, ts, i, k;
+
+    a = 1; s = integrate(a, 20, 1e-3);
+    ok = s.v < 1 && s.x > s.t;
+    lines.push((ok ? '[PASS] ' : '[FAIL] ') + 'ST1 状态有界 x>t 且 v<1 : expected=x-t>0,v<1 actual=x=' +
+      s.x.toFixed(6) + ',t=' + s.t.toFixed(6) + ',v=' + s.v.toFixed(9));
+    if (ok) { pass++; } else { fail++; }
+
+    var h = 1e-3, n = Math.round(20 / h), st = { t: 0, v: 0, x: 1 / a, tau: 0 }, res = 0, vmax = 0;
+    var marks = [1, 5, 20], vs = [], taus = [];
+    for (i = 1; i <= n; i++) {
+      st = stepRK4(st, a, h);
+      var rr = st.x * st.x - st.t * st.t - 1 / (a * a);
+      if (Math.abs(rr) > res) { res = Math.abs(rr); }
+      if (st.v > vmax) { vmax = st.v; }
+      for (k = 0; k < marks.length; k++) {
+        if (i === Math.round(marks[k] / h)) { vs.push(st.v); taus.push(st.tau); }
+      }
+    }
+    ok = res < 1e-8;
+    lines.push((ok ? '[PASS] ' : '[FAIL] ') + 'ST1 双曲不变量 max|x²−t²−1/a²| : expected=<1e-8 actual=' +
+      res.toExponential(4) + ' (a=1, RK4 h=1e-3, t到20)');
+    if (ok) { pass++; } else { fail++; }
+    ok = vmax < 1;
+    lines.push((ok ? '[PASS] ' : '[FAIL] ') + 'ST2 v(t)<1 全程 : expected=<1 actual max v=' + vmax.toFixed(12));
+    if (ok) { pass++; } else { fail++; }
+    for (k = 0; k < marks.length; k++) {
+      rec(relCheck(lines, 'ST2 v(t) t=' + marks[k], vAn(marks[k], a), vs[k], 1e-6));
+    }
+    for (k = 0; k < marks.length; k++) {
+      rec(relCheck(lines, 'ST3 固有时 τ(t) t=' + marks[k], tauAn(marks[k], a), taus[k], 1e-6));
+    }
+
+    var pairs = [[0.5, 0.9], [1.2, 2.1], [0.3, 3.0]];
+    for (k = 0; k < pairs.length; k++) {
+      var e1 = pairs[k][0], e2 = pairs[k][1];
+      var v1 = Math.tanh(e1), v2 = Math.tanh(e2);
+      rec(relCheck(lines, 'ST4 快度相加 η=' + e1 + '+' + e2, Math.tanh(e1 + e2), (v1 + v2) / (1 + v1 * v2), 1e-9));
+    }
+
+    var st5 = integrate(1, 100, 1e-3);
+    var t5 = st5.t;
+    var gapNum = st5.x - t5;
+    var gapAn = Math.sqrt(t5 * t5 + 1) - t5;
+    var tau5 = st5.tau;
+    var gapExp = Math.exp(-tau5);
+    ok = gapNum > 0 && st5.x > t5;
+    lines.push((ok ? '[PASS] ' : '[FAIL] ') + 'ST5 t=100 处光子仍未追上（gap>0） : expected=>0 actual=' + gapNum.toExponential(6));
+    if (ok) { pass++; } else { fail++; }
+    rec(relCheck(lines, 'ST5 数值间距 vs √(t²+1/a²)−t', gapAn, gapNum, 1e-6));
+    rec(relCheck(lines, 'ST5 间距 vs e^(−aτ)/a', gapExp, gapNum, 1e-6));
+
+    var cases = [[1, 0.1], [0.5, 0.2]];
+    for (k = 0; k < cases.length; k++) {
+      var aa = cases[k][0], tnw = cases[k][1];
+      var sn = integrate(aa, tnw, 1e-4);
+      rec(relCheck(lines, 'ST6 牛顿位置 x(t) a=' + aa, 1 / aa + 0.5 * aa * tnw * tnw, sn.x, 0.01));
+      rec(relCheck(lines, 'ST6 牛顿速度 v(t) a=' + aa, aa * tnw, sn.v, 0.01));
+    }
+
+    lines.push('SELFTEST ' + pass + '/' + (pass + fail) + ' PASS');
+    var panel = document.getElementById('selftestPanel');
+    panel.hidden = false;
+    panel.textContent = lines.join('\n');
+    window.__selftest = { passed: pass, failed: fail, details: lines.join('\n') };
+  }
+  function boot() {
+    readUrl();
+    syncSliders();
+    renderEq();
+    document.getElementById('sceneSelect').value = scene;
+    document.getElementById('grp-worldline').hidden = (scene !== 'worldline');
+    document.getElementById('grp-velocity').hidden = (scene !== 'velocity');
+    document.getElementById('grp-clock').hidden = (scene !== 'clock');
+    if (/[?&]selftest=1(?:&|$)/.test(location.search)) {
+      runSelfTest();
+      return;
+    }
+    wireControls();
+    fit();
+    window.addEventListener('resize', fit);
+    var last = 0;
+    function loop(ts) {
+      if (!last) { last = ts; }
+      var dt = Math.min(0.05, (ts - last) / 1000);
+      last = ts;
+      if (!paused) { advance(dt * P.speed * 10); }
+      draw();
+      requestAnimationFrame(loop);
+    }
+    resetSim();
+    requestAnimationFrame(loop);
+  }
+  boot();
+})();
+</script>
+<script defer src="../../assets/cosmos/tm-cosmos.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/tm-offline-kb.js"></script>
+<script defer src="../../assets/tm-ai-panel.js"></script>
+<script defer src="../../assets/tm-seq.js"></script>
+</body>
+</html>

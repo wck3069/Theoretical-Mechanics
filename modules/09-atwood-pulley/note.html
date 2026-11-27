@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>有转动惯量的 Atwood 机 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>有转动惯量的 Atwood 机</h1>
+<p class="ms-lead">本讲义处理作业-8 第 1 题：不可伸长的轻绳跨过有转动惯量 、半径 的定滑轮， 两端悬挂质量 （）。以 向下的位移 为广义坐标， 用拉格朗日方法求两物体加速度与绳两端张力。核心结果是等效质量 与张力差 。 配套交互页对三组参数做数值积分，与解析式相对误差在 量级。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">有转动惯量的 Atwood 机 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#作业映射">1作业映射</a></li>
+<li class="l2"><a href="#sec:model">2模型与假设</a></li>
+<li class="l2"><a href="#sec:derive">3推导</a></li>
+<li class="l3"><a href="#拉格朗日量">3.1拉格朗日量</a></li>
+<li class="l3"><a href="#运动方程">3.2运动方程</a></li>
+<li class="l3"><a href="#张力">3.3张力</a></li>
+<li class="l2"><a href="#sec:result">4解析结果</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l2"><a href="#讨论">6讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="作业映射"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-8 Q1</td>
+<td style="text-align: left;">定滑轮两端挂 <span class="math inline">\(m_1,m_2\)</span>，绳不打滑，求 <span class="math inline">\(a,T_1,T_2\)</span></td>
+<td style="text-align: left;">拉格朗日量、转动惯量、张力差</td>
+<td style="text-align: center;"><a href="#sec:derive" data-reference-type="ref" data-reference="sec:derive">3</a>–<a href="#sec:result" data-reference-type="ref" data-reference="sec:result">4</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:model"><span class="ms-secno">2</span>模型与假设</h2>
+<p>取 <span class="math inline">\(m_2\)</span> 向下的位移 <span class="math inline">\(s\)</span> 为广义坐标。绳不可伸长且不打滑，因此：</p>
+<ol>
+<li><p><span class="math inline">\(m_2\)</span> 下降 <span class="math inline">\(s\)</span> 时，<span class="math inline">\(m_1\)</span> 上升 <span class="math inline">\(s\)</span>；</p></li>
+<li><p>滑轮边缘转过的弧长为 <span class="math inline">\(s\)</span>，转角 <span class="math inline">\(\varphi=s/R\)</span>，角速度 <span class="math inline">\(\dot\varphi=\dot s/R\)</span>；</p></li>
+<li><p>绳轻且不可伸长，绳中张力在两侧可以不同（滑轮有转动惯量）；</p></li>
+<li><p>轮轴无摩擦，绳与轮之间无滑动，故无耗散。</p></li>
+</ol>
+<p>系统只有 1 个自由度，取 <span class="math inline">\(s\)</span> 即可。重力加速度记为 <span class="math inline">\(g\)</span>。</p>
+<h2 id="sec:derive"><span class="ms-secno">3</span>推导</h2>
+<h3 id="拉格朗日量"><span class="ms-secno">3.1</span>拉格朗日量</h3>
+<p>两物体的速度大小都是 <span class="math inline">\(|\dot s|\)</span>，滑轮角速度为 <span class="math inline">\(\dot s/R\)</span>。动能为 <span class="math display">\[T=\frac12 m_1\dot s^2+\frac12 m_2\dot s^2+\frac12 I\left(\frac{\dot s}{R}\right)^2
+   =\frac12\left(m_1+m_2+\frac{I}{R^2}\right)\dot s^2 .
+  
+\tag{1}\]</span> 取 <span class="math inline">\(s=0\)</span> 时势能为零，<span class="math inline">\(m_2\)</span> 下降、<span class="math inline">\(m_1\)</span> 上升，势能为 <span class="math display">\[V=-(m_2-m_1)gs .
+  
+\tag{2}\]</span> 于是 <span class="math display">\[L=T-V=\frac12 M_{\mathrm{eff}}\dot s^2+(m_2-m_1)gs,
+  \qquad
+  M_{\mathrm{eff}}\equiv m_1+m_2+\frac{I}{R^2}.
+  
+\tag{3}\]</span></p>
+<h3 id="运动方程"><span class="ms-secno">3.2</span>运动方程</h3>
+<p><span class="math inline">\(L\)</span> 含 <span class="math inline">\(s\)</span> 的一次项，故 <span class="math inline">\(s\)</span> 不是循环坐标。拉格朗日方程 <span class="math inline">\(\dfrac{d}{dt}\dfrac{\partial L}{\partial\dot s}-\dfrac{\partial L}{\partial s}=0\)</span> 给出 <span class="math display">\[M_{\mathrm{eff}}\ddot s=(m_2-m_1)g,
+  \qquad
+  \boxed{\ a=\ddot s=\frac{(m_2-m_1)g}{m_1+m_2+I/R^2}\ }.
+  
+\tag{4}\]</span> <span class="math inline">\(I=0\)</span> 时退化为理想滑轮 <span class="math inline">\(a=(m_2-m_1)g/(m_1+m_2)\)</span>。 滑轮转动惯量相当于给系统增加了一个等效质量 <span class="math inline">\(I/R^2\)</span>，它只让加速度变小，不改变方向。</p>
+<h3 id="张力"><span class="ms-secno">3.3</span>张力</h3>
+<p>对 <span class="math inline">\(m_2\)</span> 写牛顿第二定律（向下为正）： <span class="math display">\[m_2g-T_2=m_2a \quad\Longrightarrow\quad T_2=m_2(g-a).
+  
+\tag{5}\]</span> 对 <span class="math inline">\(m_1\)</span>（向上为正）： <span class="math display">\[T_1-m_1g=m_1a \quad\Longrightarrow\quad T_1=m_1(g+a).
+  
+\tag{6}\]</span> 滑轮转动方程给出张力差与角加速度的关系： <span class="math display">\[(T_2-T_1)R=I\alpha=I\frac{a}{R}
+  \quad\Longrightarrow\quad
+  T_2-T_1=\frac{Ia}{R^2}.
+  
+\tag{7}\]</span> 把 (4) 代入可验证 (7) 与 (6)–(5) 自洽。 <span class="math inline">\(I\neq0\)</span> 时 <span class="math inline">\(T_1\neq T_2\)</span>；<span class="math inline">\(I=0\)</span> 时两张力相等。</p>
+<h2 id="sec:result"><span class="ms-secno">4</span>解析结果</h2>
+<p><span class="math display">\[\begin{aligned}
+  a&amp;=\frac{(m_2-m_1)g}{m_1+m_2+I/R^2}, \\
+  T_1&amp;=m_1\left(g+a\right), \\
+  T_2&amp;=m_2\left(g-a\right), \\
+  T_2-T_1&amp;=\frac{Ia}{R^2}. 
+\end{aligned}\tag{8}\]</span> 适用条件：绳不可伸长且不打滑、轮轴无摩擦、绳质量可忽略；结果与初始 <span class="math inline">\(s\)</span> 无关。</p>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>配套交互页对 <span class="math inline">\(\ddot s=a\)</span> 作四阶 Runge–Kutta 积分（步长 <span class="math inline">\(10^{-5}\,\mathrm{s}\)</span>）， 把 <span class="math inline">\(t=0.4\,\mathrm{s}\)</span> 的位移与解析解 <span class="math inline">\(s=\tfrac12 at^2\)</span> 比较；同时用 (8)–(8) 计算张力。</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span class="math inline">\(m_1,m_2,I,R\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(M_{\mathrm{eff}}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(a\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(T_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(T_2\)</span></th>
+<th style="text-align: center;">相对误差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(1,2,0.5,0.2\)</span></td>
+<td style="text-align: center;">15.500</td>
+<td style="text-align: center;">0.632903</td>
+<td style="text-align: center;">10.442903</td>
+<td style="text-align: center;">18.354194</td>
+<td style="text-align: center;"><span class="math inline">\(1.4\times10^{-12}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(0.5,4,1.2,0.3\)</span></td>
+<td style="text-align: center;">17.833</td>
+<td style="text-align: center;">1.925327</td>
+<td style="text-align: center;">5.867664</td>
+<td style="text-align: center;">31.538692</td>
+<td style="text-align: center;"><span class="math inline">\(1.5\times10^{-12}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(2,2,1,0.25\)</span></td>
+<td style="text-align: center;">20.000</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">19.620000</td>
+<td style="text-align: center;">19.620000</td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>表中单位：质量 kg，长度 m，时间 s，力 N，加速度 m/s<span class="math inline">\(^2\)</span>。 相对误差定义为 <span class="math inline">\(|s_{\rm num}-s_{\rm ana}|/|s_{\rm ana}|\)</span>（<span class="math inline">\(s_{\rm ana}\neq0\)</span>）。</p>
+<h2 id="讨论"><span class="ms-secno">6</span>讨论</h2>
+<ol>
+<li><p><strong>等效质量.</strong> <span class="math inline">\(M_{\mathrm{eff}}=m_1+m_2+I/R^2\)</span> 把滑轮的转动惯量折算成平动质量。 <span class="math inline">\(I\)</span> 越大，加速度越小，张力差越大。</p></li>
+<li><p><strong>能量.</strong> 机械能 <span class="math inline">\(E=\tfrac12M_{\mathrm{eff}}\dot s^2-(m_2-m_1)gs\)</span> 守恒； 重力势能减少量转化为两物体与滑轮的动能。</p></li>
+<li><p><strong>极限.</strong> <span class="math inline">\(I\to0\)</span> 时 <span class="math inline">\(T_1=T_2\)</span>；<span class="math inline">\(m_2\to m_1\)</span> 时 <span class="math inline">\(a\to0\)</span>，但张力仍为 <span class="math inline">\(mg\)</span>。</p></li>
+<li><p><strong>为什么绳两端张力不同.</strong> 滑轮有角加速度，必须有净力矩； 绳对轮两侧的切向力差提供这个力矩。</p></li>
+</ol>
+<div class="thebibliography">
+<p><span>9</span> L. D. Landau, E. M. Lifshitz, <em>Mechanics</em>, 3rd ed., Pergamon, 1976. H. Goldstein, C. Poole, J. Safko, <em>Classical Mechanics</em>, 3rd ed., Addison-Wesley, 2002.</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>有转动惯量的 Atwood 机 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

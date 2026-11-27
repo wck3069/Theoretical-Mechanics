@@ -1,0 +1,299 @@
+% ============================================================
+% 理论力学 · 交互讲义 —— M4《变分原理与等时摆》note.tex
+% ============================================================
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{\textbf{变分原理与等时摆}}
+\author{理论力学 · 交互讲义}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义处理变分原理：费马原理导出折射定律，最短路径导出直线，
+等时摆问题证明摆线的等时性。对摆线 $h=s^2/(8a)$，
+下滑时间 $T=\pi\sqrt{a/g}$ 与释放位置无关；
+推广到 $h=C s^2$，共同时间 $T_0=\pi/(2\sqrt{2gC})$。
+全部解析结果由配套脚本 \texttt{qa/numeric\_check.py} 逐项数值验证。
+本模块覆盖作业-6。
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{作业映射}
+\label{sec:map}
+
+\begin{center}
+\small
+\begin{tabular}{cp{6.5cm}p{3.5cm}c}
+\toprule
+来源 & 题面简述 & 核心知识点 & 对应小节 \\
+\midrule
+作业-6 Q1 & 用费马原理和变分法证明折射定律 &
+  泛函变分、Snell 定律 & \ref{sub:fermat} \\
+作业-6 Q2 & 二维平面内，极坐标证明直线距离最短 &
+  测地线、Euler--Lagrange & \ref{sub:shortest} \\
+作业-6 Q3 & 摆线：$s=4a\cos(\theta/2)$，$h=s^2/(8a)$；
+  从 $s_0$ 释放，证明下滑时间与 $s_0$ 无关 &
+  等时摆、时间积分 & \ref{sub:cycloid} \\
+作业-6 Q3(d) & 若 $h=C s^2$，证明时间仍与 $s_0$ 无关，求 $T_0$ 与 $C$ 的关系 &
+  一般等时条件 & \ref{sub:general} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{模型与假设}
+\label{sec:model}
+
+\begin{enumerate}
+  \item \textbf{费马原理}：光在介质中沿耗时最短的路径传播。
+  \item \textbf{变分原理}：物理路径使作用量（或时间泛函）取驻值。
+  \item \textbf{无摩擦}：摆线下滑只有重力做功，机械能守恒。
+  \item \textbf{小振幅不假设}：等时性对任意振幅成立（非小角近似）。
+  \item \textbf{单位制}：$g$ 为重力加速度，$a$ 为摆线参数。
+\item \textbf{坐标约定}：$h$ 向下为正（高度降为正），$s$ 从最低点向上量取。
+\end{enumerate}
+
+% ============================================================
+\section{推导}
+\label{sec:derive}
+
+\subsection{费马原理与折射定律（作业-6 Q1）}
+\label{sub:fermat}
+
+光在介质中速度 $v=c/n$（$n$ 为折射率）。费马原理：光程时间
+\begin{equation}
+  T=\int \frac{n(s)}{c}\,\mathrm ds
+\end{equation}
+取驻值。考虑两层介质界面（$y=0$），折射率 $n_1$（上）、$n_2$（下）。
+路径从 $A=(x_1,y_1)$ 到 $B=(x_2,y_2)$，在界面点 $(x,0)$ 折射。
+时间泛函
+\begin{equation}
+  T(x)=\frac{n_1}{c}\sqrt{(x-x_1)^2+y_1^2}
+  +\frac{n_2}{c}\sqrt{(x-x_2)^2+y_2^2}.
+\end{equation}
+驻值条件 $\mathrm dT/\mathrm dx=0$：
+\begin{equation}
+  \frac{n_1}{c}\frac{x-x_1}{\sqrt{(x-x_1)^2+y_1^2}}
+  +\frac{n_2}{c}\frac{x-x_2}{\sqrt{(x-x_2)^2+y_2^2}}=0.
+\end{equation}
+设入射角 $\theta_1$、折射角 $\theta_2$（均与法线夹角），则
+\begin{equation}
+  \boxed{\;n_1\sin\theta_1=n_2\sin\theta_2\;}
+\end{equation}
+即 Snell 折射定律。
+
+\subsection{Euler--Lagrange 方程}
+\label{sub:euler-lagrange}
+
+变分原理的核心工具。给定泛函 $J[y]=\int_{x_1}^{x_2} L(x,y,y')\,\mathrm dx$，
+驻值条件 $\delta J=0$ 导出
+\begin{equation}
+  \frac{\partial L}{\partial y}-\frac{\mathrm d}{\mathrm dx}\frac{\partial L}{\partial y'}=0.
+\end{equation}
+这是 Euler--Lagrange 方程。本模块的折射定律、最短路径、等时摆
+均由此方程导出。
+
+\subsection{最短路径（作业-6 Q2）}
+\label{sub:shortest}
+
+二维平面中，两点间最短路径使弧长泛函
+\begin{equation}
+  S=\int \mathrm ds=\int\sqrt{\dot x^2+\dot y^2}\,\mathrm dt
+\end{equation}
+取驻值。Euler-Lagrange 方程：$L=\sqrt{\dot x^2+\dot y^2}$，
+$\partial L/\partial x=0$，$\partial L/\partial\dot x=\dot x/\sqrt{\dot x^2+\dot y^2}$，
+$\mathrm d/\mathrm dt(\partial L/\partial\dot x)=0$，故 $\dot x/\sqrt{\dot x^2+\dot y^2}=\mathrm{const}$。
+同理 $\dot y/\sqrt{\dot x^2+\dot y^2}=\mathrm{const}$。两式相除：$\dot y/\dot x=\mathrm{const}$，
+即 $y=kx+c$，直线。
+
+\paragraph{极坐标证明。}
+弧长 $\mathrm ds=\sqrt{\dot r^2+r^2\dot\theta^2}\,\mathrm dt$。
+Lagrange 方程对 $\theta$：$\partial L/\partial\theta=0$（旋转对称），
+故 $\partial L/\partial\dot\theta=r^2\dot\theta/\sqrt{\dot r^2+r^2\dot\theta^2}=\mathrm{const}=h$。
+这给出角动量守恒。结合径向方程，积分得 $r\sin(\theta-\theta_0)=\mathrm{const}$，
+即直线的极坐标方程。
+
+\subsection{摆线的等时性（作业-6 Q3）}
+\label{sub:cycloid}
+
+摆线参数方程：
+\begin{equation}
+  x=a(\theta-\sin\theta),\qquad
+  h=a(1+\cos\theta),\qquad 0\le\theta\le\pi,
+\end{equation}
+$h$ 为相对最低点（$\theta=\pi$）的竖直高度。弧长从最低点向上：
+\begin{equation}
+  s=\int_\theta^\pi 2a\sin(t/2)\,\mathrm dt
+  =4a\cos(\theta/2).
+\end{equation}
+高度：
+\begin{equation}
+  h=a(1+\cos\theta)=2a\cos^2(\theta/2)=\frac{s^2}{8a}.
+\end{equation}
+（作业-6 Q3(a)：$s=4a\cos(\theta/2)$，$h=s^2/(8a)$）
+
+能量守恒：从 $s_0$ 释放，到达 $s$ 时下降高度为 $h_0-h=(s_0^2-s^2)/(8a)$，故
+\begin{equation}
+  v(s)=\sqrt{2g(h_0-h)}=\sqrt{\frac{g}{4a}}\,\sqrt{s_0^2-s^2}.
+\end{equation}
+下滑时间从 $s_0$ 到 $0$：
+\begin{equation}
+  T=\int_0^{s_0}\frac{\mathrm ds}{v(s)}
+  =\sqrt{\frac{4a}{g}}\int_0^{s_0}\frac{\mathrm ds}{\sqrt{s_0^2-s^2}}
+  =\sqrt{\frac{4a}{g}}\cdot\frac{\pi}{2}
+  =\pi\sqrt{\frac{a}{g}}.
+\end{equation}
+$T$ 与 $s_0$ 无关，等时性得证（作业-6 Q3(c)）。
+
+\subsection{一般等时条件（作业-6 Q3(d)）}
+\label{sub:general}
+
+若高度满足 $h(s)=C s^2$（$C>0$），则下降高度 $h_0-h=C(s_0^2-s^2)$，
+速度 $v(s)=\sqrt{2gC(s_0^2-s^2)}$，下滑时间
+\begin{equation}
+  T_0=\int_0^{s_0}\frac{\mathrm ds}{\sqrt{2gC(s_0^2-s^2)}}
+  =\frac{1}{\sqrt{2gC}}\cdot\frac{\pi}{2}
+  =\frac{\pi}{2\sqrt{2gC}}.
+\end{equation}
+$T_0$ 与 $s_0$ 无关。与摆线对应：$C=1/(8a)$ 时
+$T_0=\pi/(2\sqrt{2g/(8a)})=\pi\sqrt{a/g}$，与 Q3(c) 一致。
+
+% ============================================================
+\section{解析结果}
+\label{sec:result}
+
+\begin{enumerate}
+  \item 折射定律：$n_1\sin\theta_1=n_2\sin\theta_2$（\eqref{sub:fermat}）。
+  \item 最短路径：直线 $y=kx+c$（\eqref{sub:shortest}）。
+  \item 摆线等时：$T=\pi\sqrt{a/g}$，与 $s_0$ 无关（\eqref{sub:cycloid}）。
+  \item 一般等时：$T_0=\pi/(2\sqrt{2gC})$，$h=C s^2$（\eqref{sub:general}）。
+\end{enumerate}
+
+% ============================================================
+\section{数值验证}
+\label{sec:numeric}
+
+全部数值实验由配套脚本 \texttt{qa/numeric\_check.py} 完成（仅依赖 numpy）。
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{5cm}cc}
+\toprule
+物理量 & 解析值 & 数值值 \\
+\midrule
+$T$（摆线，$a=1,g=1,s_0=1$） & $\pi=3.14159$ & $3.14159$ \\
+$T$（摆线，$a=1,g=1,s_0=0.5$） & $\pi=3.14159$ & $3.14159$ \\
+$T_0$（$C=1/8,g=1$） & $\pi=3.14159$ & $3.14159$ \\
+$T_0$（$C=1/4,g=1$） & $\pi/(2\sqrt{0.5})=2.221$ & $2.221$ \\
+\bottomrule
+\end{tabular}
+\caption{数值验证汇总。全部数值取自 \texttt{qa/numeric\_check.py} 的实际输出。}
+\label{tab:numeric}
+\end{table}
+
+% ============================================================
+\subsection{最速降线（Brachistochrone）}
+\label{sub:brachistochrone}
+
+最速降线问题：给定两点 $A$、$B$，求使质点从 $A$ 滑到 $B$ 时间最短的曲线。
+变分法给出摆线为解。时间泛函
+\begin{equation}
+  T=\int_A^B \frac{\mathrm ds}{\sqrt{2g\,h(s)}},
+\end{equation}
+其中 $h(s)$ 为下降高度。Euler-Lagrange 方程求解得摆线参数方程。
+这与等时摆的关系：等时摆是等时性（时间与振幅无关），
+最速降线是极值性（时间取最小值）。
+
+\subsection{渐变介质中的光线}
+\label{sub:graded}
+
+若折射率 $n(y)$ 连续变化，费马原理给出
+\begin{equation}
+  \frac{\mathrm d}{\mathrm ds}\left(n\frac{\mathrm d\boldsymbol r}{\mathrm ds}\right)=\nabla n.
+\end{equation}
+这是光线在非均匀介质中的轨迹方程。
+
+\section{变分原理的历史}
+\label{sec:history}
+
+变分原理的发展历程：Fermat（1662，光程最短）、Maupertuis（1744，最小作用量）、
+Euler（1744，Euler-Lagrange 方程）、Lagrange（1788，分析力学）、
+Hamilton（1834，Hamilton 原理）。这些原理统一了力学、光学、几何。
+
+\subsection{Snell 定律的矢量形式}
+\label{sub:snell-vector}
+
+折射定律的矢量形式：$n_1(\boldsymbol e_1\times\boldsymbol n)=n_2(\boldsymbol e_2\times\boldsymbol n)$，
+其中 $\boldsymbol n$ 为界面法线，$\boldsymbol e_1$、$\boldsymbol e_2$ 为入射/折射方向。
+这等价于切向波矢守恒：$k_{1,\parallel}=k_{2,\parallel}$。
+
+\subsection{最小作用量原理}
+\label{sub:action}
+
+Hamilton 原理：$\delta S=0$，$S=\int L\,\mathrm dt$。Euler-Lagrange 方程
+\begin{equation}
+  \frac{\partial L}{\partial q_i}-\frac{\mathrm d}{\mathrm dt}\frac{\partial L}{\partial\dot q_i}=0
+\end{equation}
+是所有经典力学方程的统一来源。费马原理是 $L=n/c$ 的特例（光程），
+最短路径是 $L=\sqrt{\dot x^2+\dot y^2}$ 的特例。
+
+\section{讨论}
+\label{sec:discuss}
+
+\paragraph{等时摆的历史。}
+Christiaan Huygens 于 1656 年发现摆线的等时性，用于制造精确的摆钟。
+
+\paragraph{与简谐振子的区别。}
+简谐振子（小角度单摆）仅在小振幅下近似等时；
+摆线对任意振幅严格等时。
+
+\paragraph{变分法的普适性。}
+变分原理统一了力学（最小作用量）、光学（费马原理）、
+几何（最短路径）三大领域。Euler-Lagrange 方程是核心工具。
+
+\paragraph{变分法的数值实现。}
+在交互页中，最短路径与等时性可通过离散化验证：
+对给定曲线族，计算时间积分并比较。等时摆的数值验证见
+\texttt{qa/numeric\_check.py}。
+
+\paragraph{等时摆的实验验证。}
+Huygens 的摆钟利用等时性实现等时振荡，不受振幅影响。
+现代精密测量中，等时摆原理用于重力加速度测定。
+
+\paragraph{变分法的适用范围。}
+变分原理适用于保守系统。非保守系统（含摩擦）需引入 Rayleigh 耗散函数。
+
+\paragraph{与作业题的对照。}
+表~\ref{tab:numeric} 覆盖了作业-6 Q3(c)(d) 的等时性验证。
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{goldstein}
+H.~Goldstein, C.~P.~Poole, J.~L.~Safko,
+\emph{Classical Mechanics}, 3rd ed., Pearson, 2002.
+（变分原理与约束。）
+
+\bibitem{huygens}
+C.~Huygens, \emph{Horologium Oscillatorium}, 1673.
+（等时摆的原始发现。）
+
+\bibitem{zhou}
+周衍柏，《理论力学教程》（第三版），高等教育出版社，2009.
+（变分原理与最小作用量。）
+
+\end{thebibliography}
+
+\end{document}

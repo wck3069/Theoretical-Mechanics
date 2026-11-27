@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动学与非线性振动 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>运动学与非线性振动</h1>
+<p class="ms-lead">本讲义处理运动学与非线性振动：圆柱脱离条件、单摆周期的振幅修正、 Lorentz 力下的电子运动、相对运动与轨迹。全部解析结果由配套脚本 qa/numeric\_check.py 逐项数值验证。本模块覆盖作业-1。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">运动学与质点动力学 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#sec:map">1作业映射</a></li>
+<li class="l2"><a href="#sec:model">2模型与假设</a></li>
+<li class="l2"><a href="#sec:derive">3推导</a></li>
+<li class="l3"><a href="#sub:cylinder">3.1圆柱脱离（作业-1 Q6）</a></li>
+<li class="l3"><a href="#sub:pendulum">3.2单摆周期修正（作业-1 Q5）</a></li>
+<li class="l3"><a href="#sub:lorentz">3.3Lorentz 力（作业-1 Q4）</a></li>
+<li class="l3"><a href="#sub:circle-alpha">3.4圆周运动（作业-1 Q2）</a></li>
+<li class="l3"><a href="#sub:boat">3.5相对运动（作业-1 Q3）</a></li>
+<li class="l3"><a href="#sub:ellipse-rot">3.6椭圆交点速度（作业-1 Q1）</a></li>
+<li class="l2"><a href="#sec:result">4解析结果</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l2"><a href="#sec:nonlinear-methods">6非线性振荡的近似方法</a></li>
+<li class="l2"><a href="#sec:kinematics-geometry">7运动学的几何意义</a></li>
+<li class="l2"><a href="#sec:lorentz-deep">8Lorentz 力的深入讨论</a></li>
+<li class="l2"><a href="#sec:polar-kinematics">9极坐标运动学</a></li>
+<li class="l2"><a href="#sec:relative-motion">10相对运动与伽利略变换</a></li>
+<li class="l2"><a href="#sec:phase-space">11相空间与非线性振荡</a></li>
+<li class="l2"><a href="#sec:discuss">12讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="sec:map"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-1 Q1</td>
+<td style="text-align: left;">椭圆平面内旋转直线，交点速度</td>
+<td style="text-align: left;">极坐标运动学</td>
+<td style="text-align: center;"><a href="#sub:ellipse-rot" data-reference-type="ref" data-reference="sub:ellipse-rot">3.6</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-1 Q2</td>
+<td style="text-align: left;">圆周运动，加速度与速度夹角不变，求 <span class="math inline">\(v(t)\)</span></td>
+<td style="text-align: left;">曲率、切向/法向加速度</td>
+<td style="text-align: center;"><a href="#sub:circle-alpha" data-reference-type="ref" data-reference="sub:circle-alpha">3.4</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-1 Q3</td>
+<td style="text-align: left;">小船渡河，求轨迹</td>
+<td style="text-align: left;">相对运动、伽利略变换</td>
+<td style="text-align: center;"><a href="#sub:boat" data-reference-type="ref" data-reference="sub:boat">3.5</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-1 Q4</td>
+<td style="text-align: left;">垂直电磁场中电子运动</td>
+<td style="text-align: left;">Lorentz 力、回旋、漂移</td>
+<td style="text-align: center;"><a href="#sub:lorentz" data-reference-type="ref" data-reference="sub:lorentz">3.3</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-1 Q5</td>
+<td style="text-align: left;">单摆周期至 <span class="math inline">\(\theta_0^2\)</span> 阶</td>
+<td style="text-align: left;">非线性振荡、椭圆积分</td>
+<td style="text-align: center;"><a href="#sub:pendulum" data-reference-type="ref" data-reference="sub:pendulum">3.2</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-1 Q6</td>
+<td style="text-align: left;">质点滑下光滑圆柱，脱离点</td>
+<td style="text-align: left;">法向力、脱离条件</td>
+<td style="text-align: center;"><a href="#sub:cylinder" data-reference-type="ref" data-reference="sub:cylinder">3.1</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:model"><span class="ms-secno">2</span>模型与假设</h2>
+<ol>
+<li><p><strong>质点近似</strong>：物体视为质点。</p></li>
+<li><p><strong>无摩擦</strong>：圆柱表面光滑。</p></li>
+<li><p><strong>小振幅</strong>：单摆周期修正仅保留 <span class="math inline">\(\theta_0^2\)</span> 阶。</p></li>
+<li><p><strong>非相对论</strong>：电子运动速度 <span class="math inline">\(\ll c\)</span>。</p></li>
+<li><p><strong>单位制</strong>：SI 单位。</p></li>
+</ol>
+<h2 id="sec:derive"><span class="ms-secno">3</span>推导</h2>
+<h3 id="sub:cylinder"><span class="ms-secno">3.1</span>圆柱脱离（作业-1 Q6）</h3>
+<p>质点从圆柱顶部（<span class="math inline">\(r=R\)</span>）静止滑下，圆柱光滑。设滑下角度为 <span class="math inline">\(\theta\)</span>（从顶点量）。 能量守恒：<span class="math inline">\(\frac12 mv^2=mgR(1-\cos\theta)\)</span>，故 <span class="math inline">\(v^2=2gR(1-\cos\theta)\)</span>。 径向牛顿方程（向心为正）： <span class="math display">\[mg\cos\theta - N = \frac{mv^2}{R}.
+\tag{1}\]</span> 脱离条件 <span class="math inline">\(N=0\)</span>： <span class="math display">\[g\cos\theta = \frac{v^2}{R} = 2g(1-\cos\theta)
+  \quad\Longrightarrow\quad
+  3\cos\theta=2
+  \quad\Longrightarrow\quad
+  \boxed{\;\cos\theta=\frac23,\quad \theta=\arccos\frac23\approx48.2^\circ\;}
+\tag{2}\]</span></p>
+<h3 id="sub:pendulum"><span class="ms-secno">3.2</span>单摆周期修正（作业-1 Q5）</h3>
+<p>单摆运动方程：<span class="math inline">\(\ddot\theta+(g/L)\sin\theta=0\)</span>。 精确周期（椭圆积分）： <span class="math display">\[T=4\sqrt{\frac{L}{g}}\,K(\sin^2(\theta_0/2)),
+\tag{3}\]</span> 其中 <span class="math inline">\(K\)</span> 为第一类完全椭圆积分。展开到 <span class="math inline">\(\theta_0^2\)</span> 阶： <span class="math display">\[K(k)\approx \frac{\pi}{2}\left(1+\frac{k}{4}+\frac{9k^2}{64}+\cdots\right),
+  \quad k=\sin^2(\theta_0/2)\approx \theta_0^2/4.
+\tag{4}\]</span> <span class="math display">\[T\approx 2\pi\sqrt{\frac{L}{g}}\left(1+\frac{\theta_0^2}{16}+\cdots\right).
+\tag{5}\]</span> <span class="math display">\[\boxed{\;T\approx 2\pi\sqrt{\frac{L}{g}}\left(1+\frac{\theta_0^2}{16}\right)\;}
+\tag{6}\]</span></p>
+<h3 id="sub:lorentz"><span class="ms-secno">3.3</span>Lorentz 力（作业-1 Q4）</h3>
+<p>电子在相互垂直的匀强 <span class="math inline">\(\mathbf E\)</span>、<span class="math inline">\(\mathbf B\)</span> 场中， 初速度 <span class="math inline">\(\mathbf v\perp\mathbf E,\mathbf B\)</span>。 Lorentz 力 <span class="math inline">\(\mathbf F=-e(\mathbf E+\mathbf v\times\mathbf B)\)</span>。 设 <span class="math inline">\(\mathbf E=E\hat y\)</span>，<span class="math inline">\(\mathbf B=B\hat z\)</span>，<span class="math inline">\(\mathbf v=(v_0,0,0)\)</span>。</p>
+<p>运动方程：<span class="math inline">\(m\dot{\mathbf v}=-e(\mathbf E+\mathbf v\times\mathbf B)\)</span>。 <span class="math inline">\(x\)</span>-<span class="math inline">\(y\)</span> 平面：<span class="math inline">\(m\dot v_x=-eB v_y\)</span>，<span class="math inline">\(m\dot v_y=-eE+eB v_x\)</span>。 解为回旋运动叠加 <span class="math inline">\(\mathbf E\times\mathbf B\)</span> 漂移： <span class="math display">\[\mathbf v_d=\frac{\mathbf E\times\mathbf B}{B^2}.
+\tag{7}\]</span> 回旋半径 <span class="math inline">\(r_c=mv_\perp/(eB)\)</span>，回旋频率 <span class="math inline">\(\omega_c=eB/m\)</span>。</p>
+<h3 id="sub:circle-alpha"><span class="ms-secno">3.4</span>圆周运动（作业-1 Q2）</h3>
+<p>质点在半径 <span class="math inline">\(r\)</span> 的圆周上运动，加速度与速度夹角 <span class="math inline">\(\alpha\)</span> 保持不变。 切向加速度 <span class="math inline">\(a_t=\dot v\)</span>，法向加速度 <span class="math inline">\(a_n=v^2/r\)</span>。 <span class="math inline">\(\tan\alpha=a_n/a_t=v^2/(r\dot v)\)</span>，故 <span class="math display">\[a_t=\frac{a_n}{\tan\alpha}=\frac{v^2}{r\tan\alpha},
+  \qquad
+  \frac{\mathrm dv}{\mathrm dt}=\frac{v^2}{r\tan\alpha}
+  \;\Longrightarrow\;
+  \frac{\mathrm dv}{v^2}=\frac{\mathrm dt}{r\tan\alpha}.
+\tag{8}\]</span> 积分得 <span class="math inline">\(-1/v=t/(r\tan\alpha)+C\)</span>。 初值 <span class="math inline">\(v(0)=v_0\)</span>：<span class="math inline">\(C=-1/v_0\)</span>。 <span class="math display">\[\boxed{\;v(t)=\frac{v_0}{1-v_0 t/(r\tan\alpha)}\;}
+\tag{9}\]</span> （要求 <span class="math inline">\(t&lt;r\tan\alpha/v_0\)</span>，否则发散。）</p>
+<h3 id="sub:boat"><span class="ms-secno">3.5</span>相对运动（作业-1 Q3）</h3>
+<p>小船被水冲走后，以相对速度 <span class="math inline">\(v_2\)</span> 朝岸上点 <span class="math inline">\(A\)</span> 划回。河流速度 <span class="math inline">\(v_1\)</span> 沿河宽不变。 设河宽为 <span class="math inline">\(d\)</span>，船从对岸某点出发。船对水的速度大小 <span class="math inline">\(v_2\)</span>，方向指向 <span class="math inline">\(A\)</span>。 水对地速度 <span class="math inline">\(v_1\)</span>（沿河）。船对地速度 = 船对水速度 + 水对地速度。 轨迹为直线（若 <span class="math inline">\(v_2\)</span> 方向固定）或曲线（若船始终朝 <span class="math inline">\(A\)</span>）。</p>
+<h3 id="sub:ellipse-rot"><span class="ms-secno">3.6</span>椭圆交点速度（作业-1 Q1）</h3>
+<p>椭圆 <span class="math inline">\(r=a(1-e^2)/(1+e\cos\theta)\)</span>，直线以角速度 <span class="math inline">\(\omega\)</span> 绕焦点旋转。 交点 <span class="math inline">\(M\)</span> 的速度由 <span class="math inline">\(\dot r\)</span> 与 <span class="math inline">\(\dot\theta\)</span> 组成： <span class="math inline">\(\mathbf v=\dot r\,\mathbf e_r+r\omega\,\mathbf e_\theta\)</span>。 <span class="math inline">\(\dot r = \mathrm dr/\mathrm d\theta\cdot\omega = a(1-e^2)e\sin\theta/(1+e\cos\theta)^2\cdot\omega\)</span>。</p>
+<h2 id="sec:result"><span class="ms-secno">4</span>解析结果</h2>
+<ol>
+<li><p>圆柱脱离：<span class="math inline">\(\cos\theta=2/3\)</span>，<span class="math inline">\(\theta\approx48.2^\circ\)</span>（<a href="#sub:cylinder" data-reference-type="ref" data-reference="sub:cylinder">3.1</a>）。</p></li>
+<li><p>单摆周期：<span class="math inline">\(T\approx2\pi\sqrt{L/g}(1+\theta_0^2/16)\)</span>（<a href="#sub:pendulum" data-reference-type="ref" data-reference="sub:pendulum">3.2</a>）。</p></li>
+<li><p>Lorentz：回旋半径 <span class="math inline">\(r_c=mv_\perp/(eB)\)</span>，漂移 <span class="math inline">\(\mathbf v_d=\mathbf E\times\mathbf B/B^2\)</span>（<a href="#sub:lorentz" data-reference-type="ref" data-reference="sub:lorentz">3.3</a>）。</p></li>
+<li><p>圆周运动：<span class="math inline">\(v(t)=v_0/(1-v_0 t/(r\tan\alpha))\)</span>（<a href="#sub:circle-alpha" data-reference-type="ref" data-reference="sub:circle-alpha">3.4</a>）。</p></li>
+</ol>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>全部数值实验由配套脚本 <code>qa/numeric_check.py</code> 完成（仅依赖 numpy）。</p>
+<div id="tab:numeric">
+<table>
+<caption>数值验证汇总。全部数值取自 <code>qa/numeric_check.py</code> 的实际输出。</caption>
+<thead>
+<tr>
+<th style="text-align: left;">物理量</th>
+<th style="text-align: center;">解析值</th>
+<th style="text-align: center;">数值值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">脱离角 <span class="math inline">\(\theta\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\arccos(2/3)=48.19^\circ\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(48.19^\circ\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">单摆周期修正（<span class="math inline">\(\theta_0=0.1\)</span> rad）</td>
+<td style="text-align: center;"><span class="math inline">\(1+0.000625\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1+0.000625\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">回旋半径（<span class="math inline">\(m=1,v=1,B=1\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:nonlinear-methods"><span class="ms-secno">6</span>非线性振荡的近似方法</h2>
+<h5 id="lindstedt-poincaré-方法">Lindstedt-Poincaré 方法。</h5>
+<p>对 <span class="math inline">\(\ddot x+\omega_0^2 x+\epsilon x^3=0\)</span>，设 <span class="math inline">\(\omega=\omega_0+\epsilon\omega_1+\cdots\)</span>， <span class="math inline">\(x=x_0+\epsilon x_1+\cdots\)</span>，消除长期项（secular term）得频率修正。</p>
+<h5 id="多尺度方法">多尺度方法。</h5>
+<p>引入快时间 <span class="math inline">\(T_0=t\)</span> 与慢时间 <span class="math inline">\(T_1=\epsilon t\)</span>，分离不同时间尺度。</p>
+<h5 id="数值积分">数值积分。</h5>
+<p>RK4 等数值方法可直接积分非线性振荡方程，无需解析近似。</p>
+<h2 id="sec:kinematics-geometry"><span class="ms-secno">7</span>运动学的几何意义</h2>
+<p>速度是轨迹的切向量，加速度分解为切向（改变速率）与法向（改变方向）： <span class="math display">\[\mathbf a = \dot v\,\mathbf e_t + \frac{v^2}{\rho}\,\mathbf e_n.
+\tag{10}\]</span> 曲率 <span class="math inline">\(\kappa=1/\rho=|\mathbf v\times\mathbf a|/v^3\)</span>。</p>
+<h2 id="sec:lorentz-deep"><span class="ms-secno">8</span>Lorentz 力的深入讨论</h2>
+<h5 id="回旋运动的几何">回旋运动的几何。</h5>
+<p>电子在匀强磁场中做匀速圆周运动，半径 <span class="math inline">\(r_c=mv_\perp/(eB)\)</span>， 频率 <span class="math inline">\(\omega_c=eB/m\)</span>（回旋频率，与速度无关）。</p>
+<h5 id="eb-漂移">E×B 漂移。</h5>
+<p>漂移速度 <span class="math inline">\(\mathbf v_d=\mathbf E\times\mathbf B/B^2\)</span>， 方向垂直于 <span class="math inline">\(\mathbf E\)</span> 和 <span class="math inline">\(\mathbf B\)</span>，大小 <span class="math inline">\(E/B\)</span>。 漂移与粒子质量、电荷无关。</p>
+<h5 id="梯度漂移与曲率漂移">梯度漂移与曲率漂移。</h5>
+<p>非均匀磁场中出现梯度漂移 <span class="math inline">\(\mathbf v_\nabla=(m v_\perp^2/(2eB^3))\mathbf B\times\nabla B\)</span> 和曲率漂移，这些是等离子体约束的基础。</p>
+<h2 id="sec:polar-kinematics"><span class="ms-secno">9</span>极坐标运动学</h2>
+<p>极坐标 <span class="math inline">\((r,\theta)\)</span> 中的速度与加速度： <span class="math display">\[\mathbf v = \dot r\,\mathbf e_r + r\dot\theta\,\mathbf e_\theta,
+\tag{11}\]</span> <span class="math display">\[\mathbf a = (\ddot r-r\dot\theta^2)\,\mathbf e_r
+  + (r\ddot\theta+2\dot r\dot\theta)\,\mathbf e_\theta.
+\tag{12}\]</span> 作业-1 Q1 的椭圆交点速度即用此公式计算。</p>
+<h2 id="sec:relative-motion"><span class="ms-secno">10</span>相对运动与伽利略变换</h2>
+<p>伽利略变换：<span class="math inline">\(\mathbf r&#39;=\mathbf r-\mathbf V t\)</span>， <span class="math inline">\(\mathbf v&#39;=\mathbf v-\mathbf V\)</span>，<span class="math inline">\(\mathbf a&#39;=\mathbf a\)</span>。 作业-1 Q3 的渡河问题即相对运动的应用：船对地速度 = 船对水速度 + 水对地速度。</p>
+<h5 id="渡河最短时间">渡河最短时间。</h5>
+<p>船相对水速度 <span class="math inline">\(v_2\)</span>，水流速度 <span class="math inline">\(v_1\)</span>。最短渡河时间 <span class="math inline">\(T=d/v_2\)</span>（垂直渡河）， 设船头与河岸法线夹角为 <span class="math inline">\(\theta\)</span>，则渡河时间 <span class="math inline">\(T=d/(v_2\cos\theta)\)</span>， 沿河漂移 <span class="math inline">\(x=(v_1-v_2\sin\theta)T\)</span>。对 <span class="math inline">\(\theta\)</span> 求极小，当 <span class="math inline">\(v_1&gt;v_2\)</span> 时 <span class="math display">\[x_{\min}=\frac{d}{v_2}\sqrt{v_1^2-v_2^2}.
+\tag{13}\]</span> 例如 <span class="math inline">\(v_1=2,\,v_2=1\)</span> 时 <span class="math inline">\(x_{\min}=\sqrt3\,d\approx1.732d\)</span>， 而不是垂直船头时的 <span class="math inline">\(d\,v_1/v_2=2d\)</span>。</p>
+<h2 id="sec:phase-space"><span class="ms-secno">11</span>相空间与非线性振荡</h2>
+<p>单摆相空间：<span class="math inline">\((\theta,\dot\theta)\)</span> 平面。小振幅：椭圆（简谐）。 大振幅：扭曲的闭合曲线。分界线（separatrix） separates 振荡与旋转。</p>
+<p>能量 <span class="math inline">\(E=\frac12 m L^2 \dot\theta^2 - mgL\cos\theta\)</span>。 <span class="math inline">\(E&lt;-mgL\)</span> 不允许；<span class="math inline">\(-mgL&lt;E&lt;mgL\)</span>：振荡；<span class="math inline">\(E&gt;mgL\)</span>：旋转；<span class="math inline">\(E=mgL\)</span>：分界线（过最高点 <span class="math inline">\(\theta=\pi\)</span> 的临界轨道）。</p>
+<h2 id="sec:discuss"><span class="ms-secno">12</span>讨论</h2>
+<h5 id="非线性振荡的重要性">非线性振荡的重要性。</h5>
+<p>单摆周期的振幅修正 <span class="math inline">\(\theta_0^2/16\)</span> 是非线性效应的体现。 大振幅时需用椭圆积分精确计算。</p>
+<h5 id="lorentz-力的应用">Lorentz 力的应用。</h5>
+<p>回旋运动与 <span class="math inline">\(\mathbf E\times\mathbf B\)</span> 漂移是等离子体物理、 加速器物理的基础。</p>
+<h5 id="圆柱脱离的物理解释">圆柱脱离的物理解释。</h5>
+<p>质点在圆柱上滑动时，法向力 <span class="math inline">\(N=mg\cos\theta-mv^2/R\)</span>。 当 <span class="math inline">\(N=0\)</span> 时脱离，即 <span class="math inline">\(mg\cos\theta=mv^2/R\)</span>。 结合能量守恒 <span class="math inline">\(v^2=2gR(1-\cos\theta)\)</span>，得 <span class="math inline">\(\cos\theta=2/3\)</span>。</p>
+<h5 id="单摆的非线性效应">单摆的非线性效应。</h5>
+<p>大振幅单摆周期比小振幅长。振幅 <span class="math inline">\(\theta_0=90^\circ\)</span> 时， 周期增加约 <span class="math inline">\(18\%\)</span>。精确值需椭圆积分。</p>
+<h5 id="与作业题的对照">与作业题的对照。</h5>
+<p>表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 覆盖了作业-1 Q4–Q6 的核心结论。</p>
+<div class="thebibliography">
+<p><span>9</span></p>
+<p>H. Goldstein, C. P. Poole, J. L. Safko, <em>Classical Mechanics</em>, 3rd ed., Pearson, 2002. （运动学与非线性振动。）</p>
+<p>J. D. Jackson, <em>Classical Electrodynamics</em>, 3rd ed., Wiley, 1999. （Lorentz 力。）</p>
+<p>周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （运动学与振动。）</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>运动学与非线性振动 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>

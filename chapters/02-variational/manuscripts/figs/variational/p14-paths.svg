@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" role="img" aria-labelledby="p14-title p14-desc">
+<title id="p14-title">四条候选路径的比较</title>
+<desc id="p14-desc">从 a 到 b 的四条路径：1 为摆线，4 为直线，2 与 3 为中间路径；y 轴向下。</desc>
+<g fill="none" stroke="#555" stroke-width="1.4">
+<path d="M55 30V288"/><path d="M50 30H602"/>
+</g>
+<path d="M55 294l-5-10h10z" fill="#555"/>
+<path d="M608 30l-10-5v10z" fill="#555"/>
+<text x="40" y="24" font-family="sans-serif" font-size="16" fill="#333">O</text>
+<text x="34" y="308" font-family="sans-serif" font-size="16" fill="#333">y</text>
+<text x="612" y="35" font-family="sans-serif" font-size="16" fill="#333">x</text>
+<path d="M85 55L560 265" fill="none" stroke="#9a9a9a" stroke-width="2" stroke-dasharray="7 6"/>
+<path d="M85 55C210 180 380 225 560 265" fill="none" stroke="#2f8fbf" stroke-width="2.4"/>
+<path d="M85 55C150 250 380 300 560 265" fill="none" stroke="#b06a3a" stroke-width="2.2"/>
+<path d="M85 55C90 190 190 258 560 265" fill="none" stroke="#1b1b1b" stroke-width="3"/>
+<circle cx="85" cy="55" r="4.5" fill="#1b1b1b"/>
+<circle cx="560" cy="265" r="4.5" fill="#1b1b1b"/>
+<text x="64" y="48" font-family="sans-serif" font-size="17" fill="#1b1b1b">a</text>
+<text x="568" y="284" font-family="sans-serif" font-size="17" fill="#1b1b1b">b</text>
+<text x="112" y="118" font-family="sans-serif" font-size="16" fill="#1b1b1b">1</text>
+<text x="300" y="314" font-family="sans-serif" font-size="16" fill="#b06a3a">2</text>
+<text x="404" y="212" font-family="sans-serif" font-size="16" fill="#2f8fbf">3</text>
+<text x="446" y="196" font-family="sans-serif" font-size="16" fill="#7a7a7a">4</text>
+</svg>

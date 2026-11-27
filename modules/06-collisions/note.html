@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>碰撞与变质量 · 理论力学</title>
+<link rel="stylesheet" href="../../assets/manuscript.css">
+<link rel="stylesheet" href="../../assets/ui-liquid.css">
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],tags:'ams'},svg:{fontCache:'local'}};
+</script>
+</head>
+<body class="ms-reader ms-generated">
+<header class="ms-header"><div class="in">
+<a class="ms-brand" href="../../assets/../index.html">✦ 理论力学</a>
+<nav class="ms-nav"><a href="index.html">← 模拟页</a><a href="../../manuscript/index.html">书稿</a><a href="../../index.html">星图</a></nav>
+</div></header>
+<main class="ms-wrap">
+<div class="ms-hero">
+<div class="ms-eyebrow">推导 · 网页阅读版</div>
+<h1>碰撞与变质量</h1>
+<p class="ms-lead">本讲义处理碰撞与变质量系统：光滑球碰撞的散射角与恢复系数、 雨滴下落的变质量运动、弹性碰撞链的反跳高度。 全部解析结果由配套脚本 qa/numeric\_check.py 逐项数值验证。 本模块覆盖作业-5 Q1--Q3。</p>
+<div class="ms-links"><b>相关</b><a href="index.html">碰撞与变质量 模拟</a></div>
+</div>
+<div class="ms-shell">
+<nav class="ms-toc" id="ms-toc" aria-label="目录">
+<details open><summary>目录</summary>
+<ul>
+<li class="l2"><a href="#sec:map">1作业映射</a></li>
+<li class="l2"><a href="#sec:model">2模型与假设</a></li>
+<li class="l2"><a href="#sec:derive">3推导</a></li>
+<li class="l3"><a href="#sub:collision">3.1光滑球碰撞（作业-5 Q1）</a></li>
+<li class="l3"><a href="#sub:raindrop">3.2雨滴变质量运动（作业-5 Q2）</a></li>
+<li class="l3"><a href="#sub:chain">3.3弹性碰撞链（作业-5 Q3）</a></li>
+<li class="l2"><a href="#sec:result">4解析结果</a></li>
+<li class="l2"><a href="#sec:numeric">5数值验证</a></li>
+<li class="l3"><a href="#sub:collision-geometry">5.1碰撞的几何解释</a></li>
+<li class="l3"><a href="#sub:variable-mass-general">5.2变质量系统的通用公式</a></li>
+<li class="l3"><a href="#sub:energy-transfer">5.3碰撞链的能量传递</a></li>
+<li class="l2"><a href="#sec:collision-types">6碰撞的分类</a></li>
+<li class="l2"><a href="#sec:applications">7碰撞与变质量的应用</a></li>
+<li class="l3"><a href="#sub:raindrop-detail">7.1雨滴 ODE 的详细求解</a></li>
+<li class="l3"><a href="#sub:chain-detail">7.2碰撞链的详细分析</a></li>
+<li class="l2"><a href="#sec:appendix">8附录：碰撞公式汇总</a></li>
+<li class="l2"><a href="#sec:discuss">9讨论</a></li>
+</ul>
+</details>
+</nav>
+<article class="ms-body">
+<h2 id="sec:map"><span class="ms-secno">1</span>作业映射</h2>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">来源</th>
+<th style="text-align: left;">题面简述</th>
+<th style="text-align: left;">核心知识点</th>
+<th style="text-align: center;">对应小节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">作业-5 Q1</td>
+<td style="text-align: left;">光滑球碰撞，求偏转角 <span class="math inline">\(\beta\)</span> 最大值及对应 <span class="math inline">\(\alpha\)</span></td>
+<td style="text-align: left;">碰撞、恢复系数、动量守恒</td>
+<td style="text-align: center;"><a href="#sub:collision" data-reference-type="ref" data-reference="sub:collision">3.1</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-5 Q2</td>
+<td style="text-align: left;">雨滴下落，质量增加率 <span class="math inline">\(\propto\)</span> 表面积，求 <span class="math inline">\(v(t)\)</span></td>
+<td style="text-align: left;">变质量系统、牛顿第二定律</td>
+<td style="text-align: center;"><a href="#sub:raindrop" data-reference-type="ref" data-reference="sub:raindrop">3.2</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">作业-5 Q3</td>
+<td style="text-align: left;">两球弹性碰撞链，求 B2 反弹高度</td>
+<td style="text-align: left;">弹性碰撞、能量与动量守恒</td>
+<td style="text-align: center;"><a href="#sub:chain" data-reference-type="ref" data-reference="sub:chain">3.3</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="sec:model"><span class="ms-secno">2</span>模型与假设</h2>
+<ol>
+<li><p><strong>碰撞假设</strong>：碰撞时间极短，碰撞期间重力等外力忽略。</p></li>
+<li><p><strong>光滑球</strong>：切向无摩擦，仅法向有恢复系数 <span class="math inline">\(e\)</span>。</p></li>
+<li><p><strong>变质量</strong>：雨滴质量随时间增加，增加的质量初速度为 0 （静止雨水），系统为开放系统。</p></li>
+<li><p><strong>弹性碰撞</strong>：Q3 中所有碰撞为完全弹性（<span class="math inline">\(e=1\)</span>）。</p></li>
+<li><p><strong>单位制</strong>：<span class="math inline">\(g\)</span> 为重力加速度。</p></li>
+</ol>
+<h2 id="sec:derive"><span class="ms-secno">3</span>推导</h2>
+<h3 id="sub:collision"><span class="ms-secno">3.1</span>光滑球碰撞（作业-5 Q1）</h3>
+<p>质量相等的光滑球，球 1 以速度 <span class="math inline">\(v\)</span> 入射，球 2 静止。 入射方向与两球中心连线夹角为 <span class="math inline">\(\alpha\)</span>。恢复系数 <span class="math inline">\(e\)</span>。</p>
+<p>分解为法向（沿中心连线）与切向： <span class="math display">\[v_{1n}=v\cos\alpha,\quad v_{1t}=v\sin\alpha,\quad v_{2n}=v_{2t}=0.
+\tag{1}\]</span> 碰撞后（等质量，恢复系数 <span class="math inline">\(e\)</span>）： <span class="math display">\[v_{1n}&#39;=\frac{1-e}{2}v\cos\alpha,\quad
+  v_{2n}&#39;=\frac{1+e}{2}v\cos\alpha,\quad
+  v_{1t}&#39;=v\sin\alpha,\quad v_{2t}&#39;=0.
+\tag{2}\]</span> 球 1 偏转角 <span class="math inline">\(\beta\)</span>（与原方向夹角）： <span class="math display">\[\cos\beta=\frac{v_{1n}v_{1n}&#39;+v_{1t}v_{1t}&#39;}{v\cdot v_1&#39;}
+  =\frac{\frac{1-e}{2}\cos^2\alpha+\sin^2\alpha}
+         {\sqrt{\left(\frac{1-e}{2}\cos\alpha\right)^2+\sin^2\alpha}}.
+\tag{3}\]</span> <span class="math inline">\(\beta\)</span> 最大时满足 <span class="math inline">\(\mathrm d\beta/\mathrm d\alpha=0\)</span>，解得 <span class="math display">\[\tan^2\alpha=\frac{1-e}{2}.
+  
+\tag{4}\]</span> 代入得 <span class="math inline">\(\beta_{\max}\)</span>。</p>
+<h3 id="sub:raindrop"><span class="ms-secno">3.2</span>雨滴变质量运动（作业-5 Q2）</h3>
+<p>雨滴半径 <span class="math inline">\(r\)</span>，质量 <span class="math inline">\(m=\rho\frac43\pi r^3\)</span>。质量增加率与表面积成正比： <span class="math display">\[\frac{\mathrm dm}{\mathrm dt}=k\cdot 4\pi r^2.
+\tag{5}\]</span> 另一方面 <span class="math inline">\(\mathrm dm/\mathrm dt=\rho\cdot 4\pi r^2\,\dot r\)</span>，故 <span class="math inline">\(\dot r=k/\rho=\lambda\)</span>（常数）。 所以 <span class="math inline">\(r(t)=r_0+\lambda t\)</span>。</p>
+<p>变质量牛顿方程（增加质量初速度为 0）： <span class="math display">\[\frac{\mathrm d(mv)}{\mathrm dt}=mg
+  \quad\Longrightarrow\quad
+  m\dot v+v\dot m=mg
+  \quad\Longrightarrow\quad
+  \dot v=g-\frac{v\dot m}{m}.
+\tag{6}\]</span> <span class="math inline">\(\dot m/m=3\lambda/(r_0+\lambda t)\)</span>，故 <span class="math display">\[\dot v+\frac{3\lambda}{r_0+\lambda t}v=g.
+\tag{7}\]</span> 积分因子 <span class="math inline">\(\mu=(r_0+\lambda t)^3\)</span>： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\left[v(r_0+\lambda t)^3\right]=g(r_0+\lambda t)^3.
+\tag{8}\]</span> 积分（<span class="math inline">\(v(0)=0\)</span>）： <span class="math display">\[\boxed{\;v(t)=\frac{g}{4\lambda}\left[(r_0+\lambda t)-\frac{r_0^4}{(r_0+\lambda t)^3}\right]\;}
+  
+\tag{9}\]</span> 当 <span class="math inline">\(t\to\infty\)</span>，<span class="math inline">\(v\to gt/4\)</span>（线性增长）。</p>
+<h3 id="sub:chain"><span class="ms-secno">3.3</span>弹性碰撞链（作业-5 Q3）</h3>
+<p>球 B1 质量 <span class="math inline">\(m_1\)</span>，B2 质量 <span class="math inline">\(m_2\)</span>（<span class="math inline">\(m_2\ll m_1\)</span>）。B1 从高度 <span class="math inline">\(h\)</span> 落下， 与地面弹性碰撞后上升速度 <span class="math inline">\(v_1=\sqrt{2gh}\)</span>，再与 B2（静止）弹性碰撞。</p>
+<p>一维弹性碰撞公式： <span class="math display">\[v_2&#39;=\frac{2m_1}{m_1+m_2}v_1\approx 2v_1 \quad (m_2\ll m_1).
+\tag{10}\]</span> B2 反弹高度 <span class="math display">\[H=\frac{v_2&#39;^2}{2g}\approx\frac{4v_1^2}{2g}=4h.
+\tag{11}\]</span> <span class="math display">\[\boxed{\;H\approx 4h\;}
+\tag{12}\]</span></p>
+<h2 id="sec:result"><span class="ms-secno">4</span>解析结果</h2>
+<ol>
+<li><p>球碰撞偏转角：<span class="math inline">\(\cos\beta\)</span> 公式（<a href="#sub:collision" data-reference-type="ref" data-reference="sub:collision">3.1</a>）， <span class="math inline">\(\beta_{\max}\)</span> 时 <span class="math inline">\(\tan^2\alpha=(1-e)/2\)</span>（(4)）。</p></li>
+<li><p>雨滴速度：<span class="math inline">\(v(t)=\frac{g}{4\lambda}[(r_0+\lambda t)-r_0^4/(r_0+\lambda t)^3]\)</span> （(9)），<span class="math inline">\(t\to\infty\)</span> 时 <span class="math inline">\(v\sim gt/4\)</span>。</p></li>
+<li><p>弹性碰撞链：<span class="math inline">\(H\approx 4h\)</span>（<span class="math inline">\(m_2\ll m_1\)</span>）。</p></li>
+</ol>
+<h2 id="sec:numeric"><span class="ms-secno">5</span>数值验证</h2>
+<p>全部数值实验由配套脚本 <code>qa/numeric_check.py</code> 完成（仅依赖 numpy）。</p>
+<div id="tab:numeric">
+<table>
+<caption>数值验证汇总。全部数值取自 <code>qa/numeric_check.py</code> 的实际输出。</caption>
+<thead>
+<tr>
+<th style="text-align: left;">物理量</th>
+<th style="text-align: center;">解析值</th>
+<th style="text-align: center;">数值值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(\beta_{\max}\)</span>（<span class="math inline">\(e=0.5\)</span>）</td>
+<td style="text-align: center;"><span class="math inline">\(36.9^\circ\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(36.8699^\circ\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(v(t)\)</span>（雨滴，<span class="math inline">\(t=10\)</span>）</td>
+<td style="text-align: center;">公式值</td>
+<td style="text-align: center;">数值积分一致</td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="math inline">\(H/h\)</span>（碰撞链）</td>
+<td style="text-align: center;"><span class="math inline">\(4.0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(4.0\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="sub:collision-geometry"><span class="ms-secno">5.1</span>碰撞的几何解释</h3>
+<p>等质量光滑球碰撞：入射球偏转角 <span class="math inline">\(\beta\)</span> 依赖于碰撞参数 <span class="math inline">\(\alpha\)</span> 与恢复系数 <span class="math inline">\(e\)</span>。 <span class="math inline">\(e=1\)</span>（完全弹性）时 <span class="math inline">\(\beta=90^\circ-\alpha\)</span>。<span class="math inline">\(e=0\)</span> 时“完全非弹性”只表示法向相对速度为零， 切向速度仍为 <span class="math inline">\(v\sin\alpha\)</span>，因此一般 <span class="math inline">\(\beta\ne0\)</span>： <span class="math display">\[\mathbf v_1&#39;=\left(\frac{v\cos\alpha}{2},\,v\sin\alpha\right),
+  \qquad
+  \beta=\arctan\!\left(2\tan\alpha\right)-\alpha.
+\tag{13}\]</span> <span class="math inline">\(\alpha=45^\circ\)</span> 时 <span class="math inline">\(\beta=18.435^\circ\)</span>；<span class="math inline">\(e=0\)</span> 的最大偏转为 <span class="math inline">\(\beta_{\max}=19.471^\circ\)</span>（<span class="math inline">\(\tan^2\alpha=1/2\)</span>），只有 <span class="math inline">\(\alpha=0\)</span> 才是 <span class="math inline">\(\beta=0\)</span>。 若两球真的粘在一起，必须额外加入切向摩擦或粘接，这与“光滑球”假设矛盾。 中间 <span class="math inline">\(0&lt;e&lt;1\)</span> 时 <span class="math inline">\(\beta\)</span> 有最大值，对应 <span class="math inline">\(\tan^2\alpha=(1-e)/2\)</span>。</p>
+<h3 id="sub:variable-mass-general"><span class="ms-secno">5.2</span>变质量系统的通用公式</h3>
+<p>一般变质量系统：<span class="math inline">\(\mathrm d(m\mathbf v)/\mathrm dt=\mathbf F+\mathbf u\,\mathrm dm/\mathrm dt\)</span>， 其中 <span class="math inline">\(\mathbf u\)</span> 为增加质量的绝对速度。雨滴问题中 <span class="math inline">\(\mathbf u=0\)</span>（静止雨水）。</p>
+<h3 id="sub:energy-transfer"><span class="ms-secno">5.3</span>碰撞链的能量传递</h3>
+<p>弹性碰撞链中，能量从重球传递到轻球。<span class="math inline">\(m_2\ll m_1\)</span> 时， <span class="math inline">\(v_2&#39;\approx 2v_1\)</span>，能量传递效率 <span class="math inline">\(\sim 4m_2/m_1\)</span>（小）。多次碰撞可逐步加速轻球。</p>
+<h2 id="sec:collision-types"><span class="ms-secno">6</span>碰撞的分类</h2>
+<ol>
+<li><p><strong>完全弹性</strong>（<span class="math inline">\(e=1\)</span>）：动能守恒，相对速度反向。</p></li>
+<li><p><strong>完全非弹性</strong>（<span class="math inline">\(e=0\)</span>）：法向相对速度为零，动能损失最大；光滑球切向速度仍保留，一般不等于“粘在一起”。</p></li>
+<li><p><strong>部分弹性</strong>（<span class="math inline">\(0&lt;e&lt;1\)</span>）：一般情况，动能部分损失。</p></li>
+</ol>
+<h5 id="碰撞的冲量">碰撞的冲量。</h5>
+<p>碰撞冲量 <span class="math inline">\(\mathbf J=\int \mathbf F\,\mathrm dt=\Delta\mathbf p\)</span>。 对光滑球，冲量沿法向，切向无冲量。</p>
+<h2 id="sec:applications"><span class="ms-secno">7</span>碰撞与变质量的应用</h2>
+<h5 id="台球游戏">台球游戏。</h5>
+<p>台球碰撞是完全弹性碰撞（<span class="math inline">\(e\approx1\)</span>）的日常例子。 碰撞角、偏转角的计算可预测台球轨迹。</p>
+<h5 id="火箭推进">火箭推进。</h5>
+<p>火箭是变质量系统（<span class="math inline">\(dm/dt&lt;0\)</span>），推力 <span class="math inline">\(F=-\dot m u\)</span>。 Tsiolkovsky 公式：<span class="math inline">\(\Delta v=u\ln(m_0/m_f)\)</span>。</p>
+<h5 id="雨滴增长">雨滴增长。</h5>
+<p>雨滴下落时质量增长，速度增长慢于自由落体（<span class="math inline">\(v\sim gt/4\)</span> vs <span class="math inline">\(gt\)</span>）。</p>
+<h3 id="sub:raindrop-detail"><span class="ms-secno">7.1</span>雨滴 ODE 的详细求解</h3>
+<p>方程 <span class="math inline">\(\dot v+3\lambda v/(r_0+\lambda t)=g\)</span> 的积分因子 <span class="math inline">\(\mu(t)=\exp(\int 3\lambda/(r_0+\lambda t)\,\mathrm dt)=(r_0+\lambda t)^3\)</span>。 乘以 <span class="math inline">\(\mu\)</span>：<span class="math inline">\(\mathrm d/\mathrm dt[v(r_0+\lambda t)^3]=g(r_0+\lambda t)^3\)</span>。 积分：<span class="math inline">\(v(r_0+\lambda t)^3 = g(r_0+\lambda t)^4/(4\lambda)+C\)</span>。 初值 <span class="math inline">\(v(0)=0\)</span>：<span class="math inline">\(C=-g r_0^4/(4\lambda)\)</span>。 最终：<span class="math inline">\(v=g/(4\lambda)[(r_0+\lambda t)-r_0^4/(r_0+\lambda t)^3]\)</span>。</p>
+<h3 id="sub:chain-detail"><span class="ms-secno">7.2</span>碰撞链的详细分析</h3>
+<p>B1 从高度 <span class="math inline">\(h\)</span> 落下：<span class="math inline">\(v_1=\sqrt{2gh}\)</span>（向下）。 与地面弹性碰撞：<span class="math inline">\(v_1&#39;=-v_1\)</span>（向上）。 与 B2 弹性碰撞（<span class="math inline">\(m_2\ll m_1\)</span>）：<span class="math inline">\(v_2&#39;=2v_1\)</span>（向上）。 B2 上升高度 <span class="math inline">\(H=v_2&#39;^2/(2g)=2v_1^2/g=4h\)</span>。</p>
+<h2 id="sec:appendix"><span class="ms-secno">8</span>附录：碰撞公式汇总</h2>
+<ol>
+<li><p>一维弹性碰撞：<span class="math inline">\(v_1&#39;=(m_1-m_2)v_1/(m_1+m_2)\)</span>，<span class="math inline">\(v_2&#39;=2m_1 v_1/(m_1+m_2)\)</span>。</p></li>
+<li><p>二维光滑球碰撞：法向恢复系数 <span class="math inline">\(e\)</span>，切向不变。</p></li>
+<li><p>变质量方程：<span class="math inline">\(\mathrm d(mv)/\mathrm dt=F+\dot m u\)</span>。</p></li>
+<li><p>雨滴：<span class="math inline">\(r=r_0+\lambda t\)</span>，<span class="math inline">\(v=g/(4\lambda)[(r_0+\lambda t)-r_0^4/(r_0+\lambda t)^3]\)</span>。</p></li>
+<li><p>碰撞链：<span class="math inline">\(H=4h\)</span>（<span class="math inline">\(m_2\ll m_1\)</span>）。</p></li>
+</ol>
+<h2 id="sec:discuss"><span class="ms-secno">9</span>讨论</h2>
+<h5 id="恢复系数的影响">恢复系数的影响。</h5>
+<p><span class="math inline">\(e=1\)</span>（完全弹性）时 <span class="math inline">\(\beta_{\max}\to 90^\circ\)</span>（<span class="math inline">\(\alpha\to0\)</span>）； <span class="math inline">\(e=0\)</span>（完全非弹性）时两球法向速度相同，但切向速度保留，<span class="math inline">\(\beta\)</span> 一般不为 <span class="math inline">\(0\)</span>（只有正碰 <span class="math inline">\(\alpha=0\)</span> 才为 <span class="math inline">\(0\)</span>）。</p>
+<h5 id="雨滴的终端行为">雨滴的终端行为。</h5>
+<p><span class="math inline">\(v\sim gt/4\)</span> 线性增长，无终端速度（因质量持续增加，重力加速度恒定）。</p>
+<h5 id="恢复系数的物理意义">恢复系数的物理意义。</h5>
+<p><span class="math inline">\(e\)</span> 表征碰撞的“弹性程度”：<span class="math inline">\(e=1\)</span> 完全弹性（动能守恒）， <span class="math inline">\(e=0\)</span> 完全非弹性（动能最大损失）。实际碰撞 <span class="math inline">\(0&lt;e&lt;1\)</span>。</p>
+<h5 id="变质量系统的应用">变质量系统的应用。</h5>
+<p>火箭推进（<span class="math inline">\(dm/dt&lt;0\)</span>）、雨滴增长、砂漏等都是变质量系统。 牛顿第二定律的推广形式 <span class="math inline">\(\mathrm d(mv)/\mathrm dt=F+\dot m u\)</span> 是关键。</p>
+<h5 id="与作业题的对照">与作业题的对照。</h5>
+<p>表 <a href="#tab:numeric" data-reference-type="ref" data-reference="tab:numeric">1</a> 覆盖了作业-5 Q1–Q3 的核心结论。</p>
+<div class="thebibliography">
+<p><span>9</span></p>
+<p>H. Goldstein, C. P. Poole, J. L. Safko, <em>Classical Mechanics</em>, 3rd ed., Pearson, 2002. （碰撞与变质量系统。）</p>
+<p>L. D. Landau, E. M. Lifshitz, <em>Mechanics</em>, 3rd ed., Butterworth–Heinemann, 1976. （变质量系统。）</p>
+<p>周衍柏，《理论力学教程》（第三版），高等教育出版社，2009. （碰撞与变质量。）</p>
+</div>
+
+</article>
+</div>
+</main>
+<footer class="ms-footer"><span>碰撞与变质量 · 网页阅读版</span><span><a href="index.html">返回模拟</a></span></footer>
+<script src="../../assets/manuscript-nav.js"></script>
+<script src="../../assets/tm-i18n-data.js"></script>
+<script src="../../assets/tm-i18n.js"></script>
+<script src="../../assets/mathjax/tex-svg.js"></script>
+</body>
+<script src="../../assets/ui-motion.js" defer></script>
+</body>
+</html>
